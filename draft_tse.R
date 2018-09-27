@@ -12,13 +12,6 @@ load('candidacyDecisions')
 
 
 
-
-
-
-
-
-
-
 names(candidates.2016)
 candidates.2016 %>%
   filter(CODIGO_CARGO == 11) %$%
