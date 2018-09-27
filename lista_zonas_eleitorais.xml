@@ -1,0 +1,3540 @@
+<?xml version="1.0"?>
+<listaZonas>
+	<zona>
+		<numero_zona>001</numero_zona>
+		<sigla_uf>26-0001</sigla_uf>
+		<endereco>AVENIDA BRIGADEIRO LUÍS ANTONIO, 453</endereco>
+		<cep>01317000</cep>
+		<bairro>BELA VISTA</bairro>
+		<nome_municipio>SÃO PAULO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>002</numero_zona>
+		<sigla_uf>26-0002</sigla_uf>
+		<endereco>RUA DR. COSTA JÚNIOR, 509</endereco>
+		<cep>05002000</cep>
+		<bairro>AGUA BRANCA</bairro>
+		<nome_municipio>SÃO PAULO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>003</numero_zona>
+		<sigla_uf>26-0003</sigla_uf>
+		<endereco>RUA ANTONIO CORUJA, 99/109</endereco>
+		<cep>01126030</cep>
+		<bairro>BOM RETIRO</bairro>
+		<nome_municipio>SÃO PAULO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>004</numero_zona>
+		<sigla_uf>26-0004</sigla_uf>
+		<endereco>RUA MADRE DE DEUS, 427</endereco>
+		<cep>03119000</cep>
+		<bairro>MOOCA</bairro>
+		<nome_municipio>SÃO PAULO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>005</numero_zona>
+		<sigla_uf>26-0005</sigla_uf>
+		<endereco>RUA CLODOMIRO AMAZONAS, 41</endereco>
+		<cep>04537010</cep>
+		<bairro>ITAIM BIBI</bairro>
+		<nome_municipio>SÃO PAULO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>006</numero_zona>
+		<sigla_uf>26-0006</sigla_uf>
+		<endereco>RUA LOEFGREEN, 2007</endereco>
+		<cep>04040033</cep>
+		<bairro>VILA CLEMENTINO</bairro>
+		<nome_municipio>SÃO PAULO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>007</numero_zona>
+		<sigla_uf>26-0007</sigla_uf>
+		<endereco>AV. CELIDÔNIO NETO, 165</endereco>
+		<cep>17120000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>AGUDOS</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>008</numero_zona>
+		<sigla_uf>26-0008</sigla_uf>
+		<endereco>RUA CAPITÃO MIRANDA, 57</endereco>
+		<cep>13900030</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>AMPARO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>009</numero_zona>
+		<sigla_uf>26-0009</sigla_uf>
+		<endereco>RUA IGUAÇU, 589</endereco>
+		<cep>16901165</cep>
+		<bairro>STELLA MARIS</bairro>
+		<nome_municipio>ANDRADINA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>010</numero_zona>
+		<sigla_uf>26-0010</sigla_uf>
+		<endereco>RUA MAJOR AUGUSTO FRANCISCO RIOS CARNEIRO, 44</endereco>
+		<cep>18320000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>APIAÍ</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>011</numero_zona>
+		<sigla_uf>26-0011</sigla_uf>
+		<endereco>RUA BRIGADEIRO LUIZ ANTONIO, 46</endereco>
+		<cep>16010680</cep>
+		<bairro>HIGIENOPOLIS</bairro>
+		<nome_municipio>ARAÇATUBA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>012</numero_zona>
+		<sigla_uf>26-0012</sigla_uf>
+		<endereco>RUA MANILIO GOBBI, 287- ESQUINA COM CORREIOS</endereco>
+		<cep>19700000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>PARAGUAÇU PAULISTA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>013</numero_zona>
+		<sigla_uf>26-0013</sigla_uf>
+		<endereco>RUA ITÁLIA, 1673, CENTRO</endereco>
+		<cep>14801350</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>ARARAQUARA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>014</numero_zona>
+		<sigla_uf>26-0014</sigla_uf>
+		<endereco>AVENIDA ZURITA, 681</endereco>
+		<cep>13601020</cep>
+		<bairro>JARDIM BELVEDERE</bairro>
+		<nome_municipio>ARARAS</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>015</numero_zona>
+		<sigla_uf>26-0015</sigla_uf>
+		<endereco>RUA DR.CLYBAS PINTO FERRAZ, 75 - SALA C</endereco>
+		<cep>19800040</cep>
+		<bairro>VILA XAVIER</bairro>
+		<nome_municipio>ASSIS</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>016</numero_zona>
+		<sigla_uf>26-0016</sigla_uf>
+		<endereco>RUA JOSÉ IGNÁCIO, 329</endereco>
+		<cep>12940630</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>ATIBAIA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>017</numero_zona>
+		<sigla_uf>26-0017</sigla_uf>
+		<endereco>RUA SANTA CATARINA, 781</endereco>
+		<cep>18700005</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>AVARÉ</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>018</numero_zona>
+		<sigla_uf>26-0018</sigla_uf>
+		<endereco>PRAÇA RUBIÃO JÚNIOR, 305 - FÓRUM</endereco>
+		<cep>12850000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>BANANAL</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>019</numero_zona>
+		<sigla_uf>26-0019</sigla_uf>
+		<endereco>RUA FRANCISCO DE PAULA CARVALHO, 41</endereco>
+		<cep>17250000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>BARIRI</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>020</numero_zona>
+		<sigla_uf>26-0020</sigla_uf>
+		<endereco>AVENIDA ELLIS MAAS, 875/877</endereco>
+		<cep>05859000</cep>
+		<bairro>CAPAO REDONDO</bairro>
+		<nome_municipio>SÃO PAULO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>021</numero_zona>
+		<sigla_uf>26-0021</sigla_uf>
+		<endereco>AVENIDA 15, 749 - CENTRO</endereco>
+		<cep>14780280</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>BARRETOS</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>022</numero_zona>
+		<sigla_uf>26-0022</sigla_uf>
+		<endereco>AVENIDA DR. CHIQUINHO ARANTES, 534</endereco>
+		<cep>14300000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>BATATAIS</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>023</numero_zona>
+		<sigla_uf>26-0023</sigla_uf>
+		<endereco>RUA ANTONIO ALVES, 21-35</endereco>
+		<cep>17012060</cep>
+		<bairro>VILA SANTA TEREZA</bairro>
+		<nome_municipio>BAURU</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>024</numero_zona>
+		<sigla_uf>26-0024</sigla_uf>
+		<endereco>RUA ANTONIO ALVES DE TOLEDO, 161</endereco>
+		<cep>14700100</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>BEBEDOURO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>025</numero_zona>
+		<sigla_uf>26-0025</sigla_uf>
+		<endereco>RUA ANTONIO SIMÕES, 65</endereco>
+		<cep>16200027</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>BIRIGUI</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>026</numero_zona>
+		<sigla_uf>26-0026</sigla_uf>
+		<endereco>RUA MONSENHOR FERRARI, 466</endereco>
+		<cep>18600310</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>BOTUCATU</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>027</numero_zona>
+		<sigla_uf>26-0027</sigla_uf>
+		<endereco>RUA MONSENHOR KOLLY,   190</endereco>
+		<cep>12900400</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>BRAGANÇA PAULISTA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>028</numero_zona>
+		<sigla_uf>26-0028</sigla_uf>
+		<endereco>PRAÇA 9 DE JULHO, 137</endereco>
+		<cep>17380000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>BROTAS</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>029</numero_zona>
+		<sigla_uf>26-0029</sigla_uf>
+		<endereco>RUA DOM PEDRO II, 195</endereco>
+		<cep>12282370</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>CAÇAPAVA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>030</numero_zona>
+		<sigla_uf>26-0030</sigla_uf>
+		<endereco>RUA MOURA ANDRADE, 35</endereco>
+		<cep>13770000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>CACONDE</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>031</numero_zona>
+		<sigla_uf>26-0031</sigla_uf>
+		<endereco>RUA DR. ARNALDO FERREIRA LIMA, 383</endereco>
+		<cep>16500000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>CAFELÂNDIA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>032</numero_zona>
+		<sigla_uf>26-0032</sigla_uf>
+		<endereco>RUA DOUTOR MATTA, 169</endereco>
+		<cep>14240000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>CAJURU</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>033</numero_zona>
+		<sigla_uf>26-0033</sigla_uf>
+		<endereco>RUA REGENTE FEIJÓ, S/N-3 ANDAR- SALA 305-PALÁCIO DA JUSTIÇA</endereco>
+		<cep>13013907</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>CAMPINAS</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>034</numero_zona>
+		<sigla_uf>26-0034</sigla_uf>
+		<endereco>RUA DR. CÂNDIDO FERREIRA, 63</endereco>
+		<cep>13270040</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>VALINHOS</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>035</numero_zona>
+		<sigla_uf>26-0035</sigla_uf>
+		<endereco>RUA BRIGADEIRO JORDÃO, 553</endereco>
+		<cep>12460000</cep>
+		<bairro>VILA ABERNESSIA</bairro>
+		<nome_municipio>CAMPOS DO JORDÃO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>036</numero_zona>
+		<sigla_uf>26-0036</sigla_uf>
+		<endereco>RUA DR. PAULO DE ALMEIDA GOMES, 106, ANTIGA SANTA CASA</endereco>
+		<cep>11990000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>CANANÉIA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>037</numero_zona>
+		<sigla_uf>26-0037</sigla_uf>
+		<endereco>RUA RAFAEL MACHADO NETO, 50</endereco>
+		<cep>18304130</cep>
+		<bairro>VILA NOVA CAPAO BONITO</bairro>
+		<nome_municipio>CAPÃO BONITO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>038</numero_zona>
+		<sigla_uf>26-0038</sigla_uf>
+		<endereco>RUA DR. JOÃO ADOLFO STEIN, 171</endereco>
+		<cep>13360000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>CAPIVARI</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>039</numero_zona>
+		<sigla_uf>26-0039</sigla_uf>
+		<endereco>RUA LUIZ PIZA, 885</endereco>
+		<cep>13700000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>CASA BRANCA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>040</numero_zona>
+		<sigla_uf>26-0040</sigla_uf>
+		<endereco>RUA SETE DE FEVEREIRO, 885</endereco>
+		<cep>15801160</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>CATANDUVA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>041</numero_zona>
+		<sigla_uf>26-0041</sigla_uf>
+		<endereco>RUA GOIÁS, 446</endereco>
+		<cep>18570000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>CONCHAS</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>042</numero_zona>
+		<sigla_uf>26-0042</sigla_uf>
+		<endereco>RUA CORONEL JOAQUIM DO PRADO, 477</endereco>
+		<cep>12701370</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>CRUZEIRO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>043</numero_zona>
+		<sigla_uf>26-0043</sigla_uf>
+		<endereco>RUA CORONEL MACEDO, 400 - TÉRREO</endereco>
+		<cep>12530000</cep>
+		<bairro>ALTO DO CRUZEIRO</bairro>
+		<nome_municipio>CUNHA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>044</numero_zona>
+		<sigla_uf>26-0044</sigla_uf>
+		<endereco>RUA DR. ANASTÁCIO VIANA, 1005</endereco>
+		<cep>13690000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>DESCALVADO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>046</numero_zona>
+		<sigla_uf>26-0046</sigla_uf>
+		<endereco>RUA FRANCISCO JORGE, 2112</endereco>
+		<cep>14400840</cep>
+		<bairro>SÃO JOSÉ</bairro>
+		<nome_municipio>FRANCA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>047</numero_zona>
+		<sigla_uf>26-0047</sigla_uf>
+		<endereco>RUA PLÍNIO DE GODOY, 236</endereco>
+		<cep>17400000</cep>
+		<bairro>WILLIAMS</bairro>
+		<nome_municipio>GARÇA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>048</numero_zona>
+		<sigla_uf>26-0048</sigla_uf>
+		<endereco>RUA MARECHAL DEODORO, 203</endereco>
+		<cep>12500210</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>GUARATINGUETÁ</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>049</numero_zona>
+		<sigla_uf>26-0049</sigla_uf>
+		<endereco>AV. SETE DE SETEMBRO, 458</endereco>
+		<cep>14940000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>IBITINGA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>050</numero_zona>
+		<sigla_uf>26-0050</sigla_uf>
+		<endereco>RUA CAPITÃO VITORIANO MACHADO, 166</endereco>
+		<cep>14540000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>IGARAPAVA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>051</numero_zona>
+		<sigla_uf>26-0051</sigla_uf>
+		<endereco>RUA CAPITÃO DIAS, 222</endereco>
+		<cep>11920000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>IGUAPE</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>052</numero_zona>
+		<sigla_uf>26-0052</sigla_uf>
+		<endereco>RUA CAP. VENÂNCIO AYRES, 514</endereco>
+		<cep>18200013</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>ITAPETININGA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>053</numero_zona>
+		<sigla_uf>26-0053</sigla_uf>
+		<endereco>AV. PAULINA DE MORAES, 191</endereco>
+		<cep>18400818</cep>
+		<bairro>VILA OPHELIA</bairro>
+		<nome_municipio>ITAPEVA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>054</numero_zona>
+		<sigla_uf>26-0054</sigla_uf>
+		<endereco>RUA JOÃO DE MORAES, 430</endereco>
+		<cep>13970200</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>ITAPIRA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>055</numero_zona>
+		<sigla_uf>26-0055</sigla_uf>
+		<endereco>RUA PADRE TARALLO, 581</endereco>
+		<cep>14900000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>ITÁPOLIS</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>056</numero_zona>
+		<sigla_uf>26-0056</sigla_uf>
+		<endereco>RUA QUINZE DE NOVEMBRO, 941</endereco>
+		<cep>18480000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>ITAPORANGA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>057</numero_zona>
+		<sigla_uf>26-0057</sigla_uf>
+		<endereco>RUA CORONEL FRUTUOSO, 235</endereco>
+		<cep>18460000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>ITARARÉ</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>058</numero_zona>
+		<sigla_uf>26-0058</sigla_uf>
+		<endereco>RUA PROFESSOR BRITO, 200</endereco>
+		<cep>13250060</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>ITATIBA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>059</numero_zona>
+		<sigla_uf>26-0059</sigla_uf>
+		<endereco>RUA SÃO PAULO, 50 - BAIRRO BRASIL</endereco>
+		<cep>13301380</cep>
+		<bairro>BAIRRO BRASIL</bairro>
+		<nome_municipio>ITU</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>060</numero_zona>
+		<sigla_uf>26-0060</sigla_uf>
+		<endereco>RUA CAPITÃO FLORINDO JOSÉ DA SILVA, 1374</endereco>
+		<cep>14500000</cep>
+		<bairro>CIDADE UNIVERSITARIA</bairro>
+		<nome_municipio>ITUVERAVA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>061</numero_zona>
+		<sigla_uf>26-0061</sigla_uf>
+		<endereco>AVENIDA BENJAMIN CONSTANT, 539</endereco>
+		<cep>14870140</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>JABOTICABAL</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>062</numero_zona>
+		<sigla_uf>26-0062</sigla_uf>
+		<endereco>RUA DR. WALDEMAR BERARDINELLI, 86</endereco>
+		<cep>12308340</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>JACAREÍ</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>063</numero_zona>
+		<sigla_uf>26-0063</sigla_uf>
+		<endereco>RUA CÔNEGO ANSELMO VALVEKENS, 169</endereco>
+		<cep>17201250</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>JAÚ</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>064</numero_zona>
+		<sigla_uf>26-0064</sigla_uf>
+		<endereco>RUA VINTE E UM DE ABRIL, 666</endereco>
+		<cep>15200000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>JOSÉ BONIFÁCIO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>065</numero_zona>
+		<sigla_uf>26-0065</sigla_uf>
+		<endereco>RUA DOS BANDEIRANTES, 103</endereco>
+		<cep>13201130</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>JUNDIAÍ</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>066</numero_zona>
+		<sigla_uf>26-0066</sigla_uf>
+		<endereco>RUA TIRADENTES,  627</endereco>
+		<cep>13480082</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>LIMEIRA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>067</numero_zona>
+		<sigla_uf>26-0067</sigla_uf>
+		<endereco>RUA NOVE DE JULHO, 816</endereco>
+		<cep>16400110</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>LINS</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>068</numero_zona>
+		<sigla_uf>26-0068</sigla_uf>
+		<endereco>PRAÇA FIRMINO BORGES ESCADA, 100, CENTRO, LORENA/SP</endereco>
+		<cep>12600480</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>LORENA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>069</numero_zona>
+		<sigla_uf>26-0069</sigla_uf>
+		<endereco>RUA EDUARDO RAPACCI, 171</endereco>
+		<cep>17780000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>LUCÉLIA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>070</numero_zona>
+		<sigla_uf>26-0070</sigla_uf>
+		<endereco>AV. BRASIL, 440</endereco>
+		<cep>17509052</cep>
+		<bairro>MARÍLIA</bairro>
+		<nome_municipio>MARÍLIA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>071</numero_zona>
+		<sigla_uf>26-0071</sigla_uf>
+		<endereco>RUA JOSÉ TEODORO, 246</endereco>
+		<cep>19500000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>MARTINÓPOLIS</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>072</numero_zona>
+		<sigla_uf>26-0072</sigla_uf>
+		<endereco>AV. LAURO LUCHESI, 26-05</endereco>
+		<cep>15130000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>MIRASSOL</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>073</numero_zona>
+		<sigla_uf>26-0073</sigla_uf>
+		<endereco>RUA DOUTOR ADOLPHO BARRETO, N 71</endereco>
+		<cep>13730120</cep>
+		<bairro>VILA MARIANA</bairro>
+		<nome_municipio>MOCOCA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>074</numero_zona>
+		<sigla_uf>26-0074</sigla_uf>
+		<endereco>RUA FRANCISCO FRANCO, 179</endereco>
+		<cep>08710590</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>MOGI DAS CRUZES</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>075</numero_zona>
+		<sigla_uf>26-0075</sigla_uf>
+		<endereco>RUA TREZE DE MAIO, 430/A E 442</endereco>
+		<cep>13800051</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>MOGI MIRIM</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>076</numero_zona>
+		<sigla_uf>26-0076</sigla_uf>
+		<endereco>RUA JEREMIAS DE PAULA EDUARDO, 1089</endereco>
+		<cep>15910000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>MONTE ALTO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>077</numero_zona>
+		<sigla_uf>26-0077</sigla_uf>
+		<endereco>RUA PRESIDENTE VARGAS, 661</endereco>
+		<cep>15150000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>MONTE APRAZÍVEL</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>078</numero_zona>
+		<sigla_uf>26-0078</sigla_uf>
+		<endereco>R. JANSEM DE MELLO, 516 - CENTRO</endereco>
+		<cep>15440000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>NOVA GRANADA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>079</numero_zona>
+		<sigla_uf>26-0079</sigla_uf>
+		<endereco>RUA SETE DE SETEMBRO, 957</endereco>
+		<cep>14960000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>NOVO HORIZONTE</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>080</numero_zona>
+		<sigla_uf>26-0080</sigla_uf>
+		<endereco>RUA DR. ANTÔNIO OLÍMPIO, 914</endereco>
+		<cep>15400000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>OLÍMPIA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>081</numero_zona>
+		<sigla_uf>26-0081</sigla_uf>
+		<endereco>AVENIDA SEIS, N 730</endereco>
+		<cep>14620000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>ORLÂNDIA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>082</numero_zona>
+		<sigla_uf>26-0082</sigla_uf>
+		<endereco>AV. ANTONIO DE ALMEIDA LEITE, 580</endereco>
+		<cep>19907000</cep>
+		<bairro>JARDIM PAULISTA</bairro>
+		<nome_municipio>OURINHOS</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>083</numero_zona>
+		<sigla_uf>26-0083</sigla_uf>
+		<endereco>AVENIDA REGINALDA LEÃO,1500</endereco>
+		<cep>19970000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>PALMITAL</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>084</numero_zona>
+		<sigla_uf>26-0084</sigla_uf>
+		<endereco>AV. MAJOR JOÃO ELIAS DE CALAZANS, 565</endereco>
+		<cep>12260000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>PARAIBUNA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>086</numero_zona>
+		<sigla_uf>26-0086</sigla_uf>
+		<endereco>AVENIDA BERNARDINO FLORA FURLAN, N-1640</endereco>
+		<cep>17280000</cep>
+		<bairro>PARQUE INDUSTRIAL FUAD RAZUK</bairro>
+		<nome_municipio>PEDERNEIRAS</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>087</numero_zona>
+		<sigla_uf>26-0087</sigla_uf>
+		<endereco>RUA SÃO FRANCISCO, 140</endereco>
+		<cep>16300045</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>PENÁPOLIS</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>088</numero_zona>
+		<sigla_uf>26-0088</sigla_uf>
+		<endereco>AVENIDA GREGÓRIO SULIAN N 1685</endereco>
+		<cep>15370000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>PEREIRA BARRETO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>089</numero_zona>
+		<sigla_uf>26-0089</sigla_uf>
+		<endereco>RUA DOUTOR CAMPOS SALES, 66 - CASA 02</endereco>
+		<cep>18170000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>PIEDADE</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>090</numero_zona>
+		<sigla_uf>26-0090</sigla_uf>
+		<endereco>RUA FRANCISCO GLICERIO, 418</endereco>
+		<cep>12401060</cep>
+		<bairro>JARDIM BOA VISTA</bairro>
+		<nome_municipio>PINDAMONHANGABA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>091</numero_zona>
+		<sigla_uf>26-0091</sigla_uf>
+		<endereco>AVENIDA DR. QUIRINO DOS SANTOS, 130</endereco>
+		<cep>13990000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>ESPÍRITO SANTO DO PINHAL</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>092</numero_zona>
+		<sigla_uf>26-0092</sigla_uf>
+		<endereco>RUA BENEDITO VIEIRA DA SILVA, 300 - CENTRO FÓRUM</endereco>
+		<cep>12970000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>PIRACAIA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>093</numero_zona>
+		<sigla_uf>26-0093</sigla_uf>
+		<endereco>RUA SÃO JOSÉ, 940 - CENTRO</endereco>
+		<cep>13400330</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>PIRACICABA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>094</numero_zona>
+		<sigla_uf>26-0094</sigla_uf>
+		<endereco>RUA CEL. JOAQUIM THEOTÔNIO DE ARAÚJO, 211/219</endereco>
+		<cep>18800000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>PIRAJU</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>095</numero_zona>
+		<sigla_uf>26-0095</sigla_uf>
+		<endereco>PRACA DR. PEDRO DA ROCHA BRAGA, 116</endereco>
+		<cep>16600000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>PIRAJUÍ</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>096</numero_zona>
+		<sigla_uf>26-0096</sigla_uf>
+		<endereco>RUA JOAQUIM PROCÓPIO DE ARAÚJO, 1947</endereco>
+		<cep>13630082</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>PIRASSUNUNGA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>098</numero_zona>
+		<sigla_uf>26-0098</sigla_uf>
+		<endereco>RUA DR. EUCLIDES ZANINI CALDAS, 713 - CENTRO</endereco>
+		<cep>14750000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>PITANGUEIRAS</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>099</numero_zona>
+		<sigla_uf>26-0099</sigla_uf>
+		<endereco>RUA GETÚLIO VARGAS, 197 - MINI-SHOPPING - SALA 11</endereco>
+		<cep>17580000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>POMPÉIA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>100</numero_zona>
+		<sigla_uf>26-0100</sigla_uf>
+		<endereco>AV. JOSE MAURINO, 283</endereco>
+		<cep>18540000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>PORTO FELIZ</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>101</numero_zona>
+		<sigla_uf>26-0101</sigla_uf>
+		<endereco>RUA CAPITÃO WALTER RIBEIRO, 140</endereco>
+		<cep>19010120</cep>
+		<bairro>VILA JESUS</bairro>
+		<nome_municipio>PRESIDENTE PRUDENTE</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>102</numero_zona>
+		<sigla_uf>26-0102</sigla_uf>
+		<endereco>RUA EUCLIDES DA CUNHA, 21</endereco>
+		<cep>19400000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>PRESIDENTE VENCESLAU</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>103</numero_zona>
+		<sigla_uf>26-0103</sigla_uf>
+		<endereco>AVENIDA BANDEIRANTES, 711</endereco>
+		<cep>16370000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>PROMISSÃO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>106</numero_zona>
+		<sigla_uf>26-0106</sigla_uf>
+		<endereco>RUA VEREADOR MANOEL TENÓRIO DE BRITO, 457</endereco>
+		<cep>19600000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>RANCHARIA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>107</numero_zona>
+		<sigla_uf>26-0107</sigla_uf>
+		<endereco>RUA GOVERNADOR PEDRO DE TOLEDO, 259</endereco>
+		<cep>13580000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>RIBEIRÃO BONITO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>108</numero_zona>
+		<sigla_uf>26-0108</sigla_uf>
+		<endereco>RUA CERQUEIRA CÉSAR, 333 - TÉRREO</endereco>
+		<cep>14010130</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>RIBEIRÃO PRETO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>109</numero_zona>
+		<sigla_uf>26-0109</sigla_uf>
+		<endereco>RUA JOÃO APRÍGIO BARBOSA, 100</endereco>
+		<cep>14150000</cep>
+		<bairro>JARDIM BOA VISTA</bairro>
+		<nome_municipio>SERRANA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>110</numero_zona>
+		<sigla_uf>26-0110</sigla_uf>
+		<endereco>RUA 8, 819</endereco>
+		<cep>13500144</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>RIO CLARO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>111</numero_zona>
+		<sigla_uf>26-0111</sigla_uf>
+		<endereco>PRACA DR. ADHEMAR DE BARROS, 40</endereco>
+		<cep>15950000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>SANTA ADÉLIA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>112</numero_zona>
+		<sigla_uf>26-0112</sigla_uf>
+		<endereco>RUA MANOEL NUNES DE SOUZA, 510</endereco>
+		<cep>12380000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>SANTA BRANCA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>114</numero_zona>
+		<sigla_uf>26-0114</sigla_uf>
+		<endereco>AVENIDA BATISTA BOTELHO, 428</endereco>
+		<cep>18900000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>SANTA CRUZ DO RIO PARDO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>115</numero_zona>
+		<sigla_uf>26-0115</sigla_uf>
+		<endereco>RUA JOÃO PESSOA, 58</endereco>
+		<cep>07500000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>SANTA ISABEL</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>116</numero_zona>
+		<sigla_uf>26-0116</sigla_uf>
+		<endereco>RUA MARECHAL DEODORO, 861</endereco>
+		<cep>13670000</cep>
+		<bairro>JARDIM AMERICA</bairro>
+		<nome_municipio>SANTA RITA DO PASSA QUATRO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>117</numero_zona>
+		<sigla_uf>26-0117</sigla_uf>
+		<endereco>RUA VISCONDE DE MAUÁ, 565</endereco>
+		<cep>19360000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>SANTO ANASTÁCIO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>118</numero_zona>
+		<sigla_uf>26-0118</sigla_uf>
+		<endereco>RUA AMADOR BUENO, 63</endereco>
+		<cep>11030151</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>SANTOS</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>119</numero_zona>
+		<sigla_uf>26-0119</sigla_uf>
+		<endereco>RUA BAHIA, 67</endereco>
+		<cep>11510070</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>CUBATÃO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>121</numero_zona>
+		<sigla_uf>26-0121</sigla_uf>
+		<endereco>AVENIDA COMENDADOR ALFREDO MAFFEI, 1645</endereco>
+		<cep>13561270</cep>
+		<bairro>JARDIM SÃO CARLOS</bairro>
+		<nome_municipio>SÃO CARLOS</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>122</numero_zona>
+		<sigla_uf>26-0122</sigla_uf>
+		<endereco>RUA DILO GIANELLI, 88</endereco>
+		<cep>13870574</cep>
+		<bairro>PARQUE DAS NAÇÕES</bairro>
+		<nome_municipio>SÃO JOÃO DA BOA VISTA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>123</numero_zona>
+		<sigla_uf>26-0123</sigla_uf>
+		<endereco>RUA PERNAMBUCO, 338</endereco>
+		<cep>14600000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>SÃO JOAQUIM DA BARRA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>124</numero_zona>
+		<sigla_uf>26-0124</sigla_uf>
+		<endereco>RUA BENJAMIN CONSTANT, 179</endereco>
+		<cep>13720000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>SÃO JOSÉ DO RIO PARDO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>125</numero_zona>
+		<sigla_uf>26-0125</sigla_uf>
+		<endereco>RUA LAFAIÉTE SPÍNOLA DE CASTRO, 1463 - SEGUNDO ANDAR</endereco>
+		<cep>15025510</cep>
+		<bairro>BOA VISTA</bairro>
+		<nome_municipio>SÃO JOSÉ DO RIO PRETO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>126</numero_zona>
+		<sigla_uf>26-0126</sigla_uf>
+		<endereco>RUA AMÉRICO GOMES NOVOA, 711</endereco>
+		<cep>15085330</cep>
+		<bairro>JARDIM REDENTOR</bairro>
+		<nome_municipio>SÃO JOSÉ DO RIO PRETO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>127</numero_zona>
+		<sigla_uf>26-0127</sigla_uf>
+		<endereco>RUA PAULO SETÚBAL, 220, VILA ADYANNA</endereco>
+		<cep>12245460</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>SÃO JOSÉ DOS CAMPOS</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>128</numero_zona>
+		<sigla_uf>26-0128</sigla_uf>
+		<endereco>VIA DE ACESSO VEREADOR JOSÉ PINTO DE SOUZA, S/N - FÓRUM</endereco>
+		<cep>12140000</cep>
+		<bairro>VARZEA DOS PASSARINHOS</bairro>
+		<nome_municipio>SÃO LUÍS DO PARAITINGA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>129</numero_zona>
+		<sigla_uf>26-0129</sigla_uf>
+		<endereco>RUA ABÍLIO GOMES, 322</endereco>
+		<cep>18650000</cep>
+		<bairro>VILA IPIRANGA</bairro>
+		<nome_municipio>SÃO MANUEL</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>130</numero_zona>
+		<sigla_uf>26-0130</sigla_uf>
+		<endereco>AVENIDA DOS IMIGRANTES, 255 - SALA 47 - SHOPPING SÃO PEDRO</endereco>
+		<cep>13520000</cep>
+		<bairro>SAO BENEDITO</bairro>
+		<nome_municipio>SÃO PEDRO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>131</numero_zona>
+		<sigla_uf>26-0131</sigla_uf>
+		<endereco>RUA DUQUE DE CAXIAS, 277</endereco>
+		<cep>18130150</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>SÃO ROQUE</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>132</numero_zona>
+		<sigla_uf>26-0132</sigla_uf>
+		<endereco>PRAÇA PROFESSOR ANTÔNIO ARGINO, 120</endereco>
+		<cep>11608554</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>SÃO SEBASTIÃO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>133</numero_zona>
+		<sigla_uf>26-0133</sigla_uf>
+		<endereco>RUA XX DE AGOSTO, 234</endereco>
+		<cep>14200000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>SÃO SIMÃO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>134</numero_zona>
+		<sigla_uf>26-0134</sigla_uf>
+		<endereco>PRAÇA BARÃO DO RIO BRANCO, 41</endereco>
+		<cep>13930000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>SERRA NEGRA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>135</numero_zona>
+		<sigla_uf>26-0135</sigla_uf>
+		<endereco>RUA ELPÍDIO GOMES, 1284</endereco>
+		<cep>14160620</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>SERTÃOZINHO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>136</numero_zona>
+		<sigla_uf>26-0136</sigla_uf>
+		<endereco>RUA DR ALFREDO DE CARVALHO PINTO, 259, PRÉDIO 2</endereco>
+		<cep>13960000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>SOCORRO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>137</numero_zona>
+		<sigla_uf>26-0137</sigla_uf>
+		<endereco>PRAÇA MAÇONARIA, S/N</endereco>
+		<cep>18040295</cep>
+		<bairro>MANGAL</bairro>
+		<nome_municipio>SOROCABA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>138</numero_zona>
+		<sigla_uf>26-0138</sigla_uf>
+		<endereco>RUA CAPITÃO DANIEL DA CUNHA MORAES, 685</endereco>
+		<cep>15170000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>TANABI</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>139</numero_zona>
+		<sigla_uf>26-0139</sigla_uf>
+		<endereco>RUA BARÃO DO TRIUNFO, 459 - CENTRO EXECUTIVO- SALA 07</endereco>
+		<cep>15900000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>TAQUARITINGA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>140</numero_zona>
+		<sigla_uf>26-0140</sigla_uf>
+		<endereco>RUA JUVENAL DE CAMPOS, 327</endereco>
+		<cep>18270330</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>TATUÍ</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>141</numero_zona>
+		<sigla_uf>26-0141</sigla_uf>
+		<endereco>AV. GRANADEIRO GUIMARÃES, 135</endereco>
+		<cep>12020130</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>TAUBATÉ</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>142</numero_zona>
+		<sigla_uf>26-0142</sigla_uf>
+		<endereco>RUA LARA CAMPOS, 105</endereco>
+		<cep>18530000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>TIETÊ</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>143</numero_zona>
+		<sigla_uf>26-0143</sigla_uf>
+		<endereco>RUA MANDAGUARIS, 106</endereco>
+		<cep>17600060</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>TUPÃ</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>144</numero_zona>
+		<sigla_uf>26-0144</sigla_uf>
+		<endereco>PRAÇA 13 DE MAIO, 238</endereco>
+		<cep>11680000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>UBATUBA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>145</numero_zona>
+		<sigla_uf>26-0145</sigla_uf>
+		<endereco>AV. SEVERINO MOREIRA BARBOSA, 176/178</endereco>
+		<cep>12630000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>CACHOEIRA PAULISTA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>146</numero_zona>
+		<sigla_uf>26-0146</sigla_uf>
+		<endereco>AV. NOVE DE JULHO, 769</endereco>
+		<cep>16880000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>VALPARAÍSO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>147</numero_zona>
+		<sigla_uf>26-0147</sigla_uf>
+		<endereco>RUA SÃO PAULO, 3431</endereco>
+		<cep>15500010</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>VOTUPORANGA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>148</numero_zona>
+		<sigla_uf>26-0148</sigla_uf>
+		<endereco>RUA NOVE DE JULHO, 9 - TÉRREO</endereco>
+		<cep>11960000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>ELDORADO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>149</numero_zona>
+		<sigla_uf>26-0149</sigla_uf>
+		<endereco>AV. EXPEDICIONÁRIOS, 1381</endereco>
+		<cep>17900000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>DRACENA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>150</numero_zona>
+		<sigla_uf>26-0150</sigla_uf>
+		<endereco>AVENIDA EXPEDICIONÁRIOS BRASILEIROS, 638</endereco>
+		<cep>15600000</cep>
+		<bairro>JARDIM AMERICA</bairro>
+		<nome_municipio>FERNANDÓPOLIS</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>151</numero_zona>
+		<sigla_uf>26-0151</sigla_uf>
+		<endereco>RUA LUÍS LINCOLN DE OLIVEIRA,280 A, CENTRO</endereco>
+		<cep>16700000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>GUARARAPES</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>152</numero_zona>
+		<sigla_uf>26-0152</sigla_uf>
+		<endereco>RUA SEIS, 2856</endereco>
+		<cep>15700060</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>JALES</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>153</numero_zona>
+		<sigla_uf>26-0153</sigla_uf>
+		<endereco>AVENIDA DOUTOR RAUL DA CUNHA BUENO 1320</endereco>
+		<cep>16800000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>MIRANDÓPOLIS</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>155</numero_zona>
+		<sigla_uf>26-0155</sigla_uf>
+		<endereco>PRAÇA PADRE LUÍS  SÁVIO, 93</endereco>
+		<cep>14470000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>PEDREGULHO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>156</numero_zona>
+		<sigla_uf>26-0156</sigla_uf>
+		<endereco>RUA MARQUESA SANTOS 52</endereco>
+		<cep>09080030</cep>
+		<bairro>VILA ALZIRA</bairro>
+		<nome_municipio>SANTO ANDRÉ</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>157</numero_zona>
+		<sigla_uf>26-0157</sigla_uf>
+		<endereco>ALAMEDA FERNÃO DIAS, 219</endereco>
+		<cep>17800000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>ADAMANTINA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>158</numero_zona>
+		<sigla_uf>26-0158</sigla_uf>
+		<endereco>RUA PRESIDENTE VARGAS, 343</endereco>
+		<cep>13465150</cep>
+		<bairro>VILA PAVAN</bairro>
+		<nome_municipio>AMERICANA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>159</numero_zona>
+		<sigla_uf>26-0159</sigla_uf>
+		<endereco>AV. EXPEDICIONÁRIO ANTONIO APARECIDO, 427</endereco>
+		<cep>17470000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>DUARTINA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>161</numero_zona>
+		<sigla_uf>26-0161</sigla_uf>
+		<endereco>RUA ANITA GARIBALDI, 821</endereco>
+		<cep>18682043</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>LENÇÓIS PAULISTA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>162</numero_zona>
+		<sigla_uf>26-0162</sigla_uf>
+		<endereco>RUA ONOFRE ALVES FERREIRA,286</endereco>
+		<cep>15190000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>NHANDEARA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>163</numero_zona>
+		<sigla_uf>26-0163</sigla_uf>
+		<endereco>RUA BÉLGICA, 440</endereco>
+		<cep>17700000</cep>
+		<bairro>JARDIM DAS BANDEIRAS</bairro>
+		<nome_municipio>OSVALDO CRUZ</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>164</numero_zona>
+		<sigla_uf>26-0164</sigla_uf>
+		<endereco>RUA XV DE NOVEMBRO, 809</endereco>
+		<cep>15490000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>PAULO DE FARIA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>165</numero_zona>
+		<sigla_uf>26-0165</sigla_uf>
+		<endereco>RUA DUQUE DE CAXIAS, 108, CENTRO, PRESIDENTE BERNARDES - SP</endereco>
+		<cep>19300000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>PRESIDENTE BERNARDES</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>166</numero_zona>
+		<sigla_uf>26-0166</sigla_uf>
+		<endereco>RUA MAJOR CARLO DEL PRETE, 651</endereco>
+		<cep>09530000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>SÃO CAETANO DO SUL</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>167</numero_zona>
+		<sigla_uf>26-0167</sigla_uf>
+		<endereco>RUA BARÃO DO RIO BRANCO, 347</endereco>
+		<cep>19570000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>REGENTE FEIJÓ</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>169</numero_zona>
+		<sigla_uf>26-0169</sigla_uf>
+		<endereco>AVENIDA 11, N. 885, CENTRO</endereco>
+		<cep>14790000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>GUAÍRA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>170</numero_zona>
+		<sigla_uf>26-0170</sigla_uf>
+		<endereco>RUA JOÃO PESSOA, 1180</endereco>
+		<cep>15990020</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>MATÃO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>171</numero_zona>
+		<sigla_uf>26-0171</sigla_uf>
+		<endereco>RUA FLORIANO PEIXOTO, 515</endereco>
+		<cep>14730000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>MONTE AZUL PAULISTA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>172</numero_zona>
+		<sigla_uf>26-0172</sigla_uf>
+		<endereco>RUA ELDORADO, 10</endereco>
+		<cep>11900000</cep>
+		<bairro>VILA TUPI</bairro>
+		<nome_municipio>REGISTRO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>174</numero_zona>
+		<sigla_uf>26-0174</sigla_uf>
+		<endereco>AVENIDA PAULO AFONSO, 388</endereco>
+		<cep>09770350</cep>
+		<bairro>NOVA PETRÓPOLIS</bairro>
+		<nome_municipio>SÃO BERNARDO DO CAMPO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>175</numero_zona>
+		<sigla_uf>26-0175</sigla_uf>
+		<endereco>RUA TIRADENTES, 877 - FÓRUM</endereco>
+		<cep>17930000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>TUPI PAULISTA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>176</numero_zona>
+		<sigla_uf>26-0176</sigla_uf>
+		<endereco>RUA LUIZ FACCINI, 344, SEGUNDO ANDAR</endereco>
+		<cep>07110000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>GUARULHOS</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>177</numero_zona>
+		<sigla_uf>26-0177</sigla_uf>
+		<endereco>RUA MARTIM AFONSO, 37</endereco>
+		<cep>11310011</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>SÃO VICENTE</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>178</numero_zona>
+		<sigla_uf>26-0178</sigla_uf>
+		<endereco>AVENIDA DR MANOEL PALOMINO FERNANDES, 659</endereco>
+		<cep>14770000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>COLINA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>179</numero_zona>
+		<sigla_uf>26-0179</sigla_uf>
+		<endereco>RUA TERESINA, 333</endereco>
+		<cep>15800300</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>CATANDUVA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>180</numero_zona>
+		<sigla_uf>26-0180</sigla_uf>
+		<endereco>AV. BRASIL, 440</endereco>
+		<cep>17509052</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>MARÍLIA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>181</numero_zona>
+		<sigla_uf>26-0181</sigla_uf>
+		<endereco>TRAVESSA MIRAMBAVA, 118</endereco>
+		<cep>08674130</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>SUZANO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>182</numero_zona>
+		<sigla_uf>26-0182</sigla_uf>
+		<endereco>RUA SETE DE SETEMBRO 1370</endereco>
+		<cep>19015080</cep>
+		<bairro>VILA DUBUS</bairro>
+		<nome_municipio>PRESIDENTE PRUDENTE</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>183</numero_zona>
+		<sigla_uf>26-0183</sigla_uf>
+		<endereco>RUA DOMINGOS BALZANI, N. 66</endereco>
+		<cep>09400060</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>RIBEIRÃO PIRES</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>184</numero_zona>
+		<sigla_uf>26-0184</sigla_uf>
+		<endereco>RUA MANDAGUARIS, 106</endereco>
+		<cep>17600050</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>TUPÃ</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>185</numero_zona>
+		<sigla_uf>26-0185</sigla_uf>
+		<endereco>AV. MONTEIRO LOBATO, 1025</endereco>
+		<cep>07112000</cep>
+		<bairro>MACEDO</bairro>
+		<nome_municipio>GUARULHOS</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>186</numero_zona>
+		<sigla_uf>26-0186</sigla_uf>
+		<endereco>RUA TUPIS, 1136 -1146</endereco>
+		<cep>13456032</cep>
+		<bairro>JARDIM PAULISTA</bairro>
+		<nome_municipio>SANTA BÁRBARA D'OESTE</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>187</numero_zona>
+		<sigla_uf>26-0187</sigla_uf>
+		<endereco>AV. CONSELHEIRO ANTONIO PRADO, 1699</endereco>
+		<cep>15775000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>SANTA FÉ DO SUL</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>188</numero_zona>
+		<sigla_uf>26-0188</sigla_uf>
+		<endereco>RUA DR. ARMANDO SALLES DE OLIVEIRA, 391</endereco>
+		<cep>13610220</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>LEME</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>189</numero_zona>
+		<sigla_uf>26-0189</sigla_uf>
+		<endereco>RUA PROFA. DINORAH CRUZ, 71</endereco>
+		<cep>11740000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>ITANHAÉM</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>190</numero_zona>
+		<sigla_uf>26-0190</sigla_uf>
+		<endereco>PRAÇA PADRE VICTOR COELHO DE ALMEIDA, 342</endereco>
+		<cep>12570000</cep>
+		<bairro>JARDIM SÃO PAULO</bairro>
+		<nome_municipio>APARECIDA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>191</numero_zona>
+		<sigla_uf>26-0191</sigla_uf>
+		<endereco>AV. MARIA LA FARINA MILANI 671</endereco>
+		<cep>18150000</cep>
+		<bairro>JARDIM DISNEYLANDIA</bairro>
+		<nome_municipio>IBIÚNA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>192</numero_zona>
+		<sigla_uf>26-0192</sigla_uf>
+		<endereco>RUA GENERAL VICENTE DE PAULA COUTINHO, 22</endereco>
+		<cep>07803050</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>FRANCO DA ROCHA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>194</numero_zona>
+		<sigla_uf>26-0194</sigla_uf>
+		<endereco>RUA CORONEL PROCÓPIO DE CARVALHO, 327</endereco>
+		<cep>13660000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>PORTO FERREIRA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>195</numero_zona>
+		<sigla_uf>26-0195</sigla_uf>
+		<endereco>AVENIDA PRESIDENTE VARGAS, 1-31,  FÓRUM</endereco>
+		<cep>19470000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>PRESIDENTE EPITÁCIO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>196</numero_zona>
+		<sigla_uf>26-0196</sigla_uf>
+		<endereco>RUA RUI BARBOSA, 790</endereco>
+		<cep>17890000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>JUNQUEIRÓPOLIS</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>197</numero_zona>
+		<sigla_uf>26-0197</sigla_uf>
+		<endereco>AVENIDA DA SAUDADE, 65</endereco>
+		<cep>14840000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>GUARIBA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>199</numero_zona>
+		<sigla_uf>26-0199</sigla_uf>
+		<endereco>AVENIDA HENRIQUETA MENDES GUERRA, 550</endereco>
+		<cep>06401160</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>BARUERI</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>200</numero_zona>
+		<sigla_uf>26-0200</sigla_uf>
+		<endereco>RUA PRUDENTE DE MORAES, 624, CENTRO</endereco>
+		<cep>17340000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>BARRA BONITA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>201</numero_zona>
+		<sigla_uf>26-0201</sigla_uf>
+		<endereco>RUA DAVID FARAH, 25</endereco>
+		<cep>06850845</cep>
+		<bairro>JARDIM SANTA ISABEL</bairro>
+		<nome_municipio>ITAPECERICA DA SERRA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>202</numero_zona>
+		<sigla_uf>26-0202</sigla_uf>
+		<endereco>RUA CORONEL JOAQUIM ALBERTO, 10</endereco>
+		<cep>14350000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>ALTINÓPOLIS</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>204</numero_zona>
+		<sigla_uf>26-0204</sigla_uf>
+		<endereco>RUA PRUDENTE DE MORAIS, 76 (ATRÁS DO FÓRUM)</endereco>
+		<cep>14680000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>JARDINÓPOLIS</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>205</numero_zona>
+		<sigla_uf>26-0205</sigla_uf>
+		<endereco>R. OLÍMPIO PAVAN, N 304</endereco>
+		<cep>18760000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>CERQUEIRA CÉSAR</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>206</numero_zona>
+		<sigla_uf>26-0206</sigla_uf>
+		<endereco>AV. BRASIL, 772</endereco>
+		<cep>11661200</cep>
+		<bairro>SUMARE</bairro>
+		<nome_municipio>CARAGUATATUBA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>207</numero_zona>
+		<sigla_uf>26-0207</sigla_uf>
+		<endereco>PRAÇA BELA VISTA, S/N - FÓRUM</endereco>
+		<cep>15850000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>URUPÊS</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>208</numero_zona>
+		<sigla_uf>26-0208</sigla_uf>
+		<endereco>AV. ÁLVARO DA CUNHA BARROS, 1069</endereco>
+		<cep>14530000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>MIGUELÓPOLIS</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>210</numero_zona>
+		<sigla_uf>26-0210</sigla_uf>
+		<endereco>RUA OLAVO BILAC, 455</endereco>
+		<cep>16210000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>BILAC</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>211</numero_zona>
+		<sigla_uf>26-0211</sigla_uf>
+		<endereco>RUA TREZE DE MAIO, 834</endereco>
+		<cep>13330120</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>INDAIATUBA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>212</numero_zona>
+		<sigla_uf>26-0212</sigla_uf>
+		<endereco>RUA WASHINGTON, 473</endereco>
+		<cep>11410150</cep>
+		<bairro>VILA MAIA</bairro>
+		<nome_municipio>GUARUJÁ</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>213</numero_zona>
+		<sigla_uf>26-0213</sigla_uf>
+		<endereco>RUA PRESIDENTE CASTELO BRANCO 323</endereco>
+		<cep>06016020</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>OSASCO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>214</numero_zona>
+		<sigla_uf>26-0214</sigla_uf>
+		<endereco>AV. FREI MARCELO MANILIA, 695, SALAS 8 E 9, ESQUINA C/ RUA RUI BARBOSA</endereco>
+		<cep>15290000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>BURITAMA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>215</numero_zona>
+		<sigla_uf>26-0215</sigla_uf>
+		<endereco>RUA JOSÉ FRANCO DE ARAÚJO, N. 519</endereco>
+		<cep>18240000</cep>
+		<bairro>VILA SAO CRISTOVAO</bairro>
+		<nome_municipio>ANGATUBA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>216</numero_zona>
+		<sigla_uf>26-0216</sigla_uf>
+		<endereco>AVENIDA PRESIDENTE JOHN F. KENNEDY, 311</endereco>
+		<cep>13845232</cep>
+		<bairro>JARDIM CENTENARIO</bairro>
+		<nome_municipio>MOGI GUAÇU</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>217</numero_zona>
+		<sigla_uf>26-0217</sigla_uf>
+		<endereco>RUA PRINCESA ISABEL,129</endereco>
+		<cep>09310010</cep>
+		<bairro>VILA BOCAINA</bairro>
+		<nome_municipio>MAUÁ</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>218</numero_zona>
+		<sigla_uf>26-0218</sigla_uf>
+		<endereco>RUA DR. EMÍLIO MARTINS RIBEIRO, S/N</endereco>
+		<cep>11850000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>MIRACATU</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>219</numero_zona>
+		<sigla_uf>26-0219</sigla_uf>
+		<endereco>RUA MARINA LA REGINA, 167</endereco>
+		<cep>08550210</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>POÁ</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>220</numero_zona>
+		<sigla_uf>26-0220</sigla_uf>
+		<endereco>RUA JOÃO WALTER, N 262</endereco>
+		<cep>18110020</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>VOTORANTIM</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>221</numero_zona>
+		<sigla_uf>26-0221</sigla_uf>
+		<endereco>RUA BARÃO DO RIO BRANCO, 401</endereco>
+		<cep>13320270</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>SALTO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>222</numero_zona>
+		<sigla_uf>26-0222</sigla_uf>
+		<endereco>AVENIDA SETE DE SETEMBRO, 189</endereco>
+		<cep>09912010</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>DIADEMA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>223</numero_zona>
+		<sigla_uf>26-0223</sigla_uf>
+		<endereco>RUA MAJOR MARTINS COELHO, 439 - FÓRUM</endereco>
+		<cep>11800000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>JUQUIÁ</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>224</numero_zona>
+		<sigla_uf>26-0224</sigla_uf>
+		<endereco>RUA SÃO PAULO, S/N - FÓRUM</endereco>
+		<cep>15570000</cep>
+		<bairro>JARDIM GOUVEIA</bairro>
+		<nome_municipio>CARDOSO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>225</numero_zona>
+		<sigla_uf>26-0225</sigla_uf>
+		<endereco>RUA AUGUSTO MIRANDA, 61-52 - GANHA TEMPO AURIFLAMA</endereco>
+		<cep>15350000</cep>
+		<bairro>JARDIM ALVORADA</bairro>
+		<nome_municipio>AURIFLAMA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>226</numero_zona>
+		<sigla_uf>26-0226</sigla_uf>
+		<endereco>RUA SÃO PAULO, 988</endereco>
+		<cep>19880000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>CÂNDIDO MOTA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>227</numero_zona>
+		<sigla_uf>26-0227</sigla_uf>
+		<endereco>RUA JORGE CAIXE, 306</endereco>
+		<cep>06716690</cep>
+		<bairro>BAIRRO DO PORTAO</bairro>
+		<nome_municipio>COTIA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>228</numero_zona>
+		<sigla_uf>26-0228</sigla_uf>
+		<endereco>AV. 23 DE JUNHO, 619</endereco>
+		<cep>11940000</cep>
+		<bairro>BAIRRO VILA ELIAS</bairro>
+		<nome_municipio>JACUPIRANGA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>229</numero_zona>
+		<sigla_uf>26-0229</sigla_uf>
+		<endereco>RUA BATISTA FIGUEIREDO, 380</endereco>
+		<cep>13880000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>VARGEM GRANDE DO SUL</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>230</numero_zona>
+		<sigla_uf>26-0230</sigla_uf>
+		<endereco>RUA ANTÔNIO DO VALLE MELO, 1332</endereco>
+		<cep>13170011</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>SUMARÉ</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>232</numero_zona>
+		<sigla_uf>26-0232</sigla_uf>
+		<endereco>AV. CARLOS GOMES, 4545</endereco>
+		<cep>15720000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>PALMEIRA D'OESTE</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>233</numero_zona>
+		<sigla_uf>26-0233</sigla_uf>
+		<endereco>R. MINAS GERAIS, S/N - FÓRUM</endereco>
+		<cep>15650000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>ESTRELA D'OESTE</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>234</numero_zona>
+		<sigla_uf>26-0234</sigla_uf>
+		<endereco>RUA LUIZ RIBEIRO SALGADO, 20 - SALA 8</endereco>
+		<cep>18870000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>FARTURA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>236</numero_zona>
+		<sigla_uf>26-0236</sigla_uf>
+		<endereco>RUA PEDRO SIA, 191 - VILA SANTA RITA DE CÁSSIA</endereco>
+		<cep>18740000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>TAQUARITUBA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>237</numero_zona>
+		<sigla_uf>26-0237</sigla_uf>
+		<endereco>RUA IPIRANGA, 84</endereco>
+		<cep>07600000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>MAIRIPORÃ</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>239</numero_zona>
+		<sigla_uf>26-0239</sigla_uf>
+		<endereco>AVENIDA JOAQUIM AFONSO DA COSTA, 284</endereco>
+		<cep>14820000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>AMÉRICO BRASILIENSE</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>240</numero_zona>
+		<sigla_uf>26-0240</sigla_uf>
+		<endereco>RUA FRANCISCO JORGE, 2112</endereco>
+		<cep>14400840</cep>
+		<bairro>SÃO JOSÉ</bairro>
+		<nome_municipio>FRANCA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>241</numero_zona>
+		<sigla_uf>26-0241</sigla_uf>
+		<endereco>ALAMEDA DOUTOR JULIO ESPERANÇA, 103</endereco>
+		<cep>17201380</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>JAÚ</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>242</numero_zona>
+		<sigla_uf>26-0242</sigla_uf>
+		<endereco>RUA MARIA APARECIDA, 84</endereco>
+		<cep>13220090</cep>
+		<bairro>VILA SANTA TEREZINHA</bairro>
+		<nome_municipio>VÁRZEA PAULISTA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>243</numero_zona>
+		<sigla_uf>26-0243</sigla_uf>
+		<endereco>RUA SETE DE SETEMBRO, 482</endereco>
+		<cep>13490000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>CORDEIRÓPOLIS</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>244</numero_zona>
+		<sigla_uf>26-0244</sigla_uf>
+		<endereco>RUA SÃO JOSÉ, 940</endereco>
+		<cep>13400330</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>PIRACICABA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>245</numero_zona>
+		<sigla_uf>26-0245</sigla_uf>
+		<endereco>RUA 14, 521</endereco>
+		<cep>13500130</cep>
+		<bairro>CONSOLACAO</bairro>
+		<nome_municipio>RIO CLARO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>246</numero_zona>
+		<sigla_uf>26-0246</sigla_uf>
+		<endereco>RUA TENENTE CORONEL CARLOS DA SILVA ARAÚJO, 355</endereco>
+		<cep>04751050</cep>
+		<bairro>SANTO AMARO</bairro>
+		<nome_municipio>SÃO PAULO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>247</numero_zona>
+		<sigla_uf>26-0247</sigla_uf>
+		<endereco>AV. COCÁ,  633 - VILA CURUÇÁ</endereco>
+		<cep>08030000</cep>
+		<bairro>SAO MIGUEL PAULISTA</bairro>
+		<nome_municipio>SÃO PAULO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>248</numero_zona>
+		<sigla_uf>26-0248</sigla_uf>
+		<endereco>RUA PAULO LOPES LEÃO, 166</endereco>
+		<cep>08210520</cep>
+		<bairro>ITAQUERA</bairro>
+		<nome_municipio>SÃO PAULO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>249</numero_zona>
+		<sigla_uf>26-0249</sigla_uf>
+		<endereco>AV. LEÔNCIO DE MAGALHÃES, 357/363</endereco>
+		<cep>02042010</cep>
+		<bairro>SANTANA</bairro>
+		<nome_municipio>SÃO PAULO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>250</numero_zona>
+		<sigla_uf>26-0250</sigla_uf>
+		<endereco>RUA MONTEIRO DE MELO, 610</endereco>
+		<cep>05050000</cep>
+		<bairro>LAPA</bairro>
+		<nome_municipio>SÃO PAULO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>251</numero_zona>
+		<sigla_uf>26-0251</sigla_uf>
+		<endereco>RUA FERREIRA DE ARAÚJO, 538</endereco>
+		<cep>05428001</cep>
+		<bairro>PINHEIROS</bairro>
+		<nome_municipio>SÃO PAULO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>252</numero_zona>
+		<sigla_uf>26-0252</sigla_uf>
+		<endereco>RUA JORGE AUGUSTO, 258</endereco>
+		<cep>03645000</cep>
+		<bairro>VILA ESPERANCA</bairro>
+		<nome_municipio>SÃO PAULO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>253</numero_zona>
+		<sigla_uf>26-0253</sigla_uf>
+		<endereco>PRAÇA SANTA TEREZINHA, 43 / 47</endereco>
+		<cep>03308070</cep>
+		<bairro>VILA AZEVEDO</bairro>
+		<nome_municipio>SÃO PAULO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>254</numero_zona>
+		<sigla_uf>26-0254</sigla_uf>
+		<endereco>RUA ARARITAGUABA, 936/938</endereco>
+		<cep>02122011</cep>
+		<bairro>VILA MARIA</bairro>
+		<nome_municipio>SÃO PAULO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>255</numero_zona>
+		<sigla_uf>26-0255</sigla_uf>
+		<endereco>AVENIDA CASA VERDE, 1819</endereco>
+		<cep>02519200</cep>
+		<bairro>CASA VERDE</bairro>
+		<nome_municipio>SÃO PAULO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>256</numero_zona>
+		<sigla_uf>26-0256</sigla_uf>
+		<endereco>RUA MARIA AMÁLIA LOPES AZEVEDO, 657</endereco>
+		<cep>02350012</cep>
+		<bairro>TREMEMBE</bairro>
+		<nome_municipio>SÃO PAULO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>257</numero_zona>
+		<sigla_uf>26-0257</sigla_uf>
+		<endereco>AVENIDA PAES DE BARROS, 3237</endereco>
+		<cep>03149100</cep>
+		<bairro>VILA PRUDENTE</bairro>
+		<nome_municipio>SÃO PAULO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>258</numero_zona>
+		<sigla_uf>26-0258</sigla_uf>
+		<endereco>AV. JANDIRA, 657</endereco>
+		<cep>04080004</cep>
+		<bairro>INDIANOPOLIS</bairro>
+		<nome_municipio>SÃO PAULO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>259</numero_zona>
+		<sigla_uf>26-0259</sigla_uf>
+		<endereco>RUA ITAPIRU, 174</endereco>
+		<cep>04143010</cep>
+		<bairro>SAÚDE</bairro>
+		<nome_municipio>SÃO PAULO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>260</numero_zona>
+		<sigla_uf>26-0260</sigla_uf>
+		<endereco>RUA BOM PASTOR, 2204</endereco>
+		<cep>04203002</cep>
+		<bairro>IPIRANGA</bairro>
+		<nome_municipio>SÃO PAULO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>261</numero_zona>
+		<sigla_uf>26-0261</sigla_uf>
+		<endereco>RUA CASTRO ALVES, 962</endereco>
+		<cep>19200000</cep>
+		<bairro>JARDIM DAS FLORES</bairro>
+		<nome_municipio>PIRAPOZINHO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>263</numero_zona>
+		<sigla_uf>26-0263</sigla_uf>
+		<endereco>AVENIDA ITAMARATI, 241</endereco>
+		<cep>09290730</cep>
+		<bairro>PARQUE JACATUBA</bairro>
+		<nome_municipio>SANTO ANDRÉ</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>264</numero_zona>
+		<sigla_uf>26-0264</sigla_uf>
+		<endereco>RUA MATO GROSSO, 428</endereco>
+		<cep>09210700</cep>
+		<bairro>SANTA TEREZINHA</bairro>
+		<nome_municipio>SANTO ANDRÉ</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>265</numero_zona>
+		<sigla_uf>26-0265</sigla_uf>
+		<endereco>RUA CERQUEIRA CÉSAR, 333</endereco>
+		<cep>14010130</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>RIBEIRÃO PRETO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>266</numero_zona>
+		<sigla_uf>26-0266</sigla_uf>
+		<endereco>RUA CERQUEIRA CÉSAR, 333</endereco>
+		<cep>14010130</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>RIBEIRÃO PRETO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>267</numero_zona>
+		<sigla_uf>26-0267</sigla_uf>
+		<endereco>RUA  LAFAIETE SPÍNOLA CASTRO, 1463 - SALA 6 - TÉRREO</endereco>
+		<cep>15025510</cep>
+		<bairro>BOA VISTA</bairro>
+		<nome_municipio>SÃO JOSÉ DO RIO PRETO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>268</numero_zona>
+		<sigla_uf>26-0268</sigla_uf>
+		<endereco>RUA LAFAIETE SPÍNOLA DE CASTRO, 1463</endereco>
+		<cep>15025510</cep>
+		<bairro>BOA VISTA</bairro>
+		<nome_municipio>SÃO JOSÉ DO RIO PRETO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>269</numero_zona>
+		<sigla_uf>26-0269</sigla_uf>
+		<endereco>RUA MAJOR CARLO DEL PRETE, 651 - FUNDOS</endereco>
+		<cep>09530000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>SÃO CAETANO DO SUL</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>270</numero_zona>
+		<sigla_uf>26-0270</sigla_uf>
+		<endereco>RUA SÃO JOSÉ, 940</endereco>
+		<cep>13400333</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>PIRACICABA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>271</numero_zona>
+		<sigla_uf>26-0271</sigla_uf>
+		<endereco>PRAÇA MAÇONARIA, S/N</endereco>
+		<cep>18040295</cep>
+		<bairro>JARDIM PAULISTANO</bairro>
+		<nome_municipio>SOROCABA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>272</numero_zona>
+		<sigla_uf>26-0272</sigla_uf>
+		<endereco>RUA VEREADOR HENRIQUE SOLER, 279</endereco>
+		<cep>11030111</cep>
+		<bairro>PONTA DA PRAIA</bairro>
+		<nome_municipio>SANTOS</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>273</numero_zona>
+		<sigla_uf>26-0273</sigla_uf>
+		<endereco>AV. BERNARDINO DE CAMPOS, 99</endereco>
+		<cep>11075355</cep>
+		<bairro>VILA BELMIRO</bairro>
+		<nome_municipio>SANTOS</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>274</numero_zona>
+		<sigla_uf>26-0274</sigla_uf>
+		<endereco>RUA REGENTE FEIJÓ, S/N - PALÁCIO DA JUSTIÇA, 2 ANDAR, SALA 209</endereco>
+		<cep>13013900</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>CAMPINAS</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>275</numero_zona>
+		<sigla_uf>26-0275</sigla_uf>
+		<endereco>RUA REGENTE FEIJÓ, S/N - PALÁCIO DA JUSTIÇA - SALA 406</endereco>
+		<cep>13013900</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>CAMPINAS</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>276</numero_zona>
+		<sigla_uf>26-0276</sigla_uf>
+		<endereco>PRAÇA PROFESSOR ANÉSIO CABRAL, 87</endereco>
+		<cep>06226010</cep>
+		<bairro>JARDIM ROCHDALLE</bairro>
+		<nome_municipio>OSASCO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>277</numero_zona>
+		<sigla_uf>26-0277</sigla_uf>
+		<endereco>AVENIDA HILDEBRANDO DE LIMA, 609</endereco>
+		<cep>06190160</cep>
+		<bairro>KM 18</bairro>
+		<nome_municipio>OSASCO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>278</numero_zona>
+		<sigla_uf>26-0278</sigla_uf>
+		<endereco>RUA LUIZ FACCINI,344 - PRIMEIRO ANDAR</endereco>
+		<cep>07110000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>GUARULHOS</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>279</numero_zona>
+		<sigla_uf>26-0279</sigla_uf>
+		<endereco>RUA LUIZ FACCINI, 346, TÉRREO</endereco>
+		<cep>07110000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>GUARULHOS</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>280</numero_zona>
+		<sigla_uf>26-0280</sigla_uf>
+		<endereco>AVENIDA ATLÂNTICA,1551</endereco>
+		<cep>04768200</cep>
+		<bairro>CAPELA DO SOCORRO</bairro>
+		<nome_municipio>SÃO PAULO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>281</numero_zona>
+		<sigla_uf>26-0281</sigla_uf>
+		<endereco>AV. DR. CAVALCANTI, 702</endereco>
+		<cep>13201003</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>JUNDIAÍ</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>282</numero_zona>
+		<sigla_uf>26-0282</sigla_uf>
+		<endereco>RUA PAULO SETÚBAL, 220</endereco>
+		<cep>12245460</cep>
+		<bairro>VILA ADY ANNA</bairro>
+		<nome_municipio>SÃO JOSÉ DOS CAMPOS</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>283</numero_zona>
+		<sigla_uf>26-0283</sigla_uf>
+		<endereco>AV. LUCAS NOGUEIRA GARCEZ, 59</endereco>
+		<cep>09750670</cep>
+		<bairro>JARDIM DO MAR</bairro>
+		<nome_municipio>SÃO BERNARDO DO CAMPO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>284</numero_zona>
+		<sigla_uf>26-0284</sigla_uf>
+		<endereco>AVENIDA SÃO JOÃO BATISTA,427</endereco>
+		<cep>09635000</cep>
+		<bairro>VILA HELENA</bairro>
+		<nome_municipio>SÃO BERNARDO DO CAMPO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>286</numero_zona>
+		<sigla_uf>26-0286</sigla_uf>
+		<endereco>AV. PROFESSOR JOAQUIM BARRETO, 710</endereco>
+		<cep>06700170</cep>
+		<bairro>GRANJA CAROLINA</bairro>
+		<nome_municipio>COTIA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>287</numero_zona>
+		<sigla_uf>26-0287</sigla_uf>
+		<endereco>RUA FRANCISCO FRANCO, 179</endereco>
+		<cep>08710590</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>MOGI DAS CRUZES</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>288</numero_zona>
+		<sigla_uf>26-0288</sigla_uf>
+		<endereco>AVENIDA TREZE, 634</endereco>
+		<cep>13500340</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>RIO CLARO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>289</numero_zona>
+		<sigla_uf>26-0289</sigla_uf>
+		<endereco>RUA SÃO FRANCISCO, 140-A</endereco>
+		<cep>16300000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>PENÁPOLIS</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>290</numero_zona>
+		<sigla_uf>26-0290</sigla_uf>
+		<endereco>RUA DR. CLYBAS PINTO FERRAZ, 75-B</endereco>
+		<cep>19800040</cep>
+		<bairro>VILA XAVIER</bairro>
+		<nome_municipio>ASSIS</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>291</numero_zona>
+		<sigla_uf>26-0291</sigla_uf>
+		<endereco>AV. FREI GERMANO, 2039 - PRAÇA DA ESTAÇÃO</endereco>
+		<cep>14405215</cep>
+		<bairro>ESTAÇÃO</bairro>
+		<nome_municipio>FRANCA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>292</numero_zona>
+		<sigla_uf>26-0292</sigla_uf>
+		<endereco>RUA VALDEMAR IGNOWSKI 62/66</endereco>
+		<cep>13380084</cep>
+		<bairro>BOSQUE DOS CEDROS</bairro>
+		<nome_municipio>NOVA ODESSA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>293</numero_zona>
+		<sigla_uf>26-0293</sigla_uf>
+		<endereco>RUA CERQUEIRA CÉSAR, 333</endereco>
+		<cep>14010130</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>RIBEIRÃO PRETO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>294</numero_zona>
+		<sigla_uf>26-0294</sigla_uf>
+		<endereco>RUA MÁXIMO BALDO, 54</endereco>
+		<cep>18043010</cep>
+		<bairro>VILA LUCY</bairro>
+		<nome_municipio>SOROCABA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>295</numero_zona>
+		<sigla_uf>26-0295</sigla_uf>
+		<endereco>RUA DOS PESCADORES, 85 - SOBRELOJA - SALA 2</endereco>
+		<cep>11750000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>PERUÍBE</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>296</numero_zona>
+		<sigla_uf>26-0296</sigla_uf>
+		<endereco>RUA DR. FLÁQUER, 137</endereco>
+		<cep>09710180</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>SÃO BERNARDO DO CAMPO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>297</numero_zona>
+		<sigla_uf>26-0297</sigla_uf>
+		<endereco>RUA 9 DE JULHO, 816</endereco>
+		<cep>16400110</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>LINS</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>298</numero_zona>
+		<sigla_uf>26-0298</sigla_uf>
+		<endereco>RUA SANTA MADALENA, N. 65, CENTRO</endereco>
+		<cep>12900440</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>BRAGANÇA PAULISTA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>299</numero_zona>
+		<sigla_uf>26-0299</sigla_uf>
+		<endereco>RUA BRIGADEIRO LUIZ ANTONIO 46</endereco>
+		<cep>16010680</cep>
+		<bairro>HIGIENOPOLIS</bairro>
+		<nome_municipio>ARAÇATUBA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>300</numero_zona>
+		<sigla_uf>26-0300</sigla_uf>
+		<endereco>RUA SILVA JARDIM, 2-17</endereco>
+		<cep>17060240</cep>
+		<bairro>JARDIM BELA VISTA</bairro>
+		<nome_municipio>BAURU</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>301</numero_zona>
+		<sigla_uf>26-0301</sigla_uf>
+		<endereco>RUA GOIÁS, 999</endereco>
+		<cep>18700140</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>AVARÉ</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>302</numero_zona>
+		<sigla_uf>26-0302</sigla_uf>
+		<endereco>AVENIDA LÍBERO DE ALMEIDA SILVARES, 2304</endereco>
+		<cep>15600000</cep>
+		<bairro>COESTER</bairro>
+		<nome_municipio>FERNANDÓPOLIS</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>303</numero_zona>
+		<sigla_uf>26-0303</sigla_uf>
+		<endereco>AV. FERNANDA, 141 - SOBRELOJA</endereco>
+		<cep>06320080</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>CARAPICUÍBA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>304</numero_zona>
+		<sigla_uf>26-0304</sigla_uf>
+		<endereco>AV. ANTONIO BARDELLA, 401 - JARDIM SÃO LUIZ</endereco>
+		<cep>06618000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>JANDIRA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>305</numero_zona>
+		<sigla_uf>26-0305</sigla_uf>
+		<endereco>RUA CERQUEIRA CÉSAR, 333 - TÉRREO</endereco>
+		<cep>14010130</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>RIBEIRÃO PRETO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>306</numero_zona>
+		<sigla_uf>26-0306</sigla_uf>
+		<endereco>TRAVESSA DR.RODRIGO ANTONIO, 33</endereco>
+		<cep>09090750</cep>
+		<bairro>VILA ALPINA</bairro>
+		<nome_municipio>SANTO ANDRÉ</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>307</numero_zona>
+		<sigla_uf>26-0307</sigla_uf>
+		<endereco>RUA CORONEL AGENOR DE CAMARGO, N 300</endereco>
+		<cep>09020220</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>SANTO ANDRÉ</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>310</numero_zona>
+		<sigla_uf>26-0310</sigla_uf>
+		<endereco>AV. SANTOS DUMONT, 689</endereco>
+		<cep>11460001</cep>
+		<bairro>SITIO PAECARA</bairro>
+		<nome_municipio>GUARUJÁ</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>312</numero_zona>
+		<sigla_uf>26-0312</sigla_uf>
+		<endereco>RUA JOSÉ URIAS FORTES, 391</endereco>
+		<cep>15025510</cep>
+		<bairro>JARDIM PANORAMA</bairro>
+		<nome_municipio>SÃO JOSÉ DO RIO PRETO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>313</numero_zona>
+		<sigla_uf>26-0313</sigla_uf>
+		<endereco>AVENIDA GASTÃO VIDIGAL, 740</endereco>
+		<cep>19901010</cep>
+		<bairro>JARDIM MATILDE</bairro>
+		<nome_municipio>OURINHOS</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>314</numero_zona>
+		<sigla_uf>26-0314</sigla_uf>
+		<endereco>RUA COSTA CABRAL, 985</endereco>
+		<cep>12120000</cep>
+		<bairro>RESIDENCIAL ANA CÂNDIDA</bairro>
+		<nome_municipio>TREMEMBÉ</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>315</numero_zona>
+		<sigla_uf>26-0315</sigla_uf>
+		<endereco>AV. INTERNACIONAL, 618</endereco>
+		<cep>06126000</cep>
+		<bairro>JARDIM SANTO ANTONIO</bairro>
+		<nome_municipio>OSASCO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>317</numero_zona>
+		<sigla_uf>26-0317</sigla_uf>
+		<endereco>AVENIDA GUILHERMINA, 267</endereco>
+		<cep>11701500</cep>
+		<bairro>JARDIM GUILHERMINA</bairro>
+		<nome_municipio>PRAIA GRANDE</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>318</numero_zona>
+		<sigla_uf>26-0318</sigla_uf>
+		<endereco>RUA SADAMITA IWASSAKI, 538</endereco>
+		<cep>18230000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>SÃO MIGUEL ARCANJO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>319</numero_zona>
+		<sigla_uf>26-0319</sigla_uf>
+		<endereco>RUA FRANCISCO FRANCO, 179</endereco>
+		<cep>08710590</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>MOGI DAS CRUZES</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>320</numero_zona>
+		<sigla_uf>26-0320</sigla_uf>
+		<endereco>AV. ENGENHEIRO ARMANDO DE ARRUDA PEREIRA, 2917</endereco>
+		<cep>04309011</cep>
+		<bairro>JABAQUARA</bairro>
+		<nome_municipio>SÃO PAULO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>323</numero_zona>
+		<sigla_uf>26-0323</sigla_uf>
+		<endereco>AVENIDA NOVE DE JULHO, 158</endereco>
+		<cep>13140287</cep>
+		<bairro>NOVA PAULÍNIA</bairro>
+		<nome_municipio>PAULÍNIA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>324</numero_zona>
+		<sigla_uf>26-0324</sigla_uf>
+		<endereco>RUA ELIZABETTA LIPS, 303</endereco>
+		<cep>06763190</cep>
+		<bairro>JARDIM BOM TEMPO</bairro>
+		<nome_municipio>TABOÃO DA SERRA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>325</numero_zona>
+		<sigla_uf>26-0325</sigla_uf>
+		<endereco>AV. RAIMUNDO PEREIRA DE MAGALHÃES, 4586</endereco>
+		<cep>05145200</cep>
+		<bairro>PIRITUBA</bairro>
+		<nome_municipio>SÃO PAULO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>326</numero_zona>
+		<sigla_uf>26-0326</sigla_uf>
+		<endereco>AVENIDA BOTURUSSU, 874</endereco>
+		<cep>03802000</cep>
+		<bairro>PARQUE BOTURUSSU</bairro>
+		<nome_municipio>SÃO PAULO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>327</numero_zona>
+		<sigla_uf>26-0327</sigla_uf>
+		<endereco>AVENIDA PAULA FERREIRA, 60</endereco>
+		<cep>02916000</cep>
+		<bairro>FREGUESIA DO O</bairro>
+		<nome_municipio>SÃO PAULO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>328</numero_zona>
+		<sigla_uf>26-0328</sigla_uf>
+		<endereco>RUA AMÉRICO FALCÃO, 251/257</endereco>
+		<cep>05786010</cep>
+		<bairro>VILA PIRAJUSSARA</bairro>
+		<nome_municipio>SÃO PAULO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>329</numero_zona>
+		<sigla_uf>26-0329</sigla_uf>
+		<endereco>RUA PROFESSORA VITALINA CAIAFA ESQUIVEL, 78</endereco>
+		<cep>09911180</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>DIADEMA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>330</numero_zona>
+		<sigla_uf>26-0330</sigla_uf>
+		<endereco>RUA ALBERTO AMADOR N. 878</endereco>
+		<cep>19280000</cep>
+		<bairro>VILA SAO PAULO</bairro>
+		<nome_municipio>TEODORO SAMPAIO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>331</numero_zona>
+		<sigla_uf>26-0331</sigla_uf>
+		<endereco>RUA HENRIQUE DIAS, 287</endereco>
+		<cep>06233120</cep>
+		<bairro>JARDIM PIRATININGA</bairro>
+		<nome_municipio>OSASCO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>332</numero_zona>
+		<sigla_uf>26-0332</sigla_uf>
+		<endereco>AV  DR. CARLOS MORAES  BARROS, 261</endereco>
+		<cep>06023000</cep>
+		<bairro>VILA CAMPESINA</bairro>
+		<nome_municipio>OSASCO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>333</numero_zona>
+		<sigla_uf>26-0333</sigla_uf>
+		<endereco>AVENIDA PRESIDENTE COSTA E SILVA, 171-A</endereco>
+		<cep>13920000</cep>
+		<bairro>VILA MONTE ALEGRE</bairro>
+		<nome_municipio>PEDREIRA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>335</numero_zona>
+		<sigla_uf>26-0335</sigla_uf>
+		<endereco>RUA ALBINO RODRIGUES NEVES, 301</endereco>
+		<cep>07401125</cep>
+		<bairro>ARUJÁ CENTER VILLE</bairro>
+		<nome_municipio>ARUJÁ</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>336</numero_zona>
+		<sigla_uf>26-0336</sigla_uf>
+		<endereco>RUA CARLOS GOMES, 613</endereco>
+		<cep>14640000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>MORRO AGUDO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>339</numero_zona>
+		<sigla_uf>26-0339</sigla_uf>
+		<endereco>AV.QUEIROZ PEDROSO, 235, JD. PEDROSO, MAUÁ/SP</endereco>
+		<cep>09370360</cep>
+		<bairro>JARDIM PEDROSO</bairro>
+		<nome_municipio>MAUÁ</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>340</numero_zona>
+		<sigla_uf>26-0340</sigla_uf>
+		<endereco>PRAÇA DA BANDEIRA, 15</endereco>
+		<cep>11310030</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>SÃO VICENTE</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>341</numero_zona>
+		<sigla_uf>26-0341</sigla_uf>
+		<endereco>RUA PRIMEIRO DE MAIO, N. 182</endereco>
+		<cep>06803000</cep>
+		<bairro>PARQUE FRANCISCO RIZZO</bairro>
+		<nome_municipio>EMBU DAS ARTES</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>342</numero_zona>
+		<sigla_uf>26-0342</sigla_uf>
+		<endereco>PRAÇA DA MAÇONARIA, S/N</endereco>
+		<cep>18040295</cep>
+		<bairro>JARDIM PAULISTANO</bairro>
+		<nome_municipio>SOROCABA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>343</numero_zona>
+		<sigla_uf>26-0343</sigla_uf>
+		<endereco>PRAÇA DA MAÇONARIA, S/N</endereco>
+		<cep>18040295</cep>
+		<bairro>JARDIM PAULISTANO</bairro>
+		<nome_municipio>SOROCABA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>344</numero_zona>
+		<sigla_uf>26-0344</sigla_uf>
+		<endereco>RUA MARECHAL DEODORO DA FONSECA, 530</endereco>
+		<cep>13230130</cep>
+		<bairro>VILA TAVARES</bairro>
+		<nome_municipio>CAMPO LIMPO PAULISTA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>345</numero_zona>
+		<sigla_uf>26-0345</sigla_uf>
+		<endereco>RUA DOS BANDEIRANTES, 375</endereco>
+		<cep>13289090</cep>
+		<bairro>SANTA ROSA</bairro>
+		<nome_municipio>VINHEDO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>346</numero_zona>
+		<sigla_uf>26-0346</sigla_uf>
+		<endereco>RUA IBIAPABA, 422</endereco>
+		<cep>05625020</cep>
+		<bairro>VILA SONIA</bairro>
+		<nome_municipio>SÃO PAULO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>347</numero_zona>
+		<sigla_uf>26-0347</sigla_uf>
+		<endereco>RUA FERNÃO ALBERNAZ, 400</endereco>
+		<cep>03532000</cep>
+		<bairro>VILA NOVA SAVOIA</bairro>
+		<nome_municipio>SÃO PAULO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>348</numero_zona>
+		<sigla_uf>26-0348</sigla_uf>
+		<endereco>RUA CRISTOVÃO GIRÃO, 132</endereco>
+		<cep>03362030</cep>
+		<bairro>VILA FORMOSA</bairro>
+		<nome_municipio>SÃO PAULO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>349</numero_zona>
+		<sigla_uf>26-0349</sigla_uf>
+		<endereco>AV. PAULO LINCOLN DO VALE PONTIN, 94</endereco>
+		<cep>02273010</cep>
+		<bairro>JACANA</bairro>
+		<nome_municipio>SÃO PAULO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>350</numero_zona>
+		<sigla_uf>26-0350</sigla_uf>
+		<endereco>AV. SAPOPEMBA, 6214</endereco>
+		<cep>03374001</cep>
+		<bairro>SAPOPEMBA</bairro>
+		<nome_municipio>SÃO PAULO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>351</numero_zona>
+		<sigla_uf>26-0351</sigla_uf>
+		<endereco>AV. CUPECÊ, 1147</endereco>
+		<cep>04365000</cep>
+		<bairro>JD PRUDENCIA</bairro>
+		<nome_municipio>SÃO PAULO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>352</numero_zona>
+		<sigla_uf>26-0352</sigla_uf>
+		<endereco>RUA MONTE CAMBERELA, 342</endereco>
+		<cep>08110260</cep>
+		<bairro>ITAIM PAULISTA</bairro>
+		<nome_municipio>SÃO PAULO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>353</numero_zona>
+		<sigla_uf>26-0353</sigla_uf>
+		<endereco>RUA SERRA DO MAR, 180</endereco>
+		<cep>08410160</cep>
+		<bairro>GUAIANAZES</bairro>
+		<nome_municipio>SÃO PAULO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>354</numero_zona>
+		<sigla_uf>26-0354</sigla_uf>
+		<endereco>RUA ARNALDO ROJEK, 111</endereco>
+		<cep>07786525</cep>
+		<bairro>JORDANESIA</bairro>
+		<nome_municipio>CAJAMAR</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>355</numero_zona>
+		<sigla_uf>26-0355</sigla_uf>
+		<endereco>RUA NOSSA SENHORA APARECIDA, 167</endereco>
+		<cep>18520000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>CERQUILHO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>356</numero_zona>
+		<sigla_uf>26-0356</sigla_uf>
+		<endereco>PRAÇA DA MAÇONARIA, S/N</endereco>
+		<cep>18040295</cep>
+		<bairro>JARDIM PAULISTANO</bairro>
+		<nome_municipio>SOROCABA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>358</numero_zona>
+		<sigla_uf>26-0358</sigla_uf>
+		<endereco>RUA SIQUEIRA CAMPOS, 65</endereco>
+		<cep>13190000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>MONTE MOR</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>359</numero_zona>
+		<sigla_uf>26-0359</sigla_uf>
+		<endereco>PROFESSOR DIMARÃES ANTONIO SANDEI, 205</endereco>
+		<cep>06693130</cep>
+		<bairro>CIDADE DA SAUDE</bairro>
+		<nome_municipio>ITAPEVI</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>360</numero_zona>
+		<sigla_uf>26-0360</sigla_uf>
+		<endereco>RUA SANTA GERTRUDES, 496 - CENTRO</endereco>
+		<cep>13150017</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>COSMÓPOLIS</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>361</numero_zona>
+		<sigla_uf>26-0361</sigla_uf>
+		<endereco>RUA LÍBERO BADARÓ, 451</endereco>
+		<cep>13186260</cep>
+		<bairro>JARDIM DO BOSQUE</bairro>
+		<nome_municipio>HORTOLÂNDIA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>362</numero_zona>
+		<sigla_uf>26-0362</sigla_uf>
+		<endereco>AV. DA AMIZADE, 3995</endereco>
+		<cep>13175375</cep>
+		<bairro>JARDIM NOVA VENEZA</bairro>
+		<nome_municipio>SUMARÉ</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>365</numero_zona>
+		<sigla_uf>26-0365</sigla_uf>
+		<endereco>RUA CAMPOS SALES, 511</endereco>
+		<cep>09310040</cep>
+		<bairro>VILA BOCAINA</bairro>
+		<nome_municipio>MAUÁ</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>367</numero_zona>
+		<sigla_uf>26-0367</sigla_uf>
+		<endereco>RUA JOÃO MENDES JÚNIOR, 418</endereco>
+		<cep>07910210</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>FRANCISCO MORATO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>368</numero_zona>
+		<sigla_uf>26-0368</sigla_uf>
+		<endereco>AVENIDA ATLÂNTICA, 1659 - ILHA SHOPPING</endereco>
+		<cep>15385000</cep>
+		<bairro>ZONA SUL</bairro>
+		<nome_municipio>ILHA SOLTEIRA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>369</numero_zona>
+		<sigla_uf>26-0369</sigla_uf>
+		<endereco>AVENIDA PEREIRA INÁCIO, 530</endereco>
+		<cep>18550000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>BOITUVA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>370</numero_zona>
+		<sigla_uf>26-0370</sigla_uf>
+		<endereco>RUA CORONEL LUIZ TENORIO DE BRITO N 530</endereco>
+		<cep>06900000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>EMBU-GUAÇU</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>371</numero_zona>
+		<sigla_uf>26-0371</sigla_uf>
+		<endereco>RUA ANTONIO CARLOS TACCONI, 45</endereco>
+		<cep>04810020</cep>
+		<bairro>CIDADE DUTRA</bairro>
+		<nome_municipio>SÃO PAULO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>372</numero_zona>
+		<sigla_uf>26-0372</sigla_uf>
+		<endereco>RUA PROF. BARROSO DO AMARAL, 32</endereco>
+		<cep>04937010</cep>
+		<bairro>JARDIM ANGELA (ZONA SUL)</bairro>
+		<nome_municipio>SÃO PAULO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>373</numero_zona>
+		<sigla_uf>26-0373</sigla_uf>
+		<endereco>ESTRADA DE ITAPECERICA, 2720</endereco>
+		<cep>05835004</cep>
+		<bairro>JARDIM ATLANTICO</bairro>
+		<nome_municipio>SÃO PAULO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>374</numero_zona>
+		<sigla_uf>26-0374</sigla_uf>
+		<endereco>AVENIDA CORIFEU DE AZEVEDO MARQUES, 1140</endereco>
+		<cep>05582001</cep>
+		<bairro>VILA INDIANA</bairro>
+		<nome_municipio>SÃO PAULO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>375</numero_zona>
+		<sigla_uf>26-0375</sigla_uf>
+		<endereco>RUA ELÍSIO FERREIRA, 506</endereco>
+		<cep>03964010</cep>
+		<bairro>SÃO MATEUS</bairro>
+		<nome_municipio>SÃO PAULO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>376</numero_zona>
+		<sigla_uf>26-0376</sigla_uf>
+		<endereco>RUA BONIFÁCIO CUBAS, 567</endereco>
+		<cep>02731000</cep>
+		<bairro>FREGUESIA DO Ó</bairro>
+		<nome_municipio>SÃO PAULO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>377</numero_zona>
+		<sigla_uf>26-0377</sigla_uf>
+		<endereco>AVENIDA VEREADOR JOÃO FERNANDES DA SILVA, 180</endereco>
+		<cep>08576000</cep>
+		<bairro>VILA VIRGINIA</bairro>
+		<nome_municipio>ITAQUAQUECETUBA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>378</numero_zona>
+		<sigla_uf>26-0378</sigla_uf>
+		<endereco>RUA REGENTE FEIJÓ, S/N</endereco>
+		<cep>13013900</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>CAMPINAS</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>379</numero_zona>
+		<sigla_uf>26-0379</sigla_uf>
+		<endereco>RUA REGENTE FEIJÓ S/N - SALA 419 - FÓRUM CENTRAL</endereco>
+		<cep>13013900</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>CAMPINAS</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>380</numero_zona>
+		<sigla_uf>26-0380</sigla_uf>
+		<endereco>RUA REGENTE FEIJÓ, S/N, 2 ANDAR, SL. 219 - PALÁCIO DA JUSTIÇA</endereco>
+		<cep>13013900</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>CAMPINAS</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>381</numero_zona>
+		<sigla_uf>26-0381</sigla_uf>
+		<endereco>AVENIDA PEDRO ROSCHEL GOTTZFRITZ, 210 - RIO BONITO</endereco>
+		<cep>04809160</cep>
+		<bairro>PARELHEIROS</bairro>
+		<nome_municipio>SÃO PAULO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>382</numero_zona>
+		<sigla_uf>26-0382</sigla_uf>
+		<endereco>RUA OVÍDIO ABRANTES, 19</endereco>
+		<cep>09424150</cep>
+		<bairro>NUCLEO COLONIAL</bairro>
+		<nome_municipio>RIBEIRÃO PIRES</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>383</numero_zona>
+		<sigla_uf>26-0383</sigla_uf>
+		<endereco>AV. PEDRO AMÉRICO, 674</endereco>
+		<cep>09110560</cep>
+		<bairro>VILA HOMERO THON</bairro>
+		<nome_municipio>SANTO ANDRÉ</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>384</numero_zona>
+		<sigla_uf>26-0384</sigla_uf>
+		<endereco>RUA ANTONIO CIA, 391</endereco>
+		<cep>13477450</cep>
+		<bairro>RESIDENCIAL BOA VISTA</bairro>
+		<nome_municipio>AMERICANA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>385</numero_zona>
+		<sigla_uf>26-0385</sigla_uf>
+		<endereco>ALAMEDA PAULISTA, 2.380</endereco>
+		<cep>14810264</cep>
+		<bairro>JARDIM VIADUTO</bairro>
+		<nome_municipio>ARARAQUARA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>386</numero_zona>
+		<sigla_uf>26-0386</sigla_uf>
+		<endereco>RUA DA LIBERDADE, 422</endereco>
+		<cep>06411190</cep>
+		<bairro>VILA BOA VISTA</bairro>
+		<nome_municipio>BARUERI</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>387</numero_zona>
+		<sigla_uf>26-0387</sigla_uf>
+		<endereco>RUA AGENOR MEIRA, 17-41</endereco>
+		<cep>17014460</cep>
+		<bairro>VILA NOEMY</bairro>
+		<nome_municipio>BAURU</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>388</numero_zona>
+		<sigla_uf>26-0388</sigla_uf>
+		<endereco>AVENIDA FERNANDA, 141 - TÉRREO</endereco>
+		<cep>06320080</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>CARAPICUÍBA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>389</numero_zona>
+		<sigla_uf>26-0389</sigla_uf>
+		<endereco>RUA DEMIFONTE, 208</endereco>
+		<cep>05201210</cep>
+		<bairro>JARDIM ADELFIORE</bairro>
+		<nome_municipio>SÃO PAULO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>390</numero_zona>
+		<sigla_uf>26-0390</sigla_uf>
+		<endereco>AV. CANGAÍBA, 1.158</endereco>
+		<cep>03712000</cep>
+		<bairro>CANGAÍBA</bairro>
+		<nome_municipio>SÃO PAULO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>391</numero_zona>
+		<sigla_uf>26-0391</sigla_uf>
+		<endereco>RUA SÃO LUCAS, 225</endereco>
+		<cep>06814310</cep>
+		<bairro>JARDIM VAZAME</bairro>
+		<nome_municipio>EMBU DAS ARTES</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>392</numero_zona>
+		<sigla_uf>26-0392</sigla_uf>
+		<endereco>AV. SÃO MIGUEL, 3906</endereco>
+		<cep>03870000</cep>
+		<bairro>PONTE RASA</bairro>
+		<nome_municipio>SÃO PAULO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>393</numero_zona>
+		<sigla_uf>26-0393</sigla_uf>
+		<endereco>AVENIDA ÍTALO BRASILEIRO PIVA, 83</endereco>
+		<cep>07080020</cep>
+		<bairro>PICANCO</bairro>
+		<nome_municipio>GUARULHOS</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>394</numero_zona>
+		<sigla_uf>26-0394</sigla_uf>
+		<endereco>AVENIDA JOAO VELOSO DA SILVA, 1181</endereco>
+		<cep>07180010</cep>
+		<bairro>CIDADE JARDIM CUMBICA</bairro>
+		<nome_municipio>GUARULHOS</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>395</numero_zona>
+		<sigla_uf>26-0395</sigla_uf>
+		<endereco>RUA CARIRI AÇU, 32</endereco>
+		<cep>07180250</cep>
+		<bairro>CIDADE JARDIM CUMBICA</bairro>
+		<nome_municipio>GUARULHOS</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>396</numero_zona>
+		<sigla_uf>26-0396</sigla_uf>
+		<endereco>RUA OLÍMPIO CATÃO, 499</endereco>
+		<cep>12308051</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>JACAREÍ</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>397</numero_zona>
+		<sigla_uf>26-0397</sigla_uf>
+		<endereco>RUA JAGUAR, 40</endereco>
+		<cep>08030460</cep>
+		<bairro>VILA CURUÇÁ</bairro>
+		<nome_municipio>SÃO PAULO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>398</numero_zona>
+		<sigla_uf>26-0398</sigla_uf>
+		<endereco>RUA CORONEL MANUEL FELICIANO DE SOUZA, 134 A</endereco>
+		<cep>08060060</cep>
+		<bairro>VILA JACUÍ</bairro>
+		<nome_municipio>SÃO PAULO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>399</numero_zona>
+		<sigla_uf>26-0399</sigla_uf>
+		<endereco>RUA PRESIDENTE ROOSEVELT, 543-A</endereco>
+		<cep>13480060</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>LIMEIRA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>400</numero_zona>
+		<sigla_uf>26-0400</sigla_uf>
+		<endereco>AVENIDA BRASIL, 440</endereco>
+		<cep>17509052</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>MARÍLIA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>401</numero_zona>
+		<sigla_uf>26-0401</sigla_uf>
+		<endereco>RUA ANTONIO TREVISANI, 93</endereco>
+		<cep>08500340</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>FERRAZ DE VASCONCELOS</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>402</numero_zona>
+		<sigla_uf>26-0402</sigla_uf>
+		<endereco>AV. CORONEL JOSÉ SOARES MARCONDES, 3220</endereco>
+		<cep>19050230</cep>
+		<bairro>JD. BONGIOVANI</bairro>
+		<nome_municipio>PRESIDENTE PRUDENTE</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>403</numero_zona>
+		<sigla_uf>26-0403</sigla_uf>
+		<endereco>ESTRADA DE TAIPAS,412</endereco>
+		<cep>02991000</cep>
+		<bairro>JARAGUA</bairro>
+		<nome_municipio>SÃO PAULO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>404</numero_zona>
+		<sigla_uf>26-0404</sigla_uf>
+		<endereco>RUA ÁLVARO DA COSTA, 28</endereco>
+		<cep>08461420</cep>
+		<bairro>GUAIANAZES</bairro>
+		<nome_municipio>SÃO PAULO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>405</numero_zona>
+		<sigla_uf>26-0405</sigla_uf>
+		<endereco>ESTRADA ITAQUERA-GUAIANASES, 2120</endereco>
+		<cep>08420000</cep>
+		<bairro>JARDIM HELENA</bairro>
+		<nome_municipio>SÃO PAULO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>406</numero_zona>
+		<sigla_uf>26-0406</sigla_uf>
+		<endereco>AV. DR.VICENTE DE CARVALHO, 220/230</endereco>
+		<cep>11704300</cep>
+		<bairro>CIDADE OCIAN</bairro>
+		<nome_municipio>PRAIA GRANDE</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>407</numero_zona>
+		<sigla_uf>26-0407</sigla_uf>
+		<endereco>AVENIDA JOHN F. KENNEDY, 1230</endereco>
+		<cep>12030200</cep>
+		<bairro>JARDIM DAS NACOES</bairro>
+		<nome_municipio>TAUBATÉ</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>408</numero_zona>
+		<sigla_uf>26-0408</sigla_uf>
+		<endereco>RUA TERESA MOUCO DE OLIVEIRA, 157 - VILA MARACANÃ</endereco>
+		<cep>05846420</cep>
+		<bairro>VILA MARACANA</bairro>
+		<nome_municipio>SÃO PAULO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>409</numero_zona>
+		<sigla_uf>26-0409</sigla_uf>
+		<endereco>RUA DOUTOR FELÍCIO LAURITO, 84</endereco>
+		<cep>09725840</cep>
+		<bairro>JARDIM OLAVO BILAC</bairro>
+		<nome_municipio>SÃO BERNARDO DO CAMPO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>410</numero_zona>
+		<sigla_uf>26-0410</sigla_uf>
+		<endereco>RUA NOVE DE JULHO, 1916</endereco>
+		<cep>13560042</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>SÃO CARLOS</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>411</numero_zona>
+		<sigla_uf>26-0411</sigla_uf>
+		<endereco>RUA PAULO SETUBAL 220</endereco>
+		<cep>12245460</cep>
+		<bairro>VILA ADY ANNA</bairro>
+		<nome_municipio>SÃO JOSÉ DOS CAMPOS</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>412</numero_zona>
+		<sigla_uf>26-0412</sigla_uf>
+		<endereco>RUA PAULO SETUBAL, 220</endereco>
+		<cep>12245912</cep>
+		<bairro>JARDIM SÃO DIMAS</bairro>
+		<nome_municipio>SÃO JOSÉ DOS CAMPOS</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>413</numero_zona>
+		<sigla_uf>26-0413</sigla_uf>
+		<endereco>AVENIDA DO CURSINO, 3821/3823</endereco>
+		<cep>04133300</cep>
+		<bairro>VILA MORAES</bairro>
+		<nome_municipio>SÃO PAULO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>414</numero_zona>
+		<sigla_uf>26-0414</sigla_uf>
+		<endereco>RUA DOS VIANAS, 556</endereco>
+		<cep>09760000</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>SÃO BERNARDO DO CAMPO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>415</numero_zona>
+		<sigla_uf>26-0415</sigla_uf>
+		<endereco>RUA BENJAMIN CONSTANT, 1029</endereco>
+		<cep>08674011</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>SUZANO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>416</numero_zona>
+		<sigla_uf>26-0416</sigla_uf>
+		<endereco>AV. LAURITA ORTEGA MARI, 1412</endereco>
+		<cep>06766361</cep>
+		<bairro>PARQUE PINHEIROS</bairro>
+		<nome_municipio>TABOÃO DA SERRA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>417</numero_zona>
+		<sigla_uf>26-0417</sigla_uf>
+		<endereco>AV. LÍDER 3114</endereco>
+		<cep>08280005</cep>
+		<bairro>CIDADE LIDER</bairro>
+		<nome_municipio>SÃO PAULO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>418</numero_zona>
+		<sigla_uf>26-0418</sigla_uf>
+		<endereco>AVENIDA NOSSA SENHORA DO SABARÁ, 4.051</endereco>
+		<cep>04447021</cep>
+		<bairro>PEDREIRA</bairro>
+		<nome_municipio>SÃO PAULO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>419</numero_zona>
+		<sigla_uf>26-0419</sigla_uf>
+		<endereco>AV. VEREADOR JOÃO FERNANDES DA SILVA, 314</endereco>
+		<cep>08576000</cep>
+		<bairro>VILA VIRGINIA</bairro>
+		<nome_municipio>ITAQUAQUECETUBA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>420</numero_zona>
+		<sigla_uf>26-0420</sigla_uf>
+		<endereco>AV. ROLAND GARROS, 1.013 - JARDIM BRASIL</endereco>
+		<cep>02235000</cep>
+		<bairro>VILA SABRINA</bairro>
+		<nome_municipio>SÃO PAULO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>421</numero_zona>
+		<sigla_uf>26-0421</sigla_uf>
+		<endereco>AV. ARQUITETO VILANOVA ARTIGAS, 1815-TEOTÔNIO VILELA</endereco>
+		<cep>03928240</cep>
+		<bairro>CONJUNTO HABITACIONAL TEOTONIO VILELA</bairro>
+		<nome_municipio>SÃO PAULO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>422</numero_zona>
+		<sigla_uf>26-0422</sigla_uf>
+		<endereco>AVENIDA SANTA INÊS, 864</endereco>
+		<cep>02415001</cep>
+		<bairro>MANDAQUI</bairro>
+		<nome_municipio>SÃO PAULO</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>423</numero_zona>
+		<sigla_uf>26-0423</sigla_uf>
+		<endereco>RUA REGENTE FEIJÓ, S/N - SALA 314 - PALÁCIO DA JUSTIÇA</endereco>
+		<cep>13013900</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>CAMPINAS</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>424</numero_zona>
+		<sigla_uf>26-0424</sigla_uf>
+		<endereco>RUA DOS BANDEIRANTES, 103</endereco>
+		<cep>13201130</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>JUNDIAÍ</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>426</numero_zona>
+		<sigla_uf>26-0426</sigla_uf>
+		<endereco>RUA JOÃO DE ALMEIDA, 126</endereco>
+		<cep>09920140</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>DIADEMA</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+	<zona>
+		<numero_zona>427</numero_zona>
+		<sigla_uf>26-0427</sigla_uf>
+		<endereco>RUA SEIS, 2856</endereco>
+		<cep>15700060</cep>
+		<bairro>CENTRO</bairro>
+		<nome_municipio>JALES</nome_municipio>
+		<sigla_uf>SP</sigla_uf>
+	</zona>
+</listaZonas>

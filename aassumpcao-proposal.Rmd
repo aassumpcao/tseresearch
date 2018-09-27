@@ -1,0 +1,73 @@
+---
+output:
+  # General Latex arguments
+  bookdown::pdf_document2:
+    toc           : false
+    keep_tex      : true
+    fig_caption   : true
+    latex_engine  : pdflatex
+    number_section: true
+
+
+  # # General Word arguments
+  # bookdown::word_document2:
+  #   toc          : false
+  #   reference_doc: "default"
+
+# Latex arguments
+header-includes:
+  - \usepackage{float}
+  - \usepackage{tikz}
+  - \usepackage{setspace}
+  - \onehalfspacing
+
+title       : Three Essays on Electoral Politics in Brazil
+subtitle    : Dissertation Proposal
+author      : Andre Assumpcao
+date        : "`r format(Sys.time(), '%b %d, %Y')`"
+institute   : The University of North Carolina at Chapel Hill
+
+fancy_lists : true
+fig_caption : yes
+starnum     : true
+bibliography: "/Users/aassumpcao/OneDrive - University of North Carolina at Chapel Hill/Documents/Library/library.bib"
+---
+<!-- ```{r global, echo = FALSE, results = "hide", message = FALSE, warnings = FALSE}
+# Load packages
+library(tidyverse)
+library(magrittr)
+
+``` -->
+
+# Summary {#title .unnumbered}
+
+
+\newpage
+
+# Paper:
+
+\newpage
+
+# Paper: Power Strategies in Local Elections (tentative title) {#paper1}
+
+## Introduction
+
+## Hypotheses
+
+#. More candidates, more chances to rise to power in local and federal elections.
+
+#. Less candidates, more resources to any one candidate in local and federal elections.
+
+## Data
+
+2016 and 2018 election results in Brazil.
+
+## Research Design
+
+RDD in municipalities with more and less than 100k residents, where political parties can sign-up more candidates relative to the number of seats available (Electoral Code Article 10).
+
+## Preliminary Results
+
+## Conclusion
+
+https://esaj.tjsp.jus.br/cpopg/show.do?processo.codigo=2900002CO0000&processo.foro=81&conversationId=&dadosConsulta.localPesquisa.cdLocal=-1&cbPesquisa=NMPARTE&dadosConsulta.tipoNuProcesso=UNIFICADO&dadosConsulta.valorConsulta=celso+augusto+coelho+ramenzoni&uuidCaptcha=&paginaConsulta=1

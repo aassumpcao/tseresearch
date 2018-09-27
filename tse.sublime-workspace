@@ -1,0 +1,1710 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"text",
+				"text_to_be_present_in_element\tclass"
+			],
+			[
+				"eleme",
+				"element_present\tstatement"
+			],
+			[
+				"Time",
+				"TimeoutException\tclass"
+			],
+			[
+				"tse",
+				"tse_case\tfunction"
+			],
+			[
+				"down",
+				"download_html\t{xml2}"
+			],
+			[
+				"prese",
+				"presence_of_all_elements_located\tclass"
+			],
+			[
+				"fin",
+				"find_elements_by_xpath\tfunction"
+			],
+			[
+				"candid",
+				"candidates.test"
+			],
+			[
+				"python",
+				"python_button\tstatement"
+			],
+			[
+				"web",
+				"webdriver\tmodule"
+			],
+			[
+				"candida",
+				"candidates.2016.Rda"
+			],
+			[
+				"xml_nod",
+				"xml_nodes\t{rvest}"
+			],
+			[
+				"cand",
+				"candidates.2012.Rda"
+			],
+			[
+				"cnadi",
+				"candidates.2016.columns"
+			],
+			[
+				"candi",
+				"candidates.2010.columns"
+			],
+			[
+				"code",
+				"codebook"
+			],
+			[
+				"str",
+				"strsplit\t{base}"
+			],
+			[
+				"ele",
+				"elections.2016"
+			],
+			[
+				"elections",
+				"elections.2012"
+			],
+			[
+				"election",
+				"elections.2010"
+			],
+			[
+				"elec",
+				"elections.2012"
+			],
+			[
+				"char",
+				"character\t{base}"
+			],
+			[
+				"donwload",
+				"download.file\t{utils}"
+			],
+			[
+				"donal",
+				"download.file\t{utils}"
+			],
+			[
+				"tidy",
+				"tidyverse\tInstalled Package"
+			],
+			[
+				"xml_find",
+				"xml_find_all\t{xml2}"
+			],
+			[
+				"xml",
+				"xml_attr"
+			],
+			[
+				"Ge",
+				"Get&uacute;lio"
+			],
+			[
+				"init",
+				"initial.name"
+			],
+			[
+				"performance",
+				"performance.rename"
+			],
+			[
+				"Scho",
+				"SchoolAidLongleaf"
+			],
+			[
+				"Schoo",
+				"SchoolAidDataset"
+			],
+			[
+				"SchoolAid",
+				"SchoolAidDataset"
+			],
+			[
+				"per",
+				"performance_priors"
+			],
+			[
+				"School",
+				"SchoolAidLongleaf"
+			],
+			[
+				"dim",
+				"dimnames\t{base}"
+			],
+			[
+				"bf",
+				"bfa_performance4"
+			],
+			[
+				"bfa",
+				"bfa_performance3"
+			],
+			[
+				"MCM",
+				"MCMCposterior"
+			],
+			[
+				"depl",
+				"dep.var.labels.include = \tArguments"
+			],
+			[
+				"dep.va",
+				"dep.var.labels = \tArguments"
+			],
+			[
+				"dep.var.la",
+				"dep.var.labels.include = \tArguments"
+			],
+			[
+				"councillo",
+				"councillor_male"
+			],
+			[
+				"councill",
+				"councillor_male"
+			],
+			[
+				"counci",
+				"councillor_male"
+			],
+			[
+				"covariate",
+				"covariates.vector"
+			],
+			[
+				"sec",
+				"\\section{title}                                   \tlatex-document"
+			],
+			[
+				"welfare",
+				"welfare.table"
+			],
+			[
+				"welfa",
+				"welfare.variables"
+			],
+			[
+				"band",
+				"bandwidth.table"
+			],
+			[
+				"hsap",
+				"\\hspace{length}                                   \tlatex-document"
+			],
+			[
+				"discussion",
+				"discussion.right"
+			],
+			[
+				"disc",
+				"discussion.right"
+			],
+			[
+				"infrac",
+				"infraction.count"
+			],
+			[
+				"infra",
+				"infraction.count"
+			],
+			[
+				"analysis",
+				"analysis.data"
+			],
+			[
+				"corruption",
+				"corruption.binary"
+			],
+			[
+				"anlaysi",
+				"analysis.data"
+			],
+			[
+				"falsification",
+				"falsification.data"
+			],
+			[
+				"fals",
+				"falsification.data"
+			],
+			[
+				"analy",
+				"analysis.data"
+			],
+			[
+				"so.",
+				"so.procurement"
+			],
+			[
+				"anal",
+				"analysis.data"
+			],
+			[
+				"hsa",
+				"\\hspace{length}                                   \tlatex-document"
+			],
+			[
+				"so.d",
+				"so.id"
+			],
+			[
+				"fal",
+				"falsification.data.Rda"
+			],
+			[
+				"falsi",
+				"falsification.data"
+			],
+			[
+				"env",
+				"envir = \tArguments"
+			],
+			[
+				"so.purhc",
+				"so.purchases.bySOtext"
+			],
+			[
+				"one",
+				"\\onehalfspacing                                   \tsetspace"
+			],
+			[
+				"so.pro",
+				"so.procurement.bycode"
+			],
+			[
+				"ragged",
+				"\\raggedright                                      \ttex"
+			],
+			[
+				"cite",
+				"cite\tTag"
+			],
+			[
+				"ci",
+				"cite\tTag"
+			],
+			[
+				"purchases.cutf",
+				"purchases.cutoff1"
+			],
+			[
+				"purcha",
+				"purchases.manipulation1"
+			],
+			[
+				"purchaes",
+				"purchases.cutoff1"
+			],
+			[
+				"padding",
+				"padding-bottom\tproperty"
+			],
+			[
+				"purchases",
+				"purchases.cutoff1"
+			],
+			[
+				"so.works.",
+				"so.works.bySOtext"
+			],
+			[
+				"purch",
+				"purchases.manipulation"
+			],
+			[
+				"so.purchaes",
+				"so.purchases.bySOtext"
+			],
+			[
+				"so.pru",
+				"so.purchases.bySOtext"
+			],
+			[
+				"appendxi",
+				"appendix.data"
+			],
+			[
+				"appendix",
+				"appendix.data"
+			],
+			[
+				"so.id",
+				"so.id"
+			],
+			[
+				"com",
+				"comment\tcomment"
+			],
+			[
+				"no",
+				"no-repeat\tbackground-repeat"
+			],
+			[
+				"back",
+				"background-size\tproperty"
+			],
+			[
+				"backgou",
+				"background-image\tproperty"
+			],
+			[
+				"so.works",
+				"so.works.bySOtext"
+			],
+			[
+				"appen",
+				"appendix.data"
+			],
+			[
+				"so.po",
+				"so.procurement.bySOtext"
+			],
+			[
+				"so.procurement",
+				"so.procurement.bySOtext"
+			],
+			[
+				"procu",
+				"procurement.vector"
+			],
+			[
+				"dir",
+				"dirname\t{base}"
+			],
+			[
+				"RStata.S",
+				"RStata.StataPath"
+			],
+			[
+				"the",
+				"thead\tTag"
+			],
+			[
+				"DESC",
+				"DESC_SIT_TOT_TURNO"
+			],
+			[
+				"DESC_SIT",
+				"DESC_SIT_TOT_TURNO"
+			],
+			[
+				"COD_SITU",
+				"COD_SIT_TOT_TURNO"
+			],
+			[
+				"reele",
+				"reelected2008"
+			],
+			[
+				"cross",
+				"crosswalk.tse.ibge"
+			],
+			[
+				"as.nu",
+				"as.numeric\t{base}"
+			],
+			[
+				"COD_SIT",
+				"COD_SIT_CAND_TOT"
+			],
+			[
+				"readxl",
+				"read_xls\t{readxl}"
+			],
+			[
+				"QTDE",
+				"QTDE_APTOS"
+			],
+			[
+				"as.inte",
+				"as.integer\t{base}"
+			],
+			[
+				"vote",
+				"votes2000"
+			],
+			[
+				"func",
+				"function\t{base}"
+			],
+			[
+				"base_",
+				"base_MUNIC_2009.zip"
+			],
+			[
+				"download.",
+				"download.file\t{utils}"
+			],
+			[
+				"downl",
+				"download.file\t{utils}"
+			],
+			[
+				"income",
+				"income"
+			],
+			[
+				"substr",
+				"substr\t{base}"
+			],
+			[
+				"mun",
+				"mun.iliteracy"
+			],
+			[
+				"Sys",
+				"Sys.info\t{base}"
+			],
+			[
+				"so.data",
+				"so.data.tagged"
+			],
+			[
+				"a",
+				"and"
+			],
+			[
+				"doubl",
+				"double.vars"
+			],
+			[
+				"doub",
+				"double.vars"
+			],
+			[
+				"classroom_ele",
+				"classroom_electricity_share"
+			],
+			[
+				"classroom",
+				"classroom_nonleakingroof_share"
+			],
+			[
+				"Sc",
+				"SchoolAidDataset"
+			],
+			[
+				"chil",
+				"children_attend"
+			],
+			[
+				"childen",
+				"children_total"
+			],
+			[
+				"indi",
+				"individual.vector"
+			],
+			[
+				"save",
+				"save\t{base}"
+			]
+		]
+	},
+	"buffers":
+	[
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+		[
+			[
+				[
+					"Packages/LaTeXTools/LaTeX.sublime-build",
+					""
+				],
+				[
+					"Packages/LaTeXTools/LaTeX.sublime-build",
+					"Traditional"
+				],
+				[
+					"Packages/LaTeXTools/LaTeX.sublime-build",
+					"PdfLaTeX"
+				],
+				[
+					"Packages/LaTeXTools/LaTeX.sublime-build",
+					"XeLaTeX"
+				],
+				[
+					"Packages/LaTeXTools/LaTeX.sublime-build",
+					"LuaLaTeX"
+				],
+				[
+					"Packages/LaTeXTools/LaTeX.sublime-build",
+					"Basic Builder"
+				],
+				[
+					"Packages/LaTeXTools/LaTeX.sublime-build",
+					"Basic Builder - PdfLaTeX"
+				],
+				[
+					"Packages/LaTeXTools/LaTeX.sublime-build",
+					"Basic Builder - XeLaTeX"
+				],
+				[
+					"Packages/LaTeXTools/LaTeX.sublime-build",
+					"Basic Builder - LuaLaTeX"
+				],
+				[
+					"Packages/LaTeXTools/LaTeX.sublime-build",
+					"Script Builder"
+				]
+			],
+			[
+				"Packages/LaTeXTools/LaTeX.sublime-build",
+				"Basic Builder - PdfLaTeX"
+			]
+		],
+		[
+			[
+				[
+					"Packages/LaTeXTools/LaTeX.sublime-build",
+					""
+				],
+				[
+					"Packages/LaTeXTools/LaTeX.sublime-build",
+					"Traditional"
+				],
+				[
+					"Packages/LaTeXTools/LaTeX.sublime-build",
+					"PdfLaTeX"
+				],
+				[
+					"Packages/LaTeXTools/LaTeX.sublime-build",
+					"XeLaTeX"
+				],
+				[
+					"Packages/LaTeXTools/LaTeX.sublime-build",
+					"LuaLaTeX"
+				],
+				[
+					"Packages/LaTeXTools/LaTeX.sublime-build",
+					"Basic Builder"
+				],
+				[
+					"Packages/LaTeXTools/LaTeX.sublime-build",
+					"Basic Builder - PdfLaTeX"
+				],
+				[
+					"Packages/LaTeXTools/LaTeX.sublime-build",
+					"Basic Builder - XeLaTeX"
+				],
+				[
+					"Packages/LaTeXTools/LaTeX.sublime-build",
+					"Basic Builder - LuaLaTeX"
+				],
+				[
+					"Packages/LaTeXTools/LaTeX.sublime-build",
+					"Script Builder"
+				],
+				[
+					"Packages/SublimeREPL/sublimerepl_build_system_hack.sublime-build",
+					""
+				],
+				[
+					"Packages/User/LaTeX.sublime-build",
+					""
+				],
+				[
+					"Packages/User/LaTeX.sublime-build",
+					"Build Bibliography"
+				]
+			],
+			[
+				"Packages/LaTeXTools/LaTeX.sublime-build",
+				"Traditional"
+			]
+		],
+		[
+			[
+				[
+					"Packages/MarkdownPreview/Markdown.sublime-build",
+					""
+				],
+				[
+					"Packages/R-Box/support/R Markdown.sublime-build",
+					""
+				],
+				[
+					"Packages/SublimeREPL/sublimerepl_build_system_hack.sublime-build",
+					""
+				]
+			],
+			[
+				"Packages/R-Box/support/R Markdown.sublime-build",
+				""
+			]
+		],
+		[
+			[
+				[
+					"Packages/Python/Python.sublime-build",
+					""
+				],
+				[
+					"Packages/Python/Python.sublime-build",
+					"Syntax Check"
+				]
+			],
+			[
+				"Packages/Python/Python.sublime-build",
+				""
+			]
+		],
+		[
+			[
+				[
+					"Packages/Python/Python.sublime-build",
+					""
+				],
+				[
+					"Packages/Python/Python.sublime-build",
+					"Syntax Check"
+				],
+				[
+					"Packages/SendCode/support/IPython - Source File.sublime-build",
+					""
+				],
+				[
+					"Packages/SublimeREPL/sublimerepl_build_system_hack.sublime-build",
+					""
+				]
+			],
+			[
+				"Packages/SublimeREPL/sublimerepl_build_system_hack.sublime-build",
+				""
+			]
+		],
+		[
+			[
+				[
+					"Packages/Python/Python.sublime-build",
+					""
+				],
+				[
+					"Packages/Python/Python.sublime-build",
+					"Syntax Check"
+				],
+				[
+					"Packages/SendCode/support/IPython - Source File.sublime-build",
+					""
+				],
+				[
+					"Packages/SublimeREPL/sublimerepl_build_system_hack.sublime-build",
+					""
+				],
+				[
+					"Packages/User/Python3.5.sublime-build",
+					""
+				]
+			],
+			[
+				"Packages/User/Python3.5.sublime-build",
+				""
+			]
+		],
+		[
+			[
+				[
+					"Packages/R/R.sublime-build",
+					""
+				],
+				[
+					"Packages/SendCode/support/R - Source File.sublime-build",
+					""
+				],
+				[
+					"Packages/SublimeREPL/sublimerepl_build_system_hack.sublime-build",
+					""
+				]
+			],
+			[
+				"Packages/R/R.sublime-build",
+				""
+			]
+		],
+		[
+			[
+				[
+					"Packages/Stata Enhanced/Stata.sublime-build",
+					""
+				],
+				[
+					"Packages/SublimeREPL/sublimerepl_build_system_hack.sublime-build",
+					""
+				]
+			],
+			[
+				"Packages/Stata Enhanced/Stata.sublime-build",
+				""
+			]
+		],
+		[
+			[
+				[
+					"Packages/SublimeREPL/sublimerepl_build_system_hack.sublime-build",
+					""
+				],
+				[
+					"Packages/User/LaTeX.sublime-build",
+					""
+				]
+			],
+			[
+				"Packages/User/LaTeX.sublime-build",
+				""
+			]
+		],
+		[
+			[
+				[
+					"Packages/User/LaTeX.sublime-build",
+					""
+				],
+				[
+					"Packages/User/LaTeX.sublime-build",
+					"Build Bibliography"
+				]
+			],
+			[
+				"Packages/User/LaTeX.sublime-build",
+				"Build Bibliography"
+			]
+		]
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 179.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"python",
+				"Build With: Python3.5"
+			],
+			[
+				"lower",
+				"Convert Case: Lower Case"
+			],
+			[
+				"git stat",
+				"git: status"
+			],
+			[
+				"sendcode",
+				"Preferences: SendCode Settings"
+			],
+			[
+				"text pastry",
+				"Text Pastry: Settings"
+			],
+			[
+				"inser nums",
+				"Insert Nums"
+			],
+			[
+				"gi ",
+				"git: init"
+			],
+			[
+				"anaconda disa",
+				"Anaconda: Disable linting on this file"
+			],
+			[
+				"build ",
+				"Build With: sublimerepl_build_system_hack"
+			],
+			[
+				"sublimeREPL python",
+				"SublimeREPL: Python"
+			],
+			[
+				"view term",
+				"Terminus: Open Default Shell in View"
+			],
+			[
+				"theme",
+				"UI: Select Theme"
+			],
+			[
+				"install",
+				"Package Control: Install Package"
+			],
+			[
+				"git s",
+				"git: status"
+			],
+			[
+				"git st",
+				"git: status"
+			],
+			[
+				"view she",
+				"Terminus: Open Default Shell in View"
+			],
+			[
+				"git pull",
+				"git: pull"
+			],
+			[
+				"git add rem",
+				"git: remote add"
+			],
+			[
+				"git ini",
+				"git: init"
+			],
+			[
+				"terminus",
+				"Terminus: Open Default Shell in View"
+			],
+			[
+				"CONVE",
+				"Convert Case: Upper Case"
+			],
+			[
+				"upper case",
+				"Convert Case: Upper Case"
+			],
+			[
+				"statu",
+				"git: status"
+			],
+			[
+				"buil",
+				"Build: Cancel"
+			],
+			[
+				"bui",
+				"Build: Cancel"
+			],
+			[
+				"build: cancel",
+				"Build: Cancel"
+			],
+			[
+				"git: st",
+				"git: status"
+			],
+			[
+				"begin",
+				"Snippet: \\begin{}…\\end{}"
+			],
+			[
+				"latex envi",
+				"Snippet: Insert a LaTeX environment"
+			],
+			[
+				"snip",
+				"Snippet: table"
+			],
+			[
+				"snipp",
+				"Snippet: table"
+			],
+			[
+				"git statu",
+				"git: status"
+			],
+			[
+				"snippet:ta",
+				"Snippet: table"
+			],
+			[
+				"sta",
+				"git: status"
+			],
+			[
+				"instal ",
+				"Package Control: Install Package"
+			],
+			[
+				"Snippet: tex",
+				"Snippet: Tikz: R to LaTeX"
+			],
+			[
+				"stat",
+				"git: status"
+			],
+			[
+				"pull",
+				"git: pull from branch"
+			],
+			[
+				"remote add",
+				"git: remote add"
+			],
+			[
+				"set remot",
+				"github: set remote for integration"
+			],
+			[
+				"git che",
+				"git: checkout new branch"
+			],
+			[
+				"git br",
+				"git: branch"
+			],
+			[
+				"git push ",
+				"git: push to branch name"
+			],
+			[
+				"pull ",
+				"git: pull from branch"
+			],
+			[
+				"git remote a",
+				"git: remote add"
+			],
+			[
+				"github set ",
+				"github: set remote for integration"
+			],
+			[
+				"repl",
+				"SublimeREPL: R"
+			],
+			[
+				"com",
+				"git: commit including unstaged files"
+			],
+			[
+				"git branc",
+				"git: branch"
+			],
+			[
+				"remote",
+				"git: remote rename"
+			],
+			[
+				"git: branch",
+				"git: branch"
+			],
+			[
+				"VI",
+				"View In Browser"
+			],
+			[
+				"view ",
+				"View In Browser"
+			],
+			[
+				"bran",
+				"git: branch"
+			],
+			[
+				"git pull ",
+				"git: pull from branch"
+			],
+			[
+				"set remo",
+				"github: set remote for integration"
+			],
+			[
+				"git init",
+				"git: init"
+			],
+			[
+				"remote ",
+				"git: remote rename"
+			],
+			[
+				"set remote",
+				"github: set remote for integration"
+			],
+			[
+				"brnac",
+				"git: pull from branch"
+			],
+			[
+				"add",
+				"git: remote add"
+			],
+			[
+				"git remo",
+				"git: remote remove"
+			],
+			[
+				"git sat",
+				"Set Syntax: Git Attributes"
+			],
+			[
+				"git bra",
+				"git: branch"
+			],
+			[
+				"remote set ",
+				"github: set remote for integration"
+			],
+			[
+				"remot",
+				"git: remote add"
+			],
+			[
+				"pus",
+				"git: push to existing branch"
+			],
+			[
+				"git remote",
+				"git: remote add"
+			],
+			[
+				"git: init",
+				"git: init"
+			],
+			[
+				"git: set",
+				"github: set remote for integration"
+			],
+			[
+				"git: stus",
+				"git: status"
+			],
+			[
+				"git",
+				"git: pull"
+			],
+			[
+				"git: in",
+				"git: init"
+			],
+			[
+				"git c",
+				"git: commit"
+			],
+			[
+				"stau",
+				"git: status"
+			],
+			[
+				"add remo",
+				"git: remote add"
+			],
+			[
+				"git:",
+				"git: init"
+			],
+			[
+				"git: ini",
+				"git: init"
+			],
+			[
+				"git: bran",
+				"git: checkout remote branch as local"
+			],
+			[
+				"rename",
+				"git: remote rename"
+			],
+			[
+				"git push",
+				"git: push to branch name"
+			],
+			[
+				"git: set remote",
+				"github: set remote for integration"
+			],
+			[
+				"remo",
+				"git: remote rename"
+			],
+			[
+				"git set",
+				"github: set remote for integration"
+			],
+			[
+				"git sta",
+				"git: status"
+			],
+			[
+				"view",
+				"View In Browser"
+			],
+			[
+				"packa",
+				"Package Control: Install Package"
+			],
+			[
+				"ins",
+				"Package Control: Install Package"
+			],
+			[
+				"align",
+				"Preferences: Alignment File Settings – User"
+			],
+			[
+				"git: statu",
+				"git: status"
+			],
+			[
+				"git set remo",
+				"github: set remote for integration"
+			],
+			[
+				"",
+				"Bookmarks: Select Next"
+			],
+			[
+				"github",
+				"github: open repo"
+			],
+			[
+				"git renite",
+				"github: set remote for integration"
+			],
+			[
+				"staut",
+				"git: status"
+			],
+			[
+				"status",
+				"git: status"
+			],
+			[
+				"git comm",
+				"git: commit"
+			],
+			[
+				"stage",
+				"git: quick stage"
+			],
+			[
+				"git ",
+				"git: remote add"
+			],
+			[
+				"comm",
+				"git: commit including unstaged files"
+			],
+			[
+				"push",
+				"git: push to branch name"
+			],
+			[
+				"commi",
+				"git: commit including unstaged files"
+			],
+			[
+				"branch",
+				"git: push to branch name"
+			],
+			[
+				"gut",
+				"Set Syntax: Git Attributes"
+			],
+			[
+				"git: fet",
+				"git: fetch"
+			],
+			[
+				"git open file",
+				"github: open file on remote"
+			],
+			[
+				"git: comm",
+				"git: commit including unstaged files"
+			],
+			[
+				"git: check",
+				"git: checkout remote branch as local"
+			],
+			[
+				"github: set remote for integration",
+				"github: set remote for integration"
+			],
+			[
+				"github: open file on remote",
+				"github: open file on remote"
+			],
+			[
+				"git: push",
+				"git: push"
+			],
+			[
+				"commit",
+				"git: commit including unstaged files"
+			],
+			[
+				"git: set re",
+				"github: set remote for integration"
+			],
+			[
+				"git: co",
+				"git: commit including unstaged files"
+			],
+			[
+				"instal",
+				"Package Control: Install Package"
+			],
+			[
+				"GitSa",
+				"GitSavvy: help"
+			],
+			[
+				"git: ",
+				"git: init"
+			],
+			[
+				"g",
+				"git: branch"
+			],
+			[
+				"func",
+				"Snippet: Function"
+			],
+			[
+				"r",
+				"SublimeREPL: R"
+			],
+			[
+				"repl r",
+				"SublimeREPL: R"
+			],
+			[
+				"Package Control: ",
+				"Package Control: Install Package"
+			],
+			[
+				"stata",
+				"Send line/selection to Stata"
+			],
+			[
+				"pacak",
+				"Package Control: Install Package"
+			],
+			[
+				"package",
+				"Package Control: Remove Package"
+			],
+			[
+				"r-box",
+				"Preferences: R-Box Settings"
+			],
+			[
+				"send",
+				"SendCode: Choose Program"
+			],
+			[
+				"SendT",
+				"Preferences: SendCode Settings"
+			]
+		],
+		"width": 516.0
+	},
+	"console":
+	{
+		"height": 565.0,
+		"history":
+		[
+			"import os; os.environ['PATH']",
+			"import OS; os.environ['PATH']",
+			"get_tex_root(sublime.active_window().active_view())",
+			"from getTeXRoot import get_tex_root",
+			"get_tex_root(sublime.active_window().active_view())",
+			"from getTeXRoot import get_tex_root",
+			"import urllib.request,os,hashlib; h = '6f4c264a24d933ce70df5dedcf1dcaee' + 'ebe013ee18cced0ef93d5f746d80ef60'; pf = 'Package Control.sublime-package'; ipp = sublime.installed_packages_path(); urllib.request.install_opener( urllib.request.build_opener( urllib.request.ProxyHandler()) ); by = urllib.request.urlopen( 'http://packagecontrol.io/' + pf.replace(' ', '%20')).read(); dh = hashlib.sha256(by).hexdigest(); print('Error validating download (got %s instead of %s), please try manual install' % (dh, h)) if dh != h else open(os.path.join( ipp, pf), 'wb' ).write(by) "
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": true,
+		"side_bar_visible": false,
+		"status_bar_visible": true
+	},
+	"file_history":
+	[
+		"/Users/aassumpcao/OneDrive - University of North Carolina at Chapel Hill/Documents/Research/2020 Dissertation/uncabj/01_download_parte_aassumpcao.R",
+		"/Users/aassumpcao/OneDrive - University of North Carolina at Chapel Hill/Documents/Programming Skills/Twitter_Scrape/test.py",
+		"/Users/aassumpcao/OneDrive - University of North Carolina at Chapel Hill/Documents/Research/2020 Dissertation/tse/tse_case.py",
+		"/Users/aassumpcao/OneDrive - University of North Carolina at Chapel Hill/Documents/Research/2020 Dissertation/tse/tse_scraper.py",
+		"/Users/aassumpcao/OneDrive - University of North Carolina at Chapel Hill/Documents/Research/2020 Dissertation/tse_scraper.R",
+		"/Users/aassumpcao/OneDrive - University of North Carolina at Chapel Hill/Documents/Research/2020 Dissertation/1Divulgação de Candidaturas e Contas Eleitorais.htm",
+		"/Users/aassumpcao/OneDrive - University of North Carolina at Chapel Hill/Documents/Research/2020 Dissertation/Divulgação de Candidaturas e Contas Eleitorais.htm",
+		"/Users/aassumpcao/OneDrive - University of North Carolina at Chapel Hill/Documents/Research/2020 Dissertation/tse/try.py",
+		"/Users/aassumpcao/Library/Application Support/Sublime Text 3/Packages/Anaconda/Anaconda.sublime-settings",
+		"/Users/aassumpcao/Library/Application Support/Sublime Text 3/Packages/User/Anaconda.sublime-settings",
+		"/Users/aassumpcao/Library/Application Support/Sublime Text 3/Packages/User/Python.sublime-settings",
+		"/Users/aassumpcao/OneDrive - University of North Carolina at Chapel Hill/Documents/Research/2020 Dissertation/esaj-download_cjpg.R",
+		"/Users/aassumpcao/OneDrive - University of North Carolina at Chapel Hill/Documents/Programming Skills/Divulgação de Candidaturas e Contas Eleitorais.htm",
+		"/Users/aassumpcao/Downloads/phantomjs-2.1.1-macosx/README.md",
+		"/Users/aassumpcao/OneDrive - University of North Carolina at Chapel Hill/Documents/Research/2020 Dissertation/tse/tse_candidate.R",
+		"/Users/aassumpcao/OneDrive - University of North Carolina at Chapel Hill/Documents/Research/2012 Discretion and corruption/discretioncorruption/12-DiscretionCorruption-Analysis.R",
+		"/Users/aassumpcao/OneDrive - University of North Carolina at Chapel Hill/Documents/Research/2012 Discretion and corruption/discretioncorruption/02-DiscretionCorruption-MunicipalCharacteristicsWrangling.R",
+		"/Users/aassumpcao/OneDrive - University of North Carolina at Chapel Hill/Documents/Research/2012 Discretion and corruption/discretioncorruption/11-DiscretionCorruption-Appendix.R",
+		"/Users/aassumpcao/OneDrive - University of North Carolina at Chapel Hill/Documents/Research/2020 Dissertation/tse/tse.sublime-project",
+		"/Users/aassumpcao/OneDrive - University of North Carolina at Chapel Hill/Documents/Research/2020 Dissertation/try.py",
+		"/Users/aassumpcao/Library/Application Support/Sublime Text 3/Packages/User/Python3.5.sublime-build",
+		"/Users/aassumpcao/OneDrive - University of North Carolina at Chapel Hill/Documents/Programming Skills/GitHub/webpage-final/_data/authors.yml",
+		"/Users/aassumpcao/OneDrive - University of North Carolina at Chapel Hill/Documents/Programming Skills/GitHub/webpage-final/_pages/publications.md",
+		"/Users/aassumpcao/OneDrive - University of North Carolina at Chapel Hill/Documents/Programming Skills/GitHub/webpage-final/_pages/data.md",
+		"/Users/aassumpcao/OneDrive - University of North Carolina at Chapel Hill/Documents/Programming Skills/GitHub/webpage-final/_publications/discretionperformance.md",
+		"/Users/aassumpcao/OneDrive - University of North Carolina at Chapel Hill/Documents/Programming Skills/GitHub/webpage-final/_pages/about.md",
+		"/Users/aassumpcao/OneDrive - University of North Carolina at Chapel Hill/Documents/Programming Skills/GitHub/webpage-final/_pages/cv.md",
+		"/Users/aassumpcao/OneDrive - University of North Carolina at Chapel Hill/Documents/Programming Skills/GitHub/webpage-final/_pages/software.md",
+		"/Users/aassumpcao/OneDrive - University of North Carolina at Chapel Hill/Documents/Programming Skills/GitHub/webpage-final/_pages/archive-layout-with-content.md",
+		"/Users/aassumpcao/OneDrive - University of North Carolina at Chapel Hill/Documents/Programming Skills/GitHub/webpage-final/_pages/terms.md",
+		"/Users/aassumpcao/OneDrive - University of North Carolina at Chapel Hill/Documents/Programming Skills/GitHub/webpage-final/_data/navigation.yml",
+		"/Users/aassumpcao/OneDrive - University of North Carolina at Chapel Hill/Documents/Programming Skills/GitHub/webpage-final/_config.yml",
+		"/Users/aassumpcao/OneDrive - University of North Carolina at Chapel Hill/Documents/Programming Skills/GitHub/webpage-final/assets/css/academicons.min.css",
+		"/Users/aassumpcao/OneDrive - University of North Carolina at Chapel Hill/Documents/Programming Skills/GitHub/webpage-final/assets/css/academicons.css",
+		"/Users/aassumpcao/OneDrive - University of North Carolina at Chapel Hill/Documents/Programming Skills/GitHub/webpage-draft/cv/index.html",
+		"/Users/aassumpcao/OneDrive - University of North Carolina at Chapel Hill/Documents/Programming Skills/GitHub/webpage-draft/README.md",
+		"/Users/aassumpcao/OneDrive - University of North Carolina at Chapel Hill/Documents/Programming Skills/GitHub/webpage-final/README.md",
+		"/Users/aassumpcao/Dropbox/For Andre (AidData)/New Datasets, Do-files and Codebooks/draft_script.R",
+		"/Users/aassumpcao/Dropbox/For Andre (AidData)/New Datasets, Do-files and Codebooks/2.0-SchoolAidAnalysis.R",
+		"/Users/aassumpcao/Desktop/shreeva",
+		"/Users/aassumpcao/OneDrive - University of North Carolina at Chapel Hill/Documents/Research/2012 Discretion and corruption/discretioncorruption/draft_script.R",
+		"/Users/aassumpcao/OneDrive - University of North Carolina at Chapel Hill/Documents/Research/2012 Discretion and corruption/discretioncorruption/article/discretionperformance.tex",
+		"/Users/aassumpcao/OneDrive - University of North Carolina at Chapel Hill/Documents/Research/2012 Discretion and corruption/discretioncorruption/article/tab_mainregression1.tex",
+		"/Users/aassumpcao/OneDrive - University of North Carolina at Chapel Hill/Documents/Research/2012 Discretion and corruption/discretioncorruption/article/tab_welfare1.tex",
+		"/Users/aassumpcao/OneDrive - University of North Carolina at Chapel Hill/Documents/Research/2012 Discretion and corruption/discretioncorruption/01-DiscretionCorruption-ServiceOrdersWrangling.R",
+		"/Users/aassumpcao/OneDrive - University of North Carolina at Chapel Hill/Documents/Research/2012 Discretion and corruption/discretioncorruption/article/tab_auditbyministry1.tex",
+		"/Users/aassumpcao/OneDrive - University of North Carolina at Chapel Hill/Documents/Research/2012 Discretion and corruption/discretioncorruption/article/appendix_tab5.tex",
+		"/Users/aassumpcao/OneDrive - University of North Carolina at Chapel Hill/Documents/Research/2012 Discretion and corruption/discretioncorruption/article/appendix_tab4.tex",
+		"/Users/aassumpcao/OneDrive - University of North Carolina at Chapel Hill/Documents/Research/2012 Discretion and corruption/discretioncorruption/article/tab_bandwidth1.tex",
+		"/Users/aassumpcao/OneDrive - University of North Carolina at Chapel Hill/Documents/Research/2012 Discretion and corruption/discretioncorruption/article/tab_descriptivestats1.tex",
+		"/Users/aassumpcao/OneDrive - University of North Carolina at Chapel Hill/Documents/Research/2012 Discretion and corruption/discretioncorruption/article/procurementtypes.tex",
+		"/Users/aassumpcao/OneDrive - University of North Carolina at Chapel Hill/Documents/Research/2012 Discretion and corruption/discretioncorruption/article/tab_rdmc1.tex",
+		"/Users/aassumpcao/OneDrive - University of North Carolina at Chapel Hill/Documents/Research/2012 Discretion and corruption/discretioncorruption/article/discretioncorruption.tex",
+		"/Users/aassumpcao/OneDrive - University of North Carolina at Chapel Hill/Documents/Research/2012 Discretion and corruption/discretioncorruption/article/appendix.tex",
+		"/Users/aassumpcao/OneDrive - University of North Carolina at Chapel Hill/Documents/Research/2012 Discretion and corruption/discretioncorruption/article/discretioncorruption.Rmd",
+		"/Users/aassumpcao/OneDrive - University of North Carolina at Chapel Hill/Documents/Research/2012 Discretion and corruption/discretioncorruption/article/appendix_tab3.tex",
+		"/Users/aassumpcao/OneDrive - University of North Carolina at Chapel Hill/Documents/Research/2012 Discretion and corruption/discretioncorruption/article/appendix_tab2.tex",
+		"/Users/aassumpcao/OneDrive - University of North Carolina at Chapel Hill/Documents/Research/2012 Discretion and corruption/discretioncorruption/article/appendix_tab4a.tex",
+		"/Users/aassumpcao/OneDrive - University of North Carolina at Chapel Hill/Documents/Research/2012 Discretion and corruption/discretioncorruption/article/appendix.Rmd",
+		"/Users/aassumpcao/Library/Application Support/Sublime Text 3/Packages/LaTeXTools/Default (OSX).sublime-keymap",
+		"/Users/aassumpcao/Library/Application Support/Sublime Text 3/Packages/User/CiteBibtex.sublime-settings",
+		"/Users/aassumpcao/Library/Application Support/Sublime Text 3/Packages/CiteBibtex/CiteBibtex.sublime-settings",
+		"/Users/aassumpcao/Library/Application Support/Sublime Text 3/Packages/User/Default (OSX).sublime-keymap",
+		"/Users/aassumpcao/OneDrive - University of North Carolina at Chapel Hill/Documents/Research/2012 Discretion and corruption/discretioncorruption/article/template.tex",
+		"/Users/aassumpcao/Library/Application Support/Sublime Text 3/Packages/User/LaTeXTools.sublime-settings",
+		"/Users/aassumpcao/OneDrive - University of North Carolina at Chapel Hill/Documents/Research/2012 Discretion and corruption/discretioncorruption/article/appendix.rmd",
+		"/Users/aassumpcao/OneDrive - University of North Carolina at Chapel Hill/Documents/Research/2012 Discretion and corruption/discretioncorruption/article/Appendix.Rmd",
+		"/Users/aassumpcao/OneDrive - University of North Carolina at Chapel Hill/Documents/Research/2012 Discretion and corruption/discretioncorruption/discretioncorruption/discretioncorruption.Rmd",
+		"/Users/aassumpcao/OneDrive - University of North Carolina at Chapel Hill/Documents/Research/2012 Discretion and corruption/discretioncorruption/discretioncorruption.rmd",
+		"/Users/aassumpcao/OneDrive - University of North Carolina at Chapel Hill/Documents/Research/2012 Discretion and corruption/discretioncorruption/template.rmd",
+		"/Users/aassumpcao/OneDrive - University of North Carolina at Chapel Hill/Documents/Research/2012 Discretion and corruption/discretioncorruption/discretioncorruption-appendix.html",
+		"/Users/aassumpcao/OneDrive - University of North Carolina at Chapel Hill/Documents/Research/2012 Discretion and corruption/discretioncorruption/discretioncorruption-appendix.rmd",
+		"/Users/aassumpcao/OneDrive - University of North Carolina at Chapel Hill/Documents/Research/2012 Discretion and corruption/discretioncorruption/11-DiscretionCorruption-Annex.R",
+		"/Users/aassumpcao/OneDrive - University of North Carolina at Chapel Hill/Documents/Programming Skills/GitHub/aassumpcao.github.io/cv/index.html",
+		"/Users/aassumpcao/OneDrive - University of North Carolina at Chapel Hill/Documents/Programming Skills/GitHub/aassumpcao.github.io/_layouts/default.html",
+		"/Users/aassumpcao/OneDrive - University of North Carolina at Chapel Hill/Documents/Programming Skills/GitHub/aassumpcao.github.io/index.html",
+		"/Users/aassumpcao/OneDrive - University of North Carolina at Chapel Hill/Documents/Programming Skills/GitHub/aassumpcao.github.io/css/main.css",
+		"/Users/aassumpcao/OneDrive - University of North Carolina at Chapel Hill/Documents/Programming Skills/GitHub/aassumpcao.github.io/publications/index.html",
+		"/Users/aassumpcao/OneDrive - University of North Carolina at Chapel Hill/Documents/Research/2012 Discretion and corruption/discretioncorruption/README.md",
+		"/Users/aassumpcao/OneDrive - University of North Carolina at Chapel Hill/Documents/Programming Skills/GitHub/aassumpcao.github.io-master/publications/index.html",
+		"/Users/aassumpcao/OneDrive - University of North Carolina at Chapel Hill/Documents/Programming Skills/GitHub/aassumpcao.github.io/software/index.html",
+		"/Users/aassumpcao/OneDrive - University of North Carolina at Chapel Hill/Documents/Research/2012 Discretion and corruption/discretioncorruption/11-DiscretionCorruption-Annex.do",
+		"/Users/aassumpcao/Library/Application Support/Sublime Text 3/Packages/Alignment/Base File.sublime-settings",
+		"/Users/aassumpcao/Library/Application Support/Sublime Text 3/Packages/User/Base File.sublime-settings",
+		"/Users/aassumpcao/Library/Application Support/Sublime Text 3/Packages/Alignment/Default (OSX).sublime-keymap",
+		"/Users/aassumpcao/Dropbox/Projeto AGUAS materiais/05 Maio 28 - Tarefas.rmd",
+		"/Users/aassumpcao/Desktop/teste",
+		"/Users/aassumpcao/OneDrive - University of North Carolina at Chapel Hill/Documents/Research/2012 Discretion and corruption/discretioncorruption/textfind_sj.do",
+		"/Users/aassumpcao/OneDrive - University of North Carolina at Chapel Hill/Documents/discretioncorruption/README.md",
+		"/Users/aassumpcao/Library/Application Support/Sublime Text 3/Packages/User/GitSavvy.sublime-settings",
+		"/Users/aassumpcao/Library/Application Support/Sublime Text 3/Packages/GitSavvy/GitSavvy.sublime-settings",
+		"/Users/aassumpcao/Documents/GitHub/discretioncorruption/11-DiscretionCorruption-Annex.R",
+		"/Users/aassumpcao/Documents/GitHub/discretioncorruption/01-DiscretionCorruption-ServiceOrdersWrangling.R",
+		"/Users/aassumpcao/Documents/GitHub/discretioncorruption/02-DiscretionCorruption-MunicipalCharacteristicsWrangling.R",
+		"/Users/aassumpcao/Documents/GitHub/discretioncorruption/README.md",
+		"/Users/aassumpcao/Library/Application Support/Sublime Text 3/Packages/Git/Git.sublime-settings",
+		"/Users/aassumpcao/Library/Application Support/Sublime Text 3/Packages/User/Git.sublime-settings",
+		"/Users/aassumpcao/OneDrive - University of North Carolina at Chapel Hill/Documents/Research/2012 Discretion and corruption/CorruptionDiscretionAnalysis/02-DiscretionCorruption-Annex.R",
+		"/Users/aassumpcao/OneDrive - University of North Carolina at Chapel Hill/Documents/Research/2012 Discretion and corruption/CorruptionDiscretionAnalysis/textfind_search.do",
+		"/Users/aassumpcao/OneDrive - University of North Carolina at Chapel Hill/Documents/Research/2012 Discretion and corruption/CorruptionDiscretionAnalysis/01-CorruptionDiscretion-MunicipalCharacteristicsWrangling.R",
+		"/Users/aassumpcao/OneDrive - University of North Carolina at Chapel Hill/Documents/Research/2012 Discretion and corruption/CorruptionDiscretionAnalysis/00-CorruptionDiscretion-ServiceOrdersWrangling.R",
+		"/Users/aassumpcao/Library/Application Support/Sublime Text 3/Packages/Text Pastry/Default (OSX).sublime-keymap",
+		"/private/var/folders/jx/stfv_8_j3nv_d31g101d4z0r0000gn/T/com.microsoft.Excel/Repair Result to tab1_1_10.xml",
+		"/Users/aassumpcao/Library/Application Support/Sublime Text 3/Packages/SendCode/SendCode (OSX).sublime-settings"
+	],
+	"find":
+	{
+		"height": 27.0
+	},
+	"find_in_files":
+	{
+		"height": 110.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"###",
+			".x",
+			".X",
+			".x",
+			"c.x",
+			"+ ",
+			"                          ",
+			"10740",
+			"    ",
+			"##",
+			"=",
+			"                                \n",
+			"#",
+			"=",
+			"\"",
+			"driver",
+			"import",
+			"<-",
+			"[i]",
+			" <-",
+			" ",
+			"'",
+			"= ",
+			"+ ",
+			"linte",
+			"proto",
+			"pro",
+			"=",
+			"'",
+			"as.character(",
+			" ",
+			", ",
+			"informaç",
+			"informação",
+			"#   ",
+			"#",
+			"##",
+			"#####",
+			"=",
+			"div[1]",
+			"/'",
+			"<-",
+			"##",
+			"<-",
+			"\"",
+			",",
+			"<-",
+			"##",
+			"2010",
+			"%<>%",
+			"# Correct minor problems",
+			"column names",
+			"# 2010 variable names",
+			"small",
+			"                             \n",
+			"%<>%",
+			")",
+			"candid",
+			"##",
+			"print('Iteration ', i, ' of ', length(elections.",
+			"print('Iteration ', i, ' of ', length(elections.2012))",
+			"header = FALSE)",
+			"up.to.",
+			"rm(path, i, append)",
+			"header = FALSE)",
+			"elections",
+			"elections2012",
+			"elections.up.to.2010",
+			"<-",
+			",",
+			"con",
+			"2",
+			"##",
+			"            ",
+			"           ",
+			"          ",
+			"         ",
+			"        ",
+			"       ",
+			"      ",
+			"     ",
+			"    ",
+			"#",
+			"(",
+			"<-",
+			"2004",
+			"link",
+			"200",
+			"link",
+			"######",
+			"##"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"sheets":
+			[
+			]
+		},
+		{
+			"sheets":
+			[
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 27.0
+	},
+	"input":
+	{
+		"height": 41.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			],
+			[
+				1,
+				0,
+				2,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			0.443169487847,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.GitSavvy":
+	{
+		"height": 259.0
+	},
+	"output.SublimeLinter":
+	{
+		"height": 126.0
+	},
+	"output.SublimeLinter Messages":
+	{
+		"height": 120.0
+	},
+	"output.exec":
+	{
+		"height": 234.0
+	},
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"output.latextools":
+	{
+		"height": 232.0
+	},
+	"output.markdown":
+	{
+		"height": 126.0
+	},
+	"output.mdpopups":
+	{
+		"height": 0.0
+	},
+	"output.sftp":
+	{
+		"height": 0.0
+	},
+	"output.show_commit_info":
+	{
+		"height": 350.0
+	},
+	"output.unsaved_changes":
+	{
+		"height": 120.0
+	},
+	"pinned_build_system": "",
+	"project": "tse.sublime-project",
+	"replace":
+	{
+		"height": 50.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"",
+				"untitled"
+			]
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 500.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 380.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 1,
+	"settings":
+	{
+	},
+	"show_minimap": false,
+	"show_open_files": true,
+	"show_tabs": true,
+	"side_bar_visible": false,
+	"side_bar_width": 310.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}
