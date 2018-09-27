@@ -3,10 +3,22 @@ library(magrittr)
 library(tidyverse)
 
 # load database
-load('candidates.2016.Rda')
+load('candidates2016.Rda')
 load('sentencingData.Rda')
+load('results2016.Rda')
+load('candidacyDecisions')
 
 # wrangling
+
+
+
+
+
+
+
+
+
+
 names(candidates.2016)
 candidates.2016 %>%
   filter(CODIGO_CARGO == 11) %$%
@@ -43,9 +55,9 @@ data %$% table(DES_SITUACAO_CANDIDATURA)
 
 which(str_detect(unlist(results.data$NOME_CANDIDATO), 'RAMENZONI'))
 
-which(str_detect(unlist(candidates.2012$NOME_CANDIDATO), 'RAMENZONI'))
+which(str_detect(unlist(results2016$NOME_CANDIDATO), 'RUBENS ROBERTO ROSA'))
 
-View(results.data[2649336,])
-View(candidates.2012[447760,])
+View(candidates.2016[212031,])
+View(results2016[327857,])
 
 library(feather)
