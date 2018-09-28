@@ -9,15 +9,36 @@ load('results2016.Rda')
 load('candidacyDecisions.Rda')
 
 # wrangling
-names(candidates.2016)
-candidates.2016 %>%
+names(candidates.2010)
+candidates.2010 %>%
   filter(CODIGO_CARGO == 11) %$%
   table(DES_SITUACAO_CANDIDATURA)
+
+load('results2008.Rda')
+load('candidates.2010.Rda')
+
+testSP <- candidates.2010 %>%
+  filter(CODIGO_CARGO == 11) %>%
+  filter(ANO_ELEICAO == 2008) %>%
+  filter(SIGLA_UF == 'SP') %>%
+  filter(DES_SITUACAO_CANDIDATURA == 'INDEFERIDO COM RECURSO')
+
+results2016 %>%
+  filter(DESC_SIT_CANDIDATO == 'INDEFERIDO COM RECURSO') %>%
+  filter(CODIGO_CARGO == 11) %$%
+  table(TOTAL_VOTOS)
+
+  # %>%
+  filter(DESC_SIT_CANDIDATO != 'DEFERIDO') %$%
+  filter(DESC_SIT_CANDIDATO == 'INDEFERIDO COM RECURSO')
+
+
+View(testAM)
 
 # testing votes per electoral section
 unzip('./votacao_secao_2016_SP.zip', exdir = './section')
 
-resultsSection <- read_delim('./section/votacao_secao_2016_SP.txt', ';',
+sectionSP <- read_delim('../2018 TSE Databank/votacao_secao_2008_SP/votacao_secao_2008_SP.txt', ';',
   escape_double = FALSE, col_names = FALSE, trim_ws = TRUE,
   locale = locale(encoding = 'Latin1'))
 
