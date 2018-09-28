@@ -3,22 +3,47 @@ library(magrittr)
 library(tidyverse)
 
 # load database
-load('candidates2016.Rda')
+load('candidates.2016.Rda')
 load('sentencingData.Rda')
 load('results2016.Rda')
-load('candidacyDecisions')
+load('candidacyDecisions.Rda')
 
 # wrangling
-
-
-
 names(candidates.2016)
 candidates.2016 %>%
   filter(CODIGO_CARGO == 11) %$%
   table(DES_SITUACAO_CANDIDATURA)
 
-2251+337+179+157+13+5+5+3
+# testing votes per electoral section
+unzip('./votacao_secao_2016_SP.zip', exdir = './section')
 
+resultsSection <- read_delim('./section/votacao_secao_2016_SP.txt', ';',
+  escape_double = FALSE, col_names = FALSE, trim_ws = TRUE,
+  locale = locale(encoding = 'Latin1'))
+
+# checking whether votes are reported
+resultsTest <- results2016 %>%
+  filter(CODIGO_CARGO == 11) %>%
+  filter(DESC_SIT_CANDIDATO == 'INDEFERIDO COM RECURSO') %>%
+  filter(TOTAL_VOTOS == 0) %>%
+  filter(SIGLA_UF == 'SP')
+
+results <- resultsSection %>%
+  filter(X12 == 11) %>%
+  filter(X9 == 'AGUDOS') %>%
+  filter(X10 == 7) %>%
+  filter(X14 == 15)
+
+results2016 %>%
+  filter(CODIGO_CARGO == 11) %>%
+  filter(NOME_MUNICIPIO == 'AGUDOS') %$%
+  filter(NUMERO_ZONA == 7)
+
+names
+
+
+2251+337+179+157+13+5+5+3
+names(results2016)
 
 as.character(unlist(sentencingData[sort.list(sentencingData$stage), 'stage']))
 
