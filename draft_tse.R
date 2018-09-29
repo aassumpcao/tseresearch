@@ -23,22 +23,42 @@ testSP <- candidates.2010 %>%
   filter(SIGLA_UF == 'SP') %>%
   filter(DES_SITUACAO_CANDIDATURA == 'INDEFERIDO COM RECURSO')
 
-results2016 %>%
-  filter(DESC_SIT_CANDIDATO == 'INDEFERIDO COM RECURSO') %>%
+candidates.2016 %>%
+  filter(DES_SITUACAO_CANDIDATURA == 'INDEFERIDO COM RECURSO') %>%
   filter(CODIGO_CARGO == 11) %$%
-  table(TOTAL_VOTOS)
+  table(DESC_SIT_TOT_TURNO)
 
-  # %>%
-  filter(DESC_SIT_CANDIDATO != 'DEFERIDO') %$%
-  filter(DESC_SIT_CANDIDATO == 'INDEFERIDO COM RECURSO')
+TEST <- results2016 %>%
+  filter(DESC_SIT_CAND_SUPERIOR == 'APTO') %>%
+  filter(DESC_SIT_CANDIDATO == 'DEFERIDO COM RECURSO') %>%
+  filter(TOTAL_VOTOS == 0)
 
 
+names(TEST)
+
+TEST2 <- left_join(TEST, candidates.2016, by = c('SQ_CANDIDATO' = 'SEQUENCIAL_CANDIDATO'))
+
+View(TEST2)
+
+sectionSP %>%
+  filter(X9 == 'GUARULHOS') %>%
+  filter(X14 == 31022) %>%
+  select(X15) %>%
+  unlist() %>%
+  sum()
+
+
+
+
+View(test)
+rm(sectionAM, test, test2, testSP)
+names(results2016)
 View(testAM)
 
 # testing votes per electoral section
 unzip('./votacao_secao_2016_SP.zip', exdir = './section')
 
-sectionSP <- read_delim('../2018 TSE Databank/votacao_secao_2008_SP/votacao_secao_2008_SP.txt', ';',
+sectionSP <- read_delim('../2018 TSE Databank/votacao_secao_2016_SP/votacao_secao_2016_SP.txt', ';',
   escape_double = FALSE, col_names = FALSE, trim_ws = TRUE,
   locale = locale(encoding = 'Latin1'))
 
