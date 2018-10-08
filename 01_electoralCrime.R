@@ -144,9 +144,8 @@ filter(candidates.feather, str_detect(protNum, 'nprot=undefined'))
 remaining <- candidates %$%
   which(SEQUENCIAL_CANDIDATO %in% unlist(invalid.cases$candidateID) &
     electionID %in% unlist(invalid.cases$electionID))
-
-View(invalid.cases)
-View(candidates[remaining,])
+# View(invalid.cases)
+# View(candidates[remaining,])
 
 ################################################################################
 # corrections
@@ -156,11 +155,31 @@ new <- c(40000001667, 50000025615, 50000025614, 90000007021, 120000003450)
 candidates[which(candidates$SEQUENCIAL_CANDIDATO %in% old),
           'SEQUENCIAL_CANDIDATO'] <- new
 
+# write to disk
+invalid.cases <- candidates %>%
+  filter(SEQUENCIAL_CANDIDATO %in% new) %>%
+  transmute(candidateID     = as.character(SEQUENCIAL_CANDIDATO),
+            electionYear    = as.character(ANO_ELEICAO),
+            electoralUnitID = as.character(SIGLA_UE),
+            electionID      = as.character(electionID)) %>%
+  write_feather(path = './cases.feather')
+
+# run python script
+source_python('01_electoralCrime.py')
+
+# load corrections
+invalid.cases <- read_feather('cases.feather')
+names(invalid.cases) <- invalid.cases[1,]
+invalid.cases %<>% slice(-1)
+
+View(invalid.cases)
+
 # candidate whose candidacy has been wrongly recorded on website
-which(candidates.feather$candidateID== 50000047516)
+which(candidates.feather$candidateID == 50000047516)
 candidates.feather %<>% filter(!row_number() == 421)
 
-
+# write to disk
+write_feather()
 
 # candidates whose candidacy is not available online (only in raw datasets)
 # candidate number 210000000226 doesn't show up anywhere

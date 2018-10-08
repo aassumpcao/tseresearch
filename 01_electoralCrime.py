@@ -46,11 +46,11 @@ browser = webdriver.Chrome(executable_path = CHROMEDRIVER_PATH,
 browser.implicitly_wait(60)
 
 # import test dataset with 1,000 individuals
-candidates = feather.read_dataframe('candidates.feather')
+candidates = feather.read_dataframe('cases.feather')
 
 # run scraper for one random individual
-tse_case(candidates.loc[9, 'electionYear'], candidates.loc[9, 'electionID'],
-         candidates.loc[9, 'electoralUnitID'], candidates.loc[9, 'candidateID'], 
+tse_case(candidates.loc[1, 'electionYear'], candidates.loc[1, 'electionID'],
+         candidates.loc[1, 'electoralUnitID'], candidates.loc[1, 'candidateID'], 
          browser)
 
 # run scraper for 1,000 individuals pulled from random sample of candidates
