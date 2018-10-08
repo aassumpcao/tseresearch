@@ -1,6 +1,13 @@
 ################################################################################
 # Electoral Crime and Performance Paper
 #
+# 01 Script:
+# This script narrows down the database of candidates who had their
+# candidacies appealed before the elections but have not heard back before
+# election date. After it filters down candidates, it runs the TSE case scraper,
+# which is a program that goes on to each candidate website at TSE and downloads
+# the case and protocol number for all their candidacies.
+#
 # Author:
 # Andre Assumpcao
 # andre.assumpcao@gmail.com
@@ -20,7 +27,6 @@ load('candidates.2016.Rda')
 
 ################################################################################
 # candidates wrangling
-
 # only working with candidates who filed (or whose opponent filed) an appeal to
 # initial candidacy decision
 candidacy.situation <- c('DEFERIDO COM RECURSO', 'INDEFERIDO COM RECURSO',
@@ -40,7 +46,6 @@ rm(list = objects(pattern = 'appealing|[0-9]+'))
 
 ################################################################################
 # case number scraper
-
 # vector of special elections in 2012
 supplemental.elections2012 <- candidates %>%
   filter(ANO_ELEICAO == 2012) %>%
@@ -103,5 +108,3 @@ rm(list = objects(pattern = '\\.|election'))
 
 # run scraper on python
 source_python('01_electoralCrime.py')
-
-##

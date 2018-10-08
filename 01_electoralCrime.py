@@ -59,7 +59,7 @@ candidateCases = [['electionYear', 'electionID', 'electoralUnitID',
                    'candidateID', 'caseNum', 'protNum']]
 
 # run scraper for 6,963 individuals
-for x in range(0, len(candidates)):
+for x in range(6762, len(candidates)):
     
     # pull sequential numbers from table
     electionYear    = candidates.loc[x, 'electionYear']
@@ -99,3 +99,6 @@ candidateCases = pd.DataFrame(candidateCases)
 
 # save to file
 feather.write_dataframe(candidateCases, 'candidateCases.feather')
+
+# close python
+exit()
