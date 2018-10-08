@@ -18,12 +18,8 @@ import time
 import re
 
 # scraper function
-def tse_case(candidateID, electoralUnitID, electionYear, browser):
+def tse_case(electionYear, electionID, electoralUnitID, candidateID, browser):
     # search parameters
-    # unique election ID as function of electoral year
-    electionID = np.select([electionYear == 2004, electionYear == 2008,
-                            electionYear == 2012, electionYear == 2016],
-                            [14431, 14422, 1699, 2])
     # base url
     main  = 'http://divulgacandcontas.tse.jus.br/divulga/#/candidato'
     # case and protocol xpaths
@@ -75,7 +71,8 @@ def tse_case(candidateID, electoralUnitID, electionYear, browser):
 
     # bring together information provided as arguments to function call and list
     # of elements found on website
-    data = [str(candidateID), str(electoralUnitID), str(electionYear)]
+    data = [str(electionYear), str(electionID), str(electoralUnitID),
+            str(candidateID)]
     data.append(caseNum[0])
     data.append(protNum[0])
 

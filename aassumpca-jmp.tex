@@ -24,8 +24,6 @@
 \usepackage[margin=1in]{geometry}
 \usepackage{hyperref}
 \hypersetup{unicode=true,
-            pdftitle={Three Essays on Electoral Politics in Brazil},
-            pdfauthor={Andre Assumpcao},
             pdfborder={0 0 0},
             breaklinks=true}
 \urlstyle{same}  % don't use monospace font for urls
@@ -75,74 +73,95 @@
 
 \setlength{\droptitle}{-2em}
 
-  \title{Three Essays on Electoral Politics in Brazil}
-    \pretitle{\vspace{\droptitle}\centering\huge}
-  \posttitle{\par}
-  \subtitle{Dissertation Proposal}
-  \author{Andre Assumpcao}
-    \preauthor{\centering\large\emph}
-  \postauthor{\par}
-      \predate{\centering\large\emph}
-  \postdate{\par}
-    \date{Sep 30, 2018}
-
+  \title{}
+    \pretitle{\vspace{\droptitle}}
+  \posttitle{}
+    \author{}
+    \preauthor{}\postauthor{}
+    \date{}
+    \predate{}\postdate{}
+  
 \usepackage{float}
 \usepackage{tikz}
 \usepackage{setspace}
-\onehalfspacing
 
 \begin{document}
-\maketitle
 
 \hypertarget{title}{%
-\section*{Summary}\label{title}}
-\addcontentsline{toc}{section}{Summary}
+\section{Electoral Crimes and Performance: Evidence from
+Brazil}\label{title}}
 
-\newpage
+Andre Assumpcao
 
-\hypertarget{paper}{%
-\section{Paper:}\label{paper}}
+\hypertarget{summary}{%
+\subsection{Summary}\label{summary}}
 
-\newpage
+Office-seeking politicians employ various tactics to get elected,
+including actions banned by electoral oversight agencies. Using an
+unique dataset on candidate eligibility constructed from judicial
+decisions of the Brazilian Electoral Court (TSE), I estimate the impact
+of electoral code violations on performance at the municipal elections
+of 2012 and 2016. I recover causal effects of violations using an unique
+feature from Brazil's electoral system in which candidates run for
+office, and can be voted on election day, even if the Electoral Court
+has not issued a final decision on whether their candidacies met all
+code requirements.
 
-\hypertarget{paper1}{%
-\section{Paper: Power Strategies in Local Elections (tentative
-title)}\label{paper1}}
+\hypertarget{main-research-question}{%
+\subsection{Main Research Question}\label{main-research-question}}
 
-\hypertarget{introduction}{%
-\subsection{Introduction}\label{introduction}}
+Do politicians who violate electoral code perform well at the ballot?
 
 \hypertarget{hypotheses}{%
 \subsection{Hypotheses}\label{hypotheses}}
 
 \begin{enumerate}
 \item
-  More candidates, more chances to rise to power in local and federal
+  Candidates who have clean records will perform better at municipal
   elections.
 \item
-  Less candidates, more resources to any one candidate in local and
-  federal elections.
+  The effect of infractions is stronger (more negative) if the number of
+  clean-record opponents in the race is higher.
 \end{enumerate}
+
+\hypertarget{outcomes}{%
+\subsection{Outcomes}\label{outcomes}}
+
+\begin{enumerate}
+\item
+  Whether candidate was the most voted in mayor elections or last
+  candidate voted in in city council elections (equivalent to being
+  elected had all their candidacies been valid).
+\item
+  Vote share.
+\item
+  Vote distance to elected candidates.
+\end{enumerate}
+
+\hypertarget{identification-strategy}{%
+\subsection{Identification Strategy}\label{identification-strategy}}
+
+IV where the the instrumented (explanatory) variable is the candidacy
+decision issued by the Electoral Court before the elections (trial
+stage) and the instrument is the decision issued after the elections
+(appeals stage) for all candidates who appealed their decision to run
+but have not had a final ruling before election day.
 
 \hypertarget{data}{%
 \subsection{Data}\label{data}}
 
-2016 and 2018 election results in Brazil.
+Election results, candidate, judge, and municipal controls for 2012 and
+2016 municipal elections in Brazil. All available at various Electoral
+Court (TSE) websites.
 
-\hypertarget{research-design}{%
-\subsection{Research Design}\label{research-design}}
+\hypertarget{contribution-and-literature}{%
+\subsection{Contribution and
+literature}\label{contribution-and-literature}}
 
-RDD in municipalities with more and less than 100k residents, where
-political parties can sign-up more candidates relative to the number of
-seats available (Electoral Code Article 10).
-
-\hypertarget{preliminary-results}{%
-\subsection{Preliminary Results}\label{preliminary-results}}
-
-\hypertarget{conclusion}{%
-\subsection{Conclusion}\label{conclusion}}
-
-\url{https://esaj.tjsp.jus.br/cpopg/show.do?processo.codigo=2900002CO0000\&processo.foro=81\&conversationId=\&dadosConsulta.localPesquisa.cdLocal=-1\&cbPesquisa=NMPARTE\&dadosConsulta.tipoNuProcesso=UNIFICADO\&dadosConsulta.valorConsulta=celso+augusto+coelho+ramenzoni\&uuidCaptcha=\&paginaConsulta=1}
+It contributes the causal effect of electoral violations to previous
+works on determinants of electoral performance; in addition, it employs
+new identification strategy and dataset (analysis of judicial decisions
+regarding elections).
 
 
 \end{document}

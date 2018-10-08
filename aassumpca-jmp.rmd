@@ -1,0 +1,65 @@
+---
+output:
+  # # General Latex arguments
+  bookdown::pdf_document2:
+    toc           : false
+    keep_tex      : true
+    fig_caption   : true
+    latex_engine  : pdflatex
+    number_section: true
+
+  # # General Word arguments
+  bookdown::word_document2:
+    toc          : false
+    reference_doc: "default"
+
+# Latex arguments
+header-includes:
+  - \usepackage{float}
+  - \usepackage{tikz}
+  - \usepackage{setspace}
+  #- \onehalfspacing
+
+fancy_lists : true
+fig_caption : yes
+starnum     : true
+---
+
+# Electoral Crimes and Performance: Evidence from Brazil {#title}
+
+Andre Assumpcao
+
+## Summary {#summary}
+
+Office-seeking politicians employ various tactics to get elected, including actions banned by electoral oversight agencies. Using an unique dataset on candidate eligibility constructed from judicial decisions of the Brazilian Electoral Court (TSE), I estimate the impact of electoral code violations on performance at the municipal elections of 2012 and 2016. I recover causal effects of violations using an unique feature from Brazil's electoral system in which candidates run for office, and can be voted on election day, even if the Electoral Court has not issued a final decision on whether their candidacies met all code requirements.
+
+## Main Research Question
+
+Do politicians who violate electoral code perform well at the ballot?
+
+## Hypotheses
+
+#. Candidates who have clean records will perform better at municipal elections.
+
+#. The effect of infractions is stronger (more negative) if the number of clean-record opponents in the race is higher.
+
+## Outcomes
+
+#. Whether candidate was the most voted in mayor elections or last candidate voted in in city council elections (equivalent to being elected had all their candidacies been valid).
+
+#. Vote share.
+
+#. Vote distance to elected candidates.
+
+## Identification Strategy
+
+IV where the the instrumented (explanatory) variable is the candidacy decision issued by the Electoral Court before the elections (trial stage) and the instrument is the decision issued after the elections (appeals stage) for all candidates who appealed their decision to run but have not had a final ruling before election day.
+
+## Data
+
+Election results, candidate, judge, and municipal controls for 2012 and 2016 municipal elections in Brazil. All available at various Electoral Court (TSE) websites.
+
+## Contribution and literature
+
+It contributes the causal effect of electoral violations to previous works on determinants of electoral performance; in addition, it employs new identification strategy and dataset (analysis of judicial decisions regarding elections).
+
