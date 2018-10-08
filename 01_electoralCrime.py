@@ -59,14 +59,12 @@ candidateCases = [['electionYear', 'electionID', 'electoralUnitID',
                    'candidateID', 'caseNum', 'protNum']]
 
 # run scraper for 6,963 individuals
-for x in range(6762, len(candidates)):
-    
+for x in range(0, len(candidates)):
     # pull sequential numbers from table
     electionYear    = candidates.loc[x, 'electionYear']
     electionID      = candidates.loc[x, 'electionID']
     electoralUnitID = candidates.loc[x, 'electoralUnitID']
     candidateID     = candidates.loc[x, 'candidateID']
-    
     # run scraper capturing browser crash error
     try:
         row = tse_case(electionYear, electionID, electoralUnitID, candidateID,
@@ -75,18 +73,14 @@ for x in range(6762, len(candidates)):
         browser.quit()
         browser = webdriver.Chrome(executable_path = CHROMEDRIVER_PATH,
                                    chrome_options  = chrome_options)
-    
         # set implicit wait for page load
         browser.implicitly_wait(60)
-    
         # run scraper
         row = tse_case(electionYear, electionID, electoralUnitID, candidateID,
                        browser)
-    
     # print information
     print('Iteration ' + str(x + 1) + ' of ' + str(len(candidates)) + 
           ' successful')
-    
     # bind to dataset
     candidateCases.append(row)
 
@@ -98,7 +92,7 @@ browser.quit()
 candidateCases = pd.DataFrame(candidateCases)
 
 # save to file
-feather.write_dataframe(candidateCases, 'candidateCases.feather')
+feather.write_dataframe(candidateCases, 'cases.feather')
 
 # close python
 exit()

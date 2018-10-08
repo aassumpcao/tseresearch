@@ -50,12 +50,12 @@ def tse_case(electionYear, electionID, electoralUnitID, candidateID, browser):
             caseNum = [x.text for x in caseElem]
             protNum = [x.get_attribute('href') for x in protElem]
             # recheck if case number (element 1) contains incorrect info
-            while caseNum[0].find('informa') != -1:
+            while caseNum[0].find('Informa') == 0:
                 time.sleep(.5)
                 caseNum = [x.text for x in caseElem]
-                break
+                break     
             # recheck if protocol number is empty
-            while len(protNum[0]) == 0:
+            while protNum[0].find('nprot=undefined') == 0:
                 time.sleep(.5)
                 protNum = [x.get_attribute('href') for x in protElem]
                 break
@@ -68,7 +68,6 @@ def tse_case(electionYear, electionID, electoralUnitID, candidateID, browser):
             # if we spend too much time looking for elements, return to top of
             # the loop
             continue
-
     # bring together information provided as arguments to function call and list
     # of elements found on website
     data = [str(electionYear), str(electionID), str(electoralUnitID),

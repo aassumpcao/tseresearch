@@ -108,3 +108,74 @@ rm(list = objects(pattern = '\\.|election'))
 
 # run scraper on python
 source_python('01_electoralCrime.py')
+
+################################################################################
+# check
+# load results and check
+candidates.feather <- read_feather('candidateCases.feather')
+names(candidates.feather) <- candidates.feather[1,]
+candidates.feather %<>% slice(-1)
+
+# check invalid case numbers
+invalid.cases <- candidates.feather %>%
+  filter(caseNum == 'Informação ainda não disponível') %>%
+  select(1:4)
+
+# rerun python script
+write_feather(invalid.cases, path = './candidates.feather')
+source_python('01_electoralCrime.py')
+
+# load data
+invalid.cases <- read_feather('invalidCases.feather')
+names(invalid.cases) <- invalid.cases[1,]
+invalid.cases %<>% slice(-1)
+
+# find rows to replace
+replace <- candidates.feather %$%
+  which(caseNum == 'Informação ainda não disponível')
+
+# replace
+candidates.feather[replace, 'protNum'] <- invalid.cases$protNum
+
+# test remaining cases
+filter(candidates.feather, str_detect(protNum, 'nprot=undefined'))
+
+# View remaining on another dataset
+remaining <- candidates %$%
+  which(SEQUENCIAL_CANDIDATO %in% unlist(invalid.cases$candidateID) &
+    electionID %in% unlist(invalid.cases$electionID))
+
+View(invalid.cases)
+View(candidates[remaining,])
+
+################################################################################
+# corrections
+# candidate numbers that need changing
+old <- c(40000009724, 50000047524, 50000047521, 90000030491, 120000008348)
+new <- c(40000001667, 50000025615, 50000025614, 90000007021, 120000003450)
+candidates[which(candidates$SEQUENCIAL_CANDIDATO %in% old),
+          'SEQUENCIAL_CANDIDATO'] <- new
+
+# candidate whose candidacy has been wrongly recorded on website
+which(candidates.feather$candidateID== 50000047516)
+candidates.feather %<>% filter(!row_number() == 421)
+
+
+
+# candidates whose candidacy is not available online (only in raw datasets)
+# candidate number 210000000226 doesn't show up anywhere
+manual.search <- c(50000047738, 50000047739, 140000024289, 140000024745,
+                   200000007872, 200000007858, 200000010277, 50000032049,
+                   160000039646, 160000039647)
+
+states <- c('ba', 'ba', 'pa', 'pa', 'pr', 'pr', 'rn', 'rn', 'rn', 'rn', 'ba')
+case.replace <- c('0000493-05.2012.6.05.0035','0000494-87.2012.6.05.0035',
+                  '0000355-28.2012.6.14.0022','0000083-12.2012.6.14.0094',
+                  '0000003-77.2013.6.16.0055','0000002-92.2013.6.16.0055',
+                  '0000240-84.2012.6.20.0007','0000241-69.2012.6.20.0007',
+                  '0001055-63.2012.6.20.0013','0000050-72.2016.6.05.0113')
+prot.replace <- c('1773042012', '1773052012', '939142012', '551612012',
+                  '158342013', '157882013', '625772012', '625762012',
+                  '408752012', '1084392016')
+
+
