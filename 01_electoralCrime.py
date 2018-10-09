@@ -46,7 +46,7 @@ browser = webdriver.Chrome(executable_path = CHROMEDRIVER_PATH,
 browser.implicitly_wait(60)
 
 # import test dataset with 1,000 individuals
-candidates = feather.read_dataframe('cases.feather')
+candidates = feather.read_dataframe('candidates.feather')
 
 # run scraper for one random individual
 tse_case(candidates.loc[1, 'electionYear'], candidates.loc[1, 'electionID'],
@@ -92,7 +92,7 @@ browser.quit()
 candidateCases = pd.DataFrame(candidateCases)
 
 # save to file
-feather.write_dataframe(candidateCases, 'cases.feather')
+feather.write_dataframe(candidateCases, 'invalidCases.feather')
 
 # close python
 exit()
