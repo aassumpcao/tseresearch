@@ -119,7 +119,7 @@ candidates.feather <- read_feather('candidateCases.feather')
 names(candidates.feather) <- candidates.feather[1,]
 candidates.feather %<>% slice(-1)
 
-# check invalid case numbers
+# check invalid case numbers (#1)
 invalid.cases <- candidates.feather %>%
   filter(caseNum == 'Informação ainda não disponível') %>%
   select(1:4)
@@ -152,6 +152,7 @@ remaining <- candidates %$%
 
 ################################################################################
 # corrections
+# (#1)
 # candidate numbers that need changing
 old <- c(40000009724, 50000047524, 50000047521, 90000030491, 120000008348)
 new <- c(40000001667, 50000025615, 50000025614, 90000007021, 120000003450)
@@ -172,7 +173,7 @@ invalid.cases <- candidates %>%
 write_feather(invalid.cases, path = './candidates.feather')
 
 # run python script
-# system2('python', args = '01_electoralCrime.py')
+# source_python('01_electoralCrime.py')
 
 # load corrections
 invalid.cases <- read_feather('invalidCases.feather')
@@ -190,6 +191,7 @@ candidates.feather %<>% filter(!row_number() == 421)
 # remove unnecessary files
 rm(new, old, remaining)
 
+# (#2)
 # candidates whose candidacy is not available online (only in raw datasets),
 # for which we have to manually download data from the web
 # candidate number 210000000226 doesn't show up anywhere
@@ -223,7 +225,46 @@ candidacyCases <- candidates.feather %>%
   bind_rows(invalid.cases) %>%
   select(-7)
 
+# (#3)
+# candidates whose case numbers are invalid despite their protocol numbers
+# being valid
+invalid.cases <- candidacyCases %>%
+  filter(str_detect(caseNum, 'Informação')) %>%
+  slice(-1)
+
+# write to disk
+write_feather(invalid.cases, path = './candidates.feather')
+
+# run python script
+# source_python('01_electoralCrime.py')
+
+# load corrections
+invalid.cases <- read_feather('invalidCases.feather')
+names(invalid.cases) <- invalid.cases[1,]
+invalid.cases %<>% slice(-1)
+
+# replace
+replace <- which(candidacyCases$candidateID %in% unlist(invalid.cases[,4]))
+replace <- replace[c(1, 3:8)]
+candidacyCases[replace, 5:6] <- invalid.cases[, 5:6]
+
+# (#4)
+# Last manual replace
+which(str_detect(candidacyCases$protNum, 'nprot=undefined'))
+candidacyCases[2552, 5] <- '00000037320136210076'
+candidacyCases[2552, 6] <- str_replace(candidacyCases[2552, 6],
+                                       pattern = 'undefined(.){15}null',
+                                       '31362013&comboTribunal=rs')
+
 # remove unnecessary objects
 rm(list = objects(pattern = 'candidates|invalid'))
 
+# fix case numbers
+candidacyCases %<>%
+  mutate_at(vars(caseNum), str_remove_all, pattern = '-|\\.') %>%
+  mutate_at(vars(caseNum), str_pad, 20, side = 'left', pad = '0')
 
+# write to disk
+save(candidacyCases, file = './candidacyCases.Rda')
+
+View(candidacyCases)
