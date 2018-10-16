@@ -1,4 +1,4 @@
-################################################################################
+
 # Electoral Crime and Performance Paper
 #
 # 01 Script:
@@ -267,4 +267,13 @@ candidacyCases %<>%
 # write to disk
 save(candidacyCases, file = './candidacyCases.Rda')
 
-View(candidacyCases)
+# join with candidacy information
+candidates %>%
+  mutate(electionID           = as.character(electionID),
+         SEQUENCIAL_CANDIDATO = as.character(SEQUENCIAL_CANDIDATO)) %>%
+  {left_join(candidacyCases, ., by = c('electionID'  = 'electionID',
+                                       'candidateID' = 'SEQUENCIAL_CANDIDATO'))}
+
+
+names(candidates)
+names(candidacyCases)
