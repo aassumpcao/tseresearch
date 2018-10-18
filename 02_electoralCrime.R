@@ -32,7 +32,7 @@ unzip('../2018 TSE Databank/votacao_secao_2012.zip', exdir = './2012section')
 # wait for all files to be unzipped
 Sys.sleep(10)
 
-# file names
+# get file names
 states <- list.files('./2012section', pattern = 'votacao')
 
 # for loop to load and merge all .txt files
@@ -76,6 +76,8 @@ names(sections2012) <- codebook
 # remove files
 unlink('./2012section', recursive = TRUE)
 
+################################################################################
+# merge with vote count
 # filter candidates by election unit, year and candidate number
 cities <- candidates %>%
   filter(ANO_ELEICAO == 2012) %$%
@@ -84,16 +86,38 @@ people <- candidates %>%
   filter(ANO_ELEICAO == 2012) %$%
   unique(NUMERO_CANDIDATO)
 
-# filter results by cities and people
-sections2012 %<>%
+# split dataset for easy calculation of results
+candidates2012 <- candidates %>% filter(ANO_ELEICAO == 2012)
+candidates2016 <- candidates %>% filter(ANO_ELEICAO == 2016)
+
+# prepare valid results dataset
+results2012 %<>%
+  mutate(candidateID = as.character(SQ_CANDIDATO)) %>%
+  group_by(SIGLA_UE, NUM_TURNO, candidateID) %>%
+  summarize(votes = sum(TOTAL_VOTOS))
+
+# join candidates and valid results
+candidates2012 %<>%
+  filter(ANO_ELEICAO == 2012) %>%
+  left_join(results2012, by = c('SIGLA_UE', 'candidateID', 'NUM_TURNO')) %>%
+  mutate(votes = ifelse(is.na(votes) | votes == 0, NA, votes))
+
+# prepare results-by-section dataset
+test <- sections2012 %>%
   filter(SIGLA_UE %in% cities) %>%
-  filter(NUM_VOTAVEL %in% people)
+  filter(NUM_VOTAVEL %in% people) %>%
+  group_by(SIGLA_UE, NUM_TURNO, CODIGO_CARGO, NUM_VOTAVEL) %>%
+  summarize(votes = sum(QTDE_VOTOS))
+
+
+
+
+
+# filter results by cities and people
 
 
 # aggregate votes by candidate number
-sections %>%
-  group_by(SIGLA_UE, NUM_TURNO, NUM_VOTAVEL) %>%
-  summarize(votes = sum(QTDE_VOTOS)) %>%
+ %>%
   {left_join(candidates, ., by = c('SIGLA_UE'  = 'SIGLA_UE',
                                    'NUM_TURNO' = 'NUM_TURNO',
                                    'NUMERO_CANDIDATO' = 'NUM_VOTAVEL'))} %>%
@@ -103,14 +127,12 @@ sections %>%
 load('results2012.Rda')
 
 candidates %>% names()
+candidates %$% summary(is.na(votes))
+
 results2012 %>% names()
 
 candidates %$% table(ANO_ELEICAO)
 
-results2012 %<>%
-  mutate(candidateID = as.character(SQ_CANDIDATO)) %>%
-  group_by(SIGLA_UE, NUM_TURNO, candidateID) %>%
-  summarize(votes = sum(TOTAL_VOTOS))
 
 candidates %>%
   filter(ANO_ELEICAO == 2012) %>%
