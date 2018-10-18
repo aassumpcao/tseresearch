@@ -1,13 +1,13 @@
-
+################################################################################
 # Electoral Crime and Performance Paper
-#
+
 # 01 Script:
 # This script narrows down the database of candidates who had their
 # candidacies appealed before the elections but have not heard back before
 # election date. After it filters down candidates, it runs the TSE case scraper,
 # which is a program that goes on to each candidate website at TSE and downloads
 # the case and protocol number for all their candidacies.
-#
+
 # Author:
 # Andre Assumpcao
 # andre.assumpcao@gmail.com
@@ -21,7 +21,7 @@ library(magrittr)
 library(feather)
 library(reticulate)
 
-# set environment var (!!!USE YOUR PYTHON3 BINARY!!!)
+# set environment var
 Sys.setenv(RETICULATE_PYTHON = '/anaconda3/bin/python')
 
 # load statements
@@ -257,7 +257,7 @@ candidacyCases[2552, 6] <- str_replace(candidacyCases[2552, 6],
                                        '31362013&comboTribunal=rs')
 
 # remove unnecessary objects
-rm(list = objects(pattern = 'candidates|invalid'))
+rm(list = objects(pattern = 'invalid'))
 
 # fix case numbers
 candidacyCases %<>%
@@ -268,12 +268,9 @@ candidacyCases %<>%
 save(candidacyCases, file = './candidacyCases.Rda')
 
 # join with candidacy information
-candidates %>%
+candidates %<>%
   mutate(electionID           = as.character(electionID),
          SEQUENCIAL_CANDIDATO = as.character(SEQUENCIAL_CANDIDATO)) %>%
   {left_join(candidacyCases, ., by = c('electionID'  = 'electionID',
                                        'candidateID' = 'SEQUENCIAL_CANDIDATO'))}
 
-
-names(candidates)
-names(candidacyCases)
