@@ -274,3 +274,5 @@ candidates %<>%
   {left_join(candidacyCases, ., by = c('electionID'  = 'electionID',
                                        'candidateID' = 'SEQUENCIAL_CANDIDATO'))}
 
+# write to disk
+save(candidates, file = './candidates.Rda')
