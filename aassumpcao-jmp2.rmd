@@ -1,0 +1,46 @@
+---
+output:
+  # # General Latex arguments
+  bookdown::pdf_document2:
+    toc           : false
+    keep_tex      : true
+    fig_caption   : true
+    latex_engine  : pdflatex
+    number_section: true
+
+  # # General Word arguments
+  bookdown::word_document2:
+    toc          : false
+    reference_doc: "default"
+
+# Latex arguments
+header-includes:
+  - \usepackage{float}
+  - \usepackage{tikz}
+  - \usepackage{setspace}
+  #- \onehalfspacing
+
+fancy_lists : true
+fig_caption : yes
+starnum     : true
+---
+
+# Judicial Favoritism of Politicians: Evidence from Small Claim Courts {#title}
+
+Andre Assumpcao
+
+## Summary
+
+
+
+## Main research Question
+
+## Hypotheses
+
+## Outcomes
+
+## Identification Strategy
+
+## Data
+
+## Contribution and Literature

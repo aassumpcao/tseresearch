@@ -29,7 +29,7 @@ starnum     : true
 
 Andre Assumpcao
 
-## Summary {#summary}
+## Summary
 
 Office-seeking politicians employ various tactics to get elected, including actions banned by electoral oversight agencies. Using an unique dataset on candidate eligibility constructed from judicial decisions of the Brazilian Electoral Court (TSE), I estimate the impact of electoral code violations on performance at the municipal elections of 2012 and 2016. I recover causal effects of violations using an unique feature from Brazil's electoral system in which candidates run for office, and can be voted on election day, even if the Electoral Court has not issued a final decision on whether their candidacies met all code requirements.
 
@@ -59,7 +59,7 @@ IV where the the instrumented (explanatory) variable is the candidacy decision i
 
 Election results, candidate, judge, and municipal controls for 2012 and 2016 municipal elections in Brazil. All available at various Electoral Court (TSE) websites.
 
-## Contribution and literature
+## Contribution and Literature
 
 It contributes the causal effect of electoral violations to previous works on determinants of electoral performance; in addition, it employs new identification strategy and dataset (analysis of judicial decisions regarding elections).
 
