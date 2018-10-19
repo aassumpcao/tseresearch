@@ -276,3 +276,6 @@ candidates %<>%
 
 # write to disk
 save(candidates, file = './candidates.Rda')
+
+# quit r
+q()

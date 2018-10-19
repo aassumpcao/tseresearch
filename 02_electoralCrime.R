@@ -204,3 +204,8 @@ candidates %<>%
   mutate(trialCrime  = ifelse(COD_SITUACAO_CANDIDATURA == 16, 0, 1),
          appealCrime = ifelse(is.na(votes.x), 1, 0))
 
+# write to disk
+save(candidates, file = './candidates.results.Rda')
+
+# quit r
+q()
