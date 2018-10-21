@@ -1,0 +1,62 @@
+---
+output:
+  # General Latex arguments
+  bookdown::pdf_document2:
+    toc           : false
+    keep_tex      : true
+    fig_caption   : true
+    latex_engine  : pdflatex
+    number_section: true
+
+  # General Word arguments
+  bookdown::word_document2:
+    toc          : false
+    reference_doc: "default"
+
+# Latex arguments
+header-includes:
+  - \usepackage{float}
+  - \usepackage{tikz}
+  - \usepackage{setspace}
+  # - \onehalfspacing
+
+fancy_lists : true
+fig_caption : yes
+starnum     : true
+---
+
+# Judicial Favoritism of Politicians: Evidence from Small Claim Courts {#title2}
+
+Andre Assumpcao
+
+## Summary
+
+Judicial favoritism has long been a subject of research in law, economics, and political science. However, scholars have mainly focused on the effect of gender and ethnicity on rulings but have largely ignored whether judges treat politicians the same way as ordinary citizens. I use a unique dataset of judicial decisions in small claims courts in the state of São Paulo, Brazil, to answer this question, where cases are assigned to judges at random, to verify whether local politicians have a higher winning rate against plaintiffs or defendants. I combine empirical strategies in Shayo and Zussman (2011), Abrams, Bertrand, and Mullainathan (2012), and Sanchez-Martinez (2018) to test random assignment and provide robustness checks against potential spurious relationships between being a politician and having a favorable court outcome.
+
+## Main research Question
+
+Are individuals running for office more likely to receive favorable rulings in small claim courts?
+
+## Hypotheses
+
+#. Politicians have a higher winning rate at the trial stage in small court claims against their counterparts.
+
+#. Proximity to elections increases the winning rates for politicians on the campaign trail.
+
+## Outcomes
+
+#. Whether politicians have had the case ruled in their favor.
+
+#. The amount awarded to (or avoided by) politicians in court cases.
+
+## Identification Strategy
+
+Natural experiment. State Courts assign cases at random when the judicial district has more than one judge on the bench. Abrams, Bertrand, and Mullainathan (2012) suggest several tests of random assignment which I use here.
+
+## Data
+
+São Paulo State Court (TJ-SP) rulings involving candidates running for office in the State of São Paulo in the 2010, 2012, 2014, and 2016 electoral cycles. Judicial district, judge and politicians' individual characteristics from the Electoral Court (TSE), TJ-SP, and the National Statistics Office (IBGE).
+
+## Contribution and Literature
+
+It is the first paper to investigate judicial bias for individual politicians and it contributes to the literature on the benefits of political connectedness.

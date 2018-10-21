@@ -1,6 +1,6 @@
 ---
 output:
-  # # General Latex arguments
+  # General Latex arguments
   bookdown::pdf_document2:
     toc           : false
     keep_tex      : true
@@ -8,7 +8,7 @@ output:
     latex_engine  : pdflatex
     number_section: true
 
-  # # General Word arguments
+  # General Word arguments
   bookdown::word_document2:
     toc          : false
     reference_doc: "default"
@@ -25,15 +25,13 @@ fig_caption : yes
 starnum     : true
 ---
 
-# Judicial Favoritism of Politicians: Evidence from Small Claim Courts {#title}
+# Paper3 {#title3}
 
 Andre Assumpcao
 
 ## Summary
 
-
-
-## Main research Question
+## Main Research Question
 
 ## Hypotheses
 
@@ -44,3 +42,4 @@ Andre Assumpcao
 ## Data
 
 ## Contribution and Literature
+
