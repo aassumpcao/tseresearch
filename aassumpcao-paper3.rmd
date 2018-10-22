@@ -27,8 +27,6 @@ starnum     : true
 
 # Paper3 {#title3}
 
-Andre Assumpcao
-
 ## Summary
 
 ## Main Research Question

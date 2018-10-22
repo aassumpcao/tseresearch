@@ -27,8 +27,6 @@ starnum     : true
 
 # Electoral Crimes and Performance: Evidence from Brazil {#title1}
 
-Andre Assumpcao
-
 ## Summary
 
 Office-seeking politicians employ various tactics to get elected, including actions banned by electoral oversight agencies. Using an unique dataset on candidate eligibility constructed from judicial decisions of the Brazilian Electoral Court (TSE), I estimate the impact of electoral code violations on performance at the municipal elections of 2012 and 2016. I recover causal effects of violations using an unique feature from Brazil's electoral system in which candidates run for office, and can be voted on election day, even if the Electoral Court has not issued a final decision on whether their candidacies met all code requirements.
