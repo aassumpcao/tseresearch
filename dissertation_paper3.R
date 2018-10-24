@@ -70,13 +70,20 @@ foi.treatment <- brasil.transparente %>%
   ungroup()
 
 # workable group
-full_join(foi.treatment, audit.treatment, by = c('ibgeID' = 'ibgeID')) %>%
-transmute(ibgeID = ibgeID, ebt2015 = rodada1, ebt2016 = rodada2,
-          ebt2017 = rodada3, state = state.x, audit.year = year,
-          audit = ifelse(is.na(year), 0, 1),
-          ebt = ifelse(is.na(ebt2015) & is.na(ebt2016) & is.na(ebt2017), 0,
-                       ifelse(any(ebt2015, ebt2016, ebt2017) > 0, 1, 0))
-) %$%
-table(audit, ebt)
+transparency.dataset <- full_join(foi.treatment, audit.treatment,
+  by = c('ibgeID' = 'ibgeID')) %>%
+  transmute(ibgeID = ibgeID, ebt2015 = rodada1, ebt2016 = rodada2,
+            ebt2017 = rodada3, state = state.x, audit.year = year,
+            audit = ifelse(is.na(year), 0, 1),
+            ebt = ifelse(is.na(ebt2015) & is.na(ebt2016) & is.na(ebt2017), 0,
+                         ifelse(any(ebt2015, ebt2016, ebt2017) > 0, 1, 0))
+  )
+
+# build table of factorial treatment
+transparency.dataset %$% table(audit, ebt)
+
+# build table of audit year by ebt
+transparency.dataset %$% table(ebt, audit.year)
+
 
 
