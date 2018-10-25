@@ -1,4 +1,4 @@
-# test for treatment and control groups for third dissertation paper
+# preliminary tests for third dissertation paper
 # by andre.assumpcao@gmail.com
 
 # import statements
@@ -20,6 +20,9 @@ partname <- c('AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT',
 # create dataset
 states <- tibble(fullname, partname)
 
+
+################################################################################
+# how many observations do we have in each subgroup?
 # merge state IDs onto ibge data
 ibge.dataset %<>% left_join(states, by = c('UF' = 'fullname'))
 
@@ -80,10 +83,10 @@ transparency.dataset <- full_join(foi.treatment, audit.treatment,
   )
 
 # build table of factorial treatment
-transparency.dataset %$% table(audit, ebt)
+transparency.dataset %>% filter(state == 'SP') %$% table(audit.year)
 
 # build table of audit year by ebt
 transparency.dataset %$% table(ebt, audit.year)
 
-
-
+################################################################################
+# what outcomes can we find for all four subgroups
