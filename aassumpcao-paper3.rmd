@@ -25,7 +25,7 @@ fig_caption : yes
 starnum     : true
 ---
 
-# Paper3 {#title3}
+# Active and Passive Transparency in Brazilian Municipalities {#title3}
 
 ## Summary
 
