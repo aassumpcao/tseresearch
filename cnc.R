@@ -9,7 +9,6 @@
 #'
 #' @return retorna \code{TRUE} se der tudo certo e ele conseguir criar e deletar todos os arquivos temporários.
 #'
-#' @export
 GET_pjs <- function(url, arq = 'arq.html') {
   tmp <- tempfile('scrape', fileext = '.js')
   writeLines(sprintf("var page = require('webpage').create();
