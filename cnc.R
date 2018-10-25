@@ -1,20 +1,3 @@
-Skip to content
-
-Search or jump to…
-
-Pull requests
-Issues
-Marketplace
-Explore
- @aassumpcao Sign out
-7
-5 1 abjur/cnc
- Code  Issues 1  Pull requests 0  Projects 0  Wiki  Insights
-cnc/R/cnc.R
-4d5daaa  on Dec 19, 2016
-@jtrecenti jtrecenti correct param name
-
-Executable File  152 lines (145 sloc)  5.8 KB
 #' Baixa uma página web qualquer usando PhantomJS
 #'
 #' Acessa uma URL, roda javascripts e baixa página usando PhantomJS.
@@ -150,7 +133,7 @@ cnc_pessoas_infos <- function(d_pessoas, path = 'data-raw/pessoas_infos') {
     dplyr::filter(stringr::str_detect(value, 'recuperarDados')) %>%
     with(gsub('[^0-9]', '', value))
   l <- 'http://www.cnj.jus.br/improbidade_adm/visualizar_condenacao.php?seq_condenacao=1&rs=getDadosParte&rst=&rsrnd=0&rsargs[]=%s'
-  l <- sprintf(l, id_pessoa)
+  l <- sprintf(l, id_pessoa) %>% unique()
   tibble::data_frame(id = id_pessoa, link = l) %>%
     dplyr::group_by(id, link) %>%
     dplyr::do({
@@ -165,17 +148,3 @@ cnc_pessoas_infos <- function(d_pessoas, path = 'data-raw/pessoas_infos') {
     }) %>%
     dplyr::ungroup()
 }
-
-© 2018 GitHub, Inc.
-Terms
-Privacy
-Security
-Status
-Help
-Contact GitHub
-Pricing
-API
-Training
-Blog
-About
-Press h to open a hovercard with more details.
