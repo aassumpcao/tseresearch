@@ -89,4 +89,22 @@ transparency.dataset %>% filter(state == 'SP') %$% table(audit.year)
 transparency.dataset %$% table(ebt, audit.year)
 
 ################################################################################
-# what outcomes can we find for all four subgroups
+# what outcomes can we find for all four subgroups?
+# (1) municipal performance from IBGE's municipal profile databases
+
+# write out file information
+mainURL <- 'ftp://ftp.ibge.gov.br/Perfil_Municipios'
+years   <- sort(c(2001, 2002, 2004:2006, 2008, 2009, 2011:2015, 2017), TRUE)
+files   <- c('Base_de_Dados/Base_MUNIC_2017_xls.zip',
+             'Base_de_Dados/Base_MUNIC_2015_xls.zip',
+             'base_MUNIC_xls_2014.zip', 'base_MUNIC_xls_2013.zip',
+             'base_MUNIC_xls_2012.zip', 'base_MUNIC_xls_2011.zip',
+             'base_MUNIC_2009.zip', 'Base2008.zip', 'base_MUNIC_2006.zip',
+             'base_MUNIC_2005.zip', 'base_MUNIC_2004.zip', 'Tabelas_2002.zip',
+             'Tabelas_2001.zip')
+
+# download all municipal profile datasets
+mapply(download.file, paste(mainURL, years, files, sep = '/'),
+       destfile = paste0('../2018 TSE Databank/munic', years, '.zip'))
+
+

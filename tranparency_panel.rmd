@@ -1,0 +1,31 @@
+# Panel for Global Transparency Conference
+
+## Title of Panel
+
+Judicial Politics in Brazil
+
+## Name of Author(s)
+
+Andre Assumpcao, UNC-Chapel Hill
+
+Guilherme Lambais, Universidade de Brasília
+
+Henrik Sigstad, Harvard University
+
+## Contact Email
+andre.assumpcao@gmail.com
+
+## Description
+
+Andre Assumpcao - "Electoral Crimes and Performance"
+
+Guilherme Lambais and Henrik Sigstad - "Subversion of Justice"
+
+This is a two-paper panel on Judicial Politics. In particular, we are investigating the relationship between court outcomes and politics in Brazil.
+
+The first paper, "Electoral Crimes and Perfomance," discusses the electoral penalty for committing electoral crimes. Using a unique database of judicial rulings from the Brazilian Electoral Court (TSE), the author codes electoral crimes committed by candidates running for local office (city councilors and mayors) and investigates their effects on performance. It unveils the informational effect of court decisions in the formation of voter's electoral preferences.
+
+The second paper, "Subversion of Justice," narrows in on the responsiveness of the judicial system to the political environment. Using data from all State Court systems in Brazil, the authors look at whether trial judges favor office-holding politicians in corruption cases. To our knowledge, this is the first paper in the literature looking at judicial favoritism in corruption cases -- one of the highest-salience issues in Brazilian politics in recent years.
+
+## Travel Assistance?
+Yes
