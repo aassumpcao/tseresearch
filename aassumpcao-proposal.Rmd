@@ -8,10 +8,10 @@ output:
     latex_engine  : pdflatex
     number_section: true
 
-  # General Word arguments
-  bookdown::word_document2:
-    toc          : false
-    reference_doc: "default"
+  # # General Word arguments
+  # bookdown::word_document2:
+  #   toc          : false
+  #   reference_doc: "default"
 
 # Latex arguments
 header-includes:
