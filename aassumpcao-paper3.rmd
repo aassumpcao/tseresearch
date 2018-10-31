@@ -50,12 +50,22 @@ For all groups:
 #. Performance:
 
 #. Sanctions:
+    
+    #. whether municipality had any public official convicted/fired for wrongdoing;
+    
+    #. whether local companies have been entered into blacklist of government providers;
+    
+    #. whether municipality was target of corruption crackdowns carried out by Federal Police.
 
 For treated groups:
 
-#. Corruption:
+#. Corruption: 
+  
+    #. corruption findings by municipalities out of total investigations; 
+  
+    #. amount potentially lost to corruption over total amount investigated.
 
-#. Transparency:
+#. Transparency: 
 
 ## Identification Strategy
 
