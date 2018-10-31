@@ -45,14 +45,18 @@ Do passive transparency measures contribute anything more than active transparen
 
 ## Outcomes
 
-#. Policy:
+For all groups:
+
+#. Performance:
 
 #. Sanctions:
+
+For treated groups:
 
 #. Corruption:
 
 #. Transparency:
- 
+
 ## Identification Strategy
 
 Natural experiment coming from the combination of randomized audits (active transparency) plus the nationwide implementation of the freedom of information act (FOIA) in 2012 (passive transparency). Municipalities fall into one of  three treatments or one control group: audits after FOIA (active and passive transparency), audits before FOIA (active transparency), non-audit after FOIA (passive transparency), and non-audit before FOIA (control).
