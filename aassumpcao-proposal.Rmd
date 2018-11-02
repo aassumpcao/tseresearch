@@ -2,34 +2,70 @@
 output:
   # General Latex arguments
   bookdown::pdf_document2:
-    toc           : false
-    keep_tex      : true
-    fig_caption   : true
-    latex_engine  : pdflatex
-    number_section: true
-
+    toc             : false
+    keep_tex        : true
+    fig_caption     : true
+    latex_engine    : pdflatex
+    number_section  : true
+    citation_package: none
+    pandoc_args     : ['--csl', 'apa-no-doi.csl']
+    
   # # General Word arguments
   # bookdown::word_document2:
-  #   toc          : false
-  #   reference_doc: "default"
+  #   toc             : false
+  #   fig_caption     : false
+  #   reference_doc   : "default"
+  #   pandoc_args     : ['--csl', 'apa-no-doi.csl']
 
 # Latex arguments
 header-includes:
   - \usepackage{float}
   - \usepackage{tikz}
   - \usepackage{setspace}
-  #- \onehalfspacing
+  - \onehalfspacing
 
-fancy_lists : true
-fig_caption : yes
-starnum     : true
+# Bibliography features
+
+bibliography  : '/Users/aassumpcao/OneDrive - University of North Carolina at Chapel Hill/Documents/Library/library.bib'
+link-citations: true
+nocite        : |
+  @Fernandez-VazquezRootingOutCorruption2016, 
+  @LuPoliticalConnectednessCourt2015,
+  @IchinoDeterringDisplacingElectoral2012,
+  @CallenInstitutionalCorruptionElection2015,
+  @DonnoDoesCheatingPay2012,
+  @CarrerasTrustElectionsVote2013,
+  @KuoIllicitTacticsSubstitutes2017,
+  @RoussiasTyingIncumbentsHands2018,
+  @MeijerTransparency2014,
+  @PeisakhinTransparencyCorruptionEvidence2012,
+  @PeisakhinTransparencyEffectiveAnticorruption2010,
+  @MichenerFOILawsWorld2011,
+  @VadlamannatiFreedomInformationLaws2016,
+  @CordisSunshineDisinfectantEffect2014,
+  @PratWrongKindTransparency2005
+  
+# Textual features
+fancy_lists   : true
+fig_caption   : yes
+starnum       : true
 ---
 
-```{r child = 'aassumpcao-paper1.Rmd'}
+# Three Essays on Sanctions of Politicians in Brazil {.unnumbered}
+
+*Andre Assumpcao*
+
+## Summary {.unnumbered}
+
+This dissertation project investigates the relationship between legal sanctions and politics in Brazil. In the first paper, I look at the effect of convictions for electoral infractions on electoral performance of mayors and city councilor candidates in four municipal elections. The second paper tests whether State Court judges significantly rule in favor of politicians involved in small court claims. Finally, the last paper investigates whether active and passive transparency simultaneously improve government performance and increase the number of legal sanctions issued for government wrongdoing. Besides novel research questions, this project also uses new data sources and innovative research methods to advance the literature tying law, political science, and economics.
+
+```{r paper1, child = 'aassumpcao-paper1.Rmd'}
 ```
 
-```{r child = 'aassumpcao-paper2.Rmd'}
+```{r paper2, child = 'aassumpcao-paper2.Rmd'}
 ```
 
-```{r child = 'aassumpcao-paper3.Rmd'}
+```{r paper3, child = 'aassumpcao-paper3.Rmd'}
 ```
+
+## References

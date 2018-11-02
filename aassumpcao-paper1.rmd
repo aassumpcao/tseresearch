@@ -25,25 +25,27 @@ fig_caption : yes
 starnum     : true
 ---
 
-# Electoral Crimes and Performance: Evidence from Brazil {#title1}
+# Electoral Crimes under Democratic Rule: Evidence from Brazil {#title1}
 
 ## Summary
 
-Office-seeking politicians employ various tactics to get elected, including actions banned by electoral oversight agencies. Using an unique dataset on candidate eligibility constructed from judicial decisions of the Brazilian Electoral Court (TSE), I estimate the impact of electoral code violations on performance at the municipal elections of 2012 and 2016. I recover causal effects of violations using an unique feature from Brazil's electoral system in which candidates run for office, and can be voted on election day, even if the Electoral Court has not issued a final decision on whether their candidacies met all code requirements.
+Office-seeking politicians employ various tactics to get elected, including actions banned by electoral oversight agencies. Using a unique dataset on candidate eligibility constructed from judicial decisions of the Brazilian Electoral Court (TSE), I estimate the impact of electoral code violations on performance at municipal elections between 2004-2016. I recover causal effects of violations using a unique feature from Brazil's electoral system in which candidates run for office, and can be voted on election day, even if the Electoral Court has not issued a final ruling on whether their candidacies met all code requirements.
 
 ## Main Research Question
 
-Do politicians who violate electoral code perform well at the ballot?
+Do politicians who violate electoral code perform better at the ballot than those who do not?
 
 ## Hypotheses
 
-#. Candidates who have clean records will perform better at municipal elections.
+#. Candidates who are cleared of electoral violations will perform better at municipal elections than candidates who are found guilty.
 
-#. The effect of infractions is stronger (more negative) if the number of clean-record opponents in the race is higher.
+#. Conviction-free candidates will performance proportionately better when there are more convicted politicians in the same race.
+
+#. The electoral punishment for electoral infractions is increasing in their severity (e.g. corruption, abuse of power, vote buying, unauthorized marketing, etc).
 
 ## Outcomes
 
-#. Whether candidate was the most voted in mayor elections or last candidate voted in in city council elections (equivalent to being elected had all their candidacies been valid).
+#. Whether candidate was the most voted for in mayor elections (majoritarian system) or the last most voted for in city council elections (proportional system) -- equivalent to being elected had they all been cleared of accusations.
 
 #. Vote share.
 
@@ -51,13 +53,12 @@ Do politicians who violate electoral code perform well at the ballot?
 
 ## Identification Strategy
 
-IV where the the instrumented (explanatory) variable is the candidacy decision issued by the Electoral Court before the elections (trial stage) and the instrument is the decision issued after the elections (appeals stage) for all candidates who appealed their decision to run but have not had a final ruling before election day.
+IV where the instrumented (explanatory) variable is the candidacy ruling issued by the Electoral Court before the elections (trial stage) and the instrument is the decision issued after the elections (appeals stage) for all politicians whose candidacy authorization had been appealed but had not yet been tried by the appellate panel on election day.
 
 ## Data
 
-Election results, candidate, judge, and municipal controls for 2012 and 2016 municipal elections in Brazil. All available at various Electoral Court (TSE) websites.
+Election results, candidate, judge, and municipal controls for municipal elections in Brazil between 2004-2016. All available at various Electoral Court (TSE) websites and the National Statistics Office (IBGE).
 
-## Contribution and Literature
+## Contribution to Literature
 
-It contributes the causal effect of electoral violations to previous works on determinants of electoral performance; in addition, it employs new identification strategy and dataset (analysis of judicial decisions regarding elections).
-
+It is the first paper to measure the electoral punishment for electoral crimes under democratic regimes; it implements a new identification strategy using different stages of the judicial process; it uses a novel database of primary data on judicial rulings from electoral oversight authorities.
