@@ -120,3 +120,44 @@ View(candidates.2016[212031,])
 View(results2016[327857,])
 
 library(feather)
+
+
+candidates.2010 %$% names()
+candidates.2010 %$% table(ANO_ELEICAO)
+str(candidates.2010 %$%
+  table(DES_SITUACAO_CANDIDATURA))
+rm(list)
+
+
+
+list <- una(unique(candidates.2010[, 'DES_SITUACAO_CANDIDATURA']))
+
+unname(list)
+
+str(list[1])
+
+
+candidates.2010 %>%
+  filter(DES_SITUACAO_CANDIDATURA == 'IMPUGNAÇÃO DE CANDIDATURA') %>%
+  View()
+
+
+candidates.2010 %>% names()
+candidates.2012 %>% names()
+candidates.2016 %>% names()
+
+
+candidates.2010 %>%
+  filter(ANO_ELEICAO == 2004)
+
+elections %$% table(match)
+
+candidates.pending %>% names()
+
+path <- paste0('/Users/aassumpcao/OneDrive - University of North Carolina',
+               ' at Chapel Hill/Documents/Research/2018 TSE/tse_case.py',
+               collapse = '')
+import_from_path('tse_case', path = path)
+
+system2('pwd')
+system('python 01_electoralCrime.py')

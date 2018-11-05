@@ -4,9 +4,9 @@
 # 01 Script:
 # This script narrows down the database of candidates who had their
 # candidacies appealed before the elections but have not heard back before
-# election date. After it filters down candidates, it runs the TSE case scraper,
-# which is a program that visits each candidate's website at TSE and downloads
-# the case and protocol number for all their candidacies.
+# election date. After it filters down candidates, it prepares the data for the
+# TSE case scraper, which is a program that visits each candidate's website at
+# TSE and downloads the case and protocol number for all their candidacies.
 
 # Author:
 # Andre Assumpcao
@@ -23,6 +23,7 @@ library(reticulate)
 
 # set environment var
 Sys.setenv(RETICULATE_PYTHON = '/anaconda3/bin/python')
+source_python('./tse_case.py')
 
 # load statements
 load('candidates.2010.Rda')
@@ -91,27 +92,48 @@ eligible.appeal <- c('DEFERIDO COM RECURSO', 'INDEFERIDO COM RECURSO',
 
 # filter datasets according to situation above
 appealing.candidates2010 <- candidates.2010 %>%
-  filter(DES_SITUACAO_CANDIDATURA %in% candidacy.situation)
+  filter(DES_SITUACAO_CANDIDATURA %in% eligible.appeal)
 appealing.candidates2012 <- candidates.2012 %>%
-  filter(DES_SITUACAO_CANDIDATURA %in% candidacy.situation)
+  filter(DES_SITUACAO_CANDIDATURA %in% eligible.appeal)
 appealing.candidates2016 <- candidates.2016 %>%
-  filter(DES_SITUACAO_CANDIDATURA %in% candidacy.situation)
-
-
-# delete unnecessary vectors
-rm(list = objects(pattern = 'candidacy\\.situation\\.(.)+|ligible|other'))
-
+  filter(DES_SITUACAO_CANDIDATURA %in% eligible.appeal)
 
 # bind observations
-candidates <- bind_rows(appealing.candidates2012, appealing.candidates2016)
+candidates.pending <- bind_rows(appealing.candidates2010,
+                                appealing.candidates2012,
+                                appealing.candidates2016)
+# drop 2000 elections
+candidates.pending %<>% filter(ANO_ELEICAO != 2000)
 
-# remove useless data
-rm(list = objects(pattern = 'appealing|[0-9]+'))
+# save candidates pending final ruling and candidacy situation datasets
+save(candidacy.situation, file = 'candidacy.situation.Rda')
+save(candidates.pending,  file = 'candidates.pending.Rda')
+
+# delete unnecessary vectors
+rm(list = objects(pattern = 'candidacy\\.situation|ligible|other|appealing'))
 
 ################################################################################
-# case number scraper
-# vector of special elections in 2012
-supplemental.elections2012 <- candidates %>%
+# candidates preparation for TSE scraper
+# add unique election ID for the elections in 2004
+electionID.2004 <- 14431
+
+# create vector of supplemental elections in 2008
+supplemental.elections2008 <- candidates.pending %>%
+  filter(ANO_ELEICAO == 2008) %>%
+  filter(DESCRICAO_ELEICAO != 'Eleições 2008') %>%
+  arrange(SIGLA_UF, DESCRICAO_UE) %>%
+  select(DESCRICAO_ELEICAO) %>%
+  unlist() %>%
+  unique()
+
+# add general election to vector
+supplemental.elections2008 <- c('Eleições 2008', supplemental.elections2008)
+
+# add unique election ID for the supplemental elections above
+electionID.2008 <- c(14422, 17522, 17524)
+
+# create vector of supplemental elections in 2012
+supplemental.elections2012 <- candidates.pending %>%
   filter(ANO_ELEICAO == 2012) %>%
   filter(DESCRICAO_ELEICAO != 'ELEIÇÃO MUNICIPAL 2012') %>%
   arrange(SIGLA_UF, DESCRICAO_UE) %>%
@@ -123,13 +145,13 @@ supplemental.elections2012 <- candidates %>%
 supplemental.elections2012 <- c('ELEIÇÃO MUNICIPAL 2012',
                                 supplemental.elections2012)
 
-# unique election ID for the supplemental elections above
+# add unique election ID for the supplemental elections above
 electionID.2012 <- c(1699, 1700, 1736, 1729, 1776, 1697, 1675, 1771, 1681, 1758,
                      1731, 1714, 1720, 1743, NA, 677, 1747, 663, 1772, 678,
                      1721, 1740, 1680, 1735, 670, 1757, 1722)
 
-# vector of special elections in 2016
-supplemental.elections2016 <- candidates %>%
+# create vector of supplemental elections in 2016
+supplemental.elections2016 <- candidates.pending %>%
   filter(ANO_ELEICAO == 2016) %>%
   filter(DESCRICAO_ELEICAO != 'Eleições Municipais 2016') %>%
   arrange(SIGLA_UF, DESCRICAO_UE) %>%
@@ -138,31 +160,35 @@ supplemental.elections2016 <- candidates %>%
   unique()
 
 # add general election to vector
-supplemental.elections2016<- c('Eleições Municipais 2016',
+supplemental.elections2016 <- c('Eleições Municipais 2016',
                                supplemental.elections2016)
 
-# unique election ID for the supplemental elections above
+# add unique election ID for the supplemental elections above
 electionID.2016 <- c(2, 93810, 91463, 60819, 70905, 68881, 36506, 93796, 42911,
                      36285, 96930, 94972, 95019, 69133, 22424, 92548, 70880)
 
 # wrangle election type
 elections <- tibble(
-  match      = c(supplemental.elections2012, supplemental.elections2016),
-  electionID = c(electionID.2012, electionID.2016))
+  match      = c('ELEICOES 2004', supplemental.elections2008,
+                 supplemental.elections2012, supplemental.elections2016),
+  electionID = c(electionID.2004, electionID.2008, electionID.2012,
+                 electionID.2016)
+  )
 
 # join electionID onto candidates database
-candidates %<>% left_join(elections, by = c('DESCRICAO_ELEICAO' = 'match'))
+candidates.pending %<>%
+  left_join(elections, by = c('DESCRICAO_ELEICAO' = 'match'))
 
 # problems with joaquim távora
-which(candidates$DESCRICAO_ELEICAO == 'ELEIÇÃO SUPLEMENTAR JOAQUIM TÁVORA')
+issues <- which(candidates.pending[,5] == 'ELEIÇÃO SUPLEMENTAR JOAQUIM TÁVORA')
 
 # select meaningful variables
-candidates.feather <- candidates %>%
+candidates.feather <- candidates.pending %>%
   transmute(electionYear    = as.character(ANO_ELEICAO),
             electionID      = as.character(electionID),
             electoralUnitID = as.character(SIGLA_UE),
             candidateID     = as.character(SEQUENCIAL_CANDIDATO)) %>%
-  filter(!row_number() %in% c(2074, 2075))
+  filter(!row_number() %in% issues)
 
 # write to disk
 write_feather(candidates.feather, path = './candidates.feather')
