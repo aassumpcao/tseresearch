@@ -25,7 +25,6 @@ header-includes:
   - \onehalfspacing
 
 # Bibliography features
-
 bibliography  : '/Users/aassumpcao/OneDrive - University of North Carolina at Chapel Hill/Documents/Library/library.bib'
 link-citations: true
 nocite        : |
@@ -46,9 +45,9 @@ nocite        : |
   @PratWrongKindTransparency2005
   
 # Textual features
-fancy_lists   : true
-fig_caption   : yes
-starnum       : true
+fancy_lists: true
+fig_caption: yes
+starnum    : true
 ---
 
 # Three Essays on Sanctions of Politicians in Brazil {.unnumbered}

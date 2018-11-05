@@ -5,7 +5,7 @@
 # This script narrows down the database of candidates who had their
 # candidacies appealed before the elections but have not heard back before
 # election date. After it filters down candidates, it runs the TSE case scraper,
-# which is a program that goes on to each candidate website at TSE and downloads
+# which is a program that visits each candidate's website at TSE and downloads
 # the case and protocol number for all their candidacies.
 
 # Author:
@@ -25,21 +25,82 @@ library(reticulate)
 Sys.setenv(RETICULATE_PYTHON = '/anaconda3/bin/python')
 
 # load statements
+load('candidates.2010.Rda')
 load('candidates.2012.Rda')
 load('candidates.2016.Rda')
 
 ################################################################################
 # candidates wrangling
-# only working with candidates who filed (or whose opponent filed) an appeal to
-# initial candidacy decision
-candidacy.situation <- c('DEFERIDO COM RECURSO', 'INDEFERIDO COM RECURSO',
-                        'CASSADO COM RECURSO', 'CANCELADO COM RECURSO')
+# find all possible candidacy situations on election day
+# up to 2010
+candidacy.situation.upto.2010 <- candidates.2010 %>%
+  select(DES_SITUACAO_CANDIDATURA) %>%
+  unique() %>%
+  unlist() %>%
+  unname()
 
-# filter dataset according to situation above
+# in 2012
+candidacy.situation.in.2012 <- candidates.2012 %>%
+  select(DES_SITUACAO_CANDIDATURA) %>%
+  unique() %>%
+  unlist() %>%
+  unname()
+
+# in 2016
+candidacy.situation.in.2016 <- candidates.2016 %>%
+  select(DES_SITUACAO_CANDIDATURA) %>%
+  unique() %>%
+  unlist() %>%
+  unname()
+
+# join situations across all elections
+candidacy.situation <- unique(c(candidacy.situation.upto.2010,
+                                candidacy.situation.in.2012,
+                                candidacy.situation.in.2016))
+
+# break situations down into 'eligible' and 'ineligible'
+# eligible:   candidate will be displayed at electronic voting machine
+# ineligible: candidate will not be displayed at electronic voting machine
+# other:      registration not processed
+eligible   <- c('DEFERIDO', 'DEFERIDO COM RECURSO', 'PENDENTE DE JULGAMENTO',
+                'INDEFERIDO COM RECURSO', 'CASSADO COM RECURSO',
+                'CANCELADO COM RECURSO', 'IMPUGNAÇÃO DE CANDIDATURA',
+                'SUB JUDICE', 'SUB JÚDICE')
+ineligible <- c('INDEFERIDO', 'CANCELAMENTO', 'FALECIDO', 'CASSADO',
+                'RENÚNCIA', 'NÃO CONHECIMENTO DO PEDIDO', 'CANCELADO',
+                'IMPUGNADO', 'INELEGÍVEL', 'FALECIMENTO',
+                'HOMOLOGAÇÃO DE RENÚNCIA', 'CASSAÇÃO DO REGISTRO',
+                'INDEFERIDO POR IMPUGNAÇÃO')
+other      <- c('PENDENTE DE JULGAMENTO', 'PENDENTE', 'AGUARDANDO JULGAMENTO',
+                'SUBSTITUTO MAJORITÁRIO PENDENTE DE JULGAMENTO',
+                'SUBSTITUTO PENDENTE DE JULGAMENTO')
+
+# create candidacy situation dataset
+candidacy.situation %<>%
+  {tibble(situation = .)} %>%
+   mutate(eligibility = case_when(situation %in% eligible   ~ 'eligible',
+                                  situation %in% ineligible ~ 'ineligible',
+                                  situation %in% other      ~ 'other')
+   )
+
+# filter down candidacy situations in which an appeal has been filed but has not
+# been ruled by election day
+eligible.appeal <- c('DEFERIDO COM RECURSO', 'INDEFERIDO COM RECURSO',
+                     'CASSADO COM RECURSO', 'CANCELADO COM RECURSO',
+                     'IMPUGNAÇÃO DE CANDIDATURA', 'SUB JUDICE', 'SUB JÚDICE')
+
+# filter datasets according to situation above
+appealing.candidates2010 <- candidates.2010 %>%
+  filter(DES_SITUACAO_CANDIDATURA %in% candidacy.situation)
 appealing.candidates2012 <- candidates.2012 %>%
   filter(DES_SITUACAO_CANDIDATURA %in% candidacy.situation)
 appealing.candidates2016 <- candidates.2016 %>%
   filter(DES_SITUACAO_CANDIDATURA %in% candidacy.situation)
+
+
+# delete unnecessary vectors
+rm(list = objects(pattern = 'candidacy\\.situation\\.(.)+|ligible|other'))
+
 
 # bind observations
 candidates <- bind_rows(appealing.candidates2012, appealing.candidates2016)

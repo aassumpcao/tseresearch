@@ -45,7 +45,7 @@ Do politicians who violate electoral code perform better at the ballot than thos
 
 ## Outcomes
 
-#. Whether candidate was the most voted for in mayor elections (majoritarian system) or the last most voted for in city council elections (proportional system) -- equivalent to being elected had they all been cleared of accusations.
+#. Whether candidate was the most voted for in mayor elections (majoritarian system) or voted in for elected city council seats (proportional system) -- equivalent to being elected had they all been cleared of accusations.
 
 #. Vote share.
 
