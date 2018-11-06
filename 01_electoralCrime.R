@@ -23,7 +23,7 @@ library(reticulate)
 
 # set environment var
 Sys.setenv(RETICULATE_PYTHON = '/anaconda3/bin/python')
-source_python('./tse_case.py')
+# source_python('./tse_case.py')
 
 # load statements
 load('candidates.2010.Rda')
@@ -179,16 +179,45 @@ elections <- tibble(
 candidates.pending %<>%
   left_join(elections, by = c('DESCRICAO_ELEICAO' = 'match'))
 
-# problems with joaquim távora
-issues <- which(candidates.pending[,5] == 'ELEIÇÃO SUPLEMENTAR JOAQUIM TÁVORA')
+################################################################################
+# corrections
+# (1)
+# incorrect candidate numbers that need changing
+old <- c(40000009724, 50000047524, 50000047521, 90000030491, 120000008348)
+new <- c(40000001667, 50000025615, 50000025614, 90000007021, 120000003450)
 
+# find positions in column 'SEQUENCIAL_CANDIDATO'
+replace.positions <- which(candidates.pending$SEQUENCIAL_CANDIDATO %in% old)
+
+# replace old numbers for new numbers
+candidates.pending[replace.positions, 'SEQUENCIAL_CANDIDATO'] <- new
+
+# correct electionID (column 47) for one candidate
+candidates.pending[which(candidates.pending[, 12] == 120000003450), 47] <- 1699
+
+# (2)
+# candidates whose candidacy has been wrongly recorded on website
+issue1 <- which(candidates.pending$SEQUENCIAL_CANDIDATO == 50000047516)
+
+# (3)
+# candidates whose information is not available online, just in raw electoral
+# court datasets
+# unavailable numbers
+search <- c(50000047738, 50000047739, 140000024289, 140000024745, 160000039647,
+            160000039646, 200000007872, 200000007858, 200000010277, 50000032049)
+
+# mark rows in which this is a problem
+issue2 <- which(candidates.pending$SEQUENCIAL_CANDIDATO %in% search)
+
+################################################################################
+# write data in python-readable format
 # select meaningful variables
 candidates.feather <- candidates.pending %>%
   transmute(electionYear    = as.character(ANO_ELEICAO),
             electionID      = as.character(electionID),
             electoralUnitID = as.character(SIGLA_UE),
             candidateID     = as.character(SEQUENCIAL_CANDIDATO)) %>%
-  filter(!row_number() %in% issues)
+  filter(!row_number() %in% c(issue1, issue2))
 
 # write to disk
 write_feather(candidates.feather, path = './candidates.feather')
@@ -196,8 +225,8 @@ write_feather(candidates.feather, path = './candidates.feather')
 # remove useless stuff
 rm(list = objects(pattern = '\\.|election'))
 
-# run scraper on python
-# source_python('01_electoralCrime.py')
+# run scraper on python (should take +4h to download everything)
+system('python 01_electoralCrime.py')
 
 ################################################################################
 # check
@@ -240,13 +269,6 @@ remaining <- candidates %$%
 ################################################################################
 # corrections
 # (#1)
-# candidate numbers that need changing
-old <- c(40000009724, 50000047524, 50000047521, 90000030491, 120000008348)
-new <- c(40000001667, 50000025615, 50000025614, 90000007021, 120000003450)
-replace.positions <- which(candidates$SEQUENCIAL_CANDIDATO %in% old)
-candidates[replace.positions, 'SEQUENCIAL_CANDIDATO'] <- new
-candidates[which(candidates$SEQUENCIAL_CANDIDATO == 120000003450),
-          'electionID'] <- 1699
 
 # check invalid protocol numbers
 invalid.cases <- candidates %>%
@@ -270,10 +292,6 @@ invalid.cases %<>% slice(-1)
 # replace
 replace.positions <- which(candidates.feather$candidateID %in% old)
 candidates.feather[replace.positions, 5:6] <- invalid.cases[, 5:6]
-
-# candidate whose candidacy has been wrongly recorded on website
-which(candidates.feather$candidateID == 50000047516)
-candidates.feather %<>% filter(!row_number() == 421)
 
 # remove unnecessary files
 rm(new, old, remaining)

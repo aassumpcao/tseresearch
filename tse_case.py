@@ -49,15 +49,21 @@ def tse_case(electionYear, electionID, electoralUnitID, candidateID, browser):
             # and add them to lists (elem1 = pull text; elem2 = pull attr value)
             caseNum = [x.text for x in caseElem]
             protNum = [x.get_attribute('href') for x in protElem]
+            # define counter to break loop in error cases
+            counter = 1
             # recheck if case number (element 1) contains incorrect info
-            while caseNum[0].find('Informa') == 0:
+            while caseNum[0].find('Informa') == 0 | counter < 31:
                 time.sleep(.5)
                 caseNum = [x.text for x in caseElem]
-                break     
+                counter += 1
+                break
+            # define counter to break loop in error cases
+            counter = 1
             # recheck if protocol number is empty
-            while protNum[0].find('nprot=undefined') == 0:
+            while protNum[0].find('nprot=undefined') == 0 | counter < 31:
                 time.sleep(.5)
                 protNum = [x.get_attribute('href') for x in protElem]
+                counter += 1
                 break
             # exit loop if successful
             break

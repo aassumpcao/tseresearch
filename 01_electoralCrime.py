@@ -58,7 +58,7 @@ tse_case(candidates.loc[1, 'electionYear'], candidates.loc[1, 'electionID'],
 candidateCases = [['electionYear', 'electionID', 'electoralUnitID', 
                    'candidateID', 'caseNum', 'protNum']]
 
-# run scraper for 6,963 individuals
+# run scraper for all individuals
 for x in range(0, len(candidates)):
     # pull sequential numbers from table
     electionYear    = candidates.loc[x, 'electionYear']
