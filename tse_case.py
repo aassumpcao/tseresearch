@@ -32,6 +32,9 @@ def tse_case(electionYear, electionID, electoralUnitID, candidateID, browser):
     s   = '/'
     url = s.join(url)
 
+    # counter to handle stale or timeout exceptions
+    exception = 1
+    
     # while loop to return to page if there is any error in finding info in DOM
     while True:
         try:
@@ -68,9 +71,21 @@ def tse_case(electionYear, electionID, electoralUnitID, candidateID, browser):
             # exit loop if successful
             break
         except StaleElementReferenceException as Exception:
+            # run this thirty times before breaking loop
+            exception += 1
+            if exception > 30:
+                caseNum = ['staleException']
+                protNum = ['staleException']
+                break
             # if element is not in DOM, return to the top of the loop
             continue
         except TimeoutException as Exception:
+            # run this thirty times before breaking loop
+            exception += 1
+            if exception > 30:
+                caseNum = ['timeoutException']
+                protNum = ['timeoutException']
+                break
             # if we spend too much time looking for elements, return to top of
             # the loop
             continue

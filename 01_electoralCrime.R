@@ -181,8 +181,7 @@ candidates.pending %<>%
 
 ################################################################################
 # corrections
-# (1)
-# incorrect candidate numbers that need changing
+# (1) incorrect candidate numbers that need changing
 old <- c(40000009724, 50000047524, 50000047521, 90000030491, 120000008348)
 new <- c(40000001667, 50000025615, 50000025614, 90000007021, 120000003450)
 
@@ -195,12 +194,10 @@ candidates.pending[replace.positions, 'SEQUENCIAL_CANDIDATO'] <- new
 # correct electionID (column 47) for one candidate
 candidates.pending[which(candidates.pending[, 12] == 120000003450), 47] <- 1699
 
-# (2)
-# candidates whose candidacy has been wrongly recorded on website
+# (2) candidates whose candidacy has been wrongly recorded on website
 issue1 <- which(candidates.pending$SEQUENCIAL_CANDIDATO == 50000047516)
 
-# (3)
-# candidates whose information is not available online, just in raw electoral
+# (3) candidates whose information is not available online, just in raw electoral
 # court datasets
 # unavailable numbers
 search <- c(50000047738, 50000047739, 140000024289, 140000024745, 160000039647,
