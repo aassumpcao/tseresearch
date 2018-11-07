@@ -161,3 +161,10 @@ import_from_path('tse_case', path = path)
 
 system2('pwd')
 system('python 01_electoralCrime.py')
+
+
+candidates.feather %>% filter(row_number() %in% c(4101:4103))
+candidates.pending %$% table(ANO_ELEICAO)
+
+
+candidates.feather %>% filter(is.na(candidateID))

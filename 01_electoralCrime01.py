@@ -49,9 +49,9 @@ browser.implicitly_wait(60)
 candidates = feather.read_dataframe('candidates.feather')
 
 # run scraper for one random individual
-tse_case(candidates.loc[1, 'electionYear'], candidates.loc[1, 'electionID'],
-         candidates.loc[1, 'electoralUnitID'], candidates.loc[1, 'candidateID'], 
-         browser)
+# tse_case(candidates.loc[1, 'electionYear'], candidates.loc[1, 'electionID'],
+#          candidates.loc[1, 'electoralUnitID'], candidates.loc[1, 'candidateID'], 
+#          browser)
 
 # run scraper for 1,000 individuals pulled from random sample of candidates
 # create empty dataset to bind results
@@ -59,7 +59,7 @@ candidateCases = [['electionYear', 'electionID', 'electoralUnitID',
                    'candidateID', 'caseNum', 'protNum']]
 
 # run scraper for all individuals
-for x in range(0, len(candidates)):
+for x in range(0, 2684):
     # pull sequential numbers from table
     electionYear    = candidates.loc[x, 'electionYear']
     electionID      = candidates.loc[x, 'electionID']
@@ -92,7 +92,7 @@ browser.quit()
 candidateCases = pd.DataFrame(candidateCases)
 
 # save to file
-feather.write_dataframe(candidateCases, 'invalidCases.feather')
+feather.write_dataframe(candidateCases, 'candidateCases01.feather')
 
 # close python
 exit()

@@ -177,7 +177,9 @@ elections <- tibble(
 
 # join electionID onto candidates database
 candidates.pending %<>%
-  left_join(elections, by = c('DESCRICAO_ELEICAO' = 'match'))
+  left_join(elections, by = c('DESCRICAO_ELEICAO' = 'match')) %>%
+  mutate(DESCRICAO_ELEICAO = ifelse(is.na(DESCRICAO_ELEICAO), 17525,
+                                    DESCRICAO_ELEICAO))
 
 ################################################################################
 # corrections
@@ -220,9 +222,9 @@ candidates.feather <- candidates.pending %>%
 write_feather(candidates.feather, path = './candidates.feather')
 
 # remove useless stuff
-rm(list = objects(pattern = '\\.|election'))
+rm(list = objects(pattern = '\\.election'))
 
-# run scraper on python (should take +4h to download everything)
+# run scraper on python (should take 20h to download everything)
 system('python 01_electoralCrime.py')
 
 ################################################################################
