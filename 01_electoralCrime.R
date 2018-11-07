@@ -21,9 +21,9 @@ library(magrittr)
 library(feather)
 library(reticulate)
 
-# set environment var
+# set reticulate features
 Sys.setenv(RETICULATE_PYTHON = '/anaconda3/bin/python')
-# source_python('./tse_case.py')
+import_from_path('tse_case', path = ".", convert = TRUE)
 
 # load statements
 load('candidates.2010.Rda')
@@ -227,7 +227,7 @@ rm(list = objects(pattern = '\\.(2010|2012|2016)|election'))
 
 # run scraper on python (should take 20h to download everything; 2004 candidates
 # search is very slow)
-# system('python3 01_electoralCrime.py')
+# source_python('01_electoralCrime.py')
 
 ################################################################################
 # check
@@ -240,160 +240,81 @@ names(case.numbers) <- case.numbers[1, ]
 # delete variable names from row
 case.numbers %<>% slice(-1)
 
-
-
-
-
-
-
-
-
-# check invalid case numbers (#1)
-invalid.cases <- candidates.feather %>%
-  filter(caseNum == 'Informação ainda não disponível') %>%
-  select(1:4)
-
-# rerun python script
-write_feather(invalid.cases, path = './candidates.feather')
-# source_python('./01_electoralCrime.py')
-
-# load data
-invalid.cases <- read_feather('invalidCases.feather')
-names(invalid.cases) <- invalid.cases[1,]
-invalid.cases %<>% slice(-1)
-
-# find rows to replace
-replace.positions <- candidates.feather %$%
-  which(caseNum == 'Informação ainda não disponível')
-
-# replace
-candidates.feather[replace.positions, 'protNum'] <- invalid.cases$protNum
-
-# test remaining cases
-filter(candidates.feather, str_detect(protNum, 'nprot=undefined'))
-
-# View remaining on another dataset
-remaining <- candidates %$%
-  which(SEQUENCIAL_CANDIDATO %in% unlist(invalid.cases$candidateID) &
-    electionID %in% unlist(invalid.cases$electionID))
-# View(invalid.cases)
-# View(candidates[remaining,])
-
-################################################################################
-# corrections
-# (#1)
-
-# check invalid protocol numbers
-invalid.cases <- candidates %>%
-  filter(SEQUENCIAL_CANDIDATO %in% new) %>%
-  transmute(electionYear    = as.character(ANO_ELEICAO),
-            electionID      = as.character(electionID),
-            electoralUnitID = as.character(SIGLA_UE),
-            candidateID     = as.character(SEQUENCIAL_CANDIDATO))
+# find cases with problems
+case.problems <- which(str_detect(case.numbers$caseNum, 'Informa'))
 
 # write to disk
-write_feather(invalid.cases, path = './candidates.feather')
+case.numbers[case.problems, 1:4] %>%
+  filter(str_detect(electionYear, '2012|2016')) %>%
+  write_feather(path = './problems.feather')
 
-# run python script
-# source_python('01_electoralCrime.py')
+# run scraper on python
+# source_python('01_electoralCrime_problems.py')
 
 # load corrections
-invalid.cases <- read_feather('invalidCases.feather')
-names(invalid.cases) <- invalid.cases[1,]
-invalid.cases %<>% slice(-1)
+problem.numbers <- read_feather('problemCases.feather')
 
-# replace
-replace.positions <- which(candidates.feather$candidateID %in% old)
-candidates.feather[replace.positions, 5:6] <- invalid.cases[, 5:6]
+# assign variable names
+names(problem.numbers) <- problem.numbers[1, ]
 
-# remove unnecessary files
-rm(new, old, remaining)
+# delete variable names from row
+problem.numbers %<>% slice(-c(1:2))
 
-# (#2)
+# find cases with problems
+case.corrections <- case.numbers %$%
+  which(str_detect(caseNum, 'Informa') & str_detect(electionYear, '2016'))
+
+# replace wrong values for right values
+case.numbers[case.corrections, 5:6] <- problem.numbers[, 5:6]
+
+################################################################################
+# manual corrections
 # candidates whose candidacy is not available online (only in raw datasets),
 # for which we have to manually download data from the web
-# candidate number 210000000226 doesn't show up anywhere
 search <- c(50000047738, 50000047739, 140000024289, 140000024745, 160000039647,
-            160000039646, 200000007872, 200000007858, 200000010277, 50000032049)
-states <- c('ba', 'ba', 'pa', 'pa', 'pr', 'pr', 'rn', 'rn', 'rn', 'ba')
+            160000039646, 200000007872, 200000007858, 200000010277, 50000032049,
+            210000000226)
+states <- c('ba', 'ba', 'pa', 'pa', 'pr', 'pr', 'rn', 'rn', 'rn', 'ba', 'rs')
 cases  <- c('0000493-05.2012.6.05.0035', '0000494-87.2012.6.05.0035',
             '0000355-28.2012.6.14.0022', '0000083-12.2012.6.14.0094',
             '0000003-77.2013.6.16.0055', '0000002-92.2013.6.16.0055',
             '0000240-84.2012.6.20.0007', '0000241-69.2012.6.20.0007',
-            '0001055-63.2012.6.20.0013', '0000050-72.2016.6.05.0113')
+            '0001055-63.2012.6.20.0013', '0000050-72.2016.6.05.0113',
+            '0000003-73.2013.6.21.0076')
 prots  <- c('1773042012', '1773052012', '939142012', '551612012', '158342013',
-            '157882013',   '625772012', '625762012', '408752012', '1084392016')
+            '157882013',   '625772012', '625762012', '408752012', '1084392016',
+            '31362013')
 urls   <- paste0('http://inter03.tse.jus.br/sadpPush/ExibirDadosProcesso.do?',
                  'nprot=', prots, '&comboTribunal=', states)
 
-# replace case numbers
-invalid.cases <- candidates %>%
+# bind such cases onto case.numbers dataset
+case.numbers <- candidates.pending %>%
   filter(SEQUENCIAL_CANDIDATO %in% search) %>%
-  select(ANO_ELEICAO, electionID, SIGLA_UE, SEQUENCIAL_CANDIDATO) %>%
-  transmute(electionYear   = as.character(ANO_ELEICAO),
-            electionID     = as.character(electionID),
-            electionUnitID = SIGLA_UE,
-            candidateID    = as.character(SEQUENCIAL_CANDIDATO),
-            caseNum        = cases,
-            protNum        = urls)
-
-# bind rows
-candidacyCases <- candidates.feather %>%
-  filter(!(candidateID %in% search)) %>%
-  bind_rows(invalid.cases) %>%
-  select(-7)
-
-# (#3)
-# candidates whose case numbers are invalid despite their protocol numbers
-# being valid
-invalid.cases <- candidacyCases %>%
-  filter(str_detect(caseNum, 'Informação')) %>%
-  slice(-1)
-
-# write to disk
-write_feather(invalid.cases, path = './candidates.feather')
-
-# run python script
-# source_python('01_electoralCrime.py')
-
-# load corrections
-invalid.cases <- read_feather('invalidCases.feather')
-names(invalid.cases) <- invalid.cases[1,]
-invalid.cases %<>% slice(-1)
-
-# replace
-replace <- which(candidacyCases$candidateID %in% unlist(invalid.cases[,4]))
-replace <- replace[c(1, 3:8)]
-candidacyCases[replace, 5:6] <- invalid.cases[, 5:6]
-
-# (#4)
-# Last manual replace
-which(str_detect(candidacyCases$protNum, 'nprot=undefined'))
-candidacyCases[2552, 5] <- '00000037320136210076'
-candidacyCases[2552, 6] <- str_replace(candidacyCases[2552, 6],
-                                       pattern = 'undefined(.){15}null',
-                                       '31362013&comboTribunal=rs')
-
-# remove unnecessary objects
-rm(list = objects(pattern = 'invalid'))
+  transmute(
+    electionYear    = as.character(ANO_ELEICAO),
+    electionID      = as.character(electionID),
+    electoralUnitID = SIGLA_UE,
+    candidateID     = as.character(SEQUENCIAL_CANDIDATO),
+    caseNum         = cases,
+    protNum         = urls
+  ) %>%
+  {bind_rows(case.numbers, .)}
 
 # fix case numbers
-candidacyCases %<>%
+case.numbers.01 <- case.numbers %>% filter(as.numeric(electionYear) < 2012)
+case.numbers.02 <- case.numbers %>% filter(as.numeric(electionYear) > 2008)
+case.numbers.02 %<>%
   mutate_at(vars(caseNum), str_remove_all, pattern = '-|\\.') %>%
   mutate_at(vars(caseNum), str_pad, 20, side = 'left', pad = '0')
 
-# write to disk
-save(candidacyCases, file = './candidacyCases.Rda')
-
-# join with candidacy information
-candidates %<>%
-  mutate(electionID           = as.character(electionID),
-         SEQUENCIAL_CANDIDATO = as.character(SEQUENCIAL_CANDIDATO)) %>%
-  {left_join(candidacyCases, ., by = c('electionID'  = 'electionID',
-                                       'candidateID' = 'SEQUENCIAL_CANDIDATO'))}
+# bind rows
+case.numbers <- rbind(case.numbers.01, case.numbers.02)
 
 # write to disk
-save(candidates, file = './candidates.Rda')
+save(case.numbers, file = './case.numbers.Rda')
+
+# write to disk
+save(candidates.pending, file = './candidates.pending.Rda')
 
 # quit r
-q()
+q('no')

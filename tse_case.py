@@ -55,7 +55,7 @@ def tse_case(electionYear, electionID, electoralUnitID, candidateID, browser):
             # define counter to break loop in error cases
             counter = 1
             # recheck if case number (element 1) contains incorrect info
-            while caseNum[0].find('Informa') == 0 | counter < 31:
+            while caseNum[0].find('Informa') == 0 & counter < 31:
                 time.sleep(.5)
                 caseNum = [x.text for x in caseElem]
                 counter += 1
@@ -63,7 +63,7 @@ def tse_case(electionYear, electionID, electoralUnitID, candidateID, browser):
             # define counter to break loop in error cases
             counter = 1
             # recheck if protocol number is empty
-            while protNum[0].find('nprot=undefined') == 0 | counter < 31:
+            while protNum[0].find('nprot=undefined') == 0 & counter < 31:
                 time.sleep(.5)
                 protNum = [x.get_attribute('href') for x in protElem]
                 counter += 1
