@@ -178,8 +178,8 @@ elections <- tibble(
 # join electionID onto candidates database
 candidates.pending %<>%
   left_join(elections, by = c('DESCRICAO_ELEICAO' = 'match')) %>%
-  mutate(DESCRICAO_ELEICAO = ifelse(is.na(DESCRICAO_ELEICAO), 17525,
-                                    DESCRICAO_ELEICAO))
+  mutate(electionID = ifelse(is.na(DESCRICAO_ELEICAO), 17525,
+                                    electionID))
 
 ################################################################################
 # corrections
@@ -219,10 +219,11 @@ candidates.feather <- candidates.pending %>%
   filter(!row_number() %in% c(issue1, issue2))
 
 # write to disk
+save(candidates.pending, file = 'candidates.pending.Rda')
 write_feather(candidates.feather, path = './candidates.feather')
 
 # remove useless stuff
-rm(list = objects(pattern = '\\.election'))
+rm(list = objects(pattern = '\\.(2010|2012|2016)|election'))
 
 # run scraper on python (should take 20h to download everything)
 system('python 01_electoralCrime.py')

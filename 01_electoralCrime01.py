@@ -49,9 +49,9 @@ browser.implicitly_wait(60)
 candidates = feather.read_dataframe('candidates.feather')
 
 # run scraper for one random individual
-# tse_case(candidates.loc[1, 'electionYear'], candidates.loc[1, 'electionID'],
-#          candidates.loc[1, 'electoralUnitID'], candidates.loc[1, 'candidateID'], 
-#          browser)
+tse_case(candidates.loc[4101, 'electionYear'], candidates.loc[4101, 'electionID'],
+         candidates.loc[4101, 'electoralUnitID'], candidates.loc[4101, 'candidateID'], 
+         browser)
 
 # run scraper for 1,000 individuals pulled from random sample of candidates
 # create empty dataset to bind results
