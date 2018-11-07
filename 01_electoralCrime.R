@@ -225,15 +225,28 @@ write_feather(candidates.feather, path = './candidates.feather')
 # remove useless stuff
 rm(list = objects(pattern = '\\.(2010|2012|2016)|election'))
 
-# run scraper on python (should take 20h to download everything)
-system('python 01_electoralCrime.py')
+# run scraper on python (should take 20h to download everything; 2004 candidates
+# search is very slow)
+# system('python3 01_electoralCrime.py')
 
 ################################################################################
 # check
-# load results and check
-candidates.feather <- read_feather('candidateCases.feather')
-names(candidates.feather) <- candidates.feather[1,]
-candidates.feather %<>% slice(-1)
+# load results
+case.numbers <- read_feather('candidateCases.feather')
+
+# assign variable names
+names(case.numbers) <- case.numbers[1, ]
+
+# delete variable names from row
+case.numbers %<>% slice(-1)
+
+
+
+
+
+
+
+
 
 # check invalid case numbers (#1)
 invalid.cases <- candidates.feather %>%
