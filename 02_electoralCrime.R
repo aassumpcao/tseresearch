@@ -57,7 +57,7 @@ codebook <- codebook[4:18]
 
 ################################################################################
 # 2004 results wrangling
-# find 2016 files
+# find 2004 files
 files <- list.files('../2018 TSE Databank/', pattern = 'votacao_secao_2004_')
 paths <- paste0('../2018 TSE Databank/', files)
 
@@ -143,12 +143,96 @@ candidates2004 %<>%
   mutate(votes = ifelse(is.na(votes.x), votes.y, votes.x))
 
 ################################################################################
+# 2008 results wrangling
+# find 2008 files
+files <- list.files('../2018 TSE Databank/', pattern = 'votacao_secao_2008_')
+paths <- paste0('../2018 TSE Databank/', files)
+
+# unzip 2008 election files
+lapply(paths, unzip, exdir = './2008section')
+
+# wait for all files to be unzipped
+Sys.sleep(15)
+
+# get file names
+states <- list.files('./2008section', pattern = 'votacao')
+
+# for loop to load and merge all .txt files
+for (i in 1:length(states)) {
+  # create path for reading files
+  path <- paste0('./2008section/', states[i])
+  # define actions by sequence of files
+  if (i == 1) {
+    # if looping over first .txt file, create dataset
+    sections2008 <- read_delim(path, ";", escape_double = FALSE,
+      col_names = FALSE, locale = locale(encoding = "Latin1"), trim_ws = TRUE)
+  } else {
+    # if looping over any other file, load .txt and append
+    append <- read_delim(path, ";", escape_double = FALSE, col_names = FALSE,
+      locale = locale(encoding = "Latin1"), trim_ws = TRUE)
+    # append to 'sections2008'
+    sections2008 <- rbind(sections2008, append)
+  }
+  # print looping information
+  print(paste0('Iteration ', i, ' of ', length(states)))
+  # delete objects at the end of loop
+  if (i == length(states)) {rm(append, path, i)}
+}
+
+# assign names
+names(sections2008) <- codebook
+
+# # write to disk
+# save(sections2008, file = 'sections2008.Rda')
+
+# remove files
+unlink('./2008section', recursive = TRUE)
+
+# merge with vote count
+# filter candidates by election unit, year and candidate number
+cities <- candidates2008 %$% unique(SIGLA_UE)
+people <- candidates2008 %$% unique(NUMERO_CANDIDATO)
+
+# prepare valid results dataset
+results2008 %<>%
+  mutate(candidateID = SQ_CANDIDATO) %>%
+  group_by(SIGLA_UE, NUM_TURNO, candidateID) %>%
+  summarize(votes = sum(TOTAL_VOTOS)) %>%
+  mutate_all(as.character)
+
+# join candidates and valid results
+candidates2008 %<>%
+  mutate_all(as.character) %>%
+  mutate(NUM_TURNO = as.integer(NUM_TURNO)) %>%
+  mutate(candidateID = SEQUENCIAL_CANDIDATO) %>%
+  left_join(results2008, by = c('SIGLA_UE', 'candidateID', 'NUM_TURNO')) %>%
+  mutate(votes = ifelse(is.na(votes) | votes == 0, NA, votes))
+
+# prepare results-by-section dataset
+sections2008 %<>%
+  filter(SIGLA_UE %in% cities) %>%
+  filter(NUM_VOTAVEL %in% people) %>%
+  group_by(SIGLA_UE, NUM_TURNO, CODIGO_CARGO, NUM_VOTAVEL) %>%
+  summarize(votes = sum(QTDE_VOTOS))
+
+# join candidates and their results (by section)
+candidates2008 %<>%
+  mutate(
+    NUMERO_CANDIDATO = as.integer(NUMERO_CANDIDATO),
+    CODIGO_CARGO     = as.integer(CODIGO_CARGO)
+  ) %>%
+  left_join(sections2008, by = c('SIGLA_UE', 'NUM_TURNO', 'CODIGO_CARGO',
+   'NUMERO_CANDIDATO' = 'NUM_VOTAVEL'))
+
+# drop candidates who were not loaded on the electronic voting machine
+candidates2008 %<>%
+  filter(!is.na(votes.x) | !is.na(votes.y)) %>%
+  mutate(votes = ifelse(is.na(votes.x), votes.y, votes.x))
+
+################################################################################
 # 2012 results wrangling
 # unzip 2012 election files
 unzip('../2018 TSE Databank/votacao_secao_2012.zip', exdir = './2012section')
-
-# wait for all files to be unzipped
-Sys.sleep(20)
 
 # get file names
 states <- list.files('./2012section', pattern = 'votacao')
@@ -191,12 +275,16 @@ people <- candidates2012 %$% unique(NUMERO_CANDIDATO)
 
 # prepare valid results dataset
 results2012 %<>%
-  mutate(candidateID = as.character(SQ_CANDIDATO)) %>%
+  mutate(candidateID = SQ_CANDIDATO) %>%
   group_by(SIGLA_UE, NUM_TURNO, candidateID) %>%
-  summarize(votes = sum(TOTAL_VOTOS))
+  summarize(votes = sum(TOTAL_VOTOS)) %>%
+  mutate_all(as.character)
 
 # join candidates and valid results
 candidates2012 %<>%
+  mutate_all(as.character) %>%
+  mutate(NUM_TURNO = as.integer(NUM_TURNO)) %>%
+  mutate(candidateID = SEQUENCIAL_CANDIDATO) %>%
   left_join(results2012, by = c('SIGLA_UE', 'candidateID', 'NUM_TURNO')) %>%
   mutate(votes = ifelse(is.na(votes) | votes == 0, NA, votes))
 
@@ -208,12 +296,17 @@ sections2012 %<>%
   summarize(votes = sum(QTDE_VOTOS))
 
 # join candidates and results-by-section
-candidates2012 %<>% left_join(sections2012, by = c('SIGLA_UE' = 'SIGLA_UE',
-  'NUM_TURNO' = 'NUM_TURNO', 'NUMERO_CANDIDATO' = 'NUM_VOTAVEL',
-  'CODIGO_CARGO' = 'CODIGO_CARGO'))
+candidates2012 %<>%
+  mutate(
+    NUMERO_CANDIDATO = as.integer(NUMERO_CANDIDATO),
+    CODIGO_CARGO     = as.integer(CODIGO_CARGO)
+  ) %>%
+  left_join(sections2012, by = c('SIGLA_UE', 'NUM_TURNO', 'CODIGO_CARGO',
+   'NUMERO_CANDIDATO' = 'NUM_VOTAVEL'))
 
 # drop candidates who were not loaded on the electronic voting machine
-candidates2012 %<>% filter(!is.na(votes.x) | !is.na(votes.y)) %>%
+candidates2012 %<>%
+  filter(!is.na(votes.x) | !is.na(votes.y)) %>%
   mutate(votes = ifelse(is.na(votes.x), votes.y, votes.x))
 
 ################################################################################
@@ -226,7 +319,7 @@ paths <- paste0('../2018 TSE Databank/', files)
 lapply(paths, unzip, exdir = './2016section')
 
 # wait for all files to be unzipped
-Sys.sleep(20)
+Sys.sleep(15)
 
 # get file names
 states <- list.files('./2016section', pattern = 'votacao')
@@ -269,12 +362,16 @@ people <- candidates2016 %$% unique(NUMERO_CANDIDATO)
 
 # prepare valid results dataset
 results2016 %<>%
-  mutate(candidateID = as.character(SQ_CANDIDATO)) %>%
+  mutate(candidateID = SQ_CANDIDATO) %>%
   group_by(SIGLA_UE, NUM_TURNO, candidateID) %>%
-  summarize(votes = sum(TOTAL_VOTOS))
+  summarize(votes = sum(TOTAL_VOTOS)) %>%
+  mutate_all(as.character)
 
 # join candidates and valid results
 candidates2016 %<>%
+  mutate_all(as.character) %>%
+  mutate(NUM_TURNO = as.integer(NUM_TURNO)) %>%
+  mutate(candidateID = SEQUENCIAL_CANDIDATO) %>%
   left_join(results2016, by = c('SIGLA_UE', 'candidateID', 'NUM_TURNO')) %>%
   mutate(votes = ifelse(is.na(votes) | votes == 0, NA, votes))
 
@@ -286,18 +383,24 @@ sections2016 %<>%
   summarize(votes = sum(QTDE_VOTOS))
 
 # join candidates and results-by-section
-candidates2016 %<>% left_join(sections2016, by = c('SIGLA_UE' = 'SIGLA_UE',
-  'NUM_TURNO' = 'NUM_TURNO', 'NUMERO_CANDIDATO' = 'NUM_VOTAVEL',
-  'CODIGO_CARGO' = 'CODIGO_CARGO'))
+candidates2016 %<>%
+  mutate(
+    NUMERO_CANDIDATO = as.integer(NUMERO_CANDIDATO),
+    CODIGO_CARGO     = as.integer(CODIGO_CARGO)
+  ) %>%
+  left_join(sections2016, by = c('SIGLA_UE', 'NUM_TURNO', 'CODIGO_CARGO',
+   'NUMERO_CANDIDATO' = 'NUM_VOTAVEL'))
 
 # drop candidates who were not loaded on the electronic voting machine
-candidates2016 %<>% filter(!is.na(votes.x) | !is.na(votes.y)) %>%
+candidates2016 %<>%
+  filter(!is.na(votes.x) | !is.na(votes.y)) %>%
   mutate(votes = ifelse(is.na(votes.x), votes.y, votes.x))
 
 ################################################################################
 # wrangle final dataset
 # append 2012 and 2016 results
-candidates <- rbind(candidates2012, candidates2016)
+candidates <- rbind(candidates2004, candidates2008, candidates2012,
+                    candidates2016)
 
 # create sentence outcomes variable
 candidates %<>%
@@ -305,7 +408,7 @@ candidates %<>%
          appealCrime = ifelse(is.na(votes.x), 1, 0))
 
 # write to disk
-save(candidates, file = './candidates.results.Rda')
+save(candidates, file = './electoral.crime.Rda')
 
 # quit r
-q()
+q('no')
