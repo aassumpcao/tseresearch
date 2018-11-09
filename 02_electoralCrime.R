@@ -10,6 +10,12 @@
 # Andre Assumpcao
 # andre.assumpcao@gmail.com
 
+# # setwd if not working with RStudio projects
+# setwd(.)
+
+# clear environment
+rm(list = objects())
+
 # import statements
 library(tidyverse)
 library(magrittr)
@@ -21,16 +27,23 @@ library(pdftools)
 Sys.setenv(RETICULATE_PYTHON = '/anaconda3/bin/python')
 
 # load statements
-load('candidates.Rda')
+load('case.numbers.Rda')
+load('candidates.pending.Rda')
+load('results2004.Rda')
+load('results2008.Rda')
 load('results2012.Rda')
 load('results2016.Rda')
 
 ################################################################################
-# wrangle actions for both 2012 and 2016 elections
+# wrangle candidate datasets to match results
+# throw away candidates running for vice-mayor
+candidates.pending %<>% filter(CODIGO_CARGO != 12)
 
 # split dataset for easy calculation of results
-candidates2012 <- candidates %>% filter(ANO_ELEICAO == 2012)
-candidates2016 <- candidates %>% filter(ANO_ELEICAO == 2016)
+candidates2004 <- candidates.pending %>% filter(ANO_ELEICAO == 2004)
+candidates2008 <- candidates.pending %>% filter(ANO_ELEICAO == 2008)
+candidates2012 <- candidates.pending %>% filter(ANO_ELEICAO == 2012)
+candidates2016 <- candidates.pending %>% filter(ANO_ELEICAO == 2016)
 
 # extract column names from accompanying .pdf file
 codebook <- pdf_text('LEIAME.pdf')
@@ -41,6 +54,93 @@ codebook <- unlist(codebook[17])
 codebook %<>% substr(0, 17) %>% {sub('\\(\\*\\)', '', .)} %>% trimws()
 codebook <- codebook[which(codebook != '')]
 codebook <- codebook[4:18]
+
+################################################################################
+# 2004 results wrangling
+# find 2016 files
+files <- list.files('../2018 TSE Databank/', pattern = 'votacao_secao_2004_')
+paths <- paste0('../2018 TSE Databank/', files)
+
+# unzip 2004 election files
+lapply(paths, unzip, exdir = './2004section')
+
+# wait for all files to be unzipped
+Sys.sleep(15)
+
+# get file names
+states <- list.files('./2004section', pattern = 'votacao')
+
+# for loop to load and merge all .txt files
+for (i in 1:length(states)) {
+  # create path for reading files
+  path <- paste0('./2004section/', states[i])
+  # define actions by sequence of files
+  if (i == 1) {
+    # if looping over first .txt file, create dataset
+    sections2004 <- read_delim(path, ";", escape_double = FALSE,
+      col_names = FALSE, locale = locale(encoding = "Latin1"), trim_ws = TRUE)
+  } else {
+    # if looping over any other file, load .txt and append
+    append <- read_delim(path, ";", escape_double = FALSE, col_names = FALSE,
+      locale = locale(encoding = "Latin1"), trim_ws = TRUE)
+    # append to 'sections2004'
+    sections2004 <- rbind(sections2004, append)
+  }
+  # print looping information
+  print(paste0('Iteration ', i, ' of ', length(states)))
+  # delete objects at the end of loop
+  if (i == length(states)) {rm(append, path, i)}
+}
+
+# assign names
+names(sections2004) <- codebook
+
+# # write to disk
+# save(sections2004, file = 'sections2004.Rda')
+
+# remove files
+unlink('./2004section', recursive = TRUE)
+
+# merge with vote count
+# filter candidates by election unit, year and candidate number
+cities <- candidates2004 %$% unique(SIGLA_UE)
+people <- candidates2004 %$% unique(NUMERO_CANDIDATO)
+
+# prepare valid results dataset
+results2004 %<>%
+  mutate(candidateID = SQ_CANDIDATO) %>%
+  group_by(SIGLA_UE, NUM_TURNO, candidateID) %>%
+  summarize(votes = sum(TOTAL_VOTOS)) %>%
+  mutate_all(as.character)
+
+# join candidates and valid results
+candidates2004 %<>%
+  mutate_all(as.character) %>%
+  mutate(NUM_TURNO = as.integer(NUM_TURNO)) %>%
+  mutate(candidateID = SEQUENCIAL_CANDIDATO) %>%
+  left_join(results2004, by = c('SIGLA_UE', 'candidateID', 'NUM_TURNO')) %>%
+  mutate(votes = ifelse(is.na(votes) | votes == 0, NA, votes))
+
+# prepare results-by-section dataset
+sections2004 %<>%
+  filter(SIGLA_UE %in% cities) %>%
+  filter(NUM_VOTAVEL %in% people) %>%
+  group_by(SIGLA_UE, NUM_TURNO, CODIGO_CARGO, NUM_VOTAVEL) %>%
+  summarize(votes = sum(QTDE_VOTOS))
+
+# join candidates and their results (by section)
+candidates2004 %<>%
+  mutate(
+    NUMERO_CANDIDATO = as.integer(NUMERO_CANDIDATO),
+    CODIGO_CARGO     = as.integer(CODIGO_CARGO)
+  ) %>%
+  left_join(sections2004, by = c('SIGLA_UE', 'NUM_TURNO', 'CODIGO_CARGO',
+   'NUMERO_CANDIDATO' = 'NUM_VOTAVEL'))
+
+# drop candidates who were not loaded on the electronic voting machine
+candidates2004 %<>%
+  filter(!is.na(votes.x) | !is.na(votes.y)) %>%
+  mutate(votes = ifelse(is.na(votes.x), votes.y, votes.x))
 
 ################################################################################
 # 2012 results wrangling
@@ -61,7 +161,7 @@ for (i in 1:length(states)) {
   if (i == 1) {
     # if looping over first .txt file, create dataset
     sections2012 <- read_delim(path, ";", escape_double = FALSE,
-       col_names = FALSE, locale = locale(encoding = "Latin1"), trim_ws = TRUE)
+      col_names = FALSE, locale = locale(encoding = "Latin1"), trim_ws = TRUE)
   } else {
     # if looping over any other file, load .txt and append
     append <- read_delim(path, ";", escape_double = FALSE, col_names = FALSE,
@@ -138,8 +238,8 @@ for (i in 1:length(states)) {
   # define actions by sequence of files
   if (i == 1) {
     # if looping over first .txt file, create dataset
-    sections2016 <- read_delim(path, ";", escape_double = FALSE, col_names = FALSE,
-      locale = locale(encoding = "Latin1"), trim_ws = TRUE)
+    sections2016 <- read_delim(path, ";", escape_double = FALSE,
+      col_names = FALSE, locale = locale(encoding = "Latin1"), trim_ws = TRUE)
   } else {
     # if looping over any other file, load .txt and append
     append <- read_delim(path, ";", escape_double = FALSE, col_names = FALSE,

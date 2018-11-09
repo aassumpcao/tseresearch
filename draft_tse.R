@@ -163,8 +163,15 @@ system2('pwd')
 system('python 01_electoralCrime.py')
 
 
-candidates.feather %>% filter(row_number() %in% c(4101:4103))
-candidates.pending %$% table(ANO_ELEICAO)
+case.numbers %>%
+  filter(str_detect(caseNum, 'Inform')) %>%
+  select(electoralUnitID, candidateID) %>%
+  left_join(mutate(candidates.pending,
+                   SEQUENCIAL_CANDIDATO = as.character(SEQUENCIAL_CANDIDATO)),
+            by = c('electoralUnitID' = 'SIGLA_UE',
+                   'candidateID' = 'SEQUENCIAL_CANDIDATO')) %>%
+  filter(CODIGO_CARGO != 12) %>%
+  arrange(as.numeric(electoralUnitID), as.numeric(candidateID)) %>%
+  View()
 
 
-candidates.feather %>% filter(is.na(candidateID))
