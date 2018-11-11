@@ -12,8 +12,8 @@
 # Andre Assumpcao
 # andre.assumpcao@gmail.com
 
-# # setwd if not working with RStudio projects
-# setwd(.)
+# # clear environment if not working with RStudio projects
+# rm(list = objects())
 
 # clear environment
 rm(list = objects())

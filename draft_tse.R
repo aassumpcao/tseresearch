@@ -175,3 +175,14 @@ case.numbers %>%
   View()
 
 
+load('case.numbers.Rda')
+load('candidates.pending.Rda')
+
+case.numbers %>% names()
+candidates.pending %>% names()
+
+candidates.pending %>%
+  mutate_all(as.character) %>%
+  left_join(case.numbers, by = c('ANO_ELEICAO' = 'electionYear',
+                                 'SIGLA_UE' = 'electoralUnitID',
+                                 'SEQUENCIAL_CANDIDATO' = 'candidateID'))
