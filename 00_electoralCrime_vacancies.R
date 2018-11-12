@@ -82,6 +82,9 @@ names(vacancies2004) <- codebook
 names(vacancies2008) <- codebook
 names(vacancies2012) <- codebook
 
+# delete files on disk
+unlink('./vacancies', recursive = TRUE)
+
 # write to file
 save(vacancies2004, file = 'vacancies2004.Rda')
 save(vacancies2008, file = 'vacancies2008.Rda')

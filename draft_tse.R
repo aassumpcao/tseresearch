@@ -186,3 +186,32 @@ candidates.pending %>%
   left_join(case.numbers, by = c('ANO_ELEICAO' = 'electionYear',
                                  'SIGLA_UE' = 'electoralUnitID',
                                  'SEQUENCIAL_CANDIDATO' = 'candidateID'))
+
+
+results2004 %>% names()
+results2008 %>% names()
+results2012 %>% names()
+results2016 %>% names()
+
+results2004 %>% filter(CODIGO_CARGO == 11) %$% unique(DESC_SIT_CAND_TOT)
+results2008 %>% filter(CODIGO_CARGO == 11) %$% unique(DESC_SIT_CAND_TOT)
+results2012 %>% filter(CODIGO_CARGO == 11) %$% unique(DESC_SIT_CAND_TOT)
+results2016 %>% filter(CODIGO_CARGO == 11) %$% unique(DESC_SIT_CAND_TOT)
+
+sections2004 %>% names()
+
+load('vacancies2004.Rda')
+load('vacancies2008.Rda')
+load('vacancies2012.Rda')
+load('vacancies2016.Rda')
+
+vacancies2004 %$% table(CODIGO_CARGO)
+vacancies2008 %$% table(CODIGO_CARGO)
+vacancies2012 %$% table(CODIGO_CARGO)
+vacancies2016 %$% table(CD_CARGO)
+
+vacancies2016 %>% names()
+candidates %>% names()
+candidates %$% table(ANO_ELEICAO)
+
+View(vacancies2004)
