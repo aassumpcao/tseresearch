@@ -212,6 +212,46 @@ vacancies2016 %$% table(CD_CARGO)
 
 vacancies2016 %>% names()
 candidates %>% names()
-candidates %$% table(ANO_ELEICAO)
+candidates2004 %$% table(QTDE_VAGAS)
+
+vacancies2016 %>% filter(SG_UF == 'AM') %>% View()
 
 View(vacancies2004)
+
+candidates2004 %>% filter(is.na(QTDE_VAGAS))
+candidates2008 %>% filter(is.na(QTDE_VAGAS))
+candidates2012 %>% filter(is.na(QTDE_VAGAS))
+candidates2016 %>% filter(is.na(QT_VAGAS))
+
+sections2016 %>%
+  filter(!(NUM_VOTAVEL %in% c(95, 96, 97))) %>%
+  group_by(SIGLA_UE, CODIGO_CARGO, NUM_TURNO) %>%
+  arrange(SIGLA_UE, CODIGO_CARGO, NUM_TURNO, desc(votes)) %>% View()
+
+total2016 %>% filter(SIGLA_UE == '00019')
+
+20772/11
+
+vacancies2016 %>% filter(SG_UE == 19) %>% select(3:7, CD_CARGO, QT_VAGAS)
+
+# # join with office vacancies so that we know how many spots were available in
+# # each race
+# candidates2004 <- candidates %>%
+#   filter(ANO_ELEICAO == 2004) %>%
+#   left_join(vacancies2004, by = c('SIGLA_UE', 'CODIGO_CARGO')) %>%
+#   select(-c(54:60))
+# candidates2008 <- candidates %>%
+#   filter(ANO_ELEICAO == 2008) %>%
+#   left_join(vacancies2008, by = c('SIGLA_UE', 'CODIGO_CARGO')) %>%
+#   select(-c(54:60))
+# candidates2012 <- candidates %>%
+#   filter(ANO_ELEICAO == 2012) %>%
+#   left_join(vacancies2012, by = c('SIGLA_UE', 'CODIGO_CARGO')) %>%
+#   select(-c(54:60))
+# candidates2016 <- candidates %>%
+#   filter(ANO_ELEICAO == 2016) %>%
+#   mutate(SIGLA_UE = as.integer(SIGLA_UE)) %>%
+#   left_join(vacancies2016,
+#             by = c('SIGLA_UE' = 'SG_UE', 'CODIGO_CARGO' = 'CD_CARGO')
+#   ) %>%
+#   select(-c(54:65))
