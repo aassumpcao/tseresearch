@@ -36,19 +36,19 @@ load('vacancies2016.Rda')
 # votes: aggregate votes for all candidates in election
 sections2004 %<>%
   group_by(SIGLA_UE, NUM_TURNO, CODIGO_CARGO, NUM_VOTAVEL) %>%
-  summarize(votes = sum(QTDE_VOTOS)) %>%
+  summarize(votes2 = sum(QTDE_VOTOS)) %>%
   arrange(SIGLA_UE, NUM_TURNO, CODIGO_CARGO, desc(votes))
 sections2008 %<>%
   group_by(SIGLA_UE, NUM_TURNO, CODIGO_CARGO, NUM_VOTAVEL) %>%
-  summarize(votes = sum(QTDE_VOTOS)) %>%
+  summarize(votes2 = sum(QTDE_VOTOS)) %>%
   arrange(SIGLA_UE, NUM_TURNO, CODIGO_CARGO, desc(votes))
 sections2012 %<>%
   group_by(SIGLA_UE, NUM_TURNO, CODIGO_CARGO, NUM_VOTAVEL) %>%
-  summarize(votes = sum(QTDE_VOTOS)) %>%
+  summarize(votes2 = sum(QTDE_VOTOS)) %>%
   arrange(SIGLA_UE, NUM_TURNO, CODIGO_CARGO, desc(votes))
 sections2016 %<>%
   group_by(SIGLA_UE, NUM_TURNO, CODIGO_CARGO, NUM_VOTAVEL) %>%
-  summarize(votes = sum(QTDE_VOTOS)) %>%
+  summarize(votes2 = sum(QTDE_VOTOS)) %>%
   arrange(SIGLA_UE, NUM_TURNO, CODIGO_CARGO, desc(votes))
 
 # vacancies: drop unnecessary rows from office vacancies datasets
@@ -73,7 +73,7 @@ elections2004 <- sections2004 %>%
   filter(!(NUM_VOTAVEL %in% c(95, 96, 97))) %>%
   group_by(SIGLA_UE, CODIGO_CARGO, NUM_TURNO, QTDE_VAGAS) %>%
   summarize(total_votes = sum(votes)) %>%
-  mutate(election_votes = case_when(CODIGO_CARGO == 11 ~ floor(total_votes / 2),
+  mutate(votes1 = case_when(CODIGO_CARGO == 11 ~ floor(total_votes / 2),
     CODIGO_CARGO == 13 ~ floor(total_votes / QTDE_VAGAS))
   )
 elections2008 <- sections2008 %>%
@@ -81,7 +81,7 @@ elections2008 <- sections2008 %>%
   filter(!(NUM_VOTAVEL %in% c(95, 96, 97))) %>%
   group_by(SIGLA_UE, CODIGO_CARGO, NUM_TURNO, QTDE_VAGAS) %>%
   summarize(total_votes = sum(votes)) %>%
-  mutate(election_votes = case_when(CODIGO_CARGO == 11 ~ floor(total_votes / 2),
+  mutate(votes1 = case_when(CODIGO_CARGO == 11 ~ floor(total_votes / 2),
     CODIGO_CARGO == 13 ~ floor(total_votes / QTDE_VAGAS))
   )
 elections2012 <- sections2012 %>%
@@ -89,7 +89,7 @@ elections2012 <- sections2012 %>%
   filter(!(NUM_VOTAVEL %in% c(95, 96, 97))) %>%
   group_by(SIGLA_UE, CODIGO_CARGO, NUM_TURNO, QTDE_VAGAS) %>%
   summarize(total_votes = sum(votes)) %>%
-  mutate(election_votes = case_when(CODIGO_CARGO == 11 ~ floor(total_votes / 2),
+  mutate(votes1 = case_when(CODIGO_CARGO == 11 ~ floor(total_votes / 2),
     CODIGO_CARGO == 13 ~ floor(total_votes / QTDE_VAGAS))
   )
 elections2016 <- sections2016 %>%
@@ -101,11 +101,63 @@ elections2016 <- sections2016 %>%
   filter(!(NUM_VOTAVEL %in% c(95, 96, 97))) %>%
   group_by(SIGLA_UE, CODIGO_CARGO, NUM_TURNO, QT_VAGAS) %>%
   summarize(total_votes = sum(votes)) %>%
-  mutate(election_votes = case_when(CODIGO_CARGO == 11 ~ floor(total_votes / 2),
+  mutate(votes1 = case_when(CODIGO_CARGO == 11 ~ floor(total_votes / 2),
     CODIGO_CARGO == 13 ~ floor(total_votes / QT_VAGAS))
   )
 
 # compute necessary votes using criterion 3
+elections2004 <- sections2004 %>%
+  mutate(rank = order(votes, decreasing = TRUE)) %>%
+  {left_join(elections2004, .,
+             by = c('SIGLA_UE', 'NUM_TURNO', 'CODIGO_CARGO')
+  )} %>%
+  group_by(SIGLA_UE, NUM_TURNO, CODIGO_CARGO) %>%
+  filter(QTDE_VAGAS == rank) %>%
+  ungroup()
+elections2008 <- sections2008 %>%
+  mutate(rank = order(votes, decreasing = TRUE)) %>%
+  {left_join(elections2008, .,
+             by = c('SIGLA_UE', 'NUM_TURNO', 'CODIGO_CARGO')
+  )} %>%
+  group_by(SIGLA_UE, NUM_TURNO, CODIGO_CARGO) %>%
+  filter(QTDE_VAGAS == rank) %>%
+  ungroup()
+elections2012 <- sections2012 %>%
+  mutate(rank = order(votes, decreasing = TRUE)) %>%
+  {left_join(elections2012, .,
+             by = c('SIGLA_UE', 'NUM_TURNO', 'CODIGO_CARGO')
+  )} %>%
+  group_by(SIGLA_UE, NUM_TURNO, CODIGO_CARGO) %>%
+  filter(QTDE_VAGAS == rank) %>%
+  ungroup()
+elections2016 <- sections2016 %>%
+  ungroup() %>%
+  mutate(SIGLA_UE = as.integer(SIGLA_UE)) %>%
+  group_by(SIGLA_UE, NUM_TURNO, CODIGO_CARGO) %>%
+  mutate(rank = order(votes, decreasing = TRUE)) %>%
+  {left_join(elections2016, .,
+             by = c('SIGLA_UE', 'NUM_TURNO', 'CODIGO_CARGO')
+  )} %>%
+  group_by(SIGLA_UE, NUM_TURNO, CODIGO_CARGO) %>%
+  filter(QT_VAGAS == rank) %>%
+  ungroup()
+
+# mutate all electoral unit identifiers
+elections2004 %<>% mutate(SIGLA_UE = as.character(SIGLA_UE))
+elections2008 %<>% mutate(SIGLA_UE = as.character(SIGLA_UE))
+elections2012 %<>% mutate(SIGLA_UE = as.character(SIGLA_UE))
+elections2016 %<>%
+  mutate(SIGLA_UE = str_pad(as.character(SIGLA_UE), 5, 'left', '0'),
+         QTDE_VAGAS = QT_VAGAS) %>%
+  select(-QT_VAGAS) %>%
+  select(SIGLA_UE, CODIGO_CARGO, NUM_TURNO, QTDE_VAGAS, everything())
+
+# build final election dataset
+elections <- rbind(elections2004, elections2008, elections2012, elections2016)
+
+# define last conditions for total votes
+elections %<>% mutate(election_votes = ifelse(CODIGO_CARGO == 13 &
+  (votes2 >= votes1), votes2, votes1))
 
 
 

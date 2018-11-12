@@ -210,7 +210,7 @@ vacancies2008 %$% table(CODIGO_CARGO)
 vacancies2012 %$% table(CODIGO_CARGO)
 vacancies2016 %$% table(CD_CARGO)
 
-vacancies2016 %>% names()
+vacancies2004 %>% names()
 candidates %>% names()
 candidates2004 %$% table(QTDE_VAGAS)
 
@@ -229,6 +229,8 @@ sections2016 %>%
   arrange(SIGLA_UE, CODIGO_CARGO, NUM_TURNO, desc(votes)) %>% View()
 
 total2016 %>% filter(SIGLA_UE == '00019')
+
+sections2004 %>% names()
 
 20772/11
 
@@ -255,3 +257,22 @@ vacancies2016 %>% filter(SG_UE == 19) %>% select(3:7, CD_CARGO, QT_VAGAS)
 #             by = c('SIGLA_UE' = 'SG_UE', 'CODIGO_CARGO' = 'CD_CARGO')
 #   ) %>%
 #   select(-c(54:65))
+
+
+sections2004
+candidates
+elections2004 %>% names()
+elections2008 %>% names()
+elections2012 %>% names()
+elections2016 %>% names()
+
+left_join(
+  mutate(sections2004, rank = order(votes, decreasing = TRUE)),
+  elections2004,
+  by = c('SIGLA_UE', 'NUM_TURNO', 'CODIGO_CARGO')
+) %>%
+group_by(SIGLA_UE, NUM_TURNO, CODIGO_CARGO) %>%
+filter(QTDE_VAGAS == rank)
+
+
+?str_pad
