@@ -274,5 +274,3 @@ left_join(
 group_by(SIGLA_UE, NUM_TURNO, CODIGO_CARGO) %>%
 filter(QTDE_VAGAS == rank)
 
-
-?str_pad
