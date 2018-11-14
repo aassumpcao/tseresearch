@@ -35,6 +35,23 @@ load('elections.Rda')
 # load('vacancies2012.Rda')
 # load('vacancies2016.Rda')
 
+# define function to calculate age from dob
+calc_age <- function(birthDate, refDate = Sys.Date()) {
+  # Args:
+  #   birthDate: argument taking up date of birth (YMD format)
+  #   refDate:   reference date to calculate age (also YMD format)
+
+  # Returns:
+  #   individual's age in years
+
+  # Body:
+  #   make one call to lubridate functions
+  time <- lubridate::as.period(lubridate::interval(birthDate, refDate), 'year')
+
+  #   return year element of period object
+  return(time$year)
+}
+
 # ##############################################################################
 # # wrangle datasets used for analysis
 # # votes: aggregate votes for all candidates in election
@@ -242,8 +259,52 @@ analysis <- candidates %>%
 
 ################################################################################
 # prepare covariates for summary statistics
+#   2. age
+#   3. gender
+#   4. education
+#   5. marital status
+#   6. ethnicity             - not available before 2016
+#   7. campaign expenditures - not available for preliminary analysis
+#   8. candidate's political experience
 
+# wrangle age
+analysis %<>%
+  mutate(dob = lubridate::dmy(candidate.dob), candidate.dob = dob) %>%
+  mutate(age = case_when(election.year == 2004 ~ calc_age(dob, '2004-10-03'),
+                         election.year == 2008 ~ calc_age(dob, '2008-10-05'),
+                         election.year == 2012 ~ calc_age(dob, '2012-10-07'),
+                         election.year == 2016 ~ calc_age(dob, '2016-10-02'))
+  ) %>%
+  mutate(age = ifelse(is.na(age), as.integer(mean(age, na.rm = TRUE)), age)) %>%
+  mutate(age = ifelse(age > 86, 2008 - age, age), candidate.age = age) %>%
+  select(-age, -dob)
 
+# wrangle gender
+analysis %<>%
+  mutate(candidate.male = ifelse(candidate.gender.ID != 4, 1, 0)) %>%
+  select(1:20, candidate.male, 23:37)
+
+# wrangle education
+analysis %<>%
+  select(-candidate.education.ID) %>%
+  mutate(candidate.education = str_remove(candidate.education, 'ENSINO')) %>%
+  mutate(candidate.education = str_trim(candidate.education)) %>%
+  mutate(candidate.education = ifelse(candidate.education == 'NÃO INFORMADO',
+                                      'SUPERIOR COMPLETO', candidate.education))
+
+# wrangle marital status
+analysis %<>%
+  mutate(
+    candidate.maritalstatus = ifelse(candidate.maritalstatus == 'NÃO INFORMADO',
+                                     'SOLTEIRO(A)', candidate.maritalstatus)
+  ) %>%
+  select(-candidate.maritalstatus.ID)
+
+# wrangle political experience
+analysis %>%
+  mutate(candidate.occupation = iconv(candidate.occupation,'Latin1','ASCII'))%>%
+  mutate(candidate.experience = str_detect(candidate.occupation,
+    'VEREADOR|PREFEITO|DEPUTADO|GOVERNADOR|SENADOR|PRESIDENTE'))
 
 
 ################################################################################

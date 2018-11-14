@@ -249,15 +249,18 @@ save(electoral.crimes, file = './electoral.crimes.Rda')
 # quit r
 q('no')
 
-# join and rearrange variables
+# join, mutate, and rearrange variables
 analysis <- candidates %>%
   left_join(elections, by = c('election.year', 'election.stage',
     'election.ID', 'office.ID')) %>%
   mutate(
-    candidate.votes = as.integer(candidate.votes),
+    candidate.votes   = as.integer(candidate.votes),
     candidate.elected = ifelse(candidate.votes >= votes.foroffice, 1, 0)) %>%
   select(
     contains('election'), contains('office'), contains('votes'),
     contains('candidate'), contains('candidacy'), contains('party')
   )
 
+analysis %>% names()
+
+analysis %$% table(candidate.occupation)

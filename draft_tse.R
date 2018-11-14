@@ -266,6 +266,8 @@ elections2008 %>% names()
 elections2012 %>% names()
 elections2016 %>% names()
 
+analysis %>% names()
+
 left_join(
   mutate(sections2004, rank = order(votes, decreasing = TRUE)),
   elections2004,
@@ -274,3 +276,31 @@ left_join(
 group_by(SIGLA_UE, NUM_TURNO, CODIGO_CARGO) %>%
 filter(QTDE_VAGAS == rank)
 
+analysis %$% table(candidate.dob, election.year)
+
+analysis %>%
+  mutate(candidate.dob = lubridate::dmy(candidate.dob))
+
+
+
+
+as.period(interval('1950-10-3', '2004-10-03'), unit = "year")$year
+
+calc_age('1950-10-3', '2004-10-03')
+
+# define function to calculate age from dob
+calc_age <- function(birthDate, refDate = Sys.Date()) {
+  # Args:
+  #   birthDate: argument taking up date of birth (YMD format)
+  #   refDate:   reference date to calculate age (also YMD format)
+
+  # Returns:
+  #   individual's age in years
+
+  # Body:
+  #   make one call to lubridate functions
+  period <- as.period(interval(birthDate, refDate),
+                      unit = "year")
+  #   return year element of period object
+  return(period$year)
+}
