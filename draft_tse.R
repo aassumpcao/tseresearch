@@ -276,31 +276,43 @@ left_join(
 group_by(SIGLA_UE, NUM_TURNO, CODIGO_CARGO) %>%
 filter(QTDE_VAGAS == rank)
 
-analysis %$% table(candidate.dob, election.year)
+analysis %$% table(is.na(candidate.dob), election.year)
 
-analysis %>%
-  mutate(candidate.dob = lubridate::dmy(candidate.dob))
-
+analysis %$% table(candidate.gender.ID)
 
 
+analysis %$% table(candidate.experience)
 
-as.period(interval('1950-10-3', '2004-10-03'), unit = "year")$year
+analysis %$% table(candidate.education, election.year)
 
-calc_age('1950-10-3', '2004-10-03')
+analysis %$% table(candidate.maritalstatus)
 
-# define function to calculate age from dob
-calc_age <- function(birthDate, refDate = Sys.Date()) {
-  # Args:
-  #   birthDate: argument taking up date of birth (YMD format)
-  #   refDate:   reference date to calculate age (also YMD format)
 
-  # Returns:
-  #   individual's age in years
+names(analysis)
 
-  # Body:
-  #   make one call to lubridate functions
-  period <- as.period(interval(birthDate, refDate),
-                      unit = "year")
-  #   return year element of period object
-  return(period$year)
-}
+
+fit <- lm(outcome.elected ~ candidate.age + candidate.male, data = analysis)
+
+
+first.stage  <- lm(candidacy.invalid.ontrial ~ candidacy.invalid.onappeal + candidate.occupation.ID, data = analysis)
+second.stage <- ivreg(outcome.elected ~ candidacy.invalid.ontrial | candidacy.invalid.onappeal, data = analysis)
+ols  <- lm(outcome.elected ~ candidacy.invalid.ontrial, data = analysis)
+
+first.stage  <- lm(candidacy.invalid.ontrial ~ candidacy.invalid.onappeal, data = analysis)
+second.stage <- ivreg(outcome.distance ~ candidacy.invalid.ontrial | candidacy.invalid.onappeal, data = analysis)
+ols  <- lm(outcome.distance ~ candidacy.invalid.ontrial, data = analysis)
+
+first.stage  <- lm(candidacy.invalid.ontrial ~ candidacy.invalid.onappeal, data = analysis)
+second.stage <- ivreg(outcome.share ~ candidacy.invalid.ontrial | candidacy.invalid.onappeal, data = analysis)
+ols  <- lm(outcome.share ~ candidacy.invalid.ontrial, data = analysis)
+
+
+
+
+summary(second.stage, diagnostics = TRUE)
+stargazer::stargazer(first.stage, second.stage, ols, type = 'text', keep = 'trial|appeal')
+stargazer::stargazer(fit, type = 'text')
+1summary(fit)
+
+
+?stargazer

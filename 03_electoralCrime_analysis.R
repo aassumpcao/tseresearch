@@ -19,6 +19,7 @@
 # import statements
 library(tidyverse)
 library(magrittr)
+library(AER)
 
 # load datasets for analysis
 load('candidates.Rda')
@@ -290,21 +291,25 @@ analysis %<>%
   mutate(candidate.education = str_remove(candidate.education, 'ENSINO')) %>%
   mutate(candidate.education = str_trim(candidate.education)) %>%
   mutate(candidate.education = ifelse(candidate.education == 'NÃO INFORMADO',
-                                      'SUPERIOR COMPLETO', candidate.education))
+                                      'SUPERIOR COMPLETO', candidate.education)
+  )
 
 # wrangle marital status
 analysis %<>%
-  mutate(
-    candidate.maritalstatus = ifelse(candidate.maritalstatus == 'NÃO INFORMADO',
-                                     'SOLTEIRO(A)', candidate.maritalstatus)
+  mutate(candidate.maritalstatus = ifelse(
+    candidate.maritalstatus == 'NÃO INFORMADO',
+    'SOLTEIRO(A)',
+    candidate.maritalstatus)
   ) %>%
   select(-candidate.maritalstatus.ID)
 
+# define vector for finding political occupations
+politicians <- 'VEREADOR|PREFEITO|DEPUTADO|GOVERNADOR|SENADOR|PRESIDENTE'
+
 # wrangle political experience
-analysis %>%
+analysis %<>%
   mutate(candidate.occupation = iconv(candidate.occupation,'Latin1','ASCII'))%>%
-  mutate(candidate.experience = str_detect(candidate.occupation,
-    'VEREADOR|PREFEITO|DEPUTADO|GOVERNADOR|SENADOR|PRESIDENTE'))
+  mutate(candidate.experience = str_detect(candidate.occupation, politicians))
 
 
 ################################################################################
