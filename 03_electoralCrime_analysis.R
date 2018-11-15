@@ -69,6 +69,22 @@ cse <- function(reg) {
   return(rob)
 }
 
+# define function to calculate corrected SEs for IV regression
+ivse <- function(reg) {
+  # Args:
+  #   reg: IV regression object
+
+  # Returns:
+  #   matrix of robust standard errors
+
+  # Body:
+  #   call to robust.se
+  rob <- ivpack::robust.se(reg)[,2]
+
+  #   return matrix
+  return(rob)
+}
+
 # ##############################################################################
 # # wrangle datasets used for analysis
 # # votes: aggregate votes for all candidates in election
@@ -276,13 +292,13 @@ analysis <- candidates %>%
 
 ################################################################################
 # prepare covariates for summary statistics
-#   2. age
-#   3. gender
-#   4. education
-#   5. marital status
-#   6. ethnicity             - not available before 2016
-#   7. campaign expenditures - not available for preliminary analysis
-#   8. candidate's political experience
+#   1. age
+#   2. gender
+#   3. education
+#   4. marital status
+#   5. ethnicity             - not available before 2016
+#   6. campaign expenditures - not available for preliminary analysis
+#   7. candidate's political experience
 
 # wrangle age
 analysis %<>%
@@ -313,11 +329,17 @@ analysis %<>%
 # wrangle marital status
 analysis %<>%
   mutate(candidate.maritalstatus = ifelse(
-    candidate.maritalstatus == 'NÃO INFORMADO',
-    'SOLTEIRO(A)',
+    candidate.maritalstatus == 'NÃO INFORMADO', 'SOLTEIRO(A)',
     candidate.maritalstatus)
   ) %>%
   select(-candidate.maritalstatus.ID)
+
+# wrangle candidacy expenditures
+analysis %<>%
+  mutate(candidacy.expenditures = as.integer(candidacy.expenditures)) %>%
+  mutate(candidacy.expenditures = replace_na(
+    candidacy.expenditures, mean(candidacy.expenditures, na.rm = TRUE))
+  )
 
 # define vector for finding political occupations
 politicians <- 'VEREADOR|PREFEITO|DEPUTADO|GOVERNADOR|SENADOR|PRESIDENTE'
@@ -325,24 +347,114 @@ politicians <- 'VEREADOR|PREFEITO|DEPUTADO|GOVERNADOR|SENADOR|PRESIDENTE'
 # wrangle political experience
 analysis %<>%
   mutate(candidate.occupation = iconv(candidate.occupation,'Latin1','ASCII'))%>%
-  mutate(candidate.experience = str_detect(candidate.occupation, politicians))
+  mutate(candidate.experience = case_when(
+    str_detect(candidate.occupation, politicians) == TRUE  ~ 1,
+    str_detect(candidate.occupation, politicians) == FALSE ~ 0,
+    is.na(str_detect(candidate.occupation, politicians))   ~ 0)
+  )
 
-################################################################################
-# produce summary statistics table
-
-################################################################################
 # transform variable type to factor
 analysis %<>% mutate_at(vars(matches('male|education|maritalstatus')), factor)
 
+################################################################################
+# produce summary statistics table
+# define outcomes
+outcomes   <- c('outcome.elected', 'outcome.distance', 'outcome.share')
+
+# define instruments
+instrumented <- 'candidacy.invalid.ontrial'
+instrument   <- 'candidacy.invalid.onappeal'
+
+# define independent variables
+variables  <- c('candidate.age', 'candidate.male', 'candidate.education',
+                'candidate.maritalstatus', 'candidate.experience',
+                'candidacy.expenditures')
+
+# define labels for independent variables
+var.labels <- c('Age', 'Male', 'Level of Education', 'Marital Status',
+                'Political Experience', 'Campaign Expenditures')
+
+################################################################################
+# run preliminary analysis
+# define ols models for all outcomes
+ols0 <- outcomes %>% paste0(., ' ~ ', instrumented)
+ols1 <- outcomes %>%
+  paste0(., ' ~ ', instrumented, ' + ', paste0(variables, collapse = ' + '))
+
+# define reduced-form models for all outcomes
+red0 <- outcomes %>% paste0(., ' ~ ', instrument)
+red1 <- outcomes %>%
+  paste0(., ' ~ ', instrument, ' + ', paste0(variables, collapse = ' + '))
+
+# define 2sls models for all outcomes
+iv0 <- outcomes %>% paste0(., ' ~ ', instrumented, ' | ', instrument)
+iv1 <- outcomes %>% paste0(., ' ~ ', instrumented, ' | ', instrument, ' + ',
+                           paste0(variables, collapse = ' + '))
 
 
-# run first and second stage regressions
-ols <- lm(outcome.elected ~ candidacy.invalid.ontrial, data = analysis)
-stargazer::stargazer(ols, e      = list(cse(ols)),
-                          title  = "OLS Regression",
-                          type   = "text",
-                          df     = FALSE,
-                          digits = 5)
+# run regressions for ols without covariates
+for (i in 1:length(ols0)) {
+
+  # define formula from ols vector
+  formula <- as.formula(ols0[i])
+
+  # run regression using formula above
+  reg <- lm(formula, data = analysis)
+
+  # assign new name
+  assign(paste0('ols0.outcome', i), reg)
+
+  # remove useless objects
+  if (i == length(ols0)) {rm(reg, i, formula)}
+}
+
+# run regressions for ols with covariates
+for (i in 1:length(ols1)) {
+
+  # define formula from ols vector
+  formula <- as.formula(ols1[i])
+
+  # run regression using formula above
+  reg <- lm(formula, data = analysis)
+
+  # assign new name
+  assign(paste0('ols1.outcome', i), reg)
+
+  # remove useless objects
+  if (i == length(ols1)) {rm(reg, i, formula)}
+}
+# run regressions for ols without covariates
+for (i in 1:length(ols0)) {
+
+  # define formula from ols vector
+  formula <- as.formula(ols0[i])
+
+  # run regression using formula above
+  reg <- lm(formula, data = analysis)
+
+  # assign new name
+  assign(paste0('ols0.outcome', i), reg)
+
+  # remove useless objects
+  if (i == length(ols0)) {rm(reg, i, formula)}
+}
+
+# run regressions for ols with covariates
+for (i in 1:length(ols1)) {
+
+  # define formula from ols vector
+  formula <- as.formula(ols1[i])
+
+  # run regression using formula above
+  reg <- lm(formula, data = analysis)
+
+  # assign new name
+  assign(paste0('ols1.outcome', i), reg)
+
+  # remove useless objects
+  if (i == length(ols1)) {rm(reg, i, formula)}
+}
+
 
 
 # # quit
