@@ -288,7 +288,10 @@ analysis %$% table(candidate.education, election.year)
 analysis %$% table(candidate.maritalstatus)
 
 
-names(analysis)
+analysis %>% str()
+
+
+
 
 
 fit <- lm(outcome.elected ~ candidate.age + candidate.male, data = analysis)

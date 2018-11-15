@@ -53,6 +53,22 @@ calc_age <- function(birthDate, refDate = Sys.Date()) {
   return(time$year)
 }
 
+# define function to calculate corrected SEs for OLS regression
+cse <- function(reg) {
+  # Args:
+  #   reg: regression object
+
+  # Returns:
+  #   matrix of robust standard errors
+
+  # Body:
+  #   call to vcovHC
+  rob <- sqrt(diag(sandwich::vcovHC(reg, type = "HC1")))
+
+  #   return matrix
+  return(rob)
+}
+
 # ##############################################################################
 # # wrangle datasets used for analysis
 # # votes: aggregate votes for all candidates in election
@@ -311,13 +327,23 @@ analysis %<>%
   mutate(candidate.occupation = iconv(candidate.occupation,'Latin1','ASCII'))%>%
   mutate(candidate.experience = str_detect(candidate.occupation, politicians))
 
-
 ################################################################################
 # produce summary statistics table
 
 ################################################################################
+# transform variable type to factor
+analysis %<>% mutate_at(vars(matches('male|education|maritalstatus')), factor)
+
+
+
 # run first and second stage regressions
+ols <- lm(outcome.elected ~ candidacy.invalid.ontrial, data = analysis)
+stargazer::stargazer(ols, e      = list(cse(ols)),
+                          title  = "OLS Regression",
+                          type   = "text",
+                          df     = FALSE,
+                          digits = 5)
+
 
 # # quit
 # q('no')
-
