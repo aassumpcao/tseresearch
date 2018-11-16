@@ -405,7 +405,7 @@ for (i in 1:length(ols0)) {
   assign(paste0('ols0.outcome', i), reg)
 
   # remove useless objects
-  if (i == length(ols0)) {rm(reg, i, formula)}
+  if (i == length(ols0)) {rm(reg, i, formula, ols0)}
 }
 
 # run regressions for ols with covariates
@@ -421,41 +421,184 @@ for (i in 1:length(ols1)) {
   assign(paste0('ols1.outcome', i), reg)
 
   # remove useless objects
-  if (i == length(ols1)) {rm(reg, i, formula)}
+  if (i == length(ols1)) {rm(reg, i, formula, ols1)}
 }
-# run regressions for ols without covariates
-for (i in 1:length(ols0)) {
+
+# run regressions for reduced-form without covariates
+for (i in 1:length(red0)) {
 
   # define formula from ols vector
-  formula <- as.formula(ols0[i])
+  formula <- as.formula(red0[i])
 
   # run regression using formula above
   reg <- lm(formula, data = analysis)
 
   # assign new name
-  assign(paste0('ols0.outcome', i), reg)
+  assign(paste0('red0.outcome', i), reg)
 
   # remove useless objects
-  if (i == length(ols0)) {rm(reg, i, formula)}
+  if (i == length(red0)) {rm(reg, i, formula, red0)}
 }
 
-# run regressions for ols with covariates
-for (i in 1:length(ols1)) {
+# run regressions for reduced-form with covariates
+for (i in 1:length(red1)) {
 
   # define formula from ols vector
-  formula <- as.formula(ols1[i])
+  formula <- as.formula(red1[i])
 
   # run regression using formula above
   reg <- lm(formula, data = analysis)
 
   # assign new name
-  assign(paste0('ols1.outcome', i), reg)
+  assign(paste0('red1.outcome', i), reg)
 
   # remove useless objects
-  if (i == length(ols1)) {rm(reg, i, formula)}
+  if (i == length(red1)) {rm(reg, i, formula, red1)}
 }
 
+# run regressions for 2sls without covariates
+for (i in 1:length(iv0)) {
 
+  # define formula from ols vector
+  formula <- as.formula(iv0[i])
+
+  # run regression using formula above
+  reg <- ivreg(formula, data = analysis)
+
+  # assign new name
+  assign(paste0('iv0.outcome', i), reg)
+
+  # remove useless objects
+  if (i == length(iv0)) {rm(reg, i, formula, iv0)}
+}
+
+# run regressions for 2sls without covariates
+for (i in 1:length(iv1)) {
+
+  # define formula from ols vector
+  formula <- as.formula(iv1[i])
+
+  # run regression using formula above
+  reg <- ivreg(formula, data = analysis)
+
+  # assign new name
+  assign(paste0('iv1.outcome', i), reg)
+
+  # remove useless objects
+  if (i == length(iv1)) {rm(reg, i, formula, iv1)}
+}
+
+# produce three tables for three outcomes
+# table 1
+stargazer::stargazer(
+
+  # regressions with outcome 1: outcome.elected
+  list(ols0.outcome1, ols1.outcome1, red0.outcome1, red1.outcome1, iv0.outcome1,
+       iv1.outcome1),
+
+  # table cosmetics
+  type = 'text',
+  title = 'The Effect of Electoral Crimes on the Probability of Election',
+  style = 'default',
+  # out   = './prospectus/tab_outcome1.tex',
+  out.header = TRUE,
+  column.labels = rep(c('OLS', 'Reduced-form', 'IV'), each = 2),
+  column.separate = rep(1, 6),
+  covariate.labels = c('Convicted at Trial', 'Convicted on Appeal'),
+  dep.var.caption = '',
+  dep.var.labels = 'Outcome: Probability of Election',
+  align = TRUE,
+  se = list(cse(ols0.outcome1), cse(ols1.outcome1), cse(red0.outcome1),
+            cse(red1.outcome1), ivse(iv0.outcome1), ivse(iv1.outcome1)),
+  digit.separate = 3,
+  digits = 3,
+  digits.extra = 0,
+  font.size = 'scriptsize',
+  header = FALSE,
+  initial.zero = FALSE,
+  model.names = FALSE,
+  keep = c('invalid'),
+  label = 'tab:outcome1',
+  no.space = FALSE,
+  omit = c('age|male'),
+  omit.labels = 'Individual Controls',
+  omit.yes.no = c('Yes', '-'),
+  table.placement = '!htbp'
+)
+
+# table 2
+stargazer::stargazer(
+
+  # regressions with outcome 2: outcome.distance
+  list(ols0.outcome2, ols1.outcome2, red0.outcome2, red1.outcome2, iv0.outcome2,
+       iv1.outcome2),
+
+  # table cosmetics
+  type = 'text',
+  title = 'The Effect of Electoral Crimes on the Vote Distance to Elected Candidates',
+  style = 'default',
+  # out   = './prospectus/tab_outcome2.tex',
+  out.header = TRUE,
+  column.labels = rep(c('OLS', 'Reduced-form', 'IV'), each = 2),
+  column.separate = rep(1, 6),
+  covariate.labels = c('Convicted at Trial', 'Convicted on Appeal'),
+  dep.var.caption = '',
+  dep.var.labels = 'Outcome: Probability of Election',
+  align = TRUE,
+  se = list(cse(ols0.outcome2), cse(ols1.outcome2), cse(red0.outcome2),
+            cse(red1.outcome2), ivse(iv0.outcome2), ivse(iv1.outcome2)),
+  digit.separate = 3,
+  digits = 3,
+  digits.extra = 0,
+  font.size = 'scriptsize',
+  header = FALSE,
+  initial.zero = FALSE,
+  model.names = FALSE,
+  keep = c('invalid'),
+  label = 'tab:outcome2',
+  no.space = FALSE,
+  omit = c('age|male'),
+  omit.labels = 'Individual Controls',
+  omit.yes.no = c('Yes', '-'),
+  table.placement = '!htbp'
+)
+
+# table 3
+stargazer::stargazer(
+
+  # regressions with outcome 3: outcome.share
+  list(ols0.outcome3, ols1.outcome3, red0.outcome3, red1.outcome3, iv0.outcome3,
+       iv1.outcome3),
+
+  # table cosmetics
+  type = 'text',
+  title = 'The Effect of Electoral Crimes on the Vote Distance to Elected Candidates',
+  style = 'default',
+  # out   = './prospectus/tab_outcome3.tex',
+  out.header = TRUE,
+  column.labels = rep(c('OLS', 'Reduced-form', 'IV'), each = 2),
+  column.separate = rep(1, 6),
+  covariate.labels = c('Convicted at Trial', 'Convicted on Appeal'),
+  dep.var.caption = '',
+  dep.var.labels = 'Outcome: Probability of Election',
+  align = TRUE,
+  se = list(cse(ols0.outcome3), cse(ols1.outcome3), cse(red0.outcome3),
+            cse(red1.outcome3), ivse(iv0.outcome3), ivse(iv1.outcome3)),
+  digit.separate = 3,
+  digits = 3,
+  digits.extra = 0,
+  font.size = 'scriptsize',
+  header = FALSE,
+  initial.zero = FALSE,
+  model.names = FALSE,
+  keep = c('invalid'),
+  label = 'tab:outcome3',
+  no.space = FALSE,
+  omit = c('age|male'),
+  omit.labels = 'Individual Controls',
+  omit.yes.no = c('Yes', '-'),
+  table.placement = '!htbp'
+)
 
 # # quit
 # q('no')
