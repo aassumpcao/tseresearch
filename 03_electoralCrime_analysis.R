@@ -20,6 +20,7 @@
 library(tidyverse)
 library(magrittr)
 library(AER)
+library(stargazer)
 
 # load datasets for analysis
 load('candidates.Rda')
@@ -337,8 +338,9 @@ analysis %<>%
 # wrangle candidacy expenditures
 analysis %<>%
   mutate(candidacy.expenditures = as.integer(candidacy.expenditures)) %>%
-  mutate(candidacy.expenditures = replace_na(
-    candidacy.expenditures, mean(candidacy.expenditures, na.rm = TRUE))
+  mutate(candidacy.expenditures = ifelse(is.na(candidacy.expenditures) |
+    candidacy.expenditures == -1, mean(candidacy.expenditures, na.rm = TRUE),
+    candidacy.expenditures)
   )
 
 # define vector for finding political occupations
@@ -354,28 +356,68 @@ analysis %<>%
   )
 
 # transform variable type to factor
-analysis %<>% mutate_at(vars(matches('male|education|maritalstatus')), factor)
+analysis %<>% mutate_at(vars(matches('education|maritalstatus')), factor)
 
 ################################################################################
-# produce summary statistics table
-# define outcomes
+# choose variables that will be used in the analysis
+# define outcomes and their labels
 outcomes   <- c('outcome.elected', 'outcome.distance', 'outcome.share')
+out.labels <- c('Probability of Election',
+                'Vote Distance to Elected Candidates (in p.p.)',
+                'Total Vote Share (in p.p.)')
 
-# define instruments
+# define instruments and their labels
 instrumented <- 'candidacy.invalid.ontrial'
 instrument   <- 'candidacy.invalid.onappeal'
+instr.labels <- c('Convicted at Trial', 'Convicted on Appeal')
 
-# define independent variables
+# define independent variables and their labels
 variables  <- c('candidate.age', 'candidate.male', 'candidate.education',
                 'candidate.maritalstatus', 'candidate.experience',
                 'candidacy.expenditures')
-
-# define labels for independent variables
 var.labels <- c('Age', 'Male', 'Level of Education', 'Marital Status',
                 'Political Experience', 'Campaign Expenditures')
 
 ################################################################################
+# create dir for prospectus
+dir.create('./prospectus')
+
+# produce summary statistics table
+stargazer(
+
+  # summmary table
+  as.data.frame(analysis[,c(variables, instrumented, instrument, outcomes)]),
+
+  # table cosmetics
+  type = 'text',
+  title = 'Descriptive Statistics',
+  style = 'default',
+  summary = TRUE,
+  out   = './prospectus/tab_sumstats.tex',
+  out.header = FALSE,
+  covariate.labels = c(var.labels[c(1:2, 5:6)], instr.labels, out.labels),
+  align = TRUE,
+  digit.separate = 3,
+  digits = 3,
+  digits.extra = 0,
+  font.size = 'scriptsize',
+  header = FALSE,
+  initial.zero = FALSE,
+  model.names = FALSE,
+  label = 'tab:firststage',
+  no.space = FALSE,
+  table.placement = '!htbp',
+  summary.logical = TRUE,
+  summary.stat = c('n', 'mean', 'sd', 'min', 'max')
+)
+
+################################################################################
 # run preliminary analysis
+# define first-stage regressions for all outcomes
+first0 <- instrumented %>% paste0(., ' ~ ', instrument)
+first1 <- instrumented %>%
+  paste0(., ' ~ ', instrument, ' + ', paste0(variables, collapse = ' + '))
+
 # define ols models for all outcomes
 ols0 <- outcomes %>% paste0(., ' ~ ', instrumented)
 ols1 <- outcomes %>%
@@ -391,106 +433,73 @@ iv0 <- outcomes %>% paste0(., ' ~ ', instrumented, ' | ', instrument)
 iv1 <- outcomes %>% paste0(., ' ~ ', instrumented, ' | ', instrument, ' + ',
                            paste0(variables, collapse = ' + '))
 
+# analysis
+# first-stage
+first0 <- lm(as.formula(first0), data = analysis)
+first1 <- lm(as.formula(first1), data = analysis)
 
-# run regressions for ols without covariates
-for (i in 1:length(ols0)) {
+# ols regressions
+ols0.outcome1 <- lm(as.formula(ols0[1]), data = analysis)
+ols1.outcome1 <- lm(as.formula(ols1[1]), data = analysis)
+ols0.outcome2 <- lm(as.formula(ols0[2]), data = analysis)
+ols1.outcome2 <- lm(as.formula(ols1[2]), data = analysis)
+ols0.outcome3 <- lm(as.formula(ols0[3]), data = analysis)
+ols1.outcome3 <- lm(as.formula(ols1[3]), data = analysis)
 
-  # define formula from ols vector
-  formula <- as.formula(ols0[i])
+# reduced-form regressions
+red0.outcome1 <- lm(as.formula(red0[1]), data = analysis)
+red1.outcome1 <- lm(as.formula(red1[1]), data = analysis)
+red0.outcome2 <- lm(as.formula(red0[2]), data = analysis)
+red1.outcome2 <- lm(as.formula(red1[2]), data = analysis)
+red0.outcome3 <- lm(as.formula(red0[3]), data = analysis)
+red1.outcome3 <- lm(as.formula(red1[3]), data = analysis)
 
-  # run regression using formula above
-  reg <- lm(formula, data = analysis)
+# 2sls regressions
+iv0.outcome1  <- ivreg(as.formula(iv0[1]), data = analysis)
+iv1.outcome1  <- ivreg(as.formula(iv1[1]), data = analysis)
+iv0.outcome2  <- ivreg(as.formula(iv0[2]), data = analysis)
+iv1.outcome2  <- ivreg(as.formula(iv1[2]), data = analysis)
+iv0.outcome3  <- ivreg(as.formula(iv0[3]), data = analysis)
+iv1.outcome3  <- ivreg(as.formula(iv1[3]), data = analysis)
 
-  # assign new name
-  assign(paste0('ols0.outcome', i), reg)
+# produce table for first-stage
+stargazer(
 
-  # remove useless objects
-  if (i == length(ols0)) {rm(reg, i, formula, ols0)}
-}
+  # first-stage regressions
+  list(first0, first1),
 
-# run regressions for ols with covariates
-for (i in 1:length(ols1)) {
-
-  # define formula from ols vector
-  formula <- as.formula(ols1[i])
-
-  # run regression using formula above
-  reg <- lm(formula, data = analysis)
-
-  # assign new name
-  assign(paste0('ols1.outcome', i), reg)
-
-  # remove useless objects
-  if (i == length(ols1)) {rm(reg, i, formula, ols1)}
-}
-
-# run regressions for reduced-form without covariates
-for (i in 1:length(red0)) {
-
-  # define formula from ols vector
-  formula <- as.formula(red0[i])
-
-  # run regression using formula above
-  reg <- lm(formula, data = analysis)
-
-  # assign new name
-  assign(paste0('red0.outcome', i), reg)
-
-  # remove useless objects
-  if (i == length(red0)) {rm(reg, i, formula, red0)}
-}
-
-# run regressions for reduced-form with covariates
-for (i in 1:length(red1)) {
-
-  # define formula from ols vector
-  formula <- as.formula(red1[i])
-
-  # run regression using formula above
-  reg <- lm(formula, data = analysis)
-
-  # assign new name
-  assign(paste0('red1.outcome', i), reg)
-
-  # remove useless objects
-  if (i == length(red1)) {rm(reg, i, formula, red1)}
-}
-
-# run regressions for 2sls without covariates
-for (i in 1:length(iv0)) {
-
-  # define formula from ols vector
-  formula <- as.formula(iv0[i])
-
-  # run regression using formula above
-  reg <- ivreg(formula, data = analysis)
-
-  # assign new name
-  assign(paste0('iv0.outcome', i), reg)
-
-  # remove useless objects
-  if (i == length(iv0)) {rm(reg, i, formula, iv0)}
-}
-
-# run regressions for 2sls without covariates
-for (i in 1:length(iv1)) {
-
-  # define formula from ols vector
-  formula <- as.formula(iv1[i])
-
-  # run regression using formula above
-  reg <- ivreg(formula, data = analysis)
-
-  # assign new name
-  assign(paste0('iv1.outcome', i), reg)
-
-  # remove useless objects
-  if (i == length(iv1)) {rm(reg, i, formula, iv1)}
-}
+  # table cosmetics
+  type = 'text',
+  title = 'First Stage Regressions of Convictions at Trial and on Appeal',
+  style = 'default',
+  out   = './prospectus/tab_firststage.tex',
+  out.header = FALSE,
+  column.labels = rep('First-Stage', 2),
+  column.separate = rep(1, 2),
+  covariate.labels = instr.labels[2],
+  dep.var.caption = paste0('Outcome: ', instr.labels[2]),
+  dep.var.labels.include = FALSE,
+  align = TRUE,
+  se = list(cse(first0), cse(first1)),
+  digit.separate = 3,
+  digits = 3,
+  digits.extra = 0,
+  font.size = 'scriptsize',
+  header = FALSE,
+  initial.zero = FALSE,
+  model.names = FALSE,
+  keep = c('invalid'),
+  label = 'tab:firststage',
+  no.space = FALSE,
+  omit = c('age|male|maritalstatus|education|experience|expenditures|constant'),
+  omit.labels = 'Individual Controls',
+  omit.yes.no = c('Yes', '-'),
+  table.placement = '!htbp'
+)
 
 # produce three tables for three outcomes
 # table 1
-stargazer::stargazer(
+stargazer(
 
   # regressions with outcome 1: outcome.elected
   list(ols0.outcome1, ols1.outcome1, red0.outcome1, red1.outcome1, iv0.outcome1,
@@ -500,13 +509,13 @@ stargazer::stargazer(
   type = 'text',
   title = 'The Effect of Electoral Crimes on the Probability of Election',
   style = 'default',
-  # out   = './prospectus/tab_outcome1.tex',
-  out.header = TRUE,
+  out   = './prospectus/tab_outcome1.tex',
+  out.header = FALSE,
   column.labels = rep(c('OLS', 'Reduced-form', 'IV'), each = 2),
   column.separate = rep(1, 6),
-  covariate.labels = c('Convicted at Trial', 'Convicted on Appeal'),
-  dep.var.caption = '',
-  dep.var.labels = 'Outcome: Probability of Election',
+  covariate.labels = instr.labels,
+  dep.var.caption = paste0('Outcome: ', out.labels[1]),
+  dep.var.labels.include = FALSE,
   align = TRUE,
   se = list(cse(ols0.outcome1), cse(ols1.outcome1), cse(red0.outcome1),
             cse(red1.outcome1), ivse(iv0.outcome1), ivse(iv1.outcome1)),
@@ -520,14 +529,14 @@ stargazer::stargazer(
   keep = c('invalid'),
   label = 'tab:outcome1',
   no.space = FALSE,
-  omit = c('age|male'),
+  omit = c('age|male|maritalstatus|education|experience|expenditures|constant'),
   omit.labels = 'Individual Controls',
   omit.yes.no = c('Yes', '-'),
   table.placement = '!htbp'
 )
 
 # table 2
-stargazer::stargazer(
+stargazer(
 
   # regressions with outcome 2: outcome.distance
   list(ols0.outcome2, ols1.outcome2, red0.outcome2, red1.outcome2, iv0.outcome2,
@@ -535,15 +544,16 @@ stargazer::stargazer(
 
   # table cosmetics
   type = 'text',
-  title = 'The Effect of Electoral Crimes on the Vote Distance to Elected Candidates',
+  title = paste('The Effect of Electoral Crimes on the Vote Distance to',
+                'Elected Candidates', sep = ' '),
   style = 'default',
-  # out   = './prospectus/tab_outcome2.tex',
-  out.header = TRUE,
+  out   = './prospectus/tab_outcome2.tex',
+  out.header = FALSE,
   column.labels = rep(c('OLS', 'Reduced-form', 'IV'), each = 2),
   column.separate = rep(1, 6),
-  covariate.labels = c('Convicted at Trial', 'Convicted on Appeal'),
-  dep.var.caption = '',
-  dep.var.labels = 'Outcome: Probability of Election',
+  covariate.labels = instr.labels,
+  dep.var.caption = paste0('Outcome: ', out.labels[2]),
+  dep.var.labels.include = FALSE,
   align = TRUE,
   se = list(cse(ols0.outcome2), cse(ols1.outcome2), cse(red0.outcome2),
             cse(red1.outcome2), ivse(iv0.outcome2), ivse(iv1.outcome2)),
@@ -557,14 +567,14 @@ stargazer::stargazer(
   keep = c('invalid'),
   label = 'tab:outcome2',
   no.space = FALSE,
-  omit = c('age|male'),
+  omit = c('age|male|maritalstatus|education|experience|expenditures|constant'),
   omit.labels = 'Individual Controls',
   omit.yes.no = c('Yes', '-'),
   table.placement = '!htbp'
 )
 
 # table 3
-stargazer::stargazer(
+stargazer(
 
   # regressions with outcome 3: outcome.share
   list(ols0.outcome3, ols1.outcome3, red0.outcome3, red1.outcome3, iv0.outcome3,
@@ -572,15 +582,15 @@ stargazer::stargazer(
 
   # table cosmetics
   type = 'text',
-  title = 'The Effect of Electoral Crimes on the Vote Distance to Elected Candidates',
+  title = 'The Effect of Electoral Crimes on the Total Vote Share',
   style = 'default',
-  # out   = './prospectus/tab_outcome3.tex',
-  out.header = TRUE,
+  out   = './prospectus/tab_outcome3.tex',
+  out.header = FALSE,
   column.labels = rep(c('OLS', 'Reduced-form', 'IV'), each = 2),
   column.separate = rep(1, 6),
-  covariate.labels = c('Convicted at Trial', 'Convicted on Appeal'),
-  dep.var.caption = '',
-  dep.var.labels = 'Outcome: Probability of Election',
+  covariate.labels = instr.labels,
+  dep.var.caption = paste0('Outcome: ', out.labels[3]),
+  dep.var.labels.include = FALSE,
   align = TRUE,
   se = list(cse(ols0.outcome3), cse(ols1.outcome3), cse(red0.outcome3),
             cse(red1.outcome3), ivse(iv0.outcome3), ivse(iv1.outcome3)),
@@ -594,7 +604,7 @@ stargazer::stargazer(
   keep = c('invalid'),
   label = 'tab:outcome3',
   no.space = FALSE,
-  omit = c('age|male'),
+  omit = c('age|male|maritalstatus|education|experience|expenditures|constant'),
   omit.labels = 'Individual Controls',
   omit.yes.no = c('Yes', '-'),
   table.placement = '!htbp'

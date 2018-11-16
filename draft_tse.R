@@ -290,107 +290,37 @@ analysis %$% table(candidate.maritalstatus)
 
 analysis %>% str()
 analysis %>% names()
+analysis %$% table(election.stage)
+
+analysis %$% table(candidate.maritalstatus)
+
+analysis %$% table(candidate.education)
+
+analysis %$% table(candidacy.invalid.ontrial, candidacy.invalid.onappeal)
+3379+22+1009+5059
 
 summary(analysis$candidacy.expenditures)
 
+analysis %>%
+  select(candidate.education, candidate.maritalstatus) %>%
+  {model.matrix(~ candidate.education, data = .)} %>%
+  as.tibble() %$% table(`(Intercept)`)
+  select(
+    intercept              = `(Intercept)`,
+    read.write             = `candidate.educationLÊ E ESCREVE`,
+    elementary.notfinished = `candidate.educationFUNDAMENTAL INCOMPLETO`,
+    elementary.finished    = `candidate.educationFUNDAMENTAL COMPLETO`,
+    highschool.notfinished = `candidate.educationMÉDIO COMPLETO`,
+    highschool.finished    = `candidate.educationMÉDIO INCOMPLETO`,
+    college.notfinished    = `candidate.educationSUPERIOR COMPLETO`,
+    college.finished       = `candidate.educationSUPERIOR INCOMPLETO`,
+    separated              = `candidate.maritalstatusDIVORCIADO(A)`,
+    divorced               = `candidate.maritalstatusSEPARADO(A) JUDICIALMENTE`,
+    single                 = `candidate.maritalstatusSOLTEIRO(A)`,
+    widow.er               = `candidate.maritalstatusVIÚVO(A)`
+)
 
+analysis %>%
+  select(candidate.education) %>%
+  spread(key = candidate.education, value = 1)
 
-fit <- lm(outcome.elected ~ candidate.age + candidate.male, data = analysis)
-
-
-first.stage  <- lm(candidacy.invalid.ontrial ~ candidacy.invalid.onappeal + candidate.occupation.ID, data = analysis)
-second.stage <- ivreg(outcome.elected ~ candidacy.invalid.ontrial | candidacy.invalid.onappeal, data = analysis)
-ols  <- lm(outcome.elected ~ candidacy.invalid.ontrial, data = analysis)
-
-first.stage  <- lm(candidacy.invalid.ontrial ~ candidacy.invalid.onappeal, data = analysis)
-second.stage <- ivreg(outcome.distance ~ candidacy.invalid.ontrial | candidacy.invalid.onappeal, data = analysis)
-ols  <- lm(outcome.distance ~ candidacy.invalid.ontrial, data = analysis)
-
-first.stage  <- lm(candidacy.invalid.ontrial ~ candidacy.invalid.onappeal, data = analysis)
-second.stage <- ivreg(outcome.share ~ candidacy.invalid.ontrial | candidacy.invalid.onappeal, data = analysis)
-ols  <- lm(outcome.share ~ candidacy.invalid.ontrial, data = analysis)
-
-ols <- lm(outcome.elected ~ candidacy.invalid.ontrial, data = analysis)
-stargazer::stargazer(ols, e      = list(cse(ols)),
-                          title  = "OLS Regression",
-                          type   = "text",
-                          df     = FALSE,
-                          digits = 3)
-
-f <- lm(candidacy.invalid.ontrial ~ candidacy.invalid.onappeal, data = analysis)
-stargazer::stargazer(f, e      = list(cse(f)),
-                        title  = "Reduced-form Regression",
-                        type   = "text",
-                        df     = FALSE,
-                        digits = 3)
-
-iv <- ivreg(outcome.elected ~ candidacy.invalid.ontrial +
-                              candidate.male +
-                              candidate.education +
-                              candidate.maritalstatus |
-                              candidate.male +
-                              candidate.education +
-                              candidate.maritalstatus +
-                              candidacy.invalid.onappeal, data = analysis)
-
-reduced <- lm(outcome.elected ~ candidacy.invalid.onappeal +
-                              candidate.male +
-                              candidate.education +
-                              candidate.maritalstatus, data = analysis)
-
-stargazer::stargazer(reduced, e      = list(cse(reduced)),
-                         keep = 'invalid',
-                         title  = "IV Regression",
-                         type   = "text",
-                         df     = FALSE,
-                         digits = 3)
-
-
-iv <- ivreg(outcome.distance ~ candidacy.invalid.ontrial +
-                              candidate.male +
-                              candidate.education +
-                              candidate.maritalstatus |
-                              candidate.male +
-                              candidate.education +
-                              candidate.maritalstatus +
-                              candidacy.invalid.onappeal, data = analysis)
-stargazer::stargazer(iv, e      = list(ivse(iv)),
-                         keep   = 'trial',
-                         title  = "IV Regression",
-                         type   = "text",
-                         df     = FALSE,
-                         digits = 3)
-
-iv <- ivreg(outcome.share ~ candidacy.invalid.ontrial +
-                              candidate.male +
-                              candidate.education +
-                              candidate.maritalstatus |
-                              candidate.male +
-                              candidate.education +
-                              candidate.maritalstatus +
-                              candidacy.invalid.onappeal, data = analysis)
-stargazer::stargazer(iv, e      = list(ivse(iv)),
-                         keep   = 'trial',
-                         title  = "IV Regression",
-                         type   = "text",
-                         df     = FALSE,
-                         digits = 3)
-
-ols1 <- lm(as.double(candidate.education) ~ candidacy.invalid.onappeal, data = analysis)
-
-ols2 <- lm(as.double(candidate.education) ~ candidacy.invalid.onappeal +
-                              candidate.male +
-                              candidate.maritalstatus, data = analysis)
-
-summary(ols1, diagnostics = TRUE)
-summary(ols2, diagnostics = TRUE)
-summary(iv, vcov = sandwich, diagnostics = TRUE)
-
-
-summary(second.stage, diagnostics = TRUE)
-stargazer::stargazer(first.stage, second.stage, ols, type = 'text', keep = 'trial|appeal')
-stargazer::stargazer(fit, type = 'text')
-1summary(fit)
-
-
-?stargazer
