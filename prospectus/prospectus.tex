@@ -21,6 +21,7 @@
 \usepackage{pdflscape}
 \usepackage{subfigure}
 \usepackage{array}
+\usepackage{titling}
 \usepackage{multirow}
 \usepackage{diagbox}
 \usepackage{dcolumn}
@@ -46,7 +47,7 @@
 \newcommand{\blue}[1]{{\color{blue} #1}}
 \newcommand{\ci}{\perp\!\!\!\perp}
 \newcommand{\nci}{\centernot{\ci}}
-\newcommand{\hypopen}{Comparing federal transfers used for the procurement of goods and services}
+\newcommand{\subtitle}[1]{\posttitle{\par\end{center}\begin{center}\large#1\end{center}\vskip0.5em}}
 
 \newcolumntype{L}[1]{>{\raggedright\let\newline\\arraybackslash\hspace{0pt}}m{#1}}
 \newcolumntype{C}[1]{>{\centering\let\newline\\arraybackslash\hspace{0pt}}m{#1}}
@@ -56,15 +57,52 @@
 
 \begin{document}
 
-\section{Electoral Crime Under Democratic Rule: Evidence from Brazil}
+\begin{titlepage}
+\title{Three Essays on Sanctions of Politicians in Brazil}
+\subtitle{A proposal submitted in partial fulfillment of the requirements for the Degree of Doctor of Philosophy in Public Policy}
+\author{Andre Assumpcao\thanks{PhD Student, Department of Public Policy, The University of North Carolina at Chapel Hill. Contact details: \href{mailto:aassumpcao@unc.edu}{aassumpcao@unc.edu}}}
+
+\maketitle
+
+\begin{abstract}
+\noindent This dissertation project will investigate the relationship between legal sanctions and politics in Brazil. In the first paper, I look at the effect of convictions for electoral infractions on electoral performance in four municipal elections between 2004 and 2016. The second paper tests whether State Court judges significantly rule in favor of politicians involved in small claim court cases. Finally, the last paper investigates whether active and passive transparency simultaneously improve government performance and increase the number of legal sanctions for government wrongdoing. These papers contribute significantly to the literature in political science, economics, and law by exploring the relationship between legal sanctions and local political dynamics in developing countries. In addition, I also contribute new data sources in the form of judicial decisions and innovative identification strategies using institutional features of Brazilian electoral and judicial systems. \\
+\vspace{0in} \\
+\noindent\textbf{Keywords:} political economy of development; electoral politics; judicial politics; transparency; economics of crime. \\
+\vspace{0in}
+\bigskip
+
+\end{abstract}
+
+\setcounter{page}{0}
+
+\thispagestyle{empty}
+
+\end{titlepage}
+
+\clearpage
+
+\section*{Summary} \label{sec:summary}
+
+\clearpage
+
+\section{Electoral Crime Under Democratic Rule: Evidence from Brazil} \label{sec:paper1}
+
+\subsection{Introduction}
+In democratic regimes, office-seeking politicians employ various tactics to get elected. They might promise more resources to increase the provision of local public goods, such as schools, hospitals, or roads; they can run ads on TV and, more recently, on social media to promote their candidacy; they could even meet with their constituents and gain their vote by establishing a personal connection with them. While these tactics are different, sometimes complementary means a politician could deploy to win an election, they all characterize \emph{play-by-the-rules} strategies. Governments generally allow such practices because they are fair electoral weapons which make electoral systems competitive. In this paper, however, I focus on forbidden, and less understood, ways to win an election by \emph{breaking the rules} and deploying illegal tactics to shape election results.
+
+Scholars have not ignored the various forms with which politicians break electoral rules to win elections. \citet{LehoucqElectoralFraudCauses2003} offers a comprehensive account of electoral fraud, which takes up a variety of forms such as procedural rule-breaking, illegal campaigning, violence, and even unequivocal vote buying practices. In a more recent study, \citet{Gans-MorseVarietiesClientelismMachine2013a} design a theoretical framework encompassing four types of clientelism practices: vote, turnout, and abstention buying, and double persuasion and their adoption under five different institutional designs.
+
+\subsection{Institutional Background}
+
+\subsection{Theory}
+
+\subsection{Empirical Strategy}
+
+\subsection{Preliminary Results}
 
 \input{tab_sumstats}
 
 \input{tab_firststage}
-
-\pagebreak
-
-\begin{landscape}
 
 \input{tab_outcome1}
 
@@ -72,6 +110,44 @@
 
 \input{tab_outcome3}
 
-\end{landscape}
+\subsection{Further Development}
+
+\clearpage
+
+\section{Judicial Favoritism of Politicians: Evidence from Small Claim Courts} \label{sec:paper2}
+
+\subsection{Introduction}
+
+\subsection{Institutional Background}
+
+\subsection{Theory}
+
+\subsection{Empirical Strategy}
+
+\subsection{Preliminary Results}
+
+\subsection{Further Development}
+
+\clearpage
+
+\section{Active and Passive Transparency in Brazilian Municipalities} \label{sec:paper3}
+
+\subsection{Introduction}
+
+\subsection{Institutional Background}
+
+\subsection{Theory}
+
+\subsection{Empirical Strategy}
+
+\subsection{Preliminary Results}
+
+\subsection{Further Development}
+
+\clearpage
+
+\setlength\bibsep{0pt}
+\bibliographystyle{apalike}
+\bibliography{/Users/aassumpcao/library.bib}
 
 \end{document}

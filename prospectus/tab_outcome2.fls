@@ -1,0 +1,6 @@
+PWD /Users/aassumpcao/OneDrive - University of North Carolina at Chapel Hill/Documents/Research/2018 TSE/prospectus
+INPUT /usr/local/texlive/2018/texmf.cnf
+INPUT /usr/local/texlive/2018/texmf-dist/web2c/texmf.cnf
+INPUT /usr/local/texlive/2018/texmf-var/web2c/pdftex/pdflatex.fmt
+INPUT tab_outcome2.tex
+OUTPUT tab_outcome2.log

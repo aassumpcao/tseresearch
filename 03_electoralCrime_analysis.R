@@ -10,13 +10,11 @@
 # Andre Assumpcao
 # andre.assumpcao@gmail.com
 
-# # setwd if not working with RStudio projects
-# setwd(.)
-
 # # clear environment if not working with RStudio projects
 # rm(list = objects())
 
 # import statements
+library(here)
 library(tidyverse)
 library(magrittr)
 library(AER)
@@ -436,7 +434,11 @@ iv1 <- outcomes %>% paste0(., ' ~ ', instrumented, ' | ', instrument, ' + ',
 # analysis
 # first-stage
 first0 <- lm(as.formula(first0), data = analysis)
+analysis$residuals.0 <- residuals(first0)
 first1 <- lm(as.formula(first1), data = analysis)
+analysis$residuals.1 <- residuals(first1)
+
+summary(lm(outcome.elected ~ residuals.1, data = analysis))
 
 # ols regressions
 ols0.outcome1 <- lm(as.formula(ols0[1]), data = analysis)
