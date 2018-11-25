@@ -16,6 +16,24 @@ Coppedge, M., Gerring, J., Knutsen, C.~H., Lindberg, S.~I., Skaaning, S.-E.,
   T., Wilson, S., and Ziblatt, D. (2018).
 \newblock V-{{Dem Country}}-{{Year Dataset}} 2018.
 
+\bibitem[Ferraz and Finan, 2008]{FerrazExposingCorruptPoliticians2008b}
+Ferraz, C. and Finan, F. (2008).
+\newblock Exposing {{Corrupt Politicians}}: {{The Effects}} of {{Brazil}}'s
+  {{Publicly Released Audits}} on {{Electoral Outcomes}}.
+\newblock {\em The Quarterly Journal of Economics}, 123:703--745.
+
+\bibitem[Ferraz and Finan, 2011]{FerrazElectoralAccountabilityCorruption2011a}
+Ferraz, C. and Finan, F. (2011).
+\newblock Electoral {{Accountability}} and {{Corruption}}: {{Evidence}} from
+  the {{Audits}} of {{Local Governments}}.
+\newblock {\em American Economic Review}, 101:1274--1311.
+
+\bibitem[Fujiwara, 2015]{FujiwaraVotingTechnologyPolitical2015}
+Fujiwara, T. (2015).
+\newblock Voting {{Technology}}, {{Political Responsiveness}}, and {{Infant
+  Health}}: {{Evidence}} from {{Brazil}}.
+\newblock {\em Econometrica}, 83(2):423--464.
+
 \bibitem[Gandhi and {Lust-Okar}, 2009]{GandhiElectionsAuthoritarianism2009}
 Gandhi, J. and {Lust-Okar}, E. (2009).
 \newblock Elections {{Under Authoritarianism}}.
@@ -33,6 +51,11 @@ Ichino, N. and Sch\"undeln, M. (2012).
   Effects}} of {{Observers}} in a {{Randomized Field Experiment}} in {{Ghana}}.
 \newblock {\em The Journal of Politics}, 74(1):292--307.
 
+\bibitem[Lambais and Sigstad, 2018]{LambaisJudicialSubversionEvidence2018}
+Lambais, G. and Sigstad, H. (2018).
+\newblock {\em Judicial {{Subversion}}: {{Evidence}} from {{Brazil}}}.
+\newblock Mimeo, Harvard University.
+
 \bibitem[Lehoucq, 2003]{LehoucqElectoralFraudCauses2003}
 Lehoucq, F. (2003).
 \newblock Electoral {{Fraud}}: {{Causes}}, {{Types}}, and {{Consequences}}.
@@ -48,10 +71,24 @@ Mares, I. and Young, L. (2016).
 \newblock Buying, {{Expropriating}}, and {{Stealing Votes}}.
 \newblock {\em Annual Review of Political Science}, 19(1):267--288.
 
+\bibitem[{Sanchez-Martinez},
+  2018]{Sanchez-MartinezDismantlingInstitutionsCourt2018}
+{Sanchez-Martinez}, C. (2018).
+\newblock {\em Dismantling {{Institutions}}: {{Court Politicization}} and
+  {{Discrimination}} in {{Public Employment Lawsuits}}}.
+\newblock {{PhD Dissertation}}, Stanford University.
+
 \bibitem[Schedler, 2015]{SchedlerElectoralAuthoritarianism2015}
 Schedler, A. (2015).
 \newblock Electoral {{Authoritarianism}}.
 \newblock In Scott, R.~A. and Kosslyn, S.~M., editors, {\em Emerging {{Trends}}
   in the {{Social}} and {{Behavioral Sciences}}}, pages 1--16.
+
+\bibitem[Winters and {Weitz-Shapiro},
+  2013]{WintersLackingInformationCondoning2013}
+Winters, M.~S. and {Weitz-Shapiro}, R. (2013).
+\newblock Lacking {{Information}} or {{Condoning Corruption}}: {{When Do Voters
+  Support Corrupt Politicians}}?
+\newblock {\em Comparative Politics}, 45:418--436.
 
 \end{thebibliography}

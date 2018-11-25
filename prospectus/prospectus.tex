@@ -87,22 +87,47 @@
 
 \section{Electoral Crime Under Democratic Rule: Evidence from Brazil} \label{sec:paper1}
 
-\subsection{Introduction}
+\subsection{Introduction} \label{subsec:introduction_paper1}
 In democratic regimes, office-seeking politicians employ various tactics to get elected. They might promise more resources to increase the provision of local public goods, such as schools, hospitals, or roads; they can run ads on TV and, more recently, on social media to promote their candidacy; they could even meet with their constituents and gain their vote by establishing a personal connection with them. While these tactics are different, sometimes complementary means a politician could deploy to win an election, they all characterize \emph{play-by-the-rules} strategies. Governments generally allow such practices because they are fair electoral weapons which make electoral systems competitive. In this paper, however, I focus on forbidden, and less understood, ways to win an election by \emph{breaking the rules} and deploying illegal tactics to shape election results.
 
 Scholars have not ignored the various forms in which politicians break electoral rules to win elections. \citet{LehoucqElectoralFraudCauses2003} offers a comprehensive account of electoral fraud, which takes up a variety of forms such as procedural rule-breaking, illegal campaigning, violence, and even unequivocal vote buying. In a more recent study, \citet{Gans-MorseVarietiesClientelismMachine2013a} design a theoretical framework encompassing four types of clientelism practices (vote, turnout, and abstention buying, and double persuasion) and their adoption under five different institutional designs. Their key insight is that the electoral system shapes the type of clientelism employed for electoral gain.
 
 Indeed, most recent studies looking into illegal electoral tactics have two common characteristics: first, they are largely concerned with coercive threats that prevent free and fair elections, as suggested by \citet{MaresBuyingExpropriatingStealing2016}; second, they focus heavily on non or partially democratic regimes, evidenced by the vast literature on electoral authoritarianism \citep{GandhiElectionsAuthoritarianism2009,LevitskyRiseCompetitiveAuthoritarianism2002,SchedlerElectoralAuthoritarianism2015,IchinoDeterringDisplacingElectoral2012,AsunkaElectoralFraudViolence2017a}. Despite the richness of this literature, I address two unexplored issues that are supplemental to our understanding of how individuals might break the rules in order to get elected.
 
-The first contribution is uncovering the effect of electoral infractions that are harder to detect or whose relationship with electoral outcomes is less known or well understood. For instance, politicians might use illegal forms of advertising or slush funds to spend beyond their campaign limits in order to win an election. Likewise, candidates and political parties might not meet all requirements for submitting candidacies, such as been cleared of previous crime accusations -- which is a special provision in Brazilian electoral law. The second contribution is precisely understanding how electoral infractions influence electoral competition in one of the top five largest democracies in the world. Despite a recent fallback, Brazil ranked in the top 10\% countries in the V-Dem Electoral Democracy Index for the period under study \citep{CoppedgeVDemCountryYearDataset2018}.
+The first contribution is uncovering the effect of electoral infractions that are harder to detect or whose relationship with electoral outcomes is less known or well understood. For instance, politicians might use illegal forms of advertising or slush funds to spend beyond their campaign limits in order to win an election. Likewise, candidates and political parties might not meet all requirements for submitting candidacies, such as been cleared of previous crime accusations -- which is a special provision in Brazilian electoral law. The second contribution is precisely understanding how electoral infractions shape electoral outcomes in one of the top five largest democracies in the world. Despite a recent fallback, Brazil consistently ranked in the top 10\% countries in the V-Dem Electoral Democracy Index for the period under study \citep{CoppedgeVDemCountryYearDataset2018}.
 
-\subsection{Institutional Background}
+The present study also contributes to the broader literature of political economy of development. Brazil has an unique institutional design in which the judiciary branch has an entire system of state (TRE) and federal (TSE) electoral courts resolving electoral claims. Their mandate is to guarantee free and fair competition for public office, enforcing the Brazilian Electoral Code of 1965 and subsequent legislation. To the extent that the Electoral Courts are successful in rooting out wrongdoing, we should expect more electoral accountability from office-holding politicians. In addition, this paper investigates another source of judiciary power beyond setting legal disputes between economic agents; since every political candidate in Brazil needs a judicial approval when running for office, the Electoral Court holds an enormous amount of power in deciding who is or is not authorized to take up office.
 
-\subsection{Theory}
+Another important contribution in this study is the use of court documents as data. I collect and code judicial rulings from TRE and TSE courts on candidacy of politicians running for municipal office in Brazilian elections between 2004 and 2016. From these documents, I extract information on individual judge characteristics and electoral irregularities candidates are accused of, and ultimately convicted for, when running for office. Not only can I provide an estimate for the average treatment effect of electoral infractions on ballot performance but I can also estimate heterogeneous effects by type of violation. This project is part of a recent wave of studies using court documents to measure economic and political outcomes in development settings \citep{Sanchez-MartinezDismantlingInstitutionsCourt2018,LambaisJudicialSubversionEvidence2018}.
 
-\subsection{Empirical Strategy}
+Using these court documents, I recover the causal effect of electoral irregularities adopting an instrumental variable (IV) strategy in which the ruling at the trial stage, issued before election day but endogenous to each electoral race, is instrumented by the decision at the appeals stage after election day has passed, which is uncorrelated with electoral performance beyond its link to the first decision at trial. Thus, for a subsample of candidates running for office who had an untried appeal standing at the time of election, I can identify the causal effect of electoral violations on performance.
 
-\subsection{Preliminary Results}
+The preliminary results are encouraging. First-stage \emph{F}-statistics are large and significant at 1\% for both models including and excluding political characteristics ($F = 1{,}092$ and $F = 16{,}356$). OLS and reduced-form parameter estimates are very close in magnitude and significant at 1\%, strongly indicating that the instrument is orthogonal to the error term in the first stage. In my preferred IV model including political characteristics as controls, having been convicted of an electoral crime reduces the probability of election and total vote share for mayor and city council candidates by 28.8 and 17.9 percentage points, respectively. Though we should be careful when comparing these results with studies looking at punishment for corruption \citep{FerrazExposingCorruptPoliticians2008b,FerrazElectoralAccountabilityCorruption2011a,WintersLackingInformationCondoning2013}, which is a broader but more severe crime, the evidence consistently points to the negative impact on electoral performance when politicians decide to break the rules.
+
+In the remainder of this proposal, I explain the institutional background allowing for causal identification in section \ref{subsec:background_paper1} and discuss the theoretical mechanism underlying the relationship between electoral crimes and performance in section \ref{subsec:theory_paper1}. Section \ref{subsec:methods_paper1} discusses the empirical strategy and section \ref{subsec:results_paper1} presents preliminary results. Section \ref{subsec:conclusion_paper1} concludes laying out the additional work which will be carried out to fully develop this paper.
+
+\clearpage
+
+\subsection{Institutional Background} \label{subsec:background_paper1}
+
+Brazilian Federal (TSE) and State Electoral Court (TRE) systems have existed intermittently since 1932 but only became institutionally relevant after the country's return to democracy in 1985. Since then, electoral courts have a fundamental role in guaranteeing free and fair elections. Their mandate is to enforce the Electoral Code of 1965 and subsequent legislation, particularly the law establishing conditions for ineligibility to public office (1990), the Law of Political Parties (1995), the Law of Elections (1997), and the Clean Slate Act of 2010.
+
+Despite various attributions, I am mostly interested in the judicial review function of electoral courts. According to Brazilian Law, every individual running for office, at every level, has to submit proper documentation proving that they meet eligibility requirements for the office they are running; for instance, they should be 35 years of age or older to run for president or senator; executive-office holders, if running for any other elected office, must step down from current post six months before election day. Every electoral cycle, the higher-court TSE establishes a schedule for submission of all these documents, which are reviewed at lower-level courts by electoral judges who issue sentences authorizing every single candidacy in the country. This is the key institutional factor that allows for causal identification of electoral irregularities on performance.
+
+An example helps illustrate this point. Municipal elections took place on October 2, 2016. The deadline for submitting all candidacy documents was August 15, 2016. Between August 15 and September 12, electoral courts review and authorize each candidacy for mayor or city councilor. The process starts at the electoral district in which the candidate is running for office, and their trial ruling comes out of the designated electoral judge for that district. These judges are part of the State Court system and, when appointed to the electoral bench, are on leave from their original tenured positions at the state system. They serve on two-year mandates, with one reappointment allowed, so they never oversee the same district for more than one electoral cycle. If either a candidate or someone else files an appeal to the trial ruling, the case is presented before a panel of three judges at the State Electoral Court TRE. There are seven appellate court justices in each state's TRE, serving up to four-year mandates, and they are immune to local politics. In any state, six of these judges are voted in by their fellow tenured judges at the State and Federal Court systems and the last member is appointed by the President of Brazil. If plaintiffs or defendants are unhappy with the appellate court decision, they can appeal their case with the Federal Court TSE, which serves as the third and final instance of judicial review for mayor and city councilor candidates.
+
+The September 12 date is the key institutional feature that allows for causal identification. It is the last day for entering candidate information onto electronic voting (EV) machines distributed at every single polling station in the country.\footnote{\citet{FujiwaraVotingTechnologyPolitical2015} describes in detail this technology.} All candidates who have untried appeals by this date will have their information loaded, and thus can be voted for, in the EV machines on election day. I can observe the electoral performance of candidates who eventually are convicted of electoral violations and compare to candidates who are cleared of accusations to partial out the local average treatment effect of committing electoral crimes.
+
+
+
+
+\subsection{Theory} \label{subsec:theory_paper1}
+
+\subsubsection{Data} \label{subsubsec:data_paper1}
+
+\subsection{Empirical Strategy} \label{subsec:methods_paper1}
+
+\subsection{Preliminary Results} \label{subsec:results_paper1}
 
 \input{tab_sumstats}
 
@@ -114,39 +139,43 @@ The first contribution is uncovering the effect of electoral infractions that ar
 
 \input{tab_outcome3}
 
-\subsection{Further Development}
+\subsection{Further Development} \label{subsec:conclusion_paper1}
 
 \clearpage
 
 \section{Judicial Favoritism of Politicians: Evidence from Small Claim Courts} \label{sec:paper2}
 
-\subsection{Introduction}
+\subsection{Introduction} \label{subsec:introduction_paper2}
 
-\subsection{Institutional Background}
+\subsection{Institutional Background} \label{subsec:background_paper2}
 
-\subsection{Theory}
+\subsection{Theory} \label{subsec:theory_paper2}
 
-\subsection{Empirical Strategy}
+\subsubsection{Data} \label{subsubsec:data_paper2}
 
-\subsection{Preliminary Results}
+\subsection{Empirical Strategy} \label{subsec:methods_paper2}
 
-\subsection{Further Development}
+\subsection{Preliminary Results} \label{subsec:results_paper2}
+
+\subsection{Further Development} \label{subsec:conclusion_paper2}
 
 \clearpage
 
 \section{Active and Passive Transparency in Brazilian Municipalities} \label{sec:paper3}
 
-\subsection{Introduction}
+\subsection{Introduction} \label{subsec:introduction_paper3}
 
-\subsection{Institutional Background}
+\subsection{Institutional Background} \label{subsec:background_paper3}
 
-\subsection{Theory}
+\subsection{Theory} \label{subsec:theory_paper3}
 
-\subsection{Empirical Strategy}
+\subsubsection{Data} \label{subsubsec:data_paper3}
 
-\subsection{Preliminary Results}
+\subsection{Empirical Strategy} \label{subsec:methods_paper3}
 
-\subsection{Further Development}
+\subsection{Preliminary Results} \label{subsec:results_paper3}
+
+\subsection{Further Development} \label{subsec:conclusion_paper3}
 
 \clearpage
 

@@ -4,45 +4,45 @@ The top-level auxiliary file: prospectus.aux
 The style file: apalike.bst
 Database file #1: /Users/aassumpcao/library.bib
 Warning--empty publisher in SchedlerElectoralAuthoritarianism2015
-You've used 9 entries,
+You've used 15 entries,
             1935 wiz_defined-function locations,
-            538 strings with 6368 characters,
-and the built_in function-call counts, 4606 in all, are:
-= -- 410
-> -- 298
-< -- 8
-+ -- 110
-- -- 108
-* -- 440
-:= -- 818
-add.period$ -- 26
-call.type$ -- 9
-change.case$ -- 98
-chr.to.int$ -- 9
-cite$ -- 10
-duplicate$ -- 136
-empty$ -- 264
-format.name$ -- 125
-if$ -- 883
+            579 strings with 7809 characters,
+and the built_in function-call counts, 6723 in all, are:
+= -- 625
+> -- 364
+< -- 14
++ -- 130
+- -- 128
+* -- 614
+:= -- 1195
+add.period$ -- 44
+call.type$ -- 15
+change.case$ -- 138
+chr.to.int$ -- 15
+cite$ -- 16
+duplicate$ -- 216
+empty$ -- 417
+format.name$ -- 159
+if$ -- 1296
 int.to.chr$ -- 1
 int.to.str$ -- 0
-missing$ -- 8
-newline$ -- 47
-num.names$ -- 29
-pop$ -- 83
+missing$ -- 12
+newline$ -- 77
+num.names$ -- 47
+pop$ -- 109
 preamble$ -- 1
-purify$ -- 98
+purify$ -- 138
 quote$ -- 0
-skip$ -- 107
+skip$ -- 169
 stack$ -- 0
-substring$ -- 260
-swap$ -- 18
+substring$ -- 426
+swap$ -- 24
 text.length$ -- 2
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 54
+type$ -- 90
 warning$ -- 1
-while$ -- 29
+while$ -- 46
 width$ -- 0
-write$ -- 116
+write$ -- 194
 (There was 1 warning)
