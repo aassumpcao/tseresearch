@@ -47,7 +47,7 @@ sectionSP %>%
   unlist() %>%
   sum()
 
-
+analysis %$% table(candidate.education)
 
 
 View(test)
@@ -287,7 +287,11 @@ analysis %$% table(candidate.education, election.year)
 
 analysis %$% table(candidate.maritalstatus)
 
+2913/9469
+5924/9469
 
+22/3379
+1009/5059
 analysis %>% str()
 analysis %>% names()
 analysis %$% table(election.stage)

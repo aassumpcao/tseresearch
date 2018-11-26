@@ -391,7 +391,7 @@ stargazer(
   title = 'Descriptive Statistics',
   style = 'default',
   summary = TRUE,
-  out   = './prospectus/tab_sumstats.tex',
+  # out = './prospectus/tab_sumstats.tex',
   out.header = FALSE,
   covariate.labels = c(var.labels[c(1:2, 5:6)], instr.labels, out.labels),
   align = TRUE,
@@ -430,15 +430,12 @@ red1 <- outcomes %>%
 iv0 <- outcomes %>% paste0(., ' ~ ', instrumented, ' | ', instrument)
 iv1 <- outcomes %>% paste0(., ' ~ ', instrumented, ' | ', instrument, ' + ',
                            paste0(variables, collapse = ' + '))
-
 # analysis
 # first-stage
 first0 <- lm(as.formula(first0), data = analysis)
 analysis$residuals.0 <- residuals(first0)
 first1 <- lm(as.formula(first1), data = analysis)
 analysis$residuals.1 <- residuals(first1)
-
-summary(lm(outcome.elected ~ residuals.1, data = analysis))
 
 # ols regressions
 ols0.outcome1 <- lm(as.formula(ols0[1]), data = analysis)
@@ -474,7 +471,7 @@ stargazer(
   type = 'text',
   title = 'First Stage Regressions of Convictions at Trial and on Appeal',
   style = 'default',
-  out   = './prospectus/tab_firststage.tex',
+  # out = './prospectus/tab_firststage.tex',
   out.header = FALSE,
   column.labels = rep('First-Stage', 2),
   column.separate = rep(1, 2),
@@ -500,6 +497,27 @@ stargazer(
   table.placement = '!htbp'
 )
 
+# extract hausman test statistics
+hausman <- objects(pattern = 'iv(.)*outcome') %>%
+           lapply(get) %>%
+           lapply(summary, vcov = sandwich, diagnostics = TRUE) %>%
+           lapply(function(x){c(x[['diagnostics']][['Wu-Hausman', 'statistic']],
+                                x[['diagnostics']][['Wu-Hausman', 'p-value']])})
+
+# print table
+tibble(
+  Outcome = c('Probability of Election', 'Vote Distance to Elected Candidates',
+  'Total Vote Share'), `Hausman Statistic` = round(c(hausman[[4]][[1]],
+  hausman[[5]][[1]], hausman[[6]][[1]]), digits = 2), `p-value` = signif(
+  c(hausman[[4]][[2]], hausman[[5]][[2]], hausman[[6]][[2]]), digits = 3)
+) %>%
+xtable::xtable(
+  caption = 'Hausman Tests for Instrument Strength',
+  label = 'tab:hausman',
+  align = c('r', 'l', 'D{.}{.}{-2}', 'D{.}{.}{-3}'),
+  digits = c(0, 0, 2, -3)) # %>%
+# print(file = './prospectus/tab_hausman.tex')
+
 # produce three tables for three outcomes
 # table 1
 stargazer(
@@ -512,7 +530,7 @@ stargazer(
   type = 'text',
   title = 'The Effect of Electoral Crimes on the Probability of Election',
   style = 'default',
-  out   = './prospectus/tab_outcome1.tex',
+  # out = './prospectus/tab_outcome1.tex',
   out.header = FALSE,
   column.labels = rep(c('OLS', 'Reduced-form', 'IV'), each = 2),
   column.separate = rep(1, 6),
@@ -551,7 +569,7 @@ stargazer(
   title = paste('The Effect of Electoral Crimes on the Vote Distance to',
                 'Elected Candidates', sep = ' '),
   style = 'default',
-  out   = './prospectus/tab_outcome2.tex',
+  # out = './prospectus/tab_outcome2.tex',
   out.header = FALSE,
   column.labels = rep(c('OLS', 'Reduced-form', 'IV'), each = 2),
   column.separate = rep(1, 6),
@@ -589,7 +607,7 @@ stargazer(
   type = 'text',
   title = 'The Effect of Electoral Crimes on the Total Vote Share',
   style = 'default',
-  out   = './prospectus/tab_outcome3.tex',
+  # out   = './prospectus/tab_outcome3.tex',
   out.header = FALSE,
   column.labels = rep(c('OLS', 'Reduced-form', 'IV'), each = 2),
   column.separate = rep(1, 6),

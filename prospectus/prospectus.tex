@@ -48,6 +48,7 @@
 \newcommand{\ci}{\perp\!\!\!\perp}
 \newcommand{\nci}{\centernot{\ci}}
 \newcommand{\subtitle}[1]{\posttitle{\par\end{center}\begin{center}\large#1\end{center}\vskip0.5em}}
+\newcommand{\refp}[1]{(\ref{#1})}
 
 \newcolumntype{L}[1]{>{\raggedright\let\newline\\arraybackslash\hspace{0pt}}m{#1}}
 \newcolumntype{C}[1]{>{\centering\let\newline\\arraybackslash\hspace{0pt}}m{#1}}
@@ -81,9 +82,9 @@
 
 \clearpage
 
-\section*{Summary} \label{sec:summary}
+% \section*{Summary} \label{sec:summary}
 
-\clearpage
+% \clearpage
 
 \section{Electoral Crime Under Democratic Rule: Evidence from Brazil} \label{sec:paper1}
 
@@ -127,7 +128,7 @@ The main limitation of this study is that I can only recover causal effects of e
 
 The main data source for electoral performance is TSE's repository of electoral data. TSE publishes electoral results, vote counts, candidate's individual characteristics, and their candidacy's situation on election day for all elections since 1994. I focus on the municipal elections after the introduction of the EV machine in 2002 for even performance measures across elections and municipalities. My sample is composed of 9,469 candidates for mayor or city councilor who appealed, or had third-parties appealing, their trial sentence on whether their candidacy meet all requirements. These candidates have been displayed in the EV device and could have been voted for on election day. Their candidacy remained pending after elections and they have only been allowed to take up office once a final ruling was issued.
 
-Data on the reasons for rejecting candidacies are scraped from the TSE website, which makes all their court documents public. I have developed a web scraper that downloads the case number for each of the 9,469 candidacies and their information in order to recover judge characteristics and reasons for rejecting a candidacy. For transparency purposes, all programs and data are freely available online.\footnote{I maintain a \href{https://www.github.com/aassumpcao/tse-scraper}{\textcolor{blue}{github}} repository storing all programs, data, and manuscripts used in this project. For the time being, this page is set to private and the latter link only provides access to the web scraper programs.}
+Data on the reasons for rejecting candidacies are scraped from the TSE website, which makes all their court documents public. I have developed a web scraper that d ownloads the case number for each of the 9,469 candidacies and their information in order to recover judge characteristics and reasons for rejecting a candidacy. For transparency purposes, all programs and data are freely available online.\footnote{I maintain a \href{https://www.github.com/aassumpcao/tse-scraper}{\textcolor{blue}{github}} repository storing all programs, data, and manuscripts used in this project. For the time being, this page is set to private and the latter link only provides access to the web scraper programs.}
 
 I have already collected all data on candidates and electoral performance from the TSE repository. Candidate individual characteristics are age, gender, political experience, education, marital status, and the reported amount of funds they have spent in their campaigns. There are, however, a few data management and transformation tasks remaining. I have coded political experience as a binary variable for when candidates report holding office at the time of elections, but I have yet to include as experience candidates who have run for office multiple times and, when running for city councilor, candidates who belong to the strongest coalition at the time of elections. Second, I need to collect further data on campaign expenditures; I have used their reported spending using the information in TSE dataset on each candidacy, which has many missing values, but the comprehensive data on funding belongs in the TSE dataset on campaign funds.
 
@@ -135,7 +136,51 @@ As far as court documents go, I have already written the web scrapers for obtain
 
 \subsection{Theory} \label{subsec:theory_paper1}
 
+Assuming a representative candidate A is running for office X. They will adopt various electoral tactics in order to gather more votes on election day. Any country's electoral authorities lay out rules for office races, such as the amount of campaign spending per candidate, means of advertising, dates for which campaigning are authorized, age limits, etc. In democratic countries, these rules promote political competition and representation of various diverse demographics in the population. Thus, any politician running for office maximizes the following utility function \refp{eq:1}:
+\begin{equation} \label{eq:1}
+  P(\text{election}) = f(X, \varepsilon)
+\end{equation}
+
+Their probability of election $p$ is a function of a series of observable characteristics represented by a matrix $X$, as described above, which can benefit or hurt candidate's electoral chances. To the best of their ability, the representative politician clearly wants to adopt beneficial tactics and avoid negative options. The error term $\varepsilon$ captures any other non-observable or non-observed characteristic that simultaneously determine a candidate's chance to hold office; political intelligence is an example of the former, the deals they make with supporters are the latter.
+
+A fundamental factor in the error term is illegal action taken by politicians to win an election. In democratic regimes, candidates will hide their wrongdoing because of the negative press and ammunition this provides to their political opponents. Illegal actions are not observed and thus are a puzzle for research. Moreover, if electoral authorities are serious about their mandate, any candidate found guilty of severe electoral wrongdoing would be removed from the race; therefore, under normal conditions, observing illegal action would not suffice for estimating effects of crime on election performance because most serious crimes would not be accounted for when looking at electoral outcomes. These practices should then be viewed as a function of the penalties they impose, as discussed above, and the return to each candidacy and how much they help people get elected. These relationships are represented by functions:
+\begin{equation} \label{eq:2}
+  P(\text{election}) = f(X, c, \varepsilon)
+\end{equation}
+\begin{equation} \label{eq:3}
+  c = f(r, p, \epsilon)
+\end{equation}
+
+In equations \refp{eq:2} and \refp{eq:3}, $c$ is the illegal action taken. It is a function of electoral rewards $r$ and electoral or legal punishment $p$, summarized in equation \refp{eq:2}. The representative candidate A compares $r$ and $p$ before deciding whether to adopt the forbidden tactic or not. The institutional design of the municipal electoral process in Brazil makes it a perfect setting for estimating equation \refp{eq:2}, as it allows the simultaneous observation of both crimes and electoral outcomes for every candidate. Since the only legal punishment available for electoral judges in Brazil are the rejection of a candidacy in one or more cycles, the only mechanism driving the choice for electoral violations is the different expectations each candidate holds with respect to the electoral payoff of wrongdoing.
+
+The remaining problem for identifying the causal effect of electoral violations on performance is the relationship between $X$ and $c$. Candidates are likely to choose an illegal action based on the type and quality of political competition they are facing, their own political skills, and other unobserved factors. That said, we can claim with a fair amount of confidence that $cov(X,c) \neq 0$ and $cov(c, \varepsilon) \neq 0$. In section \ref{subsec:methods_paper1}, I explain how I address this problem and how I can recover the causal effects of crime for a subsample of municipal candidates in Brazil.
+
 \subsection{Empirical Strategy} \label{subsec:methods_paper1}
+
+In this paper, I adopt an instrumental variables approach that allows the causal identification of the effect of electoral irregularities on performance in Brazil. As described in section \ref{subsec:background_paper1}, I can only recover local average treatment effects, i.e. for the subsample of candidates who are charged with electoral crimes, by the ruling judge or third-parties, and have an outstanding appeal on their trial decision. Candidates who break electoral code but are not detected are not part of this study, neither are candidates who have chosen not to appeal the sentence rejecting their candidacy for elected office. For this sample of candidates with untried appeals on election day, I estimate the following regression model in three ways and three different measures of electoral performance:
+\begin{equation} \label{eq:reg1}
+  \begin{split}
+    y_{i} = \alpha + \rho \cdot c_{i} + X\beta + \sum \lambda_{i, k} + \varepsilon_{i}
+  \end{split}
+\end{equation}
+
+The dependent variable has three forms: (i) the probability of election, taking up value one when either the mayor or city councilor has had enough votes for election in their race; (ii) the vote distance to elected candidate(s), which is the percentage point margin between candidate $i$ vote share and that of the single elected candidate (when running for mayor) or last elected candidate (when running for city councilor); (iii) the total vote share of candidate $i$ received in their race. Using outcome one, I can measure the impact of the electoral violation on the most important outcome of any political campaign, i.e.~being elected; outcome two tells us about the benefit for committing crimes when candidates are trying to secure an electoral lead or narrow in on races in which they are trailing another candidate; the last outcome serves as a measure of the overall impact on candidate popularity if they are found guilty by the electoral court system.
+
+The main independent variable is the binary indicator for convictions at the electoral court system $c$ for candidate $i$. If a candidacy has been rejected by the trial judge responsible for that electoral district, $c$ becomes one. I use convictions at the trial level for OLS regressions benchmarking the effect of electoral infractions on ballot performance; in reduced-form regressions, I replace convictions at trial for convictions on appeal -- which becomes one when the candidate has seen an unfavorable ruling at higher instances of the electoral court system. The reduced-form regressions hint at any potential correlation between instruments and outcomes beyond the channel via instrumented variables. I lastly estimate model \refp{eq:reg1} using two-stage least squares (2SLS) regressions, in which I instrument the endogenous regressor conviction at trial for the exogenous regressor conviction on appeal. Since I am looking at appellate court decisions issued after election day, the exclusion restriction is straightforward as the instrument is measured only after outcomes have been observed. Any effect of appellate decisions only influences electoral performance via their relationship with the convictions at trial. In such case, equation \refp{eq:reg1} and first-stage are:
+\begin{equation} \label{eq:reg2}
+  \begin{split}
+    y_{i} = \alpha + \rho \cdot \hat{c}_{i, \text{trial}} + X\beta + \sum \lambda_{i, k} + \varepsilon_{i}
+  \end{split}
+\end{equation}
+\begin{equation} \label{eq:regfirststage}
+  \begin{split}
+    c_{i, \text{trial}} = \alpha + \rho \cdot c_{i, \text{appeals}} + X\beta + \sum \lambda_{i, k} + \varepsilon_{i}
+  \end{split}
+\end{equation}
+
+I control for additional characteristics using vector $X$ of candidate information on their age, gender, marital and education status, political experience, and campaign spending. For the complete version of this paper, I also include a set of fixed-effects to capture any additional unobservable heterogeneity coming from year, election, and municipal conditions shared by all candidates. Any remaining stochastic effect is contained in the error term $\varepsilon$.
+
+In addition to running these regression equations, I offer various other robustness checks to confirm instrument strength and to do away with potential spurious relationship concerns. In the following section, I present first-stage results and the Hausman statistic to support my instrument choice. In the final version, I also include falsification tests using a sample of candidates who should not experience any electoral effect from judicial convictions on their candidacies.
 
 \subsection{Preliminary Analysis} \label{subsec:results_paper1}
 
@@ -143,19 +188,19 @@ As a preview of the final paper, I present in this section some preliminary resu
 
 \input{tab_sumstats}
 
-There are a certain characteristics that jump to mind in the sample used in this project. The average politician I am looking at in this study is 46 years-old, male (79 percent of the sample), 10 percent were office-holders at the time of election, and have spent R\$ 144,722, on average, on the campaign for office.
+There are a certain characteristics that jump to mind in the sample used in this project. The average politician I am looking at in this study is 46 years-old, male (79 percent of the sample), 10 percent were office-holders at the time of election, and have spent R\$ 144,722, on average, on the campaign for office. Categorial variables are omitted from the table but the most frequent education level of politicians is high school (30 percent) and 62.5 percent of them report being married at the time of elections. Sixty-four percent of candidates have been convicted at trial, meaning their candidacies have not been authorized, while the remaining 36 percent have seen their opponents or the Office of Electoral Prosecutions file an appeal against their candidacy with TRE. Approximately 53 percent have had a final ruling against their candidacy issued by the panel of appellate judges.
 
-(ALSO BRING UP CHARACTERISTICS IN QUALITATIVE INFORMATION)
-
-Sixty-four percent of candidates have been convicted at trial, meaning their candidacies have not been authorized, while the remaining 36 percent have seen their opponents or the Office of Electoral Prosecutions file an appeal against their candidacy with TRE. Approximately 53 percent have had a final ruling against their candidacy issued by the panel of appellate judges.
-
-Reversal rates at the appeals stage are rare. A simple tabulation shows that only X\% of candidates who have had an unfavorable ruling issued by the electoral district judge have seen a reversal on appeals. The opposite is also true. Candidates authorized to run for office have had their candidacies confirmed in X\% of all cases. A stronger evidence of this relationship is presented in table \ref{tab:firststage}, where we present the first-stage regressions of convictions on appeals vs. convictions at trial.
+Conviction reversal rates at the appeals stage are rare. Only 0.6 percent of candidates who have had an unfavorable ruling issued by the electoral district judge have seen a sentence reversal on appeals. When charges were brought up by third-parties, reversals were more frequent. Candidates authorized to run for office have had their candidacies authorization overturned in 19.9 percent of all cases. A stronger evidence of this relationship is presented in table \ref{tab:firststage}, where we present the first-stage regressions of convictions on appeals vs. convictions at trial.
 
 \input{tab_firststage}
 
 Not only the relationship between rulings at both stages are significant at 1\%, but the magnitude of the parameters is large. Being convicted by a trial judge increases a politician's probability of an unfavorable ruling on appeal by approximately 76 percentage points, including when controlling for a politician's individual characteristics. In this more restrictive case, the \emph{F}-statistic is significant at 1\% and substantially larger ($F = 1{,}092$) than industry standards at $F = 10$. Adjusted-R\textsuperscript{2} is .648 and also lends support to the use of convictions on appeal as instruments for convictions at trial.
 
-(DISCUSS HAUSMAN TEST).
+\input{tab_hausman}
+
+In table \ref{tab:hausman}, I perform another test of instrument strength using the Hausman statistic of instrumental variables regressions (including covariates) for all three outcomes. In models one and three, we can safely reject the hypothesis that OLS and IV models are asymptotically equal (both significant at 1\%). For model two, I fail to reject the equality hypothesis, suggesting that the IV is not substantially different from OLS. Since the vote distances to elected candidates change substantially if we are under majoritarian (mayor) or proportional (city council) elections, this result is entirely plausible when we estimate models with a single sample for both types of candidates. In the completed paper, I break down the sample for outcome two and show that the instrument is strong in either separate case.
+
+Tables \ref{tab:outcome1}-\ref{tab:outcome3} are the bulk of the preliminary results in this proposal. Table \ref{tab:outcome1} presents the effect of electoral infractions on the probability of election of each candidate. For mayors, this variable turns on when the candidate was the most voted in their election. For city councilors, this variable turns on when the candidate has received enough votes to finish the election within the number of vacancies in their municipality. For instance, if municipality A has 12 seats in its city council, a candidate who received the same number or more votes than the 12\textsuperscript{th} placed candidate receives outcome value one.\footnote{City council elections are not necessarily decided in such manner; TSE counts all votes in a single election and divides them up by the number of seats available. All candidates who have more votes than this mark are automatically elected to office; remaining seats go to the coalitions who have rounded up more votes. In most cases, however, votes are usually spread out across many candidates and coalitions, so being voted in as the last candidate within the number of available seats does guarantee their election and supports their coalitions to get further seats.}
 
 \input{tab_outcome1}
 
@@ -167,41 +212,41 @@ Not only the relationship between rulings at both stages are significant at 1\%,
 
 \clearpage
 
-\section{Judicial Favoritism of Politicians: Evidence from Small Claim Courts} \label{sec:paper2}
+% \section{Judicial Favoritism of Politicians: Evidence from Small Claim Courts} \label{sec:paper2}
 
-\subsection{Introduction} \label{subsec:introduction_paper2}
+% \subsection{Introduction} \label{subsec:introduction_paper2}
 
-\subsection{Institutional Background} \label{subsec:background_paper2}
+% \subsection{Institutional Background} \label{subsec:background_paper2}
 
-\subsection{Data} \label{subsec:data_paper2}
+% \subsection{Data} \label{subsec:data_paper2}
 
-\subsection{Theory} \label{subsec:theory_paper2}
+% \subsection{Theory} \label{subsec:theory_paper2}
 
-\subsection{Empirical Strategy} \label{subsec:methods_paper2}
+% \subsection{Empirical Strategy} \label{subsec:methods_paper2}
 
-\subsection{Preliminary Results} \label{subsec:results_paper2}
+% \subsection{Preliminary Results} \label{subsec:results_paper2}
 
-\subsection{Further Development} \label{subsec:conclusion_paper2}
+% \subsection{Further Development} \label{subsec:conclusion_paper2}
 
-\clearpage
+% \clearpage
 
-\section{Active and Passive Transparency in Brazilian Municipalities} \label{sec:paper3}
+% \section{Active and Passive Transparency in Brazilian Municipalities} \label{sec:paper3}
 
-\subsection{Introduction} \label{subsec:introduction_paper3}
+% \subsection{Introduction} \label{subsec:introduction_paper3}
 
-\subsection{Institutional Background} \label{subsec:background_paper3}
+% \subsection{Institutional Background} \label{subsec:background_paper3}
 
-\subsection{Data} \label{subsec:data_paper3}
+% \subsection{Data} \label{subsec:data_paper3}
 
-\subsection{Theory} \label{subsec:theory_paper3}
+% \subsection{Theory} \label{subsec:theory_paper3}
 
-\subsection{Empirical Strategy} \label{subsec:methods_paper3}
+% \subsection{Empirical Strategy} \label{subsec:methods_paper3}
 
-\subsection{Preliminary Results} \label{subsec:results_paper3}
+% \subsection{Preliminary Results} \label{subsec:results_paper3}
 
-\subsection{Further Development} \label{subsec:conclusion_paper3}
+% \subsection{Further Development} \label{subsec:conclusion_paper3}
 
-\clearpage
+% \clearpage
 
 \setlength\bibsep{0pt}
 \bibliographystyle{apalike}
