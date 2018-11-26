@@ -60,7 +60,7 @@
 \begin{titlepage}
 \title{Three Essays on Sanctions of Politicians in Brazil}
 \subtitle{A proposal submitted in partial fulfillment of the requirements for the Degree of Doctor of Philosophy in Public Policy}
-\author{Andre Assumpcao\thanks{PhD Student, Department of Public Policy, The University of North Carolina at Chapel Hill. Contact details: \href{mailto:aassumpcao@unc.edu}{aassumpcao@unc.edu}}}
+\author{Andre Assumpcao\thanks{PhD Student, Department of Public Policy, The University of North Carolina at Chapel Hill. Contact details: \href{mailto:aassumpcao@unc.edu}{\textcolor{blue}{aassumpcao@unc.edu}}}}
 
 \maketitle
 
@@ -88,6 +88,7 @@
 \section{Electoral Crime Under Democratic Rule: Evidence from Brazil} \label{sec:paper1}
 
 \subsection{Introduction} \label{subsec:introduction_paper1}
+
 In democratic regimes, office-seeking politicians employ various tactics to get elected. They might promise more resources to increase the provision of local public goods, such as schools, hospitals, or roads; they can run ads on TV and, more recently, on social media to promote their candidacy; they could even meet with their constituents and gain their vote by establishing a personal connection with them. While these tactics are different, sometimes complementary means a politician could deploy to win an election, they all characterize \emph{play-by-the-rules} strategies. Governments generally allow such practices because they are fair electoral weapons which make electoral systems competitive. In this paper, however, I focus on forbidden, and less understood, ways to win an election by \emph{breaking the rules} and deploying illegal tactics to shape election results.
 
 Scholars have not ignored the various forms in which politicians break electoral rules to win elections. \citet{LehoucqElectoralFraudCauses2003} offers a comprehensive account of electoral fraud, which takes up a variety of forms such as procedural rule-breaking, illegal campaigning, violence, and even unequivocal vote buying. In a more recent study, \citet{Gans-MorseVarietiesClientelismMachine2013a} design a theoretical framework encompassing four types of clientelism practices (vote, turnout, and abstention buying, and double persuasion) and their adoption under five different institutional designs. Their key insight is that the electoral system shapes the type of clientelism employed for electoral gain.
@@ -104,7 +105,7 @@ Using these court documents, I recover the causal effect of electoral irregulari
 
 The preliminary results are encouraging. First-stage \emph{F}-statistics are large and significant at 1\% for both models including and excluding political characteristics ($F = 1{,}092$ and $F = 16{,}356$). OLS and reduced-form parameter estimates are very close in magnitude and significant at 1\%, strongly indicating that the instrument is orthogonal to the error term in the first stage. In my preferred IV model including political characteristics as controls, having been convicted of an electoral crime reduces the probability of election and total vote share for mayor and city council candidates by 28.8 and 17.9 percentage points, respectively. Though we should be careful when comparing these results with studies looking at punishment for corruption \citep{FerrazExposingCorruptPoliticians2008b,FerrazElectoralAccountabilityCorruption2011a,WintersLackingInformationCondoning2013}, which is a broader but more severe crime, the evidence consistently points to the negative impact on electoral performance when politicians decide to break the rules.
 
-In the remainder of this proposal, I explain the institutional background allowing for causal identification in section \ref{subsec:background_paper1} and discuss the theoretical mechanism underlying the relationship between electoral crimes and performance in section \ref{subsec:theory_paper1}. Section \ref{subsec:methods_paper1} discusses the empirical strategy and section \ref{subsec:results_paper1} presents preliminary results. Section \ref{subsec:conclusion_paper1} concludes laying out the additional work which will be carried out to fully develop this paper.
+In the remainder of this proposal, I explain the institutional background allowing for causal identification in section \ref{subsec:background_paper1}, present the data in section \ref{subsec:data_paper1}, and discuss the theoretical mechanism underlying the relationship between electoral crimes and performance in section \ref{subsec:theory_paper1}. Section \ref{subsec:methods_paper1} discusses the empirical strategy and section \ref{subsec:results_paper1} presents preliminary results. Section \ref{subsec:conclusion_paper1} concludes laying out the additional work which will be carried out to fully develop this paper.
 
 \clearpage
 
@@ -112,26 +113,49 @@ In the remainder of this proposal, I explain the institutional background allowi
 
 Brazilian Federal (TSE) and State Electoral Court (TRE) systems have existed intermittently since 1932 but only became institutionally relevant after the country's return to democracy in 1985. Since then, electoral courts have a fundamental role in guaranteeing free and fair elections. Their mandate is to enforce the Electoral Code of 1965 and subsequent legislation, particularly the law establishing conditions for ineligibility to public office (1990), the Law of Political Parties (1995), the Law of Elections (1997), and the Clean Slate Act of 2010.
 
-Despite various attributions, I am mostly interested in the judicial review function of electoral courts. According to Brazilian Law, every individual running for office, at every level, has to submit proper documentation proving that they meet eligibility requirements for the office they are running; for instance, they should be 35 years of age or older to run for president or senator; executive-office holders, if running for any other elected office, must step down from current post six months before election day. Every electoral cycle, the higher-court TSE establishes a schedule for submission of all these documents, which are reviewed at lower-level courts by electoral judges who issue sentences authorizing every single candidacy in the country. This is the key institutional factor that allows for causal identification of electoral irregularities on performance.
+Despite various attributions, I am mostly interested in the judicial review function of electoral courts. According to Brazilian Law, every individual running for office, at every level, has to submit proper documentation proving that they meet eligibility requirements for the office they are running; for instance, they should be 35 years of age or older to run for president or senator; executive-office holders, if running for any other elected office, must step down from current post six months before election day. Every electoral cycle, the higher-court TSE establishes a schedule for submission of all these documents, which are reviewed at lower-level courts by electoral judges who issue sentences authorizing every single candidacy in the country. This is the main institutional factor that allows for causal identification of electoral irregularities on performance.
 
 An example helps illustrate this point. Municipal elections took place on October 2, 2016. The deadline for submitting all candidacy documents was August 15, 2016. Between August 15 and September 12, electoral courts review and authorize each candidacy for mayor or city councilor. The process starts at the electoral district in which the candidate is running for office, and their trial ruling comes out of the designated electoral judge for that district. These judges are part of the State Court system and, when appointed to the electoral bench, are on leave from their original tenured positions at the state system. They serve on two-year mandates, with one reappointment allowed, so they never oversee the same district for more than one electoral cycle. If either a candidate or someone else files an appeal to the trial ruling, the case is presented before a panel of three judges at the State Electoral Court TRE. There are seven appellate court justices in each state's TRE, serving up to four-year mandates, and they are immune to local politics. In any state, six of these judges are voted in by their fellow tenured judges at the State and Federal Court systems and the last member is appointed by the President of Brazil. If plaintiffs or defendants are unhappy with the appellate court decision, they can appeal their case with the Federal Court TSE, which serves as the third and final instance of judicial review for mayor and city councilor candidates.
 
-The September 12 date is the key institutional feature that allows for causal identification. It is the last day for entering candidate information onto electronic voting (EV) machines distributed at every single polling station in the country.\footnote{\citet{FujiwaraVotingTechnologyPolitical2015} describes in detail this technology.} All candidates who have untried appeals by this date will have their information loaded, and thus can be voted for, in the EV machines on election day. I can observe the electoral performance of candidates who eventually are convicted of electoral violations and compare to candidates who are cleared of accusations to partial out the local average treatment effect of committing electoral crimes.
+The September 12 date is the key institutional feature that allows observing performance for politicians who violate electoral rules. It is the last day for entering candidate information onto electronic voting (EV) machines distributed at every single polling station in the country.\footnote{\citet{FujiwaraVotingTechnologyPolitical2015} describes in detail this technology.} All candidates who have untried appeals by this date will have their information loaded, and thus can be voted for, in the EV machines on election day. I can observe the electoral performance of candidates who eventually are convicted of electoral violations and compare to candidates who are cleared of accusations to partial out the local average treatment effect of committing electoral crimes.
 
+Exogenous variation in convictions for electoral violation comes from the timing according to which trial and appeals sentences are issued for such candidates. Though their information (picture, name, voting number) is displayed in the EV machine, their votes are computed \emph{sub judice} -- their vote count is considered valid only when the TRE or TSE publish their final decision on their candidacy. Effectively, thus, the decisions at the appeals stage cannot affect electoral outcomes, since they are issued only after election day has passed, but they bear a strong relationship to the sentence handed out by the trial judge responsible by the electoral district in which candidates first submitted their documentation. Decisions at trial are mostly endogenous to electoral outcomes, but the use of appeals as instruments leaves out only their exogenous part allowing for causal identification.
 
+The main limitation of this study is that I can only recover causal effects of electoral violations under restrictive special conditions pertaining to municipal elections in Brazil. At any other electoral race, both the trial and appeals stages are tried by the TRE and this might shape the way electoral judges issue rulings in response to the importance of the office whose candidacy. For instance, Senators are much more influential than city councilors and have a direct channel with the President, who is responsible for appointing one judge to each TRE. Second, there are a number of candidates who do not appeal their trial ruling and as such do not appear on the EV machine on election day. Thus, I cannot observe their ballot performance. Though it is likely that they are heterogeneous in many dimensions when compared to candidates who have outstanding appeals, such as their political experience, or they drive to hold elected office, it would still be interesting if I could estimate causal effects for the entire distribution of electoral irregularities instead of the narrow sample at hand. Still, the lack of evidence of the effect of electoral violations on ballot performance for large democracies speaks to the relevance of this project.
 
+\subsection{Data} \label{subsec:data_paper1}
+
+The main data source for electoral performance is TSE's repository of electoral data. TSE publishes electoral results, vote counts, candidate's individual characteristics, and their candidacy's situation on election day for all elections since 1994. I focus on the municipal elections after the introduction of the EV machine in 2002 for even performance measures across elections and municipalities. My sample is composed of 9,469 candidates for mayor or city councilor who appealed, or had third-parties appealing, their trial sentence on whether their candidacy meet all requirements. These candidates have been displayed in the EV device and could have been voted for on election day. Their candidacy remained pending after elections and they have only been allowed to take up office once a final ruling was issued.
+
+Data on the reasons for rejecting candidacies are scraped from the TSE website, which makes all their court documents public. I have developed a web scraper that downloads the case number for each of the 9,469 candidacies and their information in order to recover judge characteristics and reasons for rejecting a candidacy. For transparency purposes, all programs and data are freely available online.\footnote{I maintain a \href{https://www.github.com/aassumpcao/tse-scraper}{\textcolor{blue}{github}} repository storing all programs, data, and manuscripts used in this project. For the time being, this page is set to private and the latter link only provides access to the web scraper programs.}
+
+I have already collected all data on candidates and electoral performance from the TSE repository. Candidate individual characteristics are age, gender, political experience, education, marital status, and the reported amount of funds they have spent in their campaigns. There are, however, a few data management and transformation tasks remaining. I have coded political experience as a binary variable for when candidates report holding office at the time of elections, but I have yet to include as experience candidates who have run for office multiple times and, when running for city councilor, candidates who belong to the strongest coalition at the time of elections. Second, I need to collect further data on campaign expenditures; I have used their reported spending using the information in TSE dataset on each candidacy, which has many missing values, but the comprehensive data on funding belongs in the TSE dataset on campaign funds.
+
+As far as court documents go, I have already written the web scrapers for obtaining case numbers and information, but have only downloaded case numbers. The remaining steps for completing the data collection task are downloading all case information in HTML format, one per case, and parsing HTML files into human-readable text. Though I am yet to do this for the whole sample, I have completed this entire process for a random sample of 1,000 candidates in the 2016 election as a trial run, so I am extremely familiar with the necessary steps for doing the remaining 9,469 iterations for the sample of candidates used in this paper.
 
 \subsection{Theory} \label{subsec:theory_paper1}
 
-\subsubsection{Data} \label{subsubsec:data_paper1}
-
 \subsection{Empirical Strategy} \label{subsec:methods_paper1}
 
-\subsection{Preliminary Results} \label{subsec:results_paper1}
+\subsection{Preliminary Analysis} \label{subsec:results_paper1}
+
+As a preview of the final paper, I present in this section some preliminary results establishing the relationship between electoral violations and electoral performance. I collected all electoral outcome data, politician's individual characteristics, candidacy situation for the local average treatment effects of crimes regardless of the type of infraction for which candidates were found guilty or not guilty. Table \ref{tab:sumstats} reports descriptive statistics about the sample of candidates.
 
 \input{tab_sumstats}
 
+There are a certain characteristics that jump to mind in the sample used in this project. The average politician I am looking at in this study is 46 years-old, male (79 percent of the sample), 10 percent were office-holders at the time of election, and have spent R\$ 144,722, on average, on the campaign for office.
+
+(ALSO BRING UP CHARACTERISTICS IN QUALITATIVE INFORMATION)
+
+Sixty-four percent of candidates have been convicted at trial, meaning their candidacies have not been authorized, while the remaining 36 percent have seen their opponents or the Office of Electoral Prosecutions file an appeal against their candidacy with TRE. Approximately 53 percent have had a final ruling against their candidacy issued by the panel of appellate judges.
+
+Reversal rates at the appeals stage are rare. A simple tabulation shows that only X\% of candidates who have had an unfavorable ruling issued by the electoral district judge have seen a reversal on appeals. The opposite is also true. Candidates authorized to run for office have had their candidacies confirmed in X\% of all cases. A stronger evidence of this relationship is presented in table \ref{tab:firststage}, where we present the first-stage regressions of convictions on appeals vs. convictions at trial.
+
 \input{tab_firststage}
+
+Not only the relationship between rulings at both stages are significant at 1\%, but the magnitude of the parameters is large. Being convicted by a trial judge increases a politician's probability of an unfavorable ruling on appeal by approximately 76 percentage points, including when controlling for a politician's individual characteristics. In this more restrictive case, the \emph{F}-statistic is significant at 1\% and substantially larger ($F = 1{,}092$) than industry standards at $F = 10$. Adjusted-R\textsuperscript{2} is .648 and also lends support to the use of convictions on appeal as instruments for convictions at trial.
+
+(DISCUSS HAUSMAN TEST).
 
 \input{tab_outcome1}
 
@@ -149,9 +173,9 @@ The September 12 date is the key institutional feature that allows for causal id
 
 \subsection{Institutional Background} \label{subsec:background_paper2}
 
-\subsection{Theory} \label{subsec:theory_paper2}
+\subsection{Data} \label{subsec:data_paper2}
 
-\subsubsection{Data} \label{subsubsec:data_paper2}
+\subsection{Theory} \label{subsec:theory_paper2}
 
 \subsection{Empirical Strategy} \label{subsec:methods_paper2}
 
@@ -167,9 +191,9 @@ The September 12 date is the key institutional feature that allows for causal id
 
 \subsection{Institutional Background} \label{subsec:background_paper3}
 
-\subsection{Theory} \label{subsec:theory_paper3}
+\subsection{Data} \label{subsec:data_paper3}
 
-\subsubsection{Data} \label{subsubsec:data_paper3}
+\subsection{Theory} \label{subsec:theory_paper3}
 
 \subsection{Empirical Strategy} \label{subsec:methods_paper3}
 
