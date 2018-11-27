@@ -497,6 +497,14 @@ stargazer(
   table.placement = '!htbp'
 )
 
+# run tabulation of convictions
+reversals.table <- analysis %$%
+  table(candidacy.invalid.ontrial, candidacy.invalid.onappeal)
+
+# do the math for table
+percent1 <- reversals.table[1,2] / (reversals.table[1,1] + reversals.table[1,2])
+percent2 <- reversals.table[2,1] / (reversals.table[2,2] + reversals.table[2,1])
+
 # extract hausman test statistics
 hausman <- objects(pattern = 'iv(.)*outcome') %>%
            lapply(get) %>%

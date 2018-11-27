@@ -3,46 +3,47 @@ Capacity: max_strings=100000, hash_size=100000, hash_prime=85009
 The top-level auxiliary file: prospectus.aux
 The style file: apalike.bst
 Database file #1: /Users/aassumpcao/library.bib
+Warning--empty journal in ChongLookingIncumbentExposing2013
 Warning--empty publisher in SchedlerElectoralAuthoritarianism2015
-You've used 15 entries,
+You've used 16 entries,
             1935 wiz_defined-function locations,
-            579 strings with 7809 characters,
-and the built_in function-call counts, 6723 in all, are:
-= -- 625
-> -- 364
+            583 strings with 8055 characters,
+and the built_in function-call counts, 7084 in all, are:
+= -- 656
+> -- 387
 < -- 14
-+ -- 130
-- -- 128
-* -- 614
-:= -- 1195
-add.period$ -- 44
-call.type$ -- 15
-change.case$ -- 138
-chr.to.int$ -- 15
-cite$ -- 16
-duplicate$ -- 216
-empty$ -- 417
-format.name$ -- 159
-if$ -- 1296
++ -- 138
+- -- 136
+* -- 646
+:= -- 1263
+add.period$ -- 46
+call.type$ -- 16
+change.case$ -- 147
+chr.to.int$ -- 16
+cite$ -- 18
+duplicate$ -- 229
+empty$ -- 437
+format.name$ -- 168
+if$ -- 1361
 int.to.chr$ -- 1
 int.to.str$ -- 0
-missing$ -- 12
-newline$ -- 77
-num.names$ -- 47
-pop$ -- 109
+missing$ -- 13
+newline$ -- 81
+num.names$ -- 50
+pop$ -- 120
 preamble$ -- 1
-purify$ -- 138
+purify$ -- 147
 quote$ -- 0
-skip$ -- 169
+skip$ -- 179
 stack$ -- 0
-substring$ -- 426
+substring$ -- 438
 swap$ -- 24
 text.length$ -- 2
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 90
-warning$ -- 1
-while$ -- 46
+type$ -- 96
+warning$ -- 2
+while$ -- 48
 width$ -- 0
-write$ -- 194
-(There was 1 warning)
+write$ -- 204
+(There were 2 warnings)

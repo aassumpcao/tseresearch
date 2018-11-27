@@ -1,12 +1,12 @@
 # Fdb version 3
-["bibtex prospectus"] 1543270346 "prospectus.aux" "prospectus.bbl" "prospectus" 1543270348
+["bibtex prospectus"] 1543349243 "prospectus.aux" "prospectus.bbl" "prospectus" 1543349565
   "/Users/aassumpcao/library.bib" 1543097195 482833 1dac81ac06fdc22e8b5c12a88a33588a ""
   "/usr/local/texlive/2018/texmf-dist/bibtex/bst/base/apalike.bst" 1480098433 24635 604dafcc79f521a11ea73e506e1fbd98 ""
-  "prospectus.aux" 1543270348 6121 fb675fdf8d348ae84c42ab2d9a6a4253 ""
+  "prospectus.aux" 1543349564 6560 c630584e6b7a581e76593076983d0382 ""
   (generated)
-  "prospectus.bbl"
   "prospectus.blg"
-["pdflatex"] 1543270347 "prospectus.tex" "prospectus.pdf" "prospectus" 1543270348
+  "prospectus.bbl"
+["pdflatex"] 1543349564 "prospectus.tex" "prospectus.pdf" "prospectus" 1543349565
   "/usr/local/texlive/2018/texmf-dist/fonts/map/fontname/texfonts.map" 1511824771 3332 103109f5612ad95229751940c61aada0 ""
   "/usr/local/texlive/2018/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm" 1480098698 1004 54797486969f23fa377b128694d548df ""
   "/usr/local/texlive/2018/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex8.tfm" 1480098698 988 bdf658c3bfc2d96d3c8b02cfc1c94c20 ""
@@ -199,18 +199,18 @@
   "/usr/local/texlive/2018/texmf-var/fonts/map/pdftex/updmap/pdftex.map" 1528426230 2849778 d20fd0a0d92d412ec9b4143de20d68a5 ""
   "/usr/local/texlive/2018/texmf-var/web2c/pdftex/pdflatex.fmt" 1528423583 4220582 296642f53d93cdbc02373533d0f42b0a ""
   "/usr/local/texlive/2018/texmf.cnf" 1523934483 577 0b39adfd7c93507ff20c9c14c2f1a33f ""
-  "prospectus.aux" 1543270348 6121 fb675fdf8d348ae84c42ab2d9a6a4253 ""
-  "prospectus.bbl" 1543270347 4462 ed262eb11f5896dfbbe175c7f121e853 "bibtex prospectus"
-  "prospectus.out" 1543270348 1285 323e1e24700ef17777338cedfde28e14 ""
-  "prospectus.tex" 1543270338 34847 6a046b9f5a88121fd25e7a0966bb3c16 ""
+  "prospectus.aux" 1543349564 6560 c630584e6b7a581e76593076983d0382 ""
+  "prospectus.bbl" 1543349243 4712 2837614d4d92551cd417dc8f94b51828 "bibtex prospectus"
+  "prospectus.out" 1543349564 1285 323e1e24700ef17777338cedfde28e14 ""
+  "prospectus.tex" 1543349335 36688 06471a3be9fc1bd35d1e45bbdb0bb499 ""
   "tab_firststage.tex" 1543254742 1894 e9d7ec1d3b19dd1a557004047dfc43fb ""
   "tab_hausman.tex" 1543252770 621 9223dc6d8781d6c25da259e44f4d8d4c ""
-  "tab_outcome1.tex" 1543254451 3428 3adcd239bd167dd02ed936b4a098fda3 ""
-  "tab_outcome2.tex" 1543004060 3089 f1b8c7390c03a46a90fe1415a4a57f0a ""
-  "tab_outcome3.tex" 1543010359 3172 c3d2ab834861abd8dd7e563505638fd0 ""
+  "tab_outcome1.tex" 1543349525 3429 e5774492de19af754f70842e36985f14 ""
+  "tab_outcome2.tex" 1543349547 3090 e5078ccd20037601d346cf466f081d95 ""
+  "tab_outcome3.tex" 1543349559 3173 87ede1b8f964c69bdb7065538dda5e92 ""
   "tab_sumstats.tex" 1543239475 1256 3d64274f31dc6aea05e4a0ebac96cf59 ""
   (generated)
-  "prospectus.log"
-  "prospectus.pdf"
-  "prospectus.out"
   "prospectus.aux"
+  "prospectus.pdf"
+  "prospectus.log"
+  "prospectus.out"
