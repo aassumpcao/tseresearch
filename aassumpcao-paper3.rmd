@@ -29,7 +29,7 @@ starnum     : true
 
 ## Summary
 
-An important part of government accountability is the obligation of public officials to inform and explain their actions [@SchedlerConceptualizingAccountability2012; @BovensAnalysingAssessingAccountability2007]. In this paper, I propose and analyze two related forms of government accountability: *active transparency*, in which government actively reveals policy information via intra-government auditing and monitoring, and *passive transparency*, in which government passively reveals information through freedom of information (FOIA) requests. Using a natural two-by-two factorial experiment design in Brazilian municipalities between 2006 and 2017, I measure the effects of active and passive transparency on government performance, sanctions, corruption, and transparency outcomes.
+An important part of government accountability is the obligation of public officials to inform and explain their actions [@SchedlerConceptualizingAccountability2012;@BovensAnalysingAssessingAccountability2007]. In this paper, I propose and analyze two related forms of government accountability: *active transparency*, in which government actively reveals policy information via intra-government auditing and monitoring, and *passive transparency*, in which government passively reveals information through freedom of information (FOIA) requests. Using a natural two-by-two factorial experiment design in Brazilian municipalities between 2006 and 2017, I measure the effects of active and passive transparency on government performance, sanctions, corruption, and transparency outcomes.
 
 ## Main Research Question
 
@@ -58,6 +58,8 @@ Does passive transparency contribute anything else beyond active transparency in
     #. whether local companies have been entered into blacklist of government providers.
     
     #. whether the municipality was targeted by Federal Police in corruption crackdowns.
+    
+    #. whether the municipality was targeted by any other legal authority.
 
 #. Corruption (across passive transparency groups):
   

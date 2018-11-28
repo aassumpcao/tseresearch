@@ -362,7 +362,7 @@ analysis %<>% mutate_at(vars(matches('education|maritalstatus')), factor)
 outcomes   <- c('outcome.elected', 'outcome.distance', 'outcome.share')
 out.labels <- c('Probability of Election',
                 'Vote Distance to Elected Candidates (in p.p.)',
-                'Total Vote Share (in p.p.)')
+                'Total Vote Share (in percent)')
 
 # define instruments and their labels
 instrumented <- 'candidacy.invalid.ontrial'
