@@ -5,45 +5,45 @@ The style file: apalike.bst
 Database file #1: /Users/aassumpcao/library.bib
 Warning--empty journal in ChongLookingIncumbentExposing2013
 Warning--empty publisher in SchedlerElectoralAuthoritarianism2015
-You've used 16 entries,
+You've used 19 entries,
             1935 wiz_defined-function locations,
-            583 strings with 8055 characters,
-and the built_in function-call counts, 7084 in all, are:
-= -- 656
-> -- 387
-< -- 14
-+ -- 138
-- -- 136
-* -- 646
-:= -- 1263
-add.period$ -- 46
-call.type$ -- 16
-change.case$ -- 147
-chr.to.int$ -- 16
-cite$ -- 18
-duplicate$ -- 229
-empty$ -- 437
-format.name$ -- 168
-if$ -- 1361
+            605 strings with 8677 characters,
+and the built_in function-call counts, 8250 in all, are:
+= -- 770
+> -- 425
+< -- 16
++ -- 150
+- -- 148
+* -- 752
+:= -- 1464
+add.period$ -- 55
+call.type$ -- 19
+change.case$ -- 168
+chr.to.int$ -- 19
+cite$ -- 21
+duplicate$ -- 271
+empty$ -- 527
+format.name$ -- 185
+if$ -- 1593
 int.to.chr$ -- 1
 int.to.str$ -- 0
-missing$ -- 13
-newline$ -- 81
-num.names$ -- 50
-pop$ -- 120
+missing$ -- 16
+newline$ -- 96
+num.names$ -- 59
+pop$ -- 133
 preamble$ -- 1
-purify$ -- 147
+purify$ -- 168
 quote$ -- 0
-skip$ -- 179
+skip$ -- 211
 stack$ -- 0
-substring$ -- 438
-swap$ -- 24
+substring$ -- 537
+swap$ -- 27
 text.length$ -- 2
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 96
+type$ -- 114
 warning$ -- 2
-while$ -- 48
+while$ -- 57
 width$ -- 0
-write$ -- 204
+write$ -- 243
 (There were 2 warnings)

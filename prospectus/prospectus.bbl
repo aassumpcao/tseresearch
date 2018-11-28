@@ -1,5 +1,11 @@
 \begin{thebibliography}{}
 
+\bibitem[Andrews and Armstrong, 2017]{AndrewsUnbiasedInstrumentalVariables2017}
+Andrews, I. and Armstrong, T.~B. (2017).
+\newblock Unbiased {{Instrumental Variables Estimation Under}} known
+  {{First}}-stage {{Sign}}.
+\newblock {\em Quantitative Economics}, 8(2):479--503.
+
 \bibitem[Asunka et~al., 2017]{AsunkaElectoralFraudViolence2017a}
 Asunka, J., Brierley, S., Golden, M., Kramon, E., and Ofosu, G. (2017).
 \newblock Electoral {{Fraud}} or {{Violence}}: {{The Effect}} of {{Observers}}
@@ -10,6 +16,11 @@ Asunka, J., Brierley, S., Golden, M., Kramon, E., and Ofosu, G. (2017).
 Chong, A., {de la O}, A., Karlan, D., and Wantchekon, L. (2013).
 \newblock Looking {{Beyond}} the {{Incumbent}}: {{Exposing Corruption}} and the
   {{Effect}} on {{Electoral Outcomes}}.
+
+\bibitem[Conley et~al., 2012]{ConleyPlausiblyExogenous2012}
+Conley, T.~G., Hansen, C.~B., and Rossi, P.~E. (2012).
+\newblock Plausibly {{Exogenous}}.
+\newblock {\em The Review of Economics and Statistics}, 94(1):260--272.
 
 \bibitem[Coppedge et~al., 2018]{CoppedgeVDemCountryYearDataset2018}
 Coppedge, M., Gerring, J., Knutsen, C.~H., Lindberg, S.~I., Skaaning, S.-E.,
@@ -55,6 +66,11 @@ Ichino, N. and Sch\"undeln, M. (2012).
 \newblock Deterring or {{Displacing Electoral Irregularities}}? {{Spillover
   Effects}} of {{Observers}} in a {{Randomized Field Experiment}} in {{Ghana}}.
 \newblock {\em The Journal of Politics}, 74(1):292--307.
+
+\bibitem[Imbens, 2014]{ImbensInstrumentalVariablesEconometrician2014}
+Imbens, G.~W. (2014).
+\newblock Instrumental {{Variables}}: {{An Econometrician}}'s {{Perspective}}.
+\newblock {\em Statist. Sci.}, 29(3):323--358.
 
 \bibitem[Lambais and Sigstad, 2018]{LambaisJudicialSubversionEvidence2018}
 Lambais, G. and Sigstad, H. (2018).
