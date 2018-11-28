@@ -1,12 +1,12 @@
 # Fdb version 3
-["bibtex prospectus"] 1543366701 "prospectus.aux" "prospectus.bbl" "prospectus" 1543370834
+["bibtex prospectus"] 1543366701 "prospectus.aux" "prospectus.bbl" "prospectus" 1543370873
   "/Users/aassumpcao/library.bib" 1543097195 482833 1dac81ac06fdc22e8b5c12a88a33588a ""
   "/usr/local/texlive/2018/texmf-dist/bibtex/bst/base/apalike.bst" 1480098433 24635 604dafcc79f521a11ea73e506e1fbd98 ""
   "prospectus.aux" 1543370834 6560 2e3fc288e6537139aa404e15bbfd24e1 ""
   (generated)
   "prospectus.blg"
   "prospectus.bbl"
-["pdflatex"] 1543370833 "prospectus.tex" "prospectus.pdf" "prospectus" 1543370834
+["pdflatex"] 1543370833 "prospectus.tex" "prospectus.pdf" "prospectus" 1543370873
   "/usr/local/texlive/2018/texmf-dist/fonts/map/fontname/texfonts.map" 1511824771 3332 103109f5612ad95229751940c61aada0 ""
   "/usr/local/texlive/2018/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm" 1480098698 1004 54797486969f23fa377b128694d548df ""
   "/usr/local/texlive/2018/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex8.tfm" 1480098698 988 bdf658c3bfc2d96d3c8b02cfc1c94c20 ""
@@ -210,7 +210,7 @@
   "tab_outcome3.tex" 1543353120 3706 fb01bc1aec233e5cc64488c271359f91 ""
   "tab_sumstats.tex" 1543239475 1256 3d64274f31dc6aea05e4a0ebac96cf59 ""
   (generated)
-  "prospectus.pdf"
-  "prospectus.log"
   "prospectus.out"
+  "prospectus.log"
+  "prospectus.pdf"
   "prospectus.aux"
