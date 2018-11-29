@@ -62,9 +62,21 @@ audit.dataset <- bind_cols(audit.dataset, ibge.munID) %>%
 # filter lotteries up to 40
 audit.dataset %<>% filter(!(Ed_Sorteio %in% paste0('V0', 1:4)))
 
-# find municipalities audited in 2012 for which we need the exact date of
-# auditing in order to break into before and after adoption of lai
-find.date <- audit.dataset %>%
-  filter(Ed_Sorteio %in% c('036', '037')) %>%
-  select(ibgeID, Municipio, UF) %>%
-  unique()
+# rename variables and recode them as string
+audit.dataset %<>%
+  select(-Municipio, -UF, -descricao_sumaria) %>%
+  select(mun.id = ibgeID, state.id = stateID, mun.name = munName,
+    lottery.id = Ed_Sorteio, lottery.year = Ano_Sorteio,
+    so.amount = Montante_fisc, so.min = Orgao_Sup, so.program = Funcao,
+    so.subprogram = Subfuncao, program.name = Programa, subprogram.name = Acao,
+    so.corruption = Tipo_constatacao) %>%
+  mutate_all(as.character)
+
+# change dataset new
+assign('audits', audit.dataset)
+
+# write to disk
+save(audits, file = '00_audit.Rda')
+
+# quit
+q('no')
