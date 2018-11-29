@@ -1,2 +1,2 @@
 # tseresearch
-TSE research files
+repository for dissertation paper "electoral crime under democratic rule"
