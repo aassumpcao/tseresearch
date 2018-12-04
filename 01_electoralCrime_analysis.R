@@ -1,17 +1,12 @@
 ################################################################################
-# Electoral Crime and Performance Paper
+# electoral crime and performance paper
+# analysis script
 
-# 03 Script:
-# This script works through the preliminary analysis for the dissertation
-# prospectus. It produces summary statistics, first, and second stage estimates
+# this script works through the preliminary analysis for the dissertation
+# prospectus. it produces summary statistics, first, and second stage estimates
 # for the effect of electoral crimes on performance.
 
-# Author:
-# Andre Assumpcao
-# andre.assumpcao@gmail.com
-
-# # clear environment if not working with RStudio projects
-# rm(list = objects())
+# by andre.assumpcao@gmail.com
 
 # import statements
 library(here)
@@ -641,6 +636,3 @@ stargazer(
   omit.yes.no = c('Yes', '-'),
   table.placement = '!htbp'
 )
-
-# # quit
-# q('no')

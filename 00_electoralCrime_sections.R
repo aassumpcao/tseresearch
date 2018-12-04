@@ -1,4 +1,16 @@
+################################################################################
+# electoral crime paper
+# results by section wrangling
+
+# this script wrangles electoral results data at the lowest-level possible
+# (the electoral section). the work here is necessary to recover vote counts for
+# politicians who are eventually convicted of crimes and for which there are no
+# results at other aggregated levels of data.
+
+# by andre.assumpcao@gmail.com
+
 # import statements
+library(here)
 library(tidyverse)
 library(magrittr)
 library(pdftools)

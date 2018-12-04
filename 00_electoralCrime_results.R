@@ -1,22 +1,15 @@
 ################################################################################
-# Electoral Crime and Performance Paper
+# electoral crime and performance paper
+# municipal election results wrangling
 
-# 02 Script:
-# This script wrangles the electoral results by electoral section for the
+# this script wrangles the electoral results by electoral section for the
 # candidates that are in our sample of candidacies not having a final ruling
 # before election day in 2004, 2008, 2012 and 2016.
 
-# Author:
-# Andre Assumpcao
-# andre.assumpcao@gmail.com
-
-# # setwd if not working with RStudio projects
-# setwd(.)
-
-# # clear environment if not working with RStudio projects
-# rm(list = objects())
+# by andre.assumpcao@gmail.com
 
 # import statements
+library(here)
 library(tidyverse)
 library(magrittr)
 library(feather)

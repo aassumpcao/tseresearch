@@ -1,24 +1,17 @@
 ################################################################################
-# Electoral Crime and Performance Paper
+# electoral crime paper
+# candidates wrangling
 
-# 01 Script:
-# This script narrows down the database of candidates who had their
-# candidacies appealed before the elections but have not heard back before
-# election date. After it filters down candidates, it prepares the data for the
-# TSE case scraper, which is a program that visits each candidate's website at
-# TSE and downloads the case and protocol number for all their candidacies.
+# this script narrows down the database of candidates who had their candidacies
+# appealed before the elections but have not heard back before election date.
+# after it filters down candidates, it prepares the data for the tse case
+# scraper, which is a program that visits each candidate's website at tse and
+# downloads the case and protocol number for all their candidacies.
 
-# Author:
-# Andre Assumpcao
-# andre.assumpcao@gmail.com
-
-# # clear environment if not working with RStudio projects
-# rm(list = objects())
-
-# clear environment
-rm(list = objects())
+# by andre.assumpcao@gmail.com
 
 # import statements
+library(here)
 library(tidyverse)
 library(magrittr)
 library(feather)

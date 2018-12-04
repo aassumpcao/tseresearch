@@ -1,7 +1,15 @@
-# remove everything from environment
-rm(list = objects())
+################################################################################
+# electoral crime paper
+# municipal vacancies wrangling
+
+# this script wrangles municipal vacancies data for each mayor and city council
+# race in sample years (2004, 2008, 2012, 2016). this data is used for creating
+# the outcomes in the final paper.
+
+# by andre.assumpcao@gmail.com
 
 # import statements
+library(here)
 library(tidyverse)
 library(magrittr)
 library(pdftools)
@@ -90,6 +98,3 @@ save(vacancies2004, file = 'vacancies2004.Rda')
 save(vacancies2008, file = 'vacancies2008.Rda')
 save(vacancies2012, file = 'vacancies2012.Rda')
 save(vacancies2016, file = 'vacancies2016.Rda')
-
-# quit
-q('no')
