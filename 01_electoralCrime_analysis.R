@@ -373,7 +373,7 @@ var.labels <- c('Age', 'Male', 'Level of Education', 'Marital Status',
 
 ################################################################################
 # create dir for prospectus
-dir.create('./prospectus')
+dir.create('./proposal1')
 
 # produce summary statistics table
 stargazer(
