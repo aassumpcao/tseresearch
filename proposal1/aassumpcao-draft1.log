@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018) (preloaded format=pdflatex 2018.6.7)  2 DEC 2018 17:29
+This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018) (preloaded format=pdflatex 2018.6.7)  13 DEC 2018 10:04
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -899,52 +899,57 @@ LaTeX Info: Redefining \nameref on input line 59.
 \@outlinefile=\write5
 \openout5 = `aassumpcao-draft1.out'.
 
-LaTeX Font Info:    Try loading font information for U+msa on input line 67.
+LaTeX Font Info:    Try loading font information for U+msa on input line 66.
 
 (/usr/local/texlive/2018/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Try loading font information for U+msb on input line 67.
+LaTeX Font Info:    Try loading font information for U+msb on input line 66.
 
 (/usr/local/texlive/2018/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
-LaTeX Font Info:    Try loading font information for OMS+cmr on input line 67.
+LaTeX Font Info:    Try loading font information for OMS+cmr on input line 66.
 
 (/usr/local/texlive/2018/texmf-dist/tex/latex/base/omscmr.fd
 File: omscmr.fd 2014/09/29 v2.5h Standard LaTeX font definitions
 )
 LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <8> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 67.
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 66.
 LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <6> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 67.
- [0
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 66.
 
-{/usr/local/texlive/2018/texmf-var/fonts/map/pdftex/updmap/pdftex.map}] [1
+Underfull \hbox (badness 10000) in paragraph at lines 68--71
 
-] [2] [3] [4]
-[5]
-Underfull \hbox (badness 10000) in paragraph at lines 141--142
+ []
+
+[0
+
+{/usr/local/texlive/2018/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
+[1
+
+] [2] [3] [4] [5]
+Underfull \hbox (badness 10000) in paragraph at lines 136--137
 
  []
 
 [6] [7] [8]
-Underfull \hbox (badness 10000) in paragraph at lines 191--192
+Underfull \hbox (badness 10000) in paragraph at lines 186--187
 
  []
 
 (./tab_sumstats.tex)
-Underfull \hbox (badness 10000) in paragraph at lines 195--196
+Underfull \hbox (badness 10000) in paragraph at lines 190--191
 
  []
 
 [9]
-Underfull \hbox (badness 10000) in paragraph at lines 214--215
+Underfull \hbox (badness 10000) in paragraph at lines 209--210
 
  []
 
 (./tab_firststage.tex) [10]
-Underfull \hbox (badness 10000) in paragraph at lines 220--221
+Underfull \hbox (badness 10000) in paragraph at lines 215--216
 
  []
 
@@ -970,21 +975,21 @@ Overfull \hbox (5.324pt too wide) in paragraph at lines 6--34
 ) [14] [15] (./aassumpcao-draft1.bbl [16
 
 ]) [17]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 298.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 298.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 293.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 293.
  (./aassumpcao-draft1.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 298.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 298.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 293.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 293.
 Package rerunfilecheck Info: File `aassumpcao-draft1.out' has not changed.
-(rerunfilecheck)             Checksum: 24B35124CD2A121FC1DFF6C26AEA9D4B;1252.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 298.
+(rerunfilecheck)             Checksum: 50F517871428F0D2EC42E7B47BBF6AFE;828.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 293.
  ) 
 Here is how much of TeX's memory you used:
- 23296 strings out of 492646
- 402519 string characters out of 6129564
- 485859 words of memory out of 5000000
- 26689 multiletter control sequences out of 15000+600000
- 14346 words of font info for 55 fonts, out of 8000000 for 9000
+ 23292 strings out of 492646
+ 402381 string characters out of 6129564
+ 485734 words of memory out of 5000000
+ 26686 multiletter control sequences out of 15000+600000
+ 14039 words of font info for 54 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  55i,18n,54p,1573b,464s stack positions out of 5000i,500n,10000p,200000b,80000s
 </usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb
@@ -1003,10 +1008,10 @@ ive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmr9.pfb></usr/local/texlive
 18/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/local/texlive/2018
 /texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb></usr/local/texlive/2018/
 texmf-dist/fonts/type1/public/amsfonts/cm/cmti8.pfb>
-Output written on aassumpcao-draft1.pdf (18 pages, 253852 bytes).
+Output written on aassumpcao-draft1.pdf (18 pages, 252493 bytes).
 PDF statistics:
- 323 PDF objects out of 1000 (max. 8388607)
- 284 compressed objects within 3 object streams
- 66 named destinations out of 1000 (max. 500000)
- 77 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 319 PDF objects out of 1000 (max. 8388607)
+ 280 compressed objects within 3 object streams
+ 65 named destinations out of 1000 (max. 500000)
+ 69 words of extra memory for PDF output out of 10000 (max. 10000000)
 
