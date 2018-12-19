@@ -12,6 +12,9 @@ library(pdftools)
 library(AER)
 library(stargazer)
 
+# load rproj (comment out if using another R IDE)
+rstudioapi::openProject('2019 Electoral Crime.Rproj')
+
 # wrangle candidate data
 source('00_electoralCrime_candidates.R')
 
