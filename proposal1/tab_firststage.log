@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018) (preloaded format=pdflatex 2018.6.7)  26 NOV 2018 12:52
+This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018) (preloaded format=pdflatex 2018.6.7)  30 DEC 2018 16:17
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -12,7 +12,7 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.2 \begin{table}
+l.1 \begin{table}
                  [!htbp] \centering
 Your command was ignored.
 Type  I <command> <return>  to replace it with another command,
@@ -25,7 +25,7 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.2 \begin{table}[
+l.1 \begin{table}[
                   !htbp] \centering
 You're in trouble here.  Try typing  <return>  to proceed.
 If that doesn't work, type  X <return>  to quit.
@@ -44,7 +44,7 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.3   \caption
+l.2   \caption
               {First Stage Regressions of Convictions at Trial and on Appeal}
 You're in trouble here.  Try typing  <return>  to proceed.
 If that doesn't work, type  X <return>  to quit.
@@ -102,7 +102,7 @@ Missing character: There is no e in font nullfont!
 Missing character: There is no a in font nullfont!
 Missing character: There is no l in font nullfont!
 ! Undefined control sequence.
-l.5 \scriptsize
+l.4 \scriptsize
                
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
@@ -111,9 +111,9 @@ spelling (e.g., `I\hbox'). Otherwise just continue,
 and I'll forget about whatever was undefined.
 
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <7> on input line 6.
+(Font)              <7> on input line 5.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <5> on input line 6.
+(Font)              <5> on input line 5.
 
 ! LaTeX Error: Illegal character in array arg.
 
@@ -121,7 +121,7 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.6 ...\extracolsep{2pt}}lD{.}{.}{-3} D{.}{.}{-3}}
+l.5 ...\extracolsep{2pt}}lD{.}{.}{-3} D{.}{.}{-3}}
                                                   
 You're in trouble here.  Try typing  <return>  to proceed.
 If that doesn't work, type  X <return>  to quit.
@@ -133,7 +133,7 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.6 ...\extracolsep{2pt}}lD{.}{.}{-3} D{.}{.}{-3}}
+l.5 ...\extracolsep{2pt}}lD{.}{.}{-3} D{.}{.}{-3}}
                                                   
 You're in trouble here.  Try typing  <return>  to proceed.
 If that doesn't work, type  X <return>  to quit.
@@ -145,7 +145,7 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.6 ...\extracolsep{2pt}}lD{.}{.}{-3} D{.}{.}{-3}}
+l.5 ...\extracolsep{2pt}}lD{.}{.}{-3} D{.}{.}{-3}}
                                                   
 You're in trouble here.  Try typing  <return>  to proceed.
 If that doesn't work, type  X <return>  to quit.
@@ -157,7 +157,7 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.6 ...\extracolsep{2pt}}lD{.}{.}{-3} D{.}{.}{-3}}
+l.5 ...\extracolsep{2pt}}lD{.}{.}{-3} D{.}{.}{-3}}
                                                   
 You're in trouble here.  Try typing  <return>  to proceed.
 If that doesn't work, type  X <return>  to quit.
@@ -169,7 +169,7 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.6 ...\extracolsep{2pt}}lD{.}{.}{-3} D{.}{.}{-3}}
+l.5 ...\extracolsep{2pt}}lD{.}{.}{-3} D{.}{.}{-3}}
                                                   
 You're in trouble here.  Try typing  <return>  to proceed.
 If that doesn't work, type  X <return>  to quit.
@@ -181,7 +181,7 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.6 ...\extracolsep{2pt}}lD{.}{.}{-3} D{.}{.}{-3}}
+l.5 ...\extracolsep{2pt}}lD{.}{.}{-3} D{.}{.}{-3}}
                                                   
 You're in trouble here.  Try typing  <return>  to proceed.
 If that doesn't work, type  X <return>  to quit.
@@ -193,7 +193,7 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.6 ...\extracolsep{2pt}}lD{.}{.}{-3} D{.}{.}{-3}}
+l.5 ...\extracolsep{2pt}}lD{.}{.}{-3} D{.}{.}{-3}}
                                                   
 You're in trouble here.  Try typing  <return>  to proceed.
 If that doesn't work, type  X <return>  to quit.
@@ -205,7 +205,7 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.6 ...\extracolsep{2pt}}lD{.}{.}{-3} D{.}{.}{-3}}
+l.5 ...\extracolsep{2pt}}lD{.}{.}{-3} D{.}{.}{-3}}
                                                   
 You're in trouble here.  Try typing  <return>  to proceed.
 If that doesn't work, type  X <return>  to quit.
@@ -286,7 +286,7 @@ Missing character: There is no 6 in font nullfont!
 ! Missing $ inserted.
 <inserted text> 
                 $
-l.14  Convicted on Appeal & .766^
+l.13  Convicted on Appeal & .766^
                                  {***}                      & .757^{***} \\
 I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
@@ -294,7 +294,7 @@ you left one out. Proceed, with fingers crossed.
 ! Extra }, or forgotten $.
 <template> \unskip \hfil }
                           \hskip \tabcolsep \endtemplate 
-l.14 ...Appeal & .766^{***}                      &
+l.13 ...Appeal & .766^{***}                      &
                                                    .757^{***} \\
 I've deleted a group-closing symbol because it seems to be
 spurious, as in `$x}$'. But perhaps the } is legitimate and
@@ -305,7 +305,7 @@ deleted material, e.g., by typing `I$}'.
 ! Missing $ inserted.
 <inserted text> 
                 $
-l.14 ...Appeal & .766^{***}                      &
+l.13 ...Appeal & .766^{***}                      &
                                                    .757^{***} \\
 I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
@@ -313,7 +313,7 @@ you left one out. Proceed, with fingers crossed.
 ! Missing } inserted.
 <inserted text> 
                 }
-l.14 ...Appeal & .766^{***}                      &
+l.13 ...Appeal & .766^{***}                      &
                                                    .757^{***} \\
 I've inserted something that you may have forgotten.
 (See the <inserted text> above.)
@@ -328,7 +328,7 @@ Missing character: There is no 7 in font nullfont!
 ! Missing $ inserted.
 <inserted text> 
                 $
-l.14 ... & .766^{***}                      & .757^
+l.13 ... & .766^{***}                      & .757^
                                                   {***} \\
 I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
@@ -336,7 +336,7 @@ you left one out. Proceed, with fingers crossed.
 ! Extra }, or forgotten $.
 <template> \unskip \hfil }
                           \hskip \tabcolsep \endtemplate 
-l.15                      &
+l.14                      &
                             (.006)                          & (.007) \\
 I've deleted a group-closing symbol because it seems to be
 spurious, as in `$x}$'. But perhaps the } is legitimate and
@@ -347,7 +347,7 @@ deleted material, e.g., by typing `I$}'.
 ! Missing $ inserted.
 <inserted text> 
                 $
-l.15                      &
+l.14                      &
                             (.006)                          & (.007) \\
 I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
@@ -355,7 +355,7 @@ you left one out. Proceed, with fingers crossed.
 ! Missing } inserted.
 <inserted text> 
                 }
-l.15                      &
+l.14                      &
                             (.006)                          & (.007) \\
 I've inserted something that you may have forgotten.
 (See the <inserted text> above.)
@@ -824,7 +824,7 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.30 \end{table}
+l.29 \end{table}
                 
 Your command was ignored.
 Type  I <command> <return>  to replace it with another command,
@@ -840,9 +840,9 @@ or  <return>  to continue without it.
 Here is how much of TeX's memory you used:
  11 strings out of 492646
  216 string characters out of 6129564
- 59906 words of memory out of 5000000
+ 59910 words of memory out of 5000000
  3996 multiletter control sequences out of 15000+600000
  3986 words of font info for 15 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 19i,10n,16p,467b,218s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 19i,10n,16p,468b,218s stack positions out of 5000i,500n,10000p,200000b,80000s
 !  ==> Fatal error occurred, no output PDF file produced!

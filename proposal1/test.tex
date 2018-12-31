@@ -1,0 +1,61 @@
+\documentclass[11pt, multi = true, crop = false]{standalone}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{centernot}
+\usepackage{amsfonts}
+\usepackage{eurosym}
+\usepackage{geometry}
+\usepackage{ulem}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usepackage{rotating}
+\usepackage{caption}
+\usepackage{color}
+\usepackage{setspace}
+\usepackage{sectsty}
+\usepackage{comment}
+\usepackage{footmisc}
+\usepackage[inline]{enumitem}
+\usepackage{caption}
+\usepackage{natbib}
+\usepackage{pdflscape}
+\usepackage{subfigure}
+\usepackage{array}
+\usepackage{titling}
+\usepackage{multirow}
+\usepackage{diagbox}
+\usepackage{dcolumn}
+\usepackage{makecell}
+\usepackage[hidelinks]{hyperref}
+\hypersetup{unicode = true}
+
+\normalem
+
+\onehalfspacing
+\newtheorem{theorem}{Theorem}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{proposition}{Proposition}
+\newenvironment{proof}[1][Proof]{\noindent\textbf{#1.}}{\ \rule{0.5em}{0.5em}}
+
+\newtheorem{hyp}{Hypothesis}
+\newtheorem{subhyp}{Hypothesis}[hyp]
+\renewcommand{\thesubhyp}{\thehyp\alph{subhyp}}
+% \renewcommand{\labelenumi}{H.\arabic{enumi}.} % Redefine new labels for hyp
+\newcommand{\T}{\rule{0pt}{2.6ex}}            % Top strut
+\newcommand{\B}{\rule[-1.2ex]{0pt}{0pt}}      % Bottom strut
+\newcommand{\red}[1]{{\color{red} #1}}
+\newcommand{\blue}[1]{{\color{blue} #1}}
+\newcommand{\ci}{\perp\!\!\!\perp}
+\newcommand{\nci}{\centernot{\ci}}
+\newcommand{\subtitle}[1]{\posttitle{\par\end{center}\begin{center}\large#1\end{center}\vskip0.5em}}
+\newcommand{\refp}[1]{(\ref{#1})}
+
+\newcolumntype{L}[1]{>{\raggedright\let\newline\\arraybackslash\hspace{0pt}}m{#1}}
+\newcolumntype{C}[1]{>{\centering\let\newline\\arraybackslash\hspace{0pt}}m{#1}}
+\newcolumntype{R}[1]{>{\raggedleft\let\newline\\arraybackslash\hspace{0pt}}m{#1}}
+
+\geometry{left=1.0in,right=1.0in,top=1.0in,bottom=1.0in}
+
+\begin{document}
+A
+\end{end}
