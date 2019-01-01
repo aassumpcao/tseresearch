@@ -17,7 +17,7 @@ import time
 import re
 import codecs
 
-# scraper function
+# scraper function when passing everything to scraper
 def tse_decision(num, state, browser, case = False):
     # search parameters
     # take values in as string
@@ -77,18 +77,14 @@ def tse_decision(num, state, browser, case = False):
                 break
             continue
 
-    # if all is good, we create the path, directory, and file name
-    if not os.path.exists('./html'):
-        os.makedirs('./html')
-
     # different names for files looked up via protocol or case number
     if fail == 1:
-        file = './html/error' + str(num) + '.html'
+        file = './error' + str(num) + '.html'
     else:
         if case == False:
-            file = './html/prot' + str(num) + '.html'
+            file = './prot' + str(num) + '.html'
         else:
-            file = './html/case' + str(num) + '.html'
+            file = './case' + str(num) + '.html'
 
     # save to file
     try:
@@ -96,5 +92,63 @@ def tse_decision(num, state, browser, case = False):
     except:
         codecs.open(file, 'w', 'utf-8').write(html)
 
+# scraper function when passing everything to scraper
+def tse_decision2(url, browser):
+    # xpaths ('andamento' = case flow; 'despacho/sentenças': case decision)
+    xpath    = '//*[contains(@value, "Todos")]'
+    viewPath = '//*[@value="Visualizar"]'
+    errPath  = '//*[text()="Problemas"]'
 
+    # get case number
+    num = re.search('(?<=nprot=)(.)*(?=&)', url).group(0)
 
+    # while loop to load page
+    while True:
+        try:
+            # navigate to url
+            browser.get(url)
+            # check if elements are located
+            decision = EC.presence_of_element_located((By.XPATH, viewPath))
+            # wait up to 3s for last element to be located
+            WebDriverWait(browser, 3).until(decision)
+            # when element is found, click on 'andamento', 'despacho', and
+            # 'view' so that the browser opens up the information we want
+            decision  = browser.find_element_by_xpath(xpath).click()
+            visualize = browser.find_element_by_xpath(viewPath).click()
+            # save inner html to object
+            java = 'return document.getElementsByTagName("html")[0].innerHTML'
+            html = browser.execute_script(java)
+            # create while loop for recheck
+            counter = 1
+            while len(html) == 0 | counter < 5:
+                time.sleep(.5)
+                html = browser.execute_script(java)
+                counter += 1
+                break
+            fail = 0
+            break
+        except StaleElementReferenceException as Exception:
+            # if element is not in DOM, return to the top of the loop
+            continue
+        except TimeoutException as Exception:
+            # if we spend too much time looking for elements, return to top of
+            # the loop
+            error = EC.presence_of_element_located((By.XPATH, errPath))
+            if error != '':
+                fail = 1
+                html = 'Nothing found'
+                print('Prot or case ' + str(num) + ' not found')
+                break
+            continue
+
+    # different names for files looked up via protocol or case number
+    if fail == 1:
+        file = './error' + str(num) + '.html'
+    else:
+        file = './prot' + str(num) + '.html'
+
+    # save to file
+    try:
+        codecs.open(file, 'w', 'cp1252').write(html)
+    except:
+        codecs.open(file, 'w', 'utf-8').write(html)
