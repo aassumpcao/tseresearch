@@ -13,11 +13,12 @@ from selenium.webdriver.common.keys    import Keys
 from selenium.webdriver.support.ui     import WebDriverWait
 from selenium.webdriver.support        import expected_conditions as EC
 import feather
+import glob
 import numpy as np
-import pandas as pd
-import time
-import re
 import os
+import pandas as pd
+import re
+import time
 
 # initial options
 # set working dir
@@ -58,9 +59,15 @@ cases2016 = cases[cases['electionYear'] == '2016']
 if not os.path.exists('./html'):
   os.mkdir('./html')
 
+# change working directory
+os.chdir('./html')
+
+# candidates running in the 2004 election
 for x in range(0, len(cases2004)):
   # define search
   decision = cases2004.iloc[x, 5]
+  # test existence of file
+
   # run scraper
   try:
     # run scraper for each candidate in the 2004 elections
@@ -74,6 +81,12 @@ for x in range(0, len(cases2004)):
     browser.implicitly_wait(60)
     # run scraper
     tse_decision2(decision, browser)
+  # list files in directory, get the latest file, and create new name
+  files   = glob.glob('./*')
+  file    = max(files, key = os.path.getctime)
+  newname = file[:-5] + '-' + cases2004.iloc[x, 3] + '.html'
+  # assign new name
+  os.rename(file, newname)
   # print information
   print('Iteration ' + str(x + 1) + ' / ' + str(len(cases2004)) + ' successful')
 
@@ -93,6 +106,12 @@ for x in range(0, len(cases2008)):
     browser.implicitly_wait(60)
     # run scraper
     tse_decision2(decision, browser)
+  # list files in directory, get the latest file, and create new name
+  files   = glob.glob('./*')
+  file    = max(files, key = os.path.getctime)
+  newname = file[:-5] + '-' + cases2008.iloc[x, 3] + '.html'
+  # assign new name
+  os.rename(file, newname)
   # print information
   print('Iteration ' + str(x + 1) + ' / ' + str(len(cases2008)) + ' successful')
 
@@ -112,6 +131,12 @@ for x in range(0, len(cases2012)):
     browser.implicitly_wait(60)
     # run scraper
     tse_decision2(decision, browser)
+  # list files in directory, get the latest file, and create new name
+  files   = glob.glob('./*')
+  file    = max(files, key = os.path.getctime)
+  newname = file[:-5] + '-' + cases2012.iloc[x, 3] + '.html'
+  # assign new name
+  os.rename(file, newname)
   # print information
   print('Iteration ' + str(x + 1) + ' / ' + str(len(cases2012)) + ' successful')
 
@@ -131,6 +156,12 @@ for x in range(0, len(cases2016)):
     browser.implicitly_wait(60)
     # run scraper
     tse_decision2(decision, browser)
+  # list files in directory, get the latest file, and create new name
+  files   = glob.glob('./*')
+  file    = max(files, key = os.path.getctime)
+  newname = file[:-5] + '-' + cases2016.iloc[x, 3] + '.html'
+  # assign new name
+  os.rename(file, newname)
   # print information
   print('Iteration ' + str(x + 1) + ' / ' + str(len(cases2016)) + ' successful')
 
