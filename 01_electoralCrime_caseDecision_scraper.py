@@ -90,6 +90,7 @@ for x in range(0, len(cases2004)):
   # print information
   print('Iteration ' + str(x + 1) + ' / ' + str(len(cases2004)) + ' successful')
 
+# candidates running in the 2008 election
 for x in range(0, len(cases2008)):
   # define search
   decision = cases2008.iloc[x, 5]
@@ -115,7 +116,8 @@ for x in range(0, len(cases2008)):
   # print information
   print('Iteration ' + str(x + 1) + ' / ' + str(len(cases2008)) + ' successful')
 
-for x in range(0, len(cases2012)):
+# candidates running in the 2012 election
+for x in range(1339, len(cases2012)):
   # define search
   decision = cases2012.iloc[x, 5]
   # run scraper
@@ -140,6 +142,7 @@ for x in range(0, len(cases2012)):
   # print information
   print('Iteration ' + str(x + 1) + ' / ' + str(len(cases2012)) + ' successful')
 
+# candidates running in the 2016 election
 for x in range(0, len(cases2016)):
   # define search
   decision = cases2016.iloc[x, 5]

@@ -3,14 +3,14 @@
 # by andre.assumpcao
 
 # import statements
-library(here)
-library(tidyverse)
-library(magrittr)
-library(feather)
-library(reticulate)
-library(pdftools)
 library(AER)
+library(feather)
+library(here)
+library(magrittr)
+library(pdftools)
+library(reticulate)
 library(stargazer)
+library(tidyverse)
 
 # load rproj (comment out if using another R IDE)
 rstudioapi::openProject('2019 Electoral Crime.Rproj')

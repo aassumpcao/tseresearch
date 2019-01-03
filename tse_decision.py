@@ -101,6 +101,8 @@ def tse_decision2(url, browser):
 
     # get case number
     num = re.search('(?<=nprot=)(.)*(?=&)', url).group(0)
+    # replace weird characters by nothing
+    num = re.sub(r'\/|\.|\&|\%|\-', '', num)
 
     # while loop to load page
     while True:
