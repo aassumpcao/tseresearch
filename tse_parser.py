@@ -1,71 +1,115 @@
-################################################################################
 # tse decision parser
 # developed by:
 # Andre Assumpcao
 # andre.assumpcao@gmail.com
 
 # import statements
-from bs4 import BeautifulSoup
 import codecs
-import feather
 import glob
-import os
 import pandas as pd
 import re
+from   bs4    import BeautifulSoup
 
-################################################################################
-# initial options
-# set working dir
-path = '/Users/aassumpcao/OneDrive - University of North Carolina ' + \
-    'at Chapel Hill/Documents/Research/2018 TSE'
+# define class
+class tse_parser:
 
-os.chdir(path)
+    #2 parse summary info table:
+    def parse_summary(self, file):
+        # regex compile for splitting rows
+        regex1 = re.compile('\n|\t')
+        regex2 = re.compile('  ')
+        # call BeautifulSoup to read string as html
+        soup = BeautifulSoup(file, 'lxml')
+        # find all tables in document
+        tables = soup.find_all('table')
+        # isolate summary table
+        table = tables[0]
+        # find all rows in table
+        rows = table.find_all('tr')
+        # find case, municipality, and protocol information from table
+        processo  = [td.text for td in rows[0].find_all('td')]
+        municipio = [td.text for td in rows[1].find_all('td')]
+        protocolo = [td.text for td in rows[2].find_all('td')]
+        # split title and information
+        processo  = [processo[0],  ''.join(processo[1:])]
+        municipio = [municipio[0], ''.join(municipio[1:])]
+        protocolo = [protocolo[0], ''.join(protocolo[1:])]
+        # find more complex elements
+        #1 find plaintiffs using regex
+        regex3 = re.compile('(requere|impugnan|recorren|litis)', re.IGNORECASE)
+        # create list of plaintiff information
+        plaintiffs = ['plaintiffs']
+        # for each row in the summary table:
+        for row in rows:
+            # find rows that match the plaintiff regex
+            if row.find_all(text = regex3) != []:
+                # extract all columns and join them into one observation
+                plaintiff = [td.text for td in row.find_all('td')]
+                plaintiff = ''.join(plaintiff[1:])
+                # append to plaintiff list
+                plaintiffs.append(plaintiff)
+        # format list
+        plaintiffs = [plaintiffs[0], ';'.join(plaintiffs[1:])]
+                
 
-# list of files to be used in webdriver
-files = os.listdir('./html')
-files.remove('.DS_Store')
+    # parse html function
+    def parse_html(self, file):
+        # call BeautifulSoup to read string as html
+        soup = BeautifulSoup(file, 'lxml')
+        # define table counter
+        counter = 0
+        # parse each table into tuple
+        for table in soup.find_all('table'):
+            counter += 1
+            return [(counter, self.parse_html_table(table))]
 
-# empty dataset to store tables
-sentencingData = [['protNum', 'basicInfo', 'progressionInfo', 'sentencingInfo']]
+    # parse each table in html file
+    def parse_html_table(self, table):
+        # define initial table size (0x0)
+        ncols = 0
+        nrows = 0
+        colnames = []
+        # find number of columns per row
+        for row in table.find_all('tr'):
+            # determine the number of columns per row
+            columns = row.find_all('td')
+            # if table is not empty
+            if len(columns) > 0:
+                # increment the total number of rows for each iteration
+                nrows += 1
+                # if this is the first iteration
+                if ncols == 0:
+                    # Set the number of columns for our table
+                    ncols = len(columns)
 
-# loop over all files in html folder
-for z in range(0, len(files)):
-    # build path to load files into python
-    page = './html/' + files[z]
-    # save var with protocolor num
-    prot = re.search('[0-9]+', page).group(0)
-    # use standard encoding for Portuguese characters or use utf-8 as fallback
-    try:
-        file = codecs.open(page, 'r', 'cp1252').read()
-    except:
-        file = codecs.open(page, 'r', 'utf-8').read()
-    # call BeautifulSoup to read string as html
-    soup = BeautifulSoup(file, 'lxml')
-    # find table nodes in html
-    tables = soup.find_all('table')
-    # loop over each table in html
-    for x in range(0, len(tables)):
-        # find rows using the 'tr' tag in each table
-        rows = tables[x].find_all('tr')
-        # find row content for all rows in each table
-        text = [y.text for y in rows]
-        # join rows so as to have each table in one value
-        text = ''.join(text)
-        # and add prot number to bservation
-        # append tables into one observation
-        if x == 0:
-            individualTable = [text]
-        else:
-            individualTable.extend([text])
-    # join protocol number at the end of table
-    individualTable.insert(0, prot)
-    # print loop progresion
-    print('HTML ' + str(z + 1) + ' parsed successfully')
-    # append to dataset
-    sentencingData.append(individualTable)
+            # Handle column names if we find them
+            th_tags = row.find_all('th')
+            if len(th_tags) > 0 and len(colnames) == 0:
+                for th in th_tags:
+                    colnames.append(th.get_text())
 
-# call pd to organize list into dataframe
-sentencingData = pd.DataFrame(sentencingData)
+        # Safeguard on Column Titles
+        if len(colnames) > 0 and len(colnames) != ncols:
+            raise Exception("Column titles do not match the number of columns")
 
-# save to file
-feather.write_dataframe(sentencingData, 'sentencingData.feather')
+        columns = colnames if len(colnames) > 0 else range(0,ncols)
+        df = pd.DataFrame(columns = columns,
+                          index= range(0,nrows))
+        row_marker = 0
+        for row in table.find_all('tr'):
+            column_marker = 0
+            columns = row.find_all('td')
+            for column in columns:
+                df.iat[row_marker,column_marker] = column.get_text()
+                column_marker += 1
+            if len(columns) > 0:
+                row_marker += 1
+
+        # Convert to float if possible
+        for col in df:
+            try:
+                df[col] = df[col].astype(float)
+            except ValueError:
+                pass
+
+        return df

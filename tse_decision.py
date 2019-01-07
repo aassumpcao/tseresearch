@@ -18,7 +18,7 @@ import re
 import codecs
 
 # scraper function when passing everything to scraper
-def tse_decision(num, state, browser, case = False):
+def tse_decision(case, browser):
     # search parameters
     # take values in as string
     state = str(state)
@@ -98,12 +98,10 @@ def tse_decision2(url, browser):
     xpath    = '//*[contains(@value, "Todos")]'
     viewPath = '//*[@value="Visualizar"]'
     errPath  = '//*[text()="Problemas"]'
-
     # get case number
     num = re.search('(?<=nprot=)(.)*(?=&)', url).group(0)
     # replace weird characters by nothing
     num = re.sub(r'\/|\.|\&|\%|\-', '', num)
-
     # while loop to load page
     while True:
         try:

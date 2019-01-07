@@ -44,7 +44,7 @@ browser = webdriver.Chrome(executable_path = CHROMEDRIVER_PATH,
                            chrome_options  = chrome_options)
 
 # set implicit wait for page load
-browser.implicitly_wait(60)
+browser.implicitly_wait(10)
 
 # import test dataset with 1,000 individuals
 cases = feather.read_dataframe('caseNumbers.feather')
@@ -64,107 +64,81 @@ os.chdir('./html')
 
 # candidates running in the 2004 election
 for x in range(0, len(cases2004)):
+  
   # define search
   decision = cases2004.iloc[x, 5]
-  # test existence of file
+  
+  # run scraper for each candidate in the 2004 elections
+  tse_decision2(decision, browser)
 
-  # run scraper
-  try:
-    # run scraper for each candidate in the 2004 elections
-    tse_decision2(decision, browser)
-  except:
-    # reboot browser if there are problems downloading the tse decision
-    browser.quit()
-    browser = webdriver.Chrome(executable_path = CHROMEDRIVER_PATH,
-                               chrome_options  = chrome_options)
-    # set implicit wait for page load
-    browser.implicitly_wait(60)
-    # run scraper
-    tse_decision2(decision, browser)
   # list files in directory, get the latest file, and create new name
   files   = glob.glob('./*')
   file    = max(files, key = os.path.getctime)
   newname = file[:-5] + '-' + cases2004.iloc[x, 3] + '.html'
+  
   # assign new name
   os.rename(file, newname)
+  
   # print information
   print('Iteration ' + str(x + 1) + ' / ' + str(len(cases2004)) + ' successful')
 
 # candidates running in the 2008 election
 for x in range(0, len(cases2008)):
+  
   # define search
   decision = cases2008.iloc[x, 5]
-  # run scraper
-  try:
-    # run scraper for each candidate in the 2004 elections
-    tse_decision2(decision, browser)
-  except:
-    # reboot browser if there are problems downloading the tse decision
-    browser.quit()
-    browser = webdriver.Chrome(executable_path = CHROMEDRIVER_PATH,
-                               chrome_options  = chrome_options)
-    # set implicit wait for page load
-    browser.implicitly_wait(60)
-    # run scraper
-    tse_decision2(decision, browser)
+  
+  # run scraper for each candidate in the 2008 elections
+  tse_decision2(decision, browser)
+  
   # list files in directory, get the latest file, and create new name
   files   = glob.glob('./*')
   file    = max(files, key = os.path.getctime)
   newname = file[:-5] + '-' + cases2008.iloc[x, 3] + '.html'
+  
   # assign new name
   os.rename(file, newname)
+  
   # print information
   print('Iteration ' + str(x + 1) + ' / ' + str(len(cases2008)) + ' successful')
 
 # candidates running in the 2012 election
-for x in range(1339, len(cases2012)):
+for x in range(0, len(cases2012)):
+  
   # define search
   decision = cases2012.iloc[x, 5]
-  # run scraper
-  try:
-    # run scraper for each candidate in the 2004 elections
-    tse_decision2(decision, browser)
-  except:
-    # reboot browser if there are problems downloading the tse decision
-    browser.quit()
-    browser = webdriver.Chrome(executable_path = CHROMEDRIVER_PATH,
-                               chrome_options  = chrome_options)
-    # set implicit wait for page load
-    browser.implicitly_wait(60)
-    # run scraper
-    tse_decision2(decision, browser)
+  
+  # run scraper for each candidate in the 2012 elections
+  tse_decision2(decision, browser)
+  
   # list files in directory, get the latest file, and create new name
   files   = glob.glob('./*')
   file    = max(files, key = os.path.getctime)
   newname = file[:-5] + '-' + cases2012.iloc[x, 3] + '.html'
+  
   # assign new name
   os.rename(file, newname)
+  
   # print information
   print('Iteration ' + str(x + 1) + ' / ' + str(len(cases2012)) + ' successful')
 
 # candidates running in the 2016 election
 for x in range(0, len(cases2016)):
+  
   # define search
   decision = cases2016.iloc[x, 5]
-  # run scraper
-  try:
-    # run scraper for each candidate in the 2004 elections
-    tse_decision2(decision, browser)
-  except:
-    # reboot browser if there are problems downloading the tse decision
-    browser.quit()
-    browser = webdriver.Chrome(executable_path = CHROMEDRIVER_PATH,
-                               chrome_options  = chrome_options)
-    # set implicit wait for page load
-    browser.implicitly_wait(60)
-    # run scraper
-    tse_decision2(decision, browser)
+
+  # run scraper for each candidate in the 2016 elections
+  tse_decision2(decision, browser)
+  
   # list files in directory, get the latest file, and create new name
   files   = glob.glob('./*')
   file    = max(files, key = os.path.getctime)
   newname = file[:-5] + '-' + cases2016.iloc[x, 3] + '.html'
+  
   # assign new name
   os.rename(file, newname)
+  
   # print information
   print('Iteration ' + str(x + 1) + ' / ' + str(len(cases2016)) + ' successful')
 
