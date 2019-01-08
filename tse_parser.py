@@ -11,22 +11,43 @@ import re
 from   bs4    import BeautifulSoup
 
 # define class
-class tse_parser:
+class TSEdata:
+    """series of functions to wrangle TSE court documents
 
-    #2 parse summary info table:
-    def parse_summary(self, file):
+    attributes:
+        to be completed
+    """
+
+    # define static variables used for parsing all tables
+    soup   = []
+    tables = []
+
+    # define regex compile for substituting weird characters in all tables
+    regex0 = re.compile(r'\n|\t')
+    regex1 = re.compile(r'\\n|\\t')
+    regex2 = re.compile(r'\\xa0')
+    
+    def __init__(self, file):
+        """load into class the file which will be parsed"""
+        # try cp1252 encoding first or utf-8 if loading fails
+        try:
+            self.file = codecs.open(file, 'r', 'cp1252').read()
+        except:
+            self.file = codecs.open(file, 'r', 'utf-8').read()
+
+        # call BeautifulSoup to read string as html
+        self.soup = BeautifulSoup(self.file, 'lxml')
+
+        # find all tables in document
+        self.tables = self.soup.find_all('table')
+
+    #1 parse summary info table:
+    def parse_summary(self):
         
         ### initial objects for parser
-        # regex compile for splitting rows
-        regex0 = re.compile(r'\n|\t')
-        regex1 = re.compile(r'\\n|\\t')
-        regex2 = re.compile(r'\\xa0')
-        # call BeautifulSoup to read string as html
-        soup = BeautifulSoup(file, 'lxml')
-        # find all tables in document
-        tables = soup.find_all('table')
+        
         # isolate summary table
-        table = tables[0]
+        table = self.tables[0]
         # find all rows in table
         rows = table.find_all('tr')
         
@@ -117,72 +138,33 @@ class tse_parser:
         summary = pd.DataFrame(summary)
         
         # remove weird characters
-        summary = summary.replace(regex0, ' ', regex = True)
-        summary = summary.replace(regex1, ' ', regex = True)
-        summary = summary.replace(regex2, ' ', regex = True)
+        summary = summary.replace(self.regex0, ' ', regex = True)
+        summary = summary.replace(self.regex1, ' ', regex = True)
+        summary = summary.replace(self.regex2, ' ', regex = True)
         summary = summary.replace(' +', ' ', regex = True)
 
         # return outcome
         return pd.DataFrame(summary)
 
-    # parse html function
-    def parse_html(self, file):
-        # call BeautifulSoup to read string as html
-        soup = BeautifulSoup(file, 'lxml')
-        # define table counter
-        counter = 0
-        # parse each table into tuple
-        for table in soup.find_all('table'):
-            counter += 1
-            return [(counter, self.parse_html_table(table))]
+    #2 parse case updates
+    def parse_updates(self):
+        return 'empty'
 
-    # parse each table in html file
-    def parse_html_table(self, table):
-        # define initial table size (0x0)
-        ncols = 0
-        nrows = 0
-        colnames = []
-        # find number of columns per row
-        for row in table.find_all('tr'):
-            # determine the number of columns per row
-            columns = row.find_all('td')
-            # if table is not empty
-            if len(columns) > 0:
-                # increment the total number of rows for each iteration
-                nrows += 1
-                # if this is the first iteration
-                if ncols == 0:
-                    # Set the number of columns for our table
-                    ncols = len(columns)
+    #3 parse judicial decisions
+    def parse_details(self):
+        return 'empty'
 
-            # Handle column names if we find them
-            th_tags = row.find_all('th')
-            if len(th_tags) > 0 and len(colnames) == 0:
-                for th in th_tags:
-                    colnames.append(th.get_text())
+    #4 parse related cases
+    def parse_related_cases(self):
+        return 'empty'
 
-        # Safeguard on Column Titles
-        if len(colnames) > 0 and len(colnames) != ncols:
-            raise Exception("Column titles do not match the number of columns")
+    #5 parse related documents
+    def parse_related_docs(self):
+        return 'empty'
 
-        columns = colnames if len(colnames) > 0 else range(0,ncols)
-        df = pd.DataFrame(columns = columns,
-                          index= range(0,nrows))
-        row_marker = 0
-        for row in table.find_all('tr'):
-            column_marker = 0
-            columns = row.find_all('td')
-            for column in columns:
-                df.iat[row_marker,column_marker] = column.get_text()
-                column_marker += 1
-            if len(columns) > 0:
-                row_marker += 1
+    #6 return full table
+    def parse_all(self):
 
-        # Convert to float if possible
-        for col in df:
-            try:
-                df[col] = df[col].astype(float)
-            except ValueError:
-                pass
-
-        return df
+        ### search for number of tables
+        tableCount = len(self.tables)
+        return 'empty'

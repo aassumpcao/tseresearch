@@ -78,7 +78,7 @@ import os
 
 os.chdir('.')
 
-file = './html/2016/prot175662016-120000006854.html'
+file = './html/2012/prot594532012-60000012429.html'
 
 try:
     file = codecs.open(file, 'r', 'cp1252').read()
@@ -86,6 +86,6 @@ except:
     file = codecs.open(file, 'r', 'utf-8').read()
 
 
-from tse_parser import tse_parser as tse
+from tse_parser import TSEdata as tse
 
-tse.parse_summary(file)
+tse(file).parse_summary()
