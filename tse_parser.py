@@ -8,10 +8,11 @@ import codecs
 import glob
 import pandas as pd
 import re
+import os
 from bs4 import BeautifulSoup
-from tse_parser import TSEdata as tse
+
 # define class
-class TSEdata:
+class tse:
     """series of methods to wrangle TSE court documents
 
     attributes:
@@ -213,7 +214,69 @@ class TSEdata:
 
     #3 parse judicial decisions
     def parse_details(self):
-        return 'empty'
+        """method to wrangle case decisions"""
+        ### initial objects for parser
+        # isolate updates and further tables
+        try:
+            tables = self.tables[2:]
+
+            # define regex to find table title
+            regex3 = re.compile('despach|senten|decis', re.IGNORECASE)
+            regex4 = re.compile(r'\n', re.IGNORECASE)
+
+            # find the position of tables with decisions
+            decisions = [i for i in range(len(tables)) if \
+                         re.search(regex3, tables[i].td.get_text())]
+
+            # define empty lists for head and body of decisions
+            shead = []
+            sbody = []
+
+            # loop over all tables containing decisions
+            for i in decisions:
+                # extract headers and body for all decisions
+                for tr in tables[i].find_all('tr'):
+                    if tr['class'] == ['tdlimpoImpar']:
+                        shead.append(tr.text)
+                    if tr['class'] == ['tdlimpoPar']:
+                        sbody.append(tr.text)
+
+            # drop empty columns
+            sbody = [i for i in sbody if re.search('.', i)]
+
+            # build database
+            if len(shead) == len(sbody):
+                sentences = pd.DataFrame(list(zip(shead, sbody)))
+            else:
+                # fix problems if lists are of unequal length
+                nrow = max(len(shead), len(sbody))
+                
+                # define the number of observations
+                bindhead = ['Head Not Available'] * (nrow - len(shead))
+                bindbody = ['Body Not Available'] * (nrow - len(sbody))
+                
+                # bind at the end of lists
+                shead.extend(bindhead)
+                sbody.extend(bindbody)
+                
+                # build corrected dataset
+                sentences = pd.DataFrame(list(zip(shead, sbody)))
+
+            # remove weird characters
+            sentences = sentences.replace(self.regex0, ' ', regex = True)
+            sentences = sentences.replace(self.regex1, ' ', regex = True)
+            sentences = sentences.replace(self.regex2, ' ', regex = True)
+            sentences = sentences.replace(' +', ' ', regex = True)
+
+            # assign column names
+            sentences.columns = ['head', 'body']
+
+            # return outcome
+            return pd.DataFrame(sentences)
+
+        # throw error if table is not available
+        except:
+            return 'there is no sentence table here'
 
     #4 parse related cases
     def parse_related_cases(self):

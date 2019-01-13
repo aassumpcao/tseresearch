@@ -10,16 +10,16 @@ except:
     file = codecs.open(file, 'r', 'utf-8').read()
 
 
-from tse_parser import TSEdata as tse
+from tse_parser import tse
 
-test = tse(file)
+self = tse(file)
 tse(file).parse_summary()
 
-test.tables
+
 
 ### initial objects for parser
 # isolate summary table
-table = self.tables[1]
+table = self.tables[2]
 
 # define regex to find table title
 regex3 = re.compile('data', re.IGNORECASE)
@@ -65,11 +65,86 @@ updates = updates.replace(' +', ' ', regex = True)
 return pd.DataFrame(updates)
 
 # page with 'redistribuição'
-file = './html/2016/prot482982016-140000007851.html'
+file = './html/2016/prot150312016-260000003691.html'
 
 file = 'teste.html'
  
 # test
 tse(file).parse_summary()
 tse(file).parse_updates()
+tse(file).parse_details()
 
+
+"""method to wrangle case decisions"""
+### initial objects for parser
+# isolate updates and further tables
+try:
+    tables = self.tables[2:]
+
+    # define regex to find table title
+    regex3 = re.compile('despach|senten|decis', re.IGNORECASE)
+    regex4 = re.compile(r'\n', re.IGNORECASE)
+
+    # find the position of tables with decisions
+    decisions = [i for i in range(len(tables)) if \
+                 re.search(regex3, tables[i].td.get_text())]
+
+    # define empty lists for head and body of decisions
+    shead = []
+    sbody = []
+
+    # loop over all tables containing decisions
+    for i in decisions:
+        # extract headers and body for all decisions
+        for tr in tables[i].find_all('tr'):
+            if tr['class'] == ['tdlimpoImpar']:
+                shead.append(tr.text)
+            if tr['class'] == ['tdlimpoPar']:
+                sbody.append(tr.text)
+
+    # drop empty columns
+    sbody = [i for i in sbody if re.search('.', i)]
+
+    # build database
+    if len(shead) == len(sbody):
+        sentences = pd.DataFrame(list(zip(shead, sbody)))
+    else:
+        # fix problems if lists are of unequal length
+        nrow = max(len(shead), len(sbody))
+        
+        # define the number of observations
+        bindhead = ['Head Not Available'] * (nrow - len(shead))
+        bindbody = ['Body Not Available'] * (nrow - len(sbody))
+        
+        # bind at the end of lists
+        shead.extend(bindhead)
+        sbody.extend(bindbody)
+        
+        # build corrected dataset
+        sentences = pd.DataFrame(list(zip(shead, sbody)))
+
+    # remove weird characters
+    sentences = sentences.replace(self.regex0, ' ', regex = True)
+    sentences = sentences.replace(self.regex1, ' ', regex = True)
+    sentences = sentences.replace(self.regex2, ' ', regex = True)
+    sentences = sentences.replace(' +', ' ', regex = True)
+
+    # assign column names
+    sentences.columns = ['head', 'body']
+
+    # return outcome
+    return pd.DataFrame(sentences)
+
+except:
+    return 'there is no sentence table here'
+
+
+# page with 'redistribuição'
+file = './html/2016/prot150312016-260000003691.html'
+
+file = 'teste.html'
+ 
+# test
+tse(file).parse_summary()
+tse(file).parse_updates()
+tse(file).parse_details()
