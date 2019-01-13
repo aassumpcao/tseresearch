@@ -1,4 +1,4 @@
-### tse decision parser
+### tse classes and methods
 # developed by:
 # Andre Assumpcao
 # andre.assumpcao@gmail.com
@@ -11,12 +11,100 @@ import re
 import os
 from bs4 import BeautifulSoup
 
-# define class
-class tse:
+# define scraper class
+class scraper:
+    """series of methods to download TSE court documents
+
+    """
+    # define browser function
+    browser = []
+
+    def __init__(self, url):
+        """load into class the url which will be downloaded"""
+        self.url = url
+
+    # scraper function when passing everything to scraper
+    def tse_decision(self, browser):
+        """method to download decision by url"""
+        # xpath search patterns
+        xpath    = '//*[contains(@value, "Todos")]'
+        viewPath = '//*[@value="Visualizar"]'
+        errPath  = '//*[text()="Problemas"]'
+        
+        # get case number
+        num = re.search('(?<=nprot=)(.)*(?=&)', self.url).group(0)
+        
+        # replace weird characters by nothing
+        num = re.sub(r'\/|\.|\&|\%|\-', '', num)
+
+        # define browser object
+        self.browser = browser
+        
+        # while loop to load page
+        while True:
+            try:
+                # navigate to url
+                self.browser.get(self.url)
+                # check if elements are located
+                decision = EC.presence_of_element_located((By.XPATH, viewPath))
+                # wait up to 3s for last element to be located
+                WebDriverWait(self.browser, 3).until(decision)
+                # when element is found, click on 'andamento', 'despacho', and
+                # 'view' so that the browser opens up the information we want
+                decision  = self.browser.find_element_by_xpath(xpath).click()
+                visualize = self.browser.find_element_by_xpath(viewPath).click()
+                # save inner html to object
+                jv = 'return document.getElementsByTagName("html")[0].innerHTML'
+                html = self.browser.execute_script(jv)
+                # create while loop for recheck
+                counter = 1
+                while len(html) == 0 | counter < 5:
+                    time.sleep(.5)
+                    html = self.browser.execute_script(jv)
+                    counter += 1
+                    break
+                fail = 0
+                break
+            except StaleElementReferenceException as Exception:
+                # if element is not in DOM, return to the top of the loop
+                continue
+            except TimeoutException as Exception:
+                # if we spend too much time looking for elements, return to top
+                #  of the loop
+                error = EC.presence_of_element_located((By.XPATH, errPath))
+                if error != '':
+                    fail = 1
+                    html = 'Nothing found'
+                    print('Prot or case ' + str(num) + ' not found')
+                    break
+                continue
+
+        # different names for files looked up via protocol or case number
+        if fail == 1:
+            file = './error' + str(num) + '.html'
+        else:
+            file = './prot' + str(num) + '.html'
+
+        # save to file
+        try:
+            codecs.open(file, 'w', 'cp1252').write(html)
+        except:
+            codecs.open(file, 'w', 'utf-8').write(html)
+
+# define parser class
+class parser:
     """series of methods to wrangle TSE court documents
 
     attributes:
-        to be completed
+        file:   path to html containing the candidacy decision
+
+    methods:
+        parse_summary:       parse summary table
+        parse_updates:       parse case updates
+        parse_details:       parse sentence details
+        parse_related_cases: parse references to other cases
+        parse_related_docs:  parse references to other documents
+        parse_all:           parse everything above
     """
 
     # define static variables used for parsing all tables
@@ -160,7 +248,7 @@ class tse:
         return pd.DataFrame(summary)
 
     #2 parse case updates
-    def parse_updates(self):       
+    def parse_updates(self):
         """method to wrangle case updates information"""
         ### initial objects for parser
         # isolate updates table
@@ -216,8 +304,8 @@ class tse:
     def parse_details(self):
         """method to wrangle case decisions"""
         ### initial objects for parser
-        # isolate updates and further tables
         try:
+            # isolate updates and further tables
             tables = self.tables[2:]
 
             # define regex to find table title
@@ -228,39 +316,48 @@ class tse:
             decisions = [i for i in range(len(tables)) if \
                          re.search(regex3, tables[i].td.get_text())]
 
-            # define empty lists for head and body of decisions
+            # define empty lists for position, head, and body of decisions
             shead = []
             sbody = []
 
-            # loop over all tables containing decisions
+            # for loop extracting the positions and the content of sentence heads
             for i in decisions:
-                # extract headers and body for all decisions
-                for tr in tables[i].find_all('tr'):
+                # create empty list of head and body of decisions per table
+                spos  = []
+                tbody = []
+                # define total number of rows per table
+                rows  = tables[i].find_all('tr')
+                prows = len(tables[i].find_all('tr'))
+                # extract sentence head and position per table
+                for tr, x in zip(rows, range(prows)):
                     if tr['class'] == ['tdlimpoImpar']:
+                        spos.append(x) 
                         shead.append(tr.text)
-                    if tr['class'] == ['tdlimpoPar']:
-                        sbody.append(tr.text)
+                # add last row in sequence
+                spos.append(prows)
+                # extract sentence body per head per table
+                for y, z in zip(spos[:-1], range(len(spos[:-1]))):
+                    tbody.append([y + 1, spos[z + 1]])
+                    # subset sentences per head
+                    for t in tbody:
+                        decision = [rows[w].text for w in range(t[0], t[1])]
+                        decision = ''.join(decision[:])
+                    # bind decisions as the same length as head
+                    sbody.append(decision)
 
-            # drop empty columns
-            sbody = [i for i in sbody if re.search('.', i)]
-
-            # build database
-            if len(shead) == len(sbody):
-                sentences = pd.DataFrame(list(zip(shead, sbody)))
-            else:
-                # fix problems if lists are of unequal length
-                nrow = max(len(shead), len(sbody))
-                
-                # define the number of observations
-                bindhead = ['Head Not Available'] * (nrow - len(shead))
-                bindbody = ['Body Not Available'] * (nrow - len(sbody))
-                
-                # bind at the end of lists
-                shead.extend(bindhead)
-                sbody.extend(bindbody)
-                
-                # build corrected dataset
-                sentences = pd.DataFrame(list(zip(shead, sbody)))
+            # build database taking into account potential parsing failures
+            nrow = max(len(shead), len(sbody))
+            
+            # define the number of observations
+            bindhead = ['Parsing Failure'] * (nrow - len(shead))
+            bindbody = ['Parsing Failure'] * (nrow - len(sbody))
+            
+            # bind at the end of lists
+            shead.extend(bindhead)
+            sbody.extend(bindbody)
+            
+            # build corrected dataset
+            sentences = pd.DataFrame(list(zip(shead, sbody)))
 
             # remove weird characters
             sentences = sentences.replace(self.regex0, ' ', regex = True)
@@ -276,7 +373,7 @@ class tse:
 
         # throw error if table is not available
         except:
-            return 'there is no sentence table here'
+            return 'There are no sentence details here'
 
     #4 parse related cases
     def parse_related_cases(self):
