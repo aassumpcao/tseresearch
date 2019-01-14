@@ -373,15 +373,54 @@ class parser:
 
         # throw error if table is not available
         except:
-            return 'There are no sentence details here'
+            return 'There are no sentence details here.'
 
     #4 parse related cases
     def parse_related_cases(self):
+        """method to wrangle case decisions"""
         return 'empty'
 
     #5 parse related documents
     def parse_related_docs(self):
-        return 'empty'
+        ### initial objects for parser
+        try:
+            # isolate updates and further tables
+            tables = self.tables[2:]
+
+            # define regex to find table title
+            regex3 = re.compile('Documentos', re.IGNORECASE)
+            regex4 = re.compile(r'\n', re.IGNORECASE)
+
+            # find the position of tables with decisions
+            decisions = [i for i in range(len(tables)) if \
+                         re.search(regex3, tables[i].td.get_text())]
+
+            # define empty list of docs
+            docs = []
+
+            # for loop finding references to all docs
+            for tr in tables[decisions[0]].find_all('tr')[1:]:
+                td = [td.text for td in tr.find_all('td')]
+                docs.append(td)    
+
+            # build corrected dataset
+            docs = pd.DataFrame(docs[1:])
+                
+            # remove weird characters
+            docs = docs.replace(self.regex0, ' ', regex = True)
+            docs = docs.replace(self.regex1, ' ', regex = True)
+            docs = docs.replace(self.regex2, ' ', regex = True)
+            docs = docs.replace(' +', ' ', regex = True)
+
+            # assign column names
+            docs.columns = ['reference', 'type']
+
+            # return outcome
+            return pd.DataFrame(docs)
+
+        # throw error if table is not available
+        except:
+            return 'There are related docs here.'
 
     #6 return full table
     def parse_all(self):

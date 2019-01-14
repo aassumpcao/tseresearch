@@ -74,31 +74,29 @@ tse(file).parse_summary()
 tse(file).parse_updates()
 tse(file).parse_details()
 
-from tse_parser import tse
+from tse_parser import parser as tse
 import random
 
 # change directory
-os.chdir('../2012')
+os.chdir('./html/2016')
 
 # random sample from directory
 files = random.sample(os.listdir('.'), 10)
 
-# same files
-files = ['prot205692016-20000001925.html',  'prot959002016-50000021622.html',
-         'prot835602016-90000016804.html',  'prot496812016-210000002719.html',
-         'prot191542016-40000008197.html',  'prot556392016-150000010680.html',
-         'prot534542016-150000008918.html', 'prot1157992016-160000024722.html', 
-         'prot1153492016-160000024400.html','prot592092016-170000011317.html']
 
 for file in files:
     # tse(file).parse_summary()
     # tse(file).parse_updates()
-    tse(file).parse_details()
+    # tse(file).parse_details()
+    tse(file).parse_related_docs()
+
+files
 
 # test
 tse(file).parse_summary()
 tse(file).parse_updates()
 tse(file).parse_details()
+tse(file).parse_related_docs()
 
 """method to wrangle case decisions"""
 ### initial objects for parser
@@ -184,3 +182,39 @@ for y in [2, 3]:
 rows[2].text
 rows[3].text
 rows[4].text
+
+self = tse(files[8])
+
+# isolate updates and further tables
+tables = self.tables[2:]
+
+# define regex to find table title
+regex3 = re.compile('documen', re.IGNORECASE)
+regex4 = re.compile(r'\n', re.IGNORECASE)
+
+# find the position of tables with decisions
+decisions = [i for i in range(len(tables)) if \
+             re.search(regex3, tables[i].td.get_text())]
+
+# define empty list of docs
+docs = []
+
+# for loop finding references to all docs
+for tr in tables[decisions[0]].find_all('tr')[1:]:
+    td = [td.text for td in tr.find_all('td')]
+    docs.append(td)    
+
+# build corrected dataset
+docs = pd.DataFrame(docs[1:])
+    
+# remove weird characters
+docs = docs.replace(self.regex0, ' ', regex = True)
+docs = docs.replace(self.regex1, ' ', regex = True)
+docs = docs.replace(self.regex2, ' ', regex = True)
+docs = docs.replace(' +', ' ', regex = True)
+
+# assign column names
+docs.columns = ['reference', 'type']
+
+# return outcome
+return pd.DataFrame(docs)
