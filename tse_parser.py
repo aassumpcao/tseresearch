@@ -30,16 +30,16 @@ class scraper:
         xpath    = '//*[contains(@value, "Todos")]'
         viewPath = '//*[@value="Visualizar"]'
         errPath  = '//*[text()="Problemas"]'
-        
+
         # get case number
         num = re.search('(?<=nprot=)(.)*(?=&)', self.url).group(0)
-        
+
         # replace weird characters by nothing
         num = re.sub(r'\/|\.|\&|\%|\-', '', num)
 
         # define browser object
         self.browser = browser
-        
+
         # while loop to load page
         while True:
             try:
@@ -115,7 +115,7 @@ class parser:
     regex0 = re.compile(r'\n|\t')
     regex1 = re.compile(r'\\n|\\t')
     regex2 = re.compile(r'\\xa0')
-    
+
     def __init__(self, file):
         """load into class the file which will be parsed"""
         # try cp1252 encoding first or utf-8 if loading fails
@@ -132,14 +132,14 @@ class parser:
 
     #1 parse summary info table:
     def parse_summary(self):
-        """method to wrangle summary information"""        
+        """method to wrangle summary information"""
         ### initial objects for parser
         # isolate summary table
         table = self.tables[0]
-        
+
         # find all rows in table
         rows = table.find_all('tr')
-        
+
         ### find simple information
         # find case, municipality, and protocol information from table
         case = [td.text for td in rows[0].find_all('td')]
@@ -150,14 +150,14 @@ class parser:
         case = ['case', ''.join(case[1:])]
         town = ['town', ''.join(town[1:])]
         prot = ['prot', ''.join(prot[1:])]
-        
+
         ### find more complex elements
         #1 find claimants using regex
         regex3 = re.compile('(requere|impugnan|recorren|litis)', re.IGNORECASE)
-        
+
         # create list of claimant information
         claimants = []
-        
+
         # for each row in the summary table:
         for row in rows:
             # find rows that match the claimant regex
@@ -167,17 +167,17 @@ class parser:
                 claimant = ''.join(claimant[1:])
                 # append to claimant list
                 claimants.append(claimant)
-        
+
         # format list
         claimants = ['claimants', ';;'.join(claimants[1:]) \
                                   if len(claimants) > 1 else claimants[0]]
-        
+
         #2 find plaintiffs using regex
         regex4 = re.compile('(requeri|impugnad|recorri|candid)', re.IGNORECASE)
-        
+
         # create list of plaintiff information
         plaintiffs = []
-        
+
         # for each row in the summary table:
         for row in rows:
             # find rows that match the plaintiff regex
@@ -187,17 +187,17 @@ class parser:
                 plaintiff = ''.join(plaintiff[1:])
                 # append to plaintiff list
                 plaintiffs.append(plaintiff)
-        
+
         # format list
         plaintiffs = ['plaintiffs', ';;'.join(plaintiffs[1:]) \
                                     if len(plaintiffs) > 1 else plaintiffs[0]]
 
         #3 find judges using regex
         regex5 = re.compile('(ju[íi]z|relator)', re.IGNORECASE)
-        
+
         # create list of judge information
         judges = []
-        
+
         # for each row in the summary table:
         for row in rows:
             # find rows that match the judge regex
@@ -207,7 +207,7 @@ class parser:
                 judge = ''.join(judge[1:])
                 # append to judge list
                 judges.append(judge)
-        
+
         # format list
         judges = ['judges', ';;'.join(judges[1:]) \
                             if len(judges) > 1 else judges[0]]
@@ -217,12 +217,12 @@ class parser:
         regex6 = re.compile('assunt',  re.IGNORECASE)
         regex7 = re.compile('localiz', re.IGNORECASE)
         regex8 = re.compile('fase',    re.IGNORECASE)
-        
+
         # find subject, location, and stage information from table
         subj  = [row.text for row in rows if row.find_all(text = regex6) != []]
         loc   = [row.text for row in rows if row.find_all(text = regex7) != []]
         stage = [row.text for row in rows if row.find_all(text = regex8) != []]
-        
+
         # split title and information
         subj  = ['subject',  re.sub('(.)*:', '', str(subj))]
         loc   = ['location', re.sub('(.)*:', '', str(loc))]
@@ -231,10 +231,10 @@ class parser:
         # join all information into single dataset
         summary = [case, town, prot, claimants, plaintiffs, \
                    judges, subj, loc, stage]
-        
+
         # transform into pandas dataframe
         summary = pd.DataFrame(summary)
-        
+
         # remove weird characters
         summary = summary.replace(self.regex0, ' ', regex = True)
         summary = summary.replace(self.regex1, ' ', regex = True)
@@ -266,7 +266,7 @@ class parser:
 
         # loop incrementing row index
         for row in rows:
-            i += 1 
+            i += 1
             if row.find_all(text = regex3) != []:
                 i += 1
                 break
@@ -296,7 +296,7 @@ class parser:
 
         # assign column names
         updates.columns = ['zone', 'date', 'update']
-        
+
         # return outcome
         return pd.DataFrame(updates)
 
@@ -304,6 +304,7 @@ class parser:
     def parse_details(self):
         """method to wrangle case decisions"""
         ### initial objects for parser
+        # try catch error if table doesn't exist
         try:
             # isolate updates and further tables
             tables = self.tables[2:]
@@ -331,7 +332,7 @@ class parser:
                 # extract sentence head and position per table
                 for tr, x in zip(rows, range(prows)):
                     if tr['class'] == ['tdlimpoImpar']:
-                        spos.append(x) 
+                        spos.append(x)
                         shead.append(tr.text)
                 # add last row in sequence
                 spos.append(prows)
@@ -347,15 +348,15 @@ class parser:
 
             # build database taking into account potential parsing failures
             nrow = max(len(shead), len(sbody))
-            
+
             # define the number of observations
             bindhead = ['Parsing Failure'] * (nrow - len(shead))
             bindbody = ['Parsing Failure'] * (nrow - len(sbody))
-            
+
             # bind at the end of lists
             shead.extend(bindhead)
             sbody.extend(bindbody)
-            
+
             # build corrected dataset
             sentences = pd.DataFrame(list(zip(shead, sbody)))
 
@@ -378,11 +379,58 @@ class parser:
     #4 parse related cases
     def parse_related_cases(self):
         """method to wrangle case decisions"""
-        return 'empty'
+        ### initial objects for parser
+        # try catch error if table doesn't exist
+        try:
+            tables = self.tables[2:]
+
+            # define regex to find table title
+            regex3 = re.compile('apensad', re.IGNORECASE)
+            regex4 = re.compile(r'\n', re.IGNORECASE)
+
+            # find the position of tables with decisions
+            decisions = [i for i in range(len(tables)) if \
+                         re.search(regex3, tables[i].td.get_text())]
+
+            # define empty list of docs
+            relatedcases = []
+
+            # for loop finding references to all related cases
+            for tr in tables[decisions[0]].find_all('tr')[1:]:
+                td  = [td.text for td in tr.find_all('td')]
+                relatedcases.append(td)
+
+            # find url just in case and subset the duplicates to unique values
+            url = [a['href'] for a in tables[decisions[0]].find_all('a')]
+            url = [x for x, y in zip(url, range(len(url))) if int(y) % 2 != 0]
+
+            # append link at the end of the table
+            for x, i in zip(range(len(relatedcases[1:])), range(len(url))):
+                relatedcases[x + 1].append(url[i])
+
+            # build corrected dataset
+            relatedcases = pd.DataFrame(relatedcases[1:])
+
+            # remove weird characters
+            relatedcases = relatedcases.replace(self.regex0, ' ', regex = True)
+            relatedcases = relatedcases.replace(self.regex1, ' ', regex = True)
+            relatedcases = relatedcases.replace(self.regex2, ' ', regex = True)
+            relatedcases = relatedcases.replace(' +', ' ', regex = True)
+
+            # assign column names
+            relatedcases.columns = ['casetype', 'casenumber', 'caseurl']
+
+            # return outcome
+            return pd.DataFrame(relatedcases)
+
+        # throw error if table is not available
+        except:
+            return 'There are related cases here.'
 
     #5 parse related documents
     def parse_related_docs(self):
         ### initial objects for parser
+        # try catch error if table doesn't exist
         try:
             # isolate updates and further tables
             tables = self.tables[2:]
@@ -401,11 +449,11 @@ class parser:
             # for loop finding references to all docs
             for tr in tables[decisions[0]].find_all('tr')[1:]:
                 td = [td.text for td in tr.find_all('td')]
-                docs.append(td)    
+                docs.append(td)
 
             # build corrected dataset
             docs = pd.DataFrame(docs[1:])
-                
+
             # remove weird characters
             docs = docs.replace(self.regex0, ' ', regex = True)
             docs = docs.replace(self.regex1, ' ', regex = True)

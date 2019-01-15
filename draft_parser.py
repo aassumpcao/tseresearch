@@ -33,7 +33,7 @@ i = -1
 
 # loop incrementing row index
 for row in rows:
-    i += 1 
+    i += 1
     if row.find_all(text = regex3) != []:
         i += 1
         break
@@ -68,7 +68,7 @@ return pd.DataFrame(updates)
 file = './html/2016/prot150312016-260000003691.html'
 
 file = 'teste.html'
- 
+
 # test
 tse(file).parse_summary()
 tse(file).parse_updates()
@@ -88,14 +88,16 @@ for file in files:
     # tse(file).parse_summary()
     # tse(file).parse_updates()
     # tse(file).parse_details()
-    tse(file).parse_related_docs()
+    # tse(file).parse_related_cases()
+    # tse(file).parse_related_docs()
 
-files
+files[1]
 
 # test
 tse(file).parse_summary()
 tse(file).parse_updates()
 tse(file).parse_details()
+tse(file).parse_related_cases()
 tse(file).parse_related_docs()
 
 """method to wrangle case decisions"""
@@ -127,7 +129,7 @@ for i in decisions:
     # extract sentence head and position per table
     for tr, x in zip(rows, range(prows)):
         if tr['class'] == ['tdlimpoImpar']:
-            spos.append(x) 
+            spos.append(x)
             shead.append(tr.text)
     # add last row in sequence
     spos.append(prows)
@@ -189,7 +191,7 @@ self = tse(files[8])
 tables = self.tables[2:]
 
 # define regex to find table title
-regex3 = re.compile('documen', re.IGNORECASE)
+regex3 = re.compile('apensad', re.IGNORECASE)
 regex4 = re.compile(r'\n', re.IGNORECASE)
 
 # find the position of tables with decisions
@@ -197,24 +199,32 @@ decisions = [i for i in range(len(tables)) if \
              re.search(regex3, tables[i].td.get_text())]
 
 # define empty list of docs
-docs = []
+relatedcases = []
 
-# for loop finding references to all docs
+# for loop finding references to all related cases
 for tr in tables[decisions[0]].find_all('tr')[1:]:
-    td = [td.text for td in tr.find_all('td')]
-    docs.append(td)    
+    td  = [td.text for td in tr.find_all('td')]
+    relatedcases.append(td)
+
+# find url just in case and subset the duplicates to unique values
+url = [a['href'] for a in tables[decisions[0]].find_all('a')]
+url = [x for x, y in zip(url, range(len(url))) if int(y) % 2 != 0]
+
+# append link at the end of the table
+for x, i in zip(range(len(relatedcases[1:])), range(len(url))):
+    relatedcases[x + 1].append(url[i])
 
 # build corrected dataset
-docs = pd.DataFrame(docs[1:])
-    
+relatedcases = pd.DataFrame(relatedcases[1:])
+
 # remove weird characters
-docs = docs.replace(self.regex0, ' ', regex = True)
-docs = docs.replace(self.regex1, ' ', regex = True)
-docs = docs.replace(self.regex2, ' ', regex = True)
-docs = docs.replace(' +', ' ', regex = True)
+relatedcases = relatedcases.replace(self.regex0, ' ', regex = True)
+relatedcases = relatedcases.replace(self.regex1, ' ', regex = True)
+relatedcases = relatedcases.replace(self.regex2, ' ', regex = True)
+relatedcases = relatedcases.replace(' +', ' ', regex = True)
 
 # assign column names
-docs.columns = ['reference', 'type']
+relatedcases.columns = ['casetype', 'casenumber', 'caseurl']
 
 # return outcome
-return pd.DataFrame(docs)
+return pd.DataFrame(relatedcases)
