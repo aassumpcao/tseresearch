@@ -91,7 +91,7 @@ for file in files:
     # tse(file).parse_related_cases()
     # tse(file).parse_related_docs()
 
-files[1]
+
 
 # test
 tse(file).parse_summary()
@@ -228,3 +228,9 @@ relatedcases.columns = ['casetype', 'casenumber', 'caseurl']
 
 # return outcome
 return pd.DataFrame(relatedcases)
+
+
+test = tse(files[8]).parse_summary()
+
+
+test.T[1:]

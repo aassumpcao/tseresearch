@@ -131,7 +131,7 @@ class parser:
         self.tables = self.soup.find_all('table')
 
     #1 parse summary info table:
-    def parse_summary(self):
+    def parse_summary(self, transpose = False):
         """method to wrangle summary information"""
         ### initial objects for parser
         # isolate summary table
@@ -244,8 +244,13 @@ class parser:
         # assign column names
         summary.columns = ['variables', 'values']
 
-        # return outcome
-        return pd.DataFrame(summary)
+        # return outcome if transpose is not provided as argument
+        if transpose == False:
+            return pd.DataFrame(summary)
+        else:
+            summary = summary.T
+            summary.columns = summary.iloc[0]
+            return pd.DataFrame(summary[1:])
 
     #2 parse case updates
     def parse_updates(self):
