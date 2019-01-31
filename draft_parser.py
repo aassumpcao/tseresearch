@@ -1,5 +1,5 @@
 import os
-
+os.getcwd()
 os.chdir('.')
 
 file = './html/2012/prot428622012-150000012522.html'
@@ -89,9 +89,9 @@ for file in files:
     # tse(file).parse_updates()
     # tse(file).parse_details()
     # tse(file).parse_related_cases()
-    # tse(file).parse_related_docs()
+    tse(file).parse_related_docs()
 
-
+file = files[3]
 
 # test
 tse(file).parse_summary()
@@ -100,137 +100,32 @@ tse(file).parse_details()
 tse(file).parse_related_cases()
 tse(file).parse_related_docs()
 
-"""method to wrangle case decisions"""
-### initial objects for parser
-# isolate updates and further tables
-self = tse(files[1])
-tables = self.tables[2:]
+"""method to parse all tables into a single dataset"""
+### call other parser functions
+# tables we know exist
+table1 = tse(self).parse_summary(transpose = True)
+table2 = tse(self).parse_updates()
 
-# define regex to find table title
-regex3 = re.compile('despach|senten|decis', re.IGNORECASE)
-regex4 = re.compile(r'\n', re.IGNORECASE)
+# insert column identifier for case information beginning
+# in table 2
+table2.insert(0, 'caseinfo', 'updates')
 
-# find the position of tables with decisions
-decisions = [i for i in range(len(tables)) if \
-             re.search(regex3, tables[i].td.get_text())]
-
-# define empty lists for position, head, and body of decisions
-shead = []
-sbody = []
-
-# for loop extracting the positions and the content of sentence heads
-for i in decisions:
-    # create empty list of head and body of decisions per table
-    spos  = []
-    tbody = []
-    # define total number of rows per table
-    rows  = tables[i].find_all('tr')
-    prows = len(tables[i].find_all('tr'))
-    # extract sentence head and position per table
-    for tr, x in zip(rows, range(prows)):
-        if tr['class'] == ['tdlimpoImpar']:
-            spos.append(x)
-            shead.append(tr.text)
-    # add last row in sequence
-    spos.append(prows)
-    # extract sentence body per head per table
-    for y, z in zip(spos[:-1], range(len(spos[:-1]))):
-        tbody.append([y + 1, spos[z + 1]])
-        # subset sentences per head
-        for t in tbody:
-            decision = [rows[w].text for w in range(t[0], t[1])]
-            decision = ''.join(decision[:])
-        # bind decisions as the same length as head
-        sbody.append(decision)
-
-
-len(decision)
-
-sbodyflat = [item for sublist in l for item in sublist]
-
-for i in sbody:
-    el = ''.join(sbody[i])
-
-
-[item for i in sbody for item in i]
-
-for i in sbody:
-    test = ''.join(item for item in i)
-
-
-
-
-len(shead)
-len(sbody)
-len(sbody[0])
-len(sbody[1])
-len(sbody[2])
-
-
-
-for t in tbody:
-    for w in range(t[0], t[1]):
-        decision = rows[w].text
-
-
-decision = [rows[w].text for w in range(d[0], d[1]) for d in pbody]
-decision = [rows[y].text for y in range(z[0], z[1]) for z in pbody]
-
-
-
-for y in [2, 3]:
-
-
-rows[2].text
-rows[3].text
-rows[4].text
-
-self = tse(files[8])
-
-# isolate updates and further tables
-tables = self.tables[2:]
-
-# define regex to find table title
-regex3 = re.compile('apensad', re.IGNORECASE)
-regex4 = re.compile(r'\n', re.IGNORECASE)
-
-# find the position of tables with decisions
-decisions = [i for i in range(len(tables)) if \
-             re.search(regex3, tables[i].td.get_text())]
-
-# define empty list of docs
-relatedcases = []
-
-# for loop finding references to all related cases
-for tr in tables[decisions[0]].find_all('tr')[1:]:
-    td  = [td.text for td in tr.find_all('td')]
-    relatedcases.append(td)
-
-# find url just in case and subset the duplicates to unique values
-url = [a['href'] for a in tables[decisions[0]].find_all('a')]
-url = [x for x, y in zip(url, range(len(url))) if int(y) % 2 != 0]
-
-# append link at the end of the table
-for x, i in zip(range(len(relatedcases[1:])), range(len(url))):
-    relatedcases[x + 1].append(url[i])
-
-# build corrected dataset
-relatedcases = pd.DataFrame(relatedcases[1:])
-
-# remove weird characters
-relatedcases = relatedcases.replace(self.regex0, ' ', regex = True)
-relatedcases = relatedcases.replace(self.regex1, ' ', regex = True)
-relatedcases = relatedcases.replace(self.regex2, ' ', regex = True)
-relatedcases = relatedcases.replace(' +', ' ', regex = True)
-
-# assign column names
-relatedcases.columns = ['casetype', 'casenumber', 'caseurl']
-
-# return outcome
-return pd.DataFrame(relatedcases)
-
-
-test = tse(files[8]).parse_summary()
-
-
-test.T[1:]
+# tables we don't know if they exist
+try:
+    table3  = tse(self).parse_details()
+    table3.insert(0, 'caseinfo', 'details')
+    length3 = len(table3)
+except:
+    length3 = 0
+try:
+    table4  = tse(self).parse_related_cases()
+    table4.insert(0, 'caseinfo', 'relatedcases')
+    length4 = len(table4)
+except:
+    length4 = 0
+try:
+    table5  = tse(self).parse_related_docs()
+    table5.insert(0, 'caseinfo', 'relateddocs')
+    length5 = len(table5)
+except:
+    table5  = 0

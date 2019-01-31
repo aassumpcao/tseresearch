@@ -475,8 +475,35 @@ class parser:
         except:
             return 'There are related docs here.'
 
-    #6 return full table
-    def parse_all(self):
+    # #6 return full table
+    # def parse_all(self):
+    #     """method to parse all tables into a single dataset"""
+    #     ### call other parser functions
+    #     # tables we know they exist
+    #     table1 = tse(self).parse_summary(transpose = True)
+    #     table2 = tse(self).parse_updates()
 
-        ### search for number of tables
-        return 'empty'
+    #     # tables we don't know if they exist
+    #     try:
+    #         table3  = tse(self).parse_details()
+    #         length3 = len(table3)
+    #     except:
+    #         length3 = 0
+    #     try:
+    #         table4  = tse(self).parse_related_cases()
+    #         length4 = len(table4)
+    #     except:
+    #         length4 = 0
+    #     try:
+    #         table5  = tse(self).parse_related_docs()
+    #         length5 = len(table5)
+    #     except:
+    #         table5  = 0
+
+    #     # define table length
+    #     nrow = len(table1) + len(table2) + length3 + length4 + length5
+
+    #     # for i in 
+
+    #     ### search for number of tables
+    #     return 'empty'
