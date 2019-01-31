@@ -76,20 +76,32 @@ tse(file).parse_details()
 
 from tse_parser import parser as tse
 import random
+import codecs
+import glob
+import pandas as pd
+import re
+import os
+from bs4 import BeautifulSoup
 
 # change directory
 os.chdir('./html/2016')
 
 # random sample from directory
-files = random.sample(os.listdir('.'), 10)
+files = random.sample(os.listdir('.'), 100)
 
+dir(tse)
 
-for file in files:
+for file in files[1:99]:
     # tse(file).parse_summary()
     # tse(file).parse_updates()
     # tse(file).parse_details()
     # tse(file).parse_related_cases()
-    tse(file).parse_related_docs()
+    # tse(file).parse_related_docs()
+    # tse(file).parse_all()
+
+
+
+
 
 file = files[3]
 
@@ -102,30 +114,81 @@ tse(file).parse_related_docs()
 
 """method to parse all tables into a single dataset"""
 ### call other parser functions
-# tables we know exist
+# parse tables we know exist
 table1 = tse(self).parse_summary(transpose = True)
 table2 = tse(self).parse_updates()
 
-# insert column identifier for case information beginning
-# in table 2
+# insert column for identifying case information (updates) 
 table2.insert(0, 'caseinfo', 'updates')
 
-# tables we don't know if they exist
+# parse tables we are not sure exist
+# try catch if tables don't exist
+# table three
 try:
-    table3  = tse(self).parse_details()
+    # parse case details table
+    table3 = tse(self).parse_details()
+
+    # insert column for identifying case information (details)
     table3.insert(0, 'caseinfo', 'details')
-    length3 = len(table3)
+
+    # bind onto previous tables
+    table2 = pd.concat([table2, table3], \
+                       axis = 0, ignore_index = True, sort = False)
+
+# throw error if table doesn't exist
 except:
-    length3 = 0
+    pass
+
+# table four
 try:
-    table4  = tse(self).parse_related_cases()
+    # parse related cases table
+    table4 = tse(self).parse_related_cases()
+
+    # insert column for identifying case information (related cases)
     table4.insert(0, 'caseinfo', 'relatedcases')
-    length4 = len(table4)
+
+    # bind onto previous tables
+    table2 = pd.concat([table2, table4], \
+                       axis = 0, ignore_index = True, sort = False)
+
+# throw error if table doesn't exist
 except:
-    length4 = 0
+    pass
+
+# table five
 try:
-    table5  = tse(self).parse_related_docs()
+    # parse related docs table
+    table5 = tse(self).parse_related_docs()
+
+    # insert column for identifying case information (related docs)
     table5.insert(0, 'caseinfo', 'relateddocs')
-    length5 = len(table5)
+
+    # bind onto previous tables
+    table2 = pd.concat([table2, table5], \
+                       axis = 0, ignore_index = True, sort = False)
+
+# throw error if table doesn't exist
 except:
-    table5  = 0
+    pass
+
+# create list of column names
+names = list(table1)
+names.extend(list(table2))
+
+# bind everything together
+table = pd.concat([table1]*len(table2), ignore_index = True)
+table = pd.concat([table, table2], axis = 1, ignore_index = True)
+
+# reassign column names
+table.columns = names
+
+# reorder table columns
+ordered = [names[9]]
+ordered.extend(names[0:8])
+ordered.extend(names[10:])
+
+# change order of columns
+table = table[ordered]
+
+# return outcome
+return table

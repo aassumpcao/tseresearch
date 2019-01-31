@@ -19,6 +19,7 @@ class scraper:
     # define browser function
     browser = []
 
+    # init method share by all class instances
     def __init__(self, url):
         """load into class the url which will be downloaded"""
         self.url = url
@@ -116,6 +117,7 @@ class parser:
     regex1 = re.compile(r'\\n|\\t')
     regex2 = re.compile(r'\\xa0')
 
+    # init method share by all class instances
     def __init__(self, file):
         """load into class the file which will be parsed"""
         # try cp1252 encoding first or utf-8 if loading fails
@@ -475,35 +477,82 @@ class parser:
         except:
             return 'There are related docs here.'
 
-    # #6 return full table
-    # def parse_all(self):
-    #     """method to parse all tables into a single dataset"""
-    #     ### call other parser functions
-    #     # tables we know they exist
-    #     table1 = tse(self).parse_summary(transpose = True)
-    #     table2 = tse(self).parse_updates()
+    #6 return full table
+    def parse_all(self):
+        """method to parse all tables into a single dataset"""
+        ### call other parser functions
+        # parse tables we know exist
+        table1 = self.parse_summary(transpose = True)
+        table2 = self.parse_updates()
 
-    #     # tables we don't know if they exist
-    #     try:
-    #         table3  = tse(self).parse_details()
-    #         length3 = len(table3)
-    #     except:
-    #         length3 = 0
-    #     try:
-    #         table4  = tse(self).parse_related_cases()
-    #         length4 = len(table4)
-    #     except:
-    #         length4 = 0
-    #     try:
-    #         table5  = tse(self).parse_related_docs()
-    #         length5 = len(table5)
-    #     except:
-    #         table5  = 0
+        # insert column for identifying case information (updates) 
+        table2.insert(0, 'caseinfo', 'updates')
 
-    #     # define table length
-    #     nrow = len(table1) + len(table2) + length3 + length4 + length5
+        # parse tables we are not sure exist
+        # try catch if tables don't exist
+        # table three
+        try:
+            # parse case details table
+            table3 = self.parse_details()
 
-    #     # for i in 
+            # insert column for identifying case information (details)
+            table3.insert(0, 'caseinfo', 'details')
 
-    #     ### search for number of tables
-    #     return 'empty'
+            # bind onto previous tables
+            table2 = pd.concat([table2, table3], \
+                               axis = 0, ignore_index = True, sort = False)
+        # skip error if table doesn't exist
+        except:
+            pass
+
+        # table four
+        try:
+            # parse related cases table
+            table4 = self.parse_related_cases()
+
+            # insert column for identifying case information (related cases)
+            table4.insert(0, 'caseinfo', 'relatedcases')
+
+            # bind onto previous tables
+            table2 = pd.concat([table2, table4], \
+                               axis = 0, ignore_index = True, sort = False)
+        # skip error if table doesn't exist
+        except:
+            pass
+
+        # table five
+        try:
+            # parse related docs table
+            table5 = self.parse_related_docs()
+
+            # insert column for identifying case information (related docs)
+            table5.insert(0, 'caseinfo', 'relateddocs')
+
+            # bind onto previous tables
+            table2 = pd.concat([table2, table5], \
+                               axis = 0, ignore_index = True, sort = False)
+        # skip error if table doesn't exist
+        except:
+            pass
+
+        # create list of column names
+        names = list(table1)
+        names.extend(list(table2))
+
+        # bind everything together
+        table = pd.concat([table1]*len(table2), ignore_index = True)
+        table = pd.concat([table, table2], axis = 1, ignore_index = True)
+
+        # reassign column names
+        table.columns = names
+
+        # reorder table columns
+        ordered = [names[9]]
+        ordered.extend(names[0:8])
+        ordered.extend(names[10:])
+
+        # change order of columns
+        table = table[ordered]
+
+        # return outcome
+        return table
