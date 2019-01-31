@@ -10,23 +10,152 @@ import pandas as pd
 import re
 import os
 from bs4 import BeautifulSoup
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+from selenium.common.exceptions        import TimeoutException
+from selenium.common.exceptions        import StaleElementReferenceException
+from selenium.webdriver.common.by      import By
+from selenium.webdriver.common.keys    import Keys
+from selenium.webdriver.support.ui     import WebDriverWait
+from selenium.webdriver.support        import expected_conditions as EC
+import numpy as np
+import time
+import re
 
 # define scraper class
 class scraper:
     """series of methods to download TSE court documents
 
+    attributes:
+        browser:             placeholder for selenium browser call
+
+    methods:
+        tse_case:            
+        tse_decision:
     """
-    # define browser function
+    # define static arguments for all methods in the scraper class
     browser = []
+    main    = 'http://divulgacandcontas.tse.jus.br/divulga/#/candidato'
+    page    = []
+    java    = 'return document.getElementsByTagName("html")[0].innerHTML'
 
     # init method share by all class instances
-    def __init__(self, url):
+    def __init__(self, browser, url = None):
         """load into class the url which will be downloaded"""
-        self.url = url
+        # store url for decision scraper
+        if url:
+            self.url = url
+        else:
+            self.url = 'URL not loaded'
 
-    # scraper function when passing everything to scraper
-    def tse_decision(self, browser):
+        # store browser info
+        self.browser = browser
+
+    # case number scraper function
+    def case(self, electionYear, electionID, electoralUnitID, candidateID):
+        """method to download case number by candidate information"""        
+        
+        # search parameters
+        # case and protocol xpaths
+        casePath = '//*[contains(@data-ng-if, "numeroProcesso")]'
+        protPath = '//*[contains(@href, "nprot")]'
+
+        # create list with elements used to visit page
+        self.page = [self.main, str(electionYear), str(electionID), \
+                                str(electoralUnitID), str(candidateID)]
+               
+        # concatenate everything and form page address
+        self.page = '/'.join(self.page)
+
+        # counter to handle stale or timeout exceptions
+        exception = 1
+        
+        # while loop to return to page if information is not in the DOM
+        while True:
+            try:
+                # navigate to self.page
+                self.browser.get(self.page)
+                
+                # check if elements are visible (i.e. were they located?)
+                caseVis = EC.presence_of_element_located((By.XPATH, casePath))
+                protVis = EC.presence_of_element_located((By.XPATH, protPath))
+                
+                # wait up to 3s for elements to be located
+                WebDriverWait(self.browser, 3).until(caseVis)
+                WebDriverWait(self.browser, 3).until(protVis)
+                
+                # if they have been found, download such elements
+                caseElem = self.browser.find_elements_by_xpath(casePath)
+                protElem = self.browser.find_elements_by_xpath(protPath)
+                
+                # add to list (elem1 = pull text; elem2 = pull attr value)
+                caseNum = [x.text for x in caseElem]
+                protNum = [x.get_attribute('href') for x in protElem]
+                
+                # define counter to break loop in error cases
+                counter = 1
+
+                # recheck if case number (element 1) contains incorrect info
+                while caseNum[0].find('Informa') == 0 & counter < 31:
+                    time.sleep(.5)
+                    caseNum = [x.text for x in caseElem]
+                    counter += 1
+                    break
+                
+                # define counter to break loop in error cases
+                counter = 1
+                
+                # recheck if protocol number is empty
+                while protNum[0].find('nprot=undefined') == 0 & counter < 31:
+                    time.sleep(.5)
+                    protNum = [x.get_attribute('href') for x in protElem]
+                    counter += 1
+                    break
+                
+                # exit loop if successful
+                break
+
+            # handle stale element exception    
+            except StaleElementReferenceException as Exception:
+                
+                # run this thirty times before breaking loop
+                exception += 1
+                if exception > 30:
+                    caseNum = ['staleException']
+                    protNum = ['staleException']
+                    break
+                
+                # if element is not in DOM, return to the top of the loop
+                continue
+
+            # handle timeout exception
+            except TimeoutException as Exception:
+                
+                # run this thirty times before breaking loop
+                exception += 1
+                if exception > 30:
+                    caseNum = ['timeoutException']
+                    protNum = ['timeoutException']
+                    break
+                
+                # if we spend too much time looking for elements, return to top 
+                # of the loop
+                continue
+        
+        # bring together information provided as arguments to function call and 
+        # list of elements found on website
+        data = [str(electionYear), str(electionID), str(electoralUnitID),
+                str(candidateID)]
+        data.append(caseNum[0])
+        data.append(protNum[0])
+
+        # return call
+        return data
+
+    # decision scraper function 
+    def decision(self):
         """method to download decision by url"""
+        
         # xpath search patterns
         xpath    = '//*[contains(@value, "Todos")]'
         viewPath = '//*[@value="Visualizar"]'
@@ -38,37 +167,42 @@ class scraper:
         # replace weird characters by nothing
         num = re.sub(r'\/|\.|\&|\%|\-', '', num)
 
-        # define browser object
-        self.browser = browser
-
         # while loop to load page
         while True:
             try:
                 # navigate to url
                 self.browser.get(self.url)
+                
                 # check if elements are located
                 decision = EC.presence_of_element_located((By.XPATH, viewPath))
+                
                 # wait up to 3s for last element to be located
                 WebDriverWait(self.browser, 3).until(decision)
+                
                 # when element is found, click on 'andamento', 'despacho', and
                 # 'view' so that the browser opens up the information we want
                 decision  = self.browser.find_element_by_xpath(xpath).click()
                 visualize = self.browser.find_element_by_xpath(viewPath).click()
+                
                 # save inner html to object
-                jv = 'return document.getElementsByTagName("html")[0].innerHTML'
-                html = self.browser.execute_script(jv)
+                html = self.browser.execute_script(self.java)
+                
                 # create while loop for recheck
                 counter = 1
                 while len(html) == 0 | counter < 5:
                     time.sleep(.5)
-                    html = self.browser.execute_script(jv)
+                    html = self.browser.execute_script(self.java)
                     counter += 1
                     break
                 fail = 0
                 break
+            
+            # handle stale element exception
             except StaleElementReferenceException as Exception:
                 # if element is not in DOM, return to the top of the loop
                 continue
+            
+            # handle timeout exception
             except TimeoutException as Exception:
                 # if we spend too much time looking for elements, return to top
                 #  of the loop
@@ -328,7 +462,7 @@ class parser:
             shead = []
             sbody = []
 
-            # for loop extracting the positions and the content of sentence heads
+            # for loop extracting the positions and the content of sentence head
             for i in decisions:
                 # create empty list of head and body of decisions per table
                 spos  = []
