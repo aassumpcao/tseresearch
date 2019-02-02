@@ -27,26 +27,21 @@ class scraper:
     """series of methods to download TSE court documents
 
     attributes:
-        browser:             placeholder for selenium browser call
+        browser:    placeholder for selenium browser call
 
     methods:
-        tse_case:            
-        tse_decision:
+        case:       download case and protocol number
+        decision:   use protocol number to download judicial decision        
     """
     # define static arguments for all methods in the scraper class
     browser = []
-    main    = 'http://divulgacandcontas.tse.jus.br/divulga/#/candidato'
-    page    = []
-    java    = 'return document.getElementsByTagName("html")[0].innerHTML'
+    page = []
+    main = 'http://divulgacandcontas.tse.jus.br/divulga/#/candidato'
+    java = 'return document.getElementsByTagName("html")[0].innerHTML'
 
     # init method share by all class instances
-    def __init__(self, browser, url = None):
+    def __init__(self, browser):
         """load into class the url which will be downloaded"""
-        # store url for decision scraper
-        if url:
-            self.url = url
-        else:
-            self.url = 'URL not loaded'
 
         # store browser info
         self.browser = browser
@@ -73,10 +68,10 @@ class scraper:
         # while loop to return to page if information is not in the DOM
         while True:
             try:
-                # navigate to self.page
+                # navigate to candidate page
                 self.browser.get(self.page)
                 
-                # check if elements are visible (i.e. were they located?)
+                # check if case and protocol are visible in webpage
                 caseVis = EC.presence_of_element_located((By.XPATH, casePath))
                 protVis = EC.presence_of_element_located((By.XPATH, protPath))
                 
@@ -84,7 +79,7 @@ class scraper:
                 WebDriverWait(self.browser, 3).until(caseVis)
                 WebDriverWait(self.browser, 3).until(protVis)
                 
-                # if they have been found, download such elements
+                # if case and protocol have been found, download such elements
                 caseElem = self.browser.find_elements_by_xpath(casePath)
                 protElem = self.browser.find_elements_by_xpath(protPath)
                 
@@ -149,25 +144,31 @@ class scraper:
         data.append(caseNum[0])
         data.append(protNum[0])
 
-        # return call
+        # return case and protocol numbers as list
         return data
 
     # decision scraper function 
-    def decision(self):
-        """method to download decision by url"""
+    def decision(self, url = None):
+        """method to download tse decisions by url"""
+
+        # store url for scraping decisions
+        self.url = url
+
+        # skip out if url has not been provided
+        if url == None: return 'URL not loaded'
         
         # xpath search patterns
         xpath    = '//*[contains(@value, "Todos")]'
         viewPath = '//*[@value="Visualizar"]'
         errPath  = '//*[text()="Problemas"]'
 
-        # get case number
+        # extract case number from url
         num = re.search('(?<=nprot=)(.)*(?=&)', self.url).group(0)
 
         # replace weird characters by nothing
         num = re.sub(r'\/|\.|\&|\%|\-', '', num)
 
-        # while loop to load page
+        # while loop to load tse decision page
         while True:
             try:
                 # navigate to url
@@ -231,7 +232,7 @@ class parser:
     """series of methods to wrangle TSE court documents
 
     attributes:
-        file:   path to html containing the candidacy decision
+        file:                path to html containing the candidacy decision
 
     methods:
         parse_summary:       parse summary table
@@ -251,9 +252,10 @@ class parser:
     regex1 = re.compile(r'\\n|\\t')
     regex2 = re.compile(r'\\xa0')
 
-    # init method share by all class instances
+    # init method shared by all class instances
     def __init__(self, file):
         """load into class the file which will be parsed"""
+
         # try cp1252 encoding first or utf-8 if loading fails
         try:
             self.file = codecs.open(file, 'r', 'cp1252').read()
@@ -269,7 +271,8 @@ class parser:
     #1 parse summary info table:
     def parse_summary(self, transpose = False):
         """method to wrangle summary information"""
-        ### initial objects for parser
+
+        # initial objects for parser
         # isolate summary table
         table = self.tables[0]
 
@@ -391,7 +394,8 @@ class parser:
     #2 parse case updates
     def parse_updates(self):
         """method to wrangle case updates information"""
-        ### initial objects for parser
+
+        # initial objects for parser
         # isolate updates table
         table = self.tables[1]
 
@@ -444,6 +448,7 @@ class parser:
     #3 parse judicial decisions
     def parse_details(self):
         """method to wrangle case decisions"""
+
         ### initial objects for parser
         # try catch error if table doesn't exist
         try:
@@ -520,6 +525,7 @@ class parser:
     #4 parse related cases
     def parse_related_cases(self):
         """method to wrangle case decisions"""
+
         ### initial objects for parser
         # try catch error if table doesn't exist
         try:
@@ -570,6 +576,8 @@ class parser:
 
     #5 parse related documents
     def parse_related_docs(self):
+        """method to parse related docs into a single dataset"""
+
         ### initial objects for parser
         # try catch error if table doesn't exist
         try:
@@ -614,6 +622,7 @@ class parser:
     #6 return full table
     def parse_all(self):
         """method to parse all tables into a single dataset"""
+
         ### call other parser functions
         # parse tables we know exist
         table1 = self.parse_summary(transpose = True)

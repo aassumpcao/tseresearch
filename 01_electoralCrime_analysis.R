@@ -295,7 +295,7 @@ analysis <- candidates %>%
 #   7. candidate's political experience
 
 # wrangle age
-analysis %<>%
+analysis %>%
   mutate(dob = lubridate::dmy(candidate.dob), candidate.dob = dob) %>%
   mutate(age = case_when(election.year == 2004 ~ calc_age(dob, '2004-10-03'),
                          election.year == 2008 ~ calc_age(dob, '2008-10-05'),
