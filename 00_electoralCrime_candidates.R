@@ -16,10 +16,8 @@ library(tidyverse)
 library(magrittr)
 library(feather)
 library(reticulate)
-
-# set reticulate features
-Sys.setenv(RETICULATE_PYTHON = '/anaconda3/bin/python')
-import_from_path('tse_case', path = ".", convert = TRUE)
+library(readr)
+library(ssh)
 
 # load statements
 load('candidates.2010.Rda')
@@ -104,13 +102,14 @@ candidates.pending %<>% filter(ANO_ELEICAO != 2000)
 # save candidates pending final ruling and candidacy situation datasets
 save(candidacy.situation, file = 'candidacy.situation.Rda')
 save(candidates.pending,  file = 'candidates.pending.Rda')
+write_csv(candidates.pending, 'candidatesPending.csv')
 
 # delete unnecessary vectors
 rm(list = objects(pattern = 'candidacy\\.situation|ligible|other|appealing'))
 
 ################################################################################
 # candidates preparation for TSE scraper
-# add unique election ID for the elections in 2004
+# add unique election ID for elections in 2004
 electionID.2004 <- 14431
 
 # create vector of supplemental elections in 2008
@@ -195,8 +194,8 @@ candidates.pending[which(candidates.pending[, 12] == 120000003450), 47] <- 1699
 # (2) candidates whose candidacy has been wrongly recorded on website
 issue1 <- which(candidates.pending$SEQUENCIAL_CANDIDATO == 50000047516)
 
-# (3) candidates whose information is not available online, just in raw electoral
-# court datasets
+# (3) candidates whose information is not available online, just in raw
+# electoral court datasets
 # unavailable numbers
 search <- c(50000047738, 50000047739, 140000024289, 140000024745, 160000039647,
             160000039646, 200000007872, 200000007858, 200000010277, 50000032049)
@@ -207,23 +206,28 @@ issue2 <- which(candidates.pending$SEQUENCIAL_CANDIDATO %in% search)
 ################################################################################
 # write data in python-readable format
 # select meaningful variables
-candidates.feather <- candidates.pending %>%
+candidates.python <- candidates.pending %>%
   transmute(electionYear    = as.character(ANO_ELEICAO),
             electionID      = as.character(electionID),
             electoralUnitID = as.character(SIGLA_UE),
-            candidateID     = as.character(SEQUENCIAL_CANDIDATO)) %>%
+            candidateID     = as.character(SEQUENCIAL_CANDIDATO),
+            scraperID       = row_number()) %>%
   filter(!row_number() %in% c(issue1, issue2))
 
 # write to disk
-save(candidates.pending, file = 'candidates.pending.Rda')
-write_feather(candidates.feather, path = './candidates.feather')
+save(candidates.python, file = 'candidatesPython.Rda')
+write_feather(candidates.python, 'candidatesPython.feather')
+write_csv(candidates.python, 'candidatesPython.csv')
 
 # remove useless stuff
 rm(list = objects(pattern = '\\.(2010|2012|2016)|election'))
 
-# run scraper on python (should take 20h to download everything; 2004 candidates
-# search is very slow)
-# source_python('01_electoralCrime.py')
+################################################################################
+# run scraper on UNC VCL machine
+session <- ssh_connect('aa2015@', passwd = '')
+
+#
+
 
 ################################################################################
 # check
