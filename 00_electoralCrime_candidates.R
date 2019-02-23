@@ -15,9 +15,7 @@ library(here)
 library(tidyverse)
 library(magrittr)
 library(feather)
-library(reticulate)
 library(readr)
-library(ssh)
 
 # load statements
 load('candidates.2010.Rda')
@@ -98,6 +96,7 @@ candidates.pending <- bind_rows(appealing.candidates2010,
                                 appealing.candidates2016)
 # drop 2000 elections
 candidates.pending %<>% filter(ANO_ELEICAO != 2000)
+candidates.pending %<>% mutate(scraperID = row_number())
 
 # save candidates pending final ruling and candidacy situation datasets
 save(candidacy.situation, file = 'candidacy.situation.Rda')
@@ -211,7 +210,7 @@ candidates.python <- candidates.pending %>%
             electionID      = as.character(electionID),
             electoralUnitID = as.character(SIGLA_UE),
             candidateID     = as.character(SEQUENCIAL_CANDIDATO),
-            scraperID       = row_number()) %>%
+            sraperID        = scraperID) %>%
   filter(!row_number() %in% c(issue1, issue2))
 
 # write to disk
@@ -222,23 +221,21 @@ write_csv(candidates.python, 'candidatesPython.csv')
 # remove useless stuff
 rm(list = objects(pattern = '\\.(2010|2012|2016)|election'))
 
-################################################################################
-# run scraper on UNC VCL machine
-session <- ssh_connect('aa2015@', passwd = '')
-
-#
-
+# run scraper in python
+# system('python3.7 01_electoralCrime_caseNum_scraper.py &')
 
 ################################################################################
 # check
 # load results
-case.numbers <- read_feather('candidateCases.feather')
+# case.numbers <- read_feather('candidateCases.feather')
+case.numbers <- readr::read_csv('candidateCases.csv')
 
 # assign variable names
 names(case.numbers) <- case.numbers[1, ]
 
 # delete variable names from row
 case.numbers %<>% slice(-1)
+case.numbers %<>% select(-1)
 
 # find cases with problems
 case.problems <- which(str_detect(case.numbers$caseNum, 'Informa'))
@@ -246,13 +243,14 @@ case.problems <- which(str_detect(case.numbers$caseNum, 'Informa'))
 # write to disk
 case.numbers[case.problems, 1:4] %>%
   filter(str_detect(electionYear, '2012|2016')) %>%
-  write_feather(path = './problems.feather')
+  write_csv(path = './problems.csv')
 
 # run scraper on python
 # source_python('01_electoralCrime_problems.py')
 
 # load corrections
-problem.numbers <- read_feather('problemCases.feather')
+# problem.numbers <- read_feather('problemCases.feather')
+problem.numbers <- read_csv('problemCases.csv')
 
 # assign variable names
 names(problem.numbers) <- problem.numbers[1, ]
@@ -287,18 +285,39 @@ prots  <- c('1773042012', '1773052012', '939142012', '551612012', '158342013',
 urls   <- paste0('http://inter03.tse.jus.br/sadpPush/ExibirDadosProcesso.do?',
                  'nprot=', prots, '&comboTribunal=', states)
 
+
+# join datasets to capture scraperID
+joinkey <- c('electionYear' = 'ANO_ELEICAO',
+             'electoralUnitID' = 'SIGLA_UE',
+             'candidateID' = 'SEQUENCIAL_CANDIDATO')
+
+# format ANO_ELEICAO
+candidates.pending %<>% mutate_all(as.character)
+case.numbers %<>% mutate_all(as.character)
+
+# include scraperID
+case.numbers %<>%
+  left_join(candidates.pending, by = joinkey) %>%
+  select(c(1:6), scraperID) %>%
+  rename(electionID = electionID.x) %>%
+  distinct(.keep_all = TRUE)
+
 # bind such cases onto case.numbers dataset
 case.numbers <- candidates.pending %>%
   filter(SEQUENCIAL_CANDIDATO %in% search) %>%
   transmute(
-    electionYear    = as.character(ANO_ELEICAO),
-    electionID      = as.character(electionID),
+    electionYear    = ANO_ELEICAO,
+    electionID      = electionID,
     electoralUnitID = SIGLA_UE,
-    candidateID     = as.character(SEQUENCIAL_CANDIDATO),
+    candidateID     = SEQUENCIAL_CANDIDATO,
     caseNum         = cases,
-    protNum         = urls
+    protNum         = urls,
+    scraperID       = scraperID
   ) %>%
   {bind_rows(case.numbers, .)}
+
+# fill in last scraperIDs
+
 
 # fix case numbers
 case.numbers.01 <- case.numbers %>% filter(as.numeric(electionYear) < 2012)
@@ -312,6 +331,7 @@ case.numbers <- rbind(case.numbers.01, case.numbers.02)
 
 # write to disk
 save(case.numbers, file = './case.numbers.Rda')
+write_csv(case.numbers, path = 'caseNumbers.csv')
 
 # write to disk
 save(candidates.pending, file = './candidates.pending.Rda')

@@ -3,35 +3,43 @@
 # Andre Assumpcao
 # andre.assumpcao@gmail.com
 
-# import statements
+# import standard libraries
 import codecs
 import glob
 import math
+import numpy as np
 import os
 import pandas as pd
 import re
 import time
+
+# import third-party libraries
 from bs4 import BeautifulSoup
 from selenium                          import webdriver
 from selenium.webdriver.chrome.options import Options
+from selenium.common.exceptions        import NoSuchElementException
 from selenium.common.exceptions        import TimeoutException
 from selenium.common.exceptions        import StaleElementReferenceException
 from selenium.webdriver.common.by      import By
 from selenium.webdriver.common.keys    import Keys
+from selenium.webdriver.support.ui     import Select
 from selenium.webdriver.support.ui     import WebDriverWait
 from selenium.webdriver.support        import expected_conditions as EC
 
-
 # define scraper class
 class scraper:
-    """series of methods to download TSE court documents
 
-    attributes:
-        browser:    placeholder for selenium browser call
+    """
+        the scraper class contains methods used to download data from
+        tse websites. it visits two pages: (i) any candidate's profile
+        and (ii) the decision regarding their candidacy.
 
-    methods:
-        case:       download case and protocol number
-        decision:   use protocol number to download judicial decision
+        attributes:
+            browser:    placeholder for selenium browser call
+
+        methods:
+            case:       download case and protocol number
+            decision:   use protocol number to download judicial decision
     """
     # define static arguments for all methods in the scraper class
     browser = []
@@ -45,7 +53,7 @@ class scraper:
     # xpath search patterns for decision method
     xpath    = '//*[contains(@value, "Todos")]'
     viewPath = '//*[@value="Visualizar"]'
-    errPath  = '//li'
+    errPath  = '//*[@color="RED"]'
 
     # init method share by all class instances
     def __init__(self, browser):
@@ -55,8 +63,10 @@ class scraper:
         self.browser = browser
 
     # case number scraper function
-    def case(self, electionYear, electionID, electoralUnitID, candidateID):
-        """method to download case number by candidate information"""
+    def case(self, electionYear, electionID, electoralUnitID, candidateID,
+             wait = 10):
+
+        """ method to download case number by candidate information """
 
         # turn method arguments to strings
         args = locals()
@@ -76,7 +86,7 @@ class scraper:
 
             # wait up to 60s for elements to be located
             # WebDriverWait(browser, 60).until(caseVis)
-            WebDriverWait(self.browser, 60).until(protVis)
+            WebDriverWait(self.browser, wait).until(protVis)
 
             # if protocol number has been found, download it
             # caseElem = browser.find_element_by_xpath(casePath)
@@ -100,23 +110,18 @@ class scraper:
         return protNum
 
     # decision scraper function
-    def decision(self, url = None):
-        """method to download tse decisions by url"""
+    def decision(self, url = None, filename = 'decision'):
+
+        """ method to download tse decisions by url """
 
         # skip out if url has not been provided
         if url == None: return 'URL not loaded'
 
-        # try information in DOM
+        # store url for scraping decisions
+        self.url = url
+
+        # catch error
         try:
-            # store url for scraping decisions
-            self.url = url
-
-            # extract protocol number from url
-            num = re.search('(?<=nprot=)(.)*(?=&)', self.url).group(0)
-
-            # replace weird characters by nothing
-            num = re.sub(r'\/|\.|\&|\%|\-', '', num)
-
             # navigate to url
             self.browser.get(self.url)
 
@@ -124,58 +129,62 @@ class scraper:
             dec = EC.presence_of_element_located((By.XPATH, self.viewPath))
 
             # wait up to 3s for last element to be located
-            WebDriverWait(self.browser, 60).until(dec)
+            WebDriverWait(self.browser, 15).until(dec)
 
             # when element is found, click on 'andamento', 'despacho',
             # and 'view' so that the browser opens up the information we
             # want
-            dec = self.browser.find_element_by_xpath(self.xpath).click()
-            vis = self.browser.find_element_by_xpath(self.viewPath).click()
+            self.browser.find_element_by_xpath(self.xpath).click()
+            self.browser.find_element_by_xpath(self.viewPath).click()
 
             # save inner html to object
             html = self.browser.execute_script(self.java)
 
-            # fail switch
-            fail = 0
-
-        # handle stale element exception
-        except StaleElementReferenceException as Exception:
-            html = 'Download unsuccessful: staleElementException'
-            fail = 1
-
-        # handle timeout exception
-        except TimeoutException as Exception:
-            html = 'Download unsuccessful: timeoutException'
-            fail = 1
-
-        # save file if found
-        if fail == 0:
-            # provide name to file
-            file = './prot' + str(num) + '.html'
+            # define filename
+            if filename == 'decision':
+                file = 'decision.html'
+            else:
+                # provide name to file
+                file = str(filename) + '.html'
             # save to file
             try:
                 codecs.open(file, 'w', 'cp1252').write(html)
             except:
                 codecs.open(file, 'w', 'utf-8').write(html)
+
             # print message
             return 'Download successful'
-        else:
-            return html
+
+        except NoSuchElementException as Exception:
+            e = EC.presence_of_element_located((By.XPATH, self.errPath))
+            WebDriverWait(self.browser, 1).until(e)
+            return 'Download failed: NoSuchElementException'
+
+        except TimeoutException as Exception:
+            return 'Download failed: timeoutException'
+
+        except StaleElementReferenceException as Exception:
+            return 'Download failed: staleElementException'
+
+        except:
+            return 'Download failed: reason unknown'
 
 # define parser class
 class parser:
-    """series of methods to wrangle TSE court documents
 
-    attributes:
-        file:                path to html containing the candidacy decision
+    """
+        series of methods to wrangle TSE court documents
 
-    methods:
-        parse_summary:       parse summary table
-        parse_updates:       parse case updates
-        parse_details:       parse sentence details
-        parse_related_cases: parse references to other cases
-        parse_related_docs:  parse references to other documents
-        parse_all:           parse everything above
+        attributes:
+            file:                path to judicial decision html file
+
+        methods:
+            parse_summary:       parse summary table
+            parse_updates:       parse case updates
+            parse_details:       parse sentence details
+            parse_related_cases: parse references to other cases
+            parse_related_docs:  parse references to other documents
+            parse_all:           parse everything above
     """
 
     # define static variables used for parsing all tables
@@ -189,7 +198,8 @@ class parser:
 
     # init method shared by all class instances
     def __init__(self, file):
-        """load into class the file which will be parsed"""
+
+        """ load into class the file which will be parsed """
 
         # try cp1252 encoding first or utf-8 if loading fails
         try:
@@ -205,7 +215,8 @@ class parser:
 
     #1 parse summary info table:
     def parse_summary(self, transpose = False):
-        """method to wrangle summary information"""
+
+        """ method to wrangle summary information """
 
         # initial objects for parser
         # isolate summary table
@@ -328,7 +339,8 @@ class parser:
 
     #2 parse case updates
     def parse_updates(self):
-        """method to wrangle case updates information"""
+
+        """ method to wrangle case updates information """
 
         # initial objects for parser
         # isolate updates table
@@ -382,7 +394,8 @@ class parser:
 
     #3 parse judicial decisions
     def parse_details(self):
-        """method to wrangle case decisions"""
+
+        """ method to wrangle case decisions """
 
         ### initial objects for parser
         # try catch error if table doesn't exist
@@ -459,7 +472,8 @@ class parser:
 
     #4 parse related cases
     def parse_related_cases(self):
-        """method to wrangle case decisions"""
+
+        """ method to wrangle case decisions """
 
         ### initial objects for parser
         # try catch error if table doesn't exist
@@ -511,7 +525,8 @@ class parser:
 
     #5 parse related documents
     def parse_related_docs(self):
-        """method to parse related docs into a single dataset"""
+
+        """ method to parse related docs into a single dataset """
 
         ### initial objects for parser
         # try catch error if table doesn't exist
@@ -556,7 +571,8 @@ class parser:
 
     #6 return full table
     def parse_all(self):
-        """method to parse all tables into a single dataset"""
+
+        """ method to parse all tables into a single dataset """
 
         ### call other parser functions
         # parse tables we know exist

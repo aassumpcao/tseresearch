@@ -12,12 +12,7 @@
 library(here)
 library(tidyverse)
 library(magrittr)
-library(feather)
-library(reticulate)
 library(pdftools)
-
-# set environment var
-Sys.setenv(RETICULATE_PYTHON = '/anaconda3/bin/python')
 
 # load datasets
 load('case.numbers.Rda')
@@ -241,19 +236,3 @@ save(electoral.crimes, file = './electoral.crimes.Rda')
 
 # quit r
 q('no')
-
-# join, mutate, and rearrange variables
-analysis <- candidates %>%
-  left_join(elections, by = c('election.year', 'election.stage',
-    'election.ID', 'office.ID')) %>%
-  mutate(
-    candidate.votes   = as.integer(candidate.votes),
-    candidate.elected = ifelse(candidate.votes >= votes.foroffice, 1, 0)) %>%
-  select(
-    contains('election'), contains('office'), contains('votes'),
-    contains('candidate'), contains('candidacy'), contains('party')
-  )
-
-analysis %>% names()
-
-analysis %$% table(candidate.occupation)

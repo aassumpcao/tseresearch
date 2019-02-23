@@ -58,3 +58,5 @@ arguments = {'electionYear'   : candidates.loc[int(i), 'electionYear'],
 tse.scraper(browser).case(**arguments)
 tse.scraper(browser).decision(url)
 
+problemCases = feather.read_dataframe('problemCases.feather')
+problemCases.to_csv('problemCases.csv', index = False)
