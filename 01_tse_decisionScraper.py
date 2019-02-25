@@ -71,8 +71,7 @@ for i in range(limit):
     absorb = scrape.decision(**arguments)
     results.append((arguments['filename'], absorb))
     # print progress
-    if (i + 1) % 1000 == 0:
-        print(str(i+1) + ' / ' + str(limit), + ' ; ' + datetime.datetime.now())
+    if (i + 1) % 1000 == 0: print(str(i + 1) + ' / ' + str(limit))
 
 # save scraper outcomes
 pd.DataFrame(results).to_csv('./scraper_status.csv')

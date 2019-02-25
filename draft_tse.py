@@ -60,3 +60,10 @@ tse.scraper(browser).decision(url)
 
 problemCases = feather.read_dataframe('problemCases.feather')
 problemCases.to_csv('problemCases.csv', index = False)
+
+
+# extract protocol number from url
+num = re.search('(?<=nprot=)(.)*(?=&)', self.url).group(0)
+
+ # replace weird characters by nothing
+num = re.sub(r'\/|\.|\&|\%|\-', '', num)
