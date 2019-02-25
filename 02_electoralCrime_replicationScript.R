@@ -4,13 +4,10 @@
 
 # import statements
 library(AER)
-library(feather)
 library(here)
 library(magrittr)
 library(pdftools)
 library(readr)
-library(reticulate)
-library(ssh)
 library(stargazer)
 library(tidyverse)
 
