@@ -195,6 +195,16 @@ class parser:
     regex1 = re.compile(r'\\n|\\t')
     regex2 = re.compile('\xa0')
     regex3 = re.compile(' +')
+    regex4 = re.compile('^PROCESSO')
+    regex5 = re.compile('^MUNIC[IÍ]PIO')
+    regex6 = re.compile('^PROTOCOLO')
+    regex7 = re.compile('^(requere|impugnan|recorren|litis)', re.IGNORECASE)
+    regex8 = re.compile('^(requeri|impugnad|recorri|candid)', re.IGNORECASE)
+    regex9 = re.compile('^(ju[íi]z|relator)', re.IGNORECASE)
+    regex10 = re.compile('^assunt', re.IGNORECASE)
+    regex11 = re.compile('^localiz', re.IGNORECASE)
+    regex12 = re.compile('^fase', re.IGNORECASE)
+    regex13 = re.compile('(?<=:)(.)*')
 
     # init method shared by all class instances
     def __init__(self, file):
@@ -222,124 +232,49 @@ class parser:
         # isolate summary table
         table = self.tables[0]
 
-        # find all rows in table
-        rows = table.find_all('tr')
+        # find all rows in table and extract their text
+        rows = [tr.text for tr in table.find_all('tr')]
 
-        ### find simple information
-        # find case, municipality, and protocol information from table
-        case = [td.text for td in rows[0].find_all('td')]
-        town = [td.text for td in rows[1].find_all('td')]
-        prot = [td.text for td in rows[2].find_all('td')]
+        # clean up text
+        rows = [re.sub(self.regex0, '', row) for row in rows]
+        rows = [re.sub(self.regex1, '', row) for row in rows]
+        rows = [re.sub(self.regex2, '', row) for row in rows]
+        rows = [re.sub(self.regex3,' ', row) for row in rows]
 
-        # split title and information
-        case = ['case', ''.join(case[1:])]
-        town = ['town', ''.join(town[1:])]
-        prot = ['prot', ''.join(prot[1:])]
+        # slice javascript out of list
+        rows = rows[:-1]
 
-        ### find more complex elements
-        #1 find claimants using regex
-        regex3 = re.compile('(requere|impugnan|recorren|litis)', re.IGNORECASE)
+        # filter down each row to text that matters
+        case      = {'case'     : list(filter(self.regex4.search, rows))}
+        town      = {'town'     : list(filter(self.regex5.search, rows))}
+        prot      = {'prot'     : list(filter(self.regex6.search, rows))}
+        claimants = {'claimants': list(filter(self.regex7.search, rows))}
+        defendant = {'defendant': list(filter(self.regex8.search, rows))}
+        judge     = {'judge'    : list(filter(self.regex9.search, rows))}
+        subject   = {'subject'  : list(filter(self.regex10.search, rows))}
+        district  = {'district' : list(filter(self.regex11.search, rows))}
+        stage     = {'stage'    : list(filter(self.regex12.search, rows))}
 
-        # create list of claimant information
-        claimants = [None]
+        # join all information into single list
+        summary = [case, town, prot, claimants, defendant, judge, subject, \
+                   district, stage]
 
-        # for each row in the summary table:
-        for row in rows:
-            # find rows that match the claimant regex
-            if not row.find_all(text = regex3):
-                # extract all columns and join them into one observation
-                claimant = [td.text for td in row.find_all('td')]
-                claimant = ''.join(claimant[1:])
-                # append to claimant list
-                claimants.append(claimant)
+        # create dictionary
+        for info in summary[1:]: case.update(info)
 
-        # format list
-        # if not claimants: claimants = ['claimants', ';;'.join(claimants[1:]) \
-        #                                if len(claimants) > 1 else claimants[0]]
+        # strip keys in dictionary values
+        for k, v in case.items():
+            case[k] = [re.search(self.regex13, i).group() for i in case[k]]
+            case[k] = [i.strip() for i in case[k]]
 
-        claimants = ['claimants', ';;'.join(claimants[1:]) \
-                                  if len(claimants) > 1 else claimants[0]]
+        # recreate summary
+        summary = case.copy()
 
-        #2 find plaintiffs using regex
-        regex4 = re.compile('(requeri|impugnad|recorri|candid)', re.IGNORECASE)
+        # replace None for missing values
+        summary = {k: [None] if not v else v for k, v in summary.items()}
 
-        # create list of plaintiff information
-        defendants = [None]
-
-        # for each row in the summary table:
-        for row in rows:
-            # find rows that match the plaintiff regex
-            if not row.find_all(text = regex4):
-                # extract all columns and join them into one observation
-                defendant = [td.text for td in row.find_all('td')]
-                defendant = ''.join(defendant[1:])
-                # append to plaintiff list
-                defendants.append(defendant)
-
-        # format list
-        # if not defendants:
-        defendants = ['defendants', ';;'.join(defendants[1:]) \
-                          if len(defendants) > 1 else defendants[0]]
-
-        #3 find judges using regex
-        regex5 = re.compile('(ju[íi]z|relator)', re.IGNORECASE)
-
-        # create list of judge information
-        judges = [None]
-
-        # for each row in the summary table:
-        for row in rows:
-            # find rows that match the judge regex
-            if not row.find_all(text = regex5):
-                # extract all columns and join them into one observation
-                judge = [td.text for td in row.find_all('td')]
-                judge = ''.join(judge[1:])
-                # append to judge list
-                judges.append(judge)
-
-        # format list
-        if not judges: judges = ['judges', ';;'.join(judges[1:]) \
-                                 if len(judges) > 1 else judges[0]]
-
-        ### find last information
-        # find case subject, location, and stage in table
-        regex6 = re.compile('assunt',  re.IGNORECASE)
-        regex7 = re.compile('localiz', re.IGNORECASE)
-        regex8 = re.compile('fase',    re.IGNORECASE)
-
-        # find subject, location, and stage information from table
-        subj  = [row.text for row in rows if row.find_all(text = regex6) != []]
-        loc   = [row.text for row in rows if row.find_all(text = regex7) != []]
-        stage = [row.text for row in rows if row.find_all(text = regex8) != []]
-
-        # split title and information
-        subj  = ['subject',  re.sub('(.)*:', '', str(subj))]
-        loc   = ['location', re.sub('(.)*:', '', str(loc))]
-        stage = ['stage',    re.sub('(.)*:', '', str(stage))]
-
-        # join all information into single dataset
-        summary = [case, town, prot, claimants, defendants, \
-                   judges, subj, loc, stage]
-
-        # transform into pandas dataframe
-        summary = pd.DataFrame(summary)
-
-        # remove weird characters
-        summary = summary.replace(self.regex0, ' ', regex = True)
-        summary = summary.replace(self.regex1, ' ', regex = True)
-        summary = summary.replace(self.regex2, ' ', regex = True)
-        summary = summary.replace(' +', ' ', regex = True)
-
-        # assign column names
-        summary.columns = ['variables', 'values']
-
-        # return outcome if transpose is not provided as argument
-        if transpose == False:
-            return pd.DataFrame(summary)
-        else:
-            summary = summary.T
-            summary.columns = summary.iloc[0]
-            return pd.DataFrame(summary[1:])
+        # return dictionary of information
+        return summary
 
     #2 parse case updates
     def parse_updates(self):

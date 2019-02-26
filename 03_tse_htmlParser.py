@@ -4,6 +4,7 @@
 # andre.assumpcao@gmail.com
 
 # import standard libraries
+import codecs
 import glob
 import numpy as np
 import os
@@ -30,10 +31,8 @@ files = list(filter(regex.search, files))
 file = random.sample(files, 1)
 
 # loop over files, parse summary and bind
-kwargs = {'transpose': True}
-
 for i, file in enumerate(files):
-    tse.parser(file).parse_summary(**kwargs)
+    tse.parser(file).parse_summary()
     print(i)
 
 
