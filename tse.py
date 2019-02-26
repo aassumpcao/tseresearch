@@ -63,8 +63,7 @@ class scraper:
         self.browser = browser
 
     # case number scraper function
-    def case(self, electionYear, electionID, electoralUnitID, candidateID,
-             wait = 10):
+    def case(self, electionYear, electionID, electoralUnitID, candidateID):
 
         """ method to download case number by candidate information """
 
@@ -86,7 +85,7 @@ class scraper:
 
             # wait up to 60s for elements to be located
             # WebDriverWait(browser, 60).until(caseVis)
-            WebDriverWait(self.browser, wait).until(protVis)
+            WebDriverWait(self.browser, 10).until(protVis)
 
             # if protocol number has been found, download it
             # caseElem = browser.find_element_by_xpath(casePath)
@@ -194,7 +193,8 @@ class parser:
     # define regex compile for substituting weird characters in all tables
     regex0 = re.compile(r'\n|\t')
     regex1 = re.compile(r'\\n|\\t')
-    regex2 = re.compile(r'\\xa0')
+    regex2 = re.compile('\xa0')
+    regex3 = re.compile(' +')
 
     # init method shared by all class instances
     def __init__(self, file):
@@ -241,12 +241,12 @@ class parser:
         regex3 = re.compile('(requere|impugnan|recorren|litis)', re.IGNORECASE)
 
         # create list of claimant information
-        claimants = []
+        claimants = [None]
 
         # for each row in the summary table:
         for row in rows:
             # find rows that match the claimant regex
-            if row.find_all(text = regex3) != []:
+            if not row.find_all(text = regex3):
                 # extract all columns and join them into one observation
                 claimant = [td.text for td in row.find_all('td')]
                 claimant = ''.join(claimant[1:])
@@ -254,6 +254,9 @@ class parser:
                 claimants.append(claimant)
 
         # format list
+        # if not claimants: claimants = ['claimants', ';;'.join(claimants[1:]) \
+        #                                if len(claimants) > 1 else claimants[0]]
+
         claimants = ['claimants', ';;'.join(claimants[1:]) \
                                   if len(claimants) > 1 else claimants[0]]
 
@@ -261,32 +264,33 @@ class parser:
         regex4 = re.compile('(requeri|impugnad|recorri|candid)', re.IGNORECASE)
 
         # create list of plaintiff information
-        plaintiffs = []
+        defendants = [None]
 
         # for each row in the summary table:
         for row in rows:
             # find rows that match the plaintiff regex
-            if row.find_all(text = regex4) != []:
+            if not row.find_all(text = regex4):
                 # extract all columns and join them into one observation
-                plaintiff = [td.text for td in row.find_all('td')]
-                plaintiff = ''.join(plaintiff[1:])
+                defendant = [td.text for td in row.find_all('td')]
+                defendant = ''.join(defendant[1:])
                 # append to plaintiff list
-                plaintiffs.append(plaintiff)
+                defendants.append(defendant)
 
         # format list
-        plaintiffs = ['plaintiffs', ';;'.join(plaintiffs[1:]) \
-                                    if len(plaintiffs) > 1 else plaintiffs[0]]
+        # if not defendants:
+        defendants = ['defendants', ';;'.join(defendants[1:]) \
+                          if len(defendants) > 1 else defendants[0]]
 
         #3 find judges using regex
         regex5 = re.compile('(ju[íi]z|relator)', re.IGNORECASE)
 
         # create list of judge information
-        judges = []
+        judges = [None]
 
         # for each row in the summary table:
         for row in rows:
             # find rows that match the judge regex
-            if row.find_all(text = regex5) != []:
+            if not row.find_all(text = regex5):
                 # extract all columns and join them into one observation
                 judge = [td.text for td in row.find_all('td')]
                 judge = ''.join(judge[1:])
@@ -294,8 +298,8 @@ class parser:
                 judges.append(judge)
 
         # format list
-        judges = ['judges', ';;'.join(judges[1:]) \
-                            if len(judges) > 1 else judges[0]]
+        if not judges: judges = ['judges', ';;'.join(judges[1:]) \
+                                 if len(judges) > 1 else judges[0]]
 
         ### find last information
         # find case subject, location, and stage in table
@@ -314,7 +318,7 @@ class parser:
         stage = ['stage',    re.sub('(.)*:', '', str(stage))]
 
         # join all information into single dataset
-        summary = [case, town, prot, claimants, plaintiffs, \
+        summary = [case, town, prot, claimants, defendants, \
                    judges, subj, loc, stage]
 
         # transform into pandas dataframe
