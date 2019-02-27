@@ -205,7 +205,7 @@ class parser:
     regex11 = re.compile('^localiz', re.IGNORECASE)
     regex12 = re.compile('^fase', re.IGNORECASE)
     regex13 = re.compile('(?<=:)(.)*')
-    regex14 = re.compile('(Despach.*)|(Senten.*)|(Decis.*(?! Plenária))')
+    regex14 = re.compile('(Despach|Senten|(Decis.*?=Plenária))')
 
     # init method shared by all class instances
     def __init__(self, file):
@@ -226,9 +226,9 @@ class parser:
 
         # isolate latter tables
         kwargs = {'class': 'titulo_tabela'}
-        self.xt = [td.text for t in self.tables \
-                   for td in t.find_all('td', **kwargs)]
-        self.xt = {t: i + 1 for i, t in enumerate(self.xt)}
+        self.xtable = [td.text for t in self.tables \
+                       for td in t.find_all('td', **kwargs)]
+        self.xtable = {t: i + 1 for i, t in enumerate(self.xtable)}
 
     #1 parse summary info table:
     def parse_summary(self, transpose = False):
@@ -268,9 +268,13 @@ class parser:
         for k, v in info.items():
             info[k] = [re.search(self.regex13, i).group() for i in info[k]]
             info[k] = [i.strip() for i in info[k]]
+            if len(info[k]) > 1: info[k] = [' '.join(info[k])]
 
-        # replace None for missing values
+        # replace missing values for None
         summary = {k: [None] if not v else v for k, v in info.items()}
+
+        # # flatten list of values into scalars
+        # summary = {k: v for k, v in info.items() for v in info[k]}
 
         # return dictionary of information
         return summary
@@ -309,7 +313,7 @@ class parser:
         index = None
 
         # find table to parse
-        for k, v in self.xt.items():
+        for k, v in self.xtable.items():
             if re.search(self.regex14, k):
                 index = int(v)
 

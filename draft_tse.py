@@ -96,115 +96,14 @@ regex10 = re.compile('^assunt', re.IGNORECASE)
 regex11 = re.compile('^localiz', re.IGNORECASE)
 regex12 = re.compile('^fase', re.IGNORECASE)
 regex13 = re.compile('(?<=:)(.)*')
-regex14 = re.compile('^(?!.*Plenár)(Despach|Senten|Decis)')
 
 tables = soup.find_all('table')
 
 test = tse.parser(files[0])
-test.xt
 
-# isolate following tables
-kwargs = {'class': 'titulo_tabela'}
-xtable = [td.text for t in test.tables for td in t.find_all('td', **kwargs)]
-xtable = {t: i for i, t in enumerate(xtable)}
+test = tse.parser(files[6]).parse_summary()
 
-# find table to parse
-for k, v in xtable.items():
-    if re.search(regex14, k):
-        index = int(v)
+test['stage'] = [None]
 
-# choose updates table to parse
-table = tables[index]
-
-# extract rows from table
-kwarg = {'class': 'tdlimpoImpar'}
-shead = [tr.text for tr in table.find_all('tr', **kwarg)]
-kwarg = {'class': 'tdlimpoPar'}
-sbody = [tr.text for tr in table.find_all('tr', **kwarg)]
-
-# clean up headers
-shead = [re.sub(regex0, '', i) for i in shead]
-shead = [re.sub(regex1, '', i) for i in shead]
-shead = [re.sub(regex2, '', i) for i in shead]
-shead = [re.sub(regex3,' ', i) for i in shead]
-shead = [i.strip() for i in shead]
-
-# clean up body
-sbody = [re.sub(regex0, '', i) for i in sbody]
-sbody = [re.sub(regex1, '', i) for i in sbody]
-sbody = [re.sub(regex2, '', i) for i in sbody]
-sbody = [re.sub(regex3,' ', i) for i in sbody]
-sbody = [i.strip() for i in sbody]
-
-# assign updates to dictionary
-if len(shead) == len(sbody):
-    details = {'shead': shead, 'sbody': sbody}
-else:
-    sbody = [i + ' ' + j for i, j in zip(sbody[::2], sbody[1::2])]
-    details = {'shead': shead, 'sbody': sbody}
-
-# return dictionary of information
-return details
-
-# find the position of tables with decisions
-decisions = [i for i in range(len(tables)) if \
-             re.search(regex3, tables[i].td.get_text())]
-
-# define empty lists for position, head, and body of decisions
-shead = []
-sbody = []
-
-# for loop extracting the positions and the content of sentence head
-for i in decisions:
-    # create empty list of head and body of decisions per table
-    spos  = []
-    tbody = []
-    # define total number of rows per table
-    rows  = tables[i].find_all('tr')
-    prows = len(tables[i].find_all('tr'))
-    # extract sentence head and position per table
-    for tr, x in zip(rows, range(prows)):
-        if tr['class'] == ['tdlimpoImpar']:
-            spos.append(x)
-            shead.append(tr.text)
-    # add last row in sequence
-    spos.append(prows)
-    # extract sentence body per head per table
-    for y, z in zip(spos[:-1], range(len(spos[:-1]))):
-        tbody.append([y + 1, spos[z + 1]])
-        # subset sentences per head
-        for t in tbody:
-            decision = [rows[w].text for w in range(t[0], t[1])]
-            decision = ''.join(decision[:])
-        # bind decisions as the same length as head
-        sbody.append(decision)
-
-# build database taking into account potential parsing failures
-nrow = max(len(shead), len(sbody))
-
-# define the number of observations
-bindhead = ['Parsing Failure'] * (nrow - len(shead))
-bindbody = ['Parsing Failure'] * (nrow - len(sbody))
-
-# bind at the end of lists
-shead.extend(bindhead)
-sbody.extend(bindbody)
-
-# build corrected dataset
-sentences = pd.DataFrame(list(zip(shead, sbody)))
-
-# remove weird characters
-sentences = sentences.replace(self.regex0, ' ', regex = True)
-sentences = sentences.replace(self.regex1, ' ', regex = True)
-sentences = sentences.replace(self.regex2, ' ', regex = True)
-sentences = sentences.replace(' +', ' ', regex = True)
-
-# assign column names
-sentences.columns = ['head', 'body']
-
-# return outcome
-return pd.DataFrame(sentences)
-
-# throw error if table is not available
-except:
-return 'There are no sentence details here.'
+summary = {k: v for k, v in test.items() for v in test[k]}
+pd.DataFrame(summary, index = [0]).T

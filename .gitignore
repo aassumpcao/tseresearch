@@ -41,3 +41,6 @@ rsconnect/
 html/
 __pycache__/
 *.html
+
+# Ignore datasets
+*.csv
