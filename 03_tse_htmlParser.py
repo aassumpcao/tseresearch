@@ -28,12 +28,16 @@ files = glob.glob('./html-first-run/*.html')
 files = list(filter(regex.search, files))
 
 # try random file
-file = random.sample(files, 1)
+files = random.sample(files, 20)
 
 # loop over files, parse summary and bind
 for i, file in enumerate(files):
-    tse.parser(file).parse_summary()
-    print(i)
+    tse.parser(file).parse_details()
+
+tse.parser(files[6]).parse_details()
+
+files[6]
+
 
 
 

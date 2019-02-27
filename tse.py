@@ -205,6 +205,7 @@ class parser:
     regex11 = re.compile('^localiz', re.IGNORECASE)
     regex12 = re.compile('^fase', re.IGNORECASE)
     regex13 = re.compile('(?<=:)(.)*')
+    regex14 = re.compile('(Despach.*)|(Senten.*)|(Decis.*(?! Plenária))')
 
     # init method shared by all class instances
     def __init__(self, file):
@@ -222,6 +223,11 @@ class parser:
 
         # find all tables in document
         self.tables = self.soup.find_all('table')
+
+        # isolate latter tables
+        kwargs = {'class': 'titulo_tabela'}
+        self.xt = [td.text for t in self.tables for td in t.find_all('td', **kwargs)]
+        self.xt = {t: i for i, t in enumerate(self.xt)}
 
     #1 parse summary info table:
     def parse_summary(self, transpose = False):
@@ -281,133 +287,147 @@ class parser:
 
         """ method to wrangle case updates information """
 
-        # initial objects for parser
         # isolate updates table
         table = self.tables[1]
 
-        # define regex to find table title
-        regex3 = re.compile('data', re.IGNORECASE)
-
-        ### for loop to find table indexes
         # find all rows in table
-        rows = table.find_all('tr')
+        cols = [td.text for row in table.find_all('tr') \
+                for td in row.find_all('td')]
 
-        # define counter for finding the first row to parse
-        i = -1
+        # clean up text
+        cols = [re.sub(self.regex0, '', col) for col in cols]
+        cols = [re.sub(self.regex1, '', col) for col in cols]
+        cols = [re.sub(self.regex2, '', col) for col in cols]
+        cols = [re.sub(self.regex3,' ', col) for col in cols]
+        cols = [col.strip() for col in cols]
 
-        # loop incrementing row index
-        for row in rows:
-            i += 1
-            if row.find_all(text = regex3) != []:
-                i += 1
-                break
+        # create dictionary
+        update = {'zone': cols[4::3], 'date': cols[5::3], 'update': cols[6::3]}
 
-        ### for loop to extract table text and build dataset
-        # defined case updates
-        updates = []
-
-        # build table
-        for row in rows:
-            # extract information in each line
-            line = [td.text for td in row.find_all('td')]
-            # append to empty object
-            updates.append(line)
-
-        # build database
-        updates = updates[i:len(rows)]
-
-        # transform into pandas dataframe
-        updates = pd.DataFrame(updates)
-
-        # remove weird characters
-        updates = updates.replace(self.regex0, ' ', regex = True)
-        updates = updates.replace(self.regex1, ' ', regex = True)
-        updates = updates.replace(self.regex2, ' ', regex = True)
-        updates = updates.replace(' +', ' ', regex = True)
-
-        # assign column names
-        updates.columns = ['zone', 'date', 'update']
-
-        # return outcome
-        return pd.DataFrame(updates)
+        # return dictionary of information
+        return update
 
     #3 parse judicial decisions
     def parse_details(self):
 
         """ method to wrangle case decisions """
 
-        ### initial objects for parser
-        # try catch error if table doesn't exist
-        try:
-            # isolate updates and further tables
-            tables = self.tables[2:]
+        # empty placeholder for the details table
+        index = None
 
-            # define regex to find table title
-            regex3 = re.compile('despach|senten|decis', re.IGNORECASE)
-            regex4 = re.compile(r'\n', re.IGNORECASE)
+        # find table to parse
+        for k, v in self.xt.items():
+            if re.search(self.regex14, k):
+                index = int(v)
 
-            # find the position of tables with decisions
-            decisions = [i for i in range(len(tables)) if \
-                         re.search(regex3, tables[i].td.get_text())]
+        # end program if index is empty
+        if index is None: return {'shead': [None], 'sbody': [None]}
 
-            # define empty lists for position, head, and body of decisions
-            shead = []
-            sbody = []
+        # choose updates table to parse
+        table = self.tables[index]
 
-            # for loop extracting the positions and the content of sentence head
-            for i in decisions:
-                # create empty list of head and body of decisions per table
-                spos  = []
-                tbody = []
-                # define total number of rows per table
-                rows  = tables[i].find_all('tr')
-                prows = len(tables[i].find_all('tr'))
-                # extract sentence head and position per table
-                for tr, x in zip(rows, range(prows)):
-                    if tr['class'] == ['tdlimpoImpar']:
-                        spos.append(x)
-                        shead.append(tr.text)
-                # add last row in sequence
-                spos.append(prows)
-                # extract sentence body per head per table
-                for y, z in zip(spos[:-1], range(len(spos[:-1]))):
-                    tbody.append([y + 1, spos[z + 1]])
-                    # subset sentences per head
-                    for t in tbody:
-                        decision = [rows[w].text for w in range(t[0], t[1])]
-                        decision = ''.join(decision[:])
-                    # bind decisions as the same length as head
-                    sbody.append(decision)
+        # extract rows from table
+        kwarg = {'class': 'tdlimpoImpar'}
+        shead = [tr.text for tr in table.find_all('tr', **kwarg)]
+        kwarg = {'class': 'tdlimpoPar'}
+        sbody = [tr.text for tr in table.find_all('tr', **kwarg)]
 
-            # build database taking into account potential parsing failures
-            nrow = max(len(shead), len(sbody))
+        # clean up headers
+        shead = [re.sub(self.regex0, '', i) for i in shead]
+        shead = [re.sub(self.regex1, '', i) for i in shead]
+        shead = [re.sub(self.regex2, '', i) for i in shead]
+        shead = [re.sub(self.regex3,' ', i) for i in shead]
+        shead = [i.strip() for i in shead]
 
-            # define the number of observations
-            bindhead = ['Parsing Failure'] * (nrow - len(shead))
-            bindbody = ['Parsing Failure'] * (nrow - len(sbody))
+        # clean up body
+        sbody = [re.sub(self.regex0, '', i) for i in sbody]
+        sbody = [re.sub(self.regex1, '', i) for i in sbody]
+        sbody = [re.sub(self.regex2, '', i) for i in sbody]
+        sbody = [re.sub(self.regex3,' ', i) for i in sbody]
+        sbody = [i.strip() for i in sbody]
 
-            # bind at the end of lists
-            shead.extend(bindhead)
-            sbody.extend(bindbody)
+        # assign updates to dictionary
+        if len(shead) == len(sbody):
+            details = {'shead': shead, 'sbody': sbody}
+        else:
+            sbody = [i + ' ' + j for i, j in zip(sbody[::2], sbody[1::2])]
+            details = {'shead': shead, 'sbody': sbody}
 
-            # build corrected dataset
-            sentences = pd.DataFrame(list(zip(shead, sbody)))
+        # return dictionary of information
+        return details
 
-            # remove weird characters
-            sentences = sentences.replace(self.regex0, ' ', regex = True)
-            sentences = sentences.replace(self.regex1, ' ', regex = True)
-            sentences = sentences.replace(self.regex2, ' ', regex = True)
-            sentences = sentences.replace(' +', ' ', regex = True)
+        # ### initial objects for parser
+        # # try catch error if table doesn't exist
+        # try:
+        #     # isolate updates and further tables
+        #     tables = self.tables[2:]
 
-            # assign column names
-            sentences.columns = ['head', 'body']
+        #     # define regex to find table title
+        #     regex3 = re.compile('despach|senten|decis', re.IGNORECASE)
+        #     regex4 = re.compile(r'\n', re.IGNORECASE)
 
-            # return outcome
-            return pd.DataFrame(sentences)
+        #     # find the position of tables with decisions
+        #     decisions = [i for i in range(len(tables)) if \
+        #                  re.search(regex3, tables[i].td.get_text())]
 
-        # throw error if table is not available
-        except:
-            return 'There are no sentence details here.'
+        #     # define empty lists for position, head, and body of decisions
+        #     shead = []
+        #     sbody = []
+
+        #     # for loop extracting the positions and the content of sentence head
+        #     for i in decisions:
+        #         # create empty list of head and body of decisions per table
+        #         spos  = []
+        #         tbody = []
+        #         # define total number of rows per table
+        #         rows  = tables[i].find_all('tr')
+        #         prows = len(tables[i].find_all('tr'))
+        #         # extract sentence head and position per table
+        #         for tr, x in zip(rows, range(prows)):
+        #             if tr['class'] == ['tdlimpoImpar']:
+        #                 spos.append(x)
+        #                 shead.append(tr.text)
+        #         # add last row in sequence
+        #         spos.append(prows)
+        #         # extract sentence body per head per table
+        #         for y, z in zip(spos[:-1], range(len(spos[:-1]))):
+        #             tbody.append([y + 1, spos[z + 1]])
+        #             # subset sentences per head
+        #             for t in tbody:
+        #                 decision = [rows[w].text for w in range(t[0], t[1])]
+        #                 decision = ''.join(decision[:])
+        #             # bind decisions as the same length as head
+        #             sbody.append(decision)
+
+        #     # build database taking into account potential parsing failures
+        #     nrow = max(len(shead), len(sbody))
+
+        #     # define the number of observations
+        #     bindhead = ['Parsing Failure'] * (nrow - len(shead))
+        #     bindbody = ['Parsing Failure'] * (nrow - len(sbody))
+
+        #     # bind at the end of lists
+        #     shead.extend(bindhead)
+        #     sbody.extend(bindbody)
+
+        #     # build corrected dataset
+        #     sentences = pd.DataFrame(list(zip(shead, sbody)))
+
+        #     # remove weird characters
+        #     sentences = sentences.replace(self.regex0, ' ', regex = True)
+        #     sentences = sentences.replace(self.regex1, ' ', regex = True)
+        #     sentences = sentences.replace(self.regex2, ' ', regex = True)
+        #     sentences = sentences.replace(' +', ' ', regex = True)
+
+        #     # assign column names
+        #     sentences.columns = ['head', 'body']
+
+        #     # return outcome
+        #     return pd.DataFrame(sentences)
+
+        # # throw error if table is not available
+        # except:
+        #     return 'There are no sentence details here.'
 
     #4 parse related cases
     def parse_related_cases(self):
