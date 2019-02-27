@@ -32,9 +32,9 @@ files = random.sample(files, 20)
 
 # loop over files, parse summary and bind
 for i, file in enumerate(files):
-    tse.parser(file).parse_details()
+    pd.DataFrame.from_dict(tse.parser(file).parse_details()).T
 
-tse.parser(files[6]).parse_details()
+tse.parser(files[18]).parse_details()
 
 files[6]
 
