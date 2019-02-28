@@ -48,17 +48,15 @@ equalizer = [len(case['zone']) for case in updates]
 scraperID = [{'scraperID': politician['scraperID'] * equalizer[i]} \
              for i, politician in enumerate(scraperID)]
 
-
-for i, case in enumerate(updates):
-    if len(case['zone']) != len(case['update']):
-        print(i)
-
 # build dictionary including each file's scraperID
 for i, case in enumerate(updates): case.update(scraperID[i])
 
 # build dataset
 updates = pd.concat([pd.DataFrame.from_dict(case) for case in updates])
 updates = updates.reset_index(drop = True)
+
+# save dataset
+updates.to_csv('tseUpdates.csv', index = False, sep = '#')
 
 ### parse details
 # parse table details
