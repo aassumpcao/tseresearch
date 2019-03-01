@@ -328,3 +328,13 @@ analysis %>%
   select(candidate.education) %>%
   spread(key = candidate.education, value = 1)
 
+
+
+campaign2004 <- readr::read_delim('DespesaCandidato2004.txt', ';',
+                                  escape_double = FALSE,
+                                  trim_ws = TRUE,
+                                  locale = locale(encoding = 'Latin1'))
+
+# files
+files <- list.files('../2018 TSE Databank/prestacao_contas_2010',
+                    full.names = TRUE, recursive = TRUE)

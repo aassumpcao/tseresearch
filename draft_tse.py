@@ -107,3 +107,18 @@ test['stage'] = [None]
 
 summary = {k: v for k, v in test.items() for v in test[k]}
 pd.DataFrame(summary, index = [0]).T
+
+import os
+import pandas as pd
+import csv
+
+#
+file = '../2018 TSE Databank/DespesaCandidato2004.txt'
+
+kwargs = {'sep': ';', 'index_col': False, 'encoding': 'latin_1',
+    'error_bad_lines': False, 'quoting': csv.QUOTE_NONE}
+
+dataframe = pd.read_csv(file, **kwargs)
+dataframe.to_csv('DespesaCandidato20042.txt', '#', doublequote = False,
+    escapechar = '\\')
+
