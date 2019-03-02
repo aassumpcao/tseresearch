@@ -60,12 +60,6 @@ campaign2014 %<>% rename(`Tipo de documento` = `Tipo do documento`)
 campaign1 <- bind_rows(campaign2004, campaign2006, campaign2008)
 campaign2 <- bind_rows(campaign2010, campaign2012, campaign2014, campaign2016)
 
-names(campaign1)
-names(campaign2)
-
-[], 23, 5, 9, 4, 2, 1, [], 17, 16, 20, 19, 11, 10, 12, [], [], [], 7, 6, 22,
-[], [], 29, [],
-
 # create list of missing and matching variables in 2016 dataset
 missing <- c(1, 8, c(16:18), 22, 23, 25)
 matching <- c(23, 5, 9, 4, 2, 1, 17, 16, 20, 19, 11, 10, 12, 7, 6, 22, 29)
@@ -82,4 +76,3 @@ campaign <- bind_rows(campaign1, campaign2)
 
 # save to file
 save(campaign, file = 'campaign.Rda')
-campaign
