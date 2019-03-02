@@ -2,7 +2,6 @@
 # candidates wrangling
 #   this script wrangles the candidates in all local elections in brazil between
 #   2004 and 2016.
-
 # author: andre assumpcao
 # email:  andre.assumpcao@gmail.com
 

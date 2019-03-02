@@ -338,3 +338,14 @@ campaign2004 <- readr::read_delim('DespesaCandidato2004.txt', ';',
 # files
 files <- list.files('../2018 TSE Databank/prestacao_contas_2010',
                     full.names = TRUE, recursive = TRUE)
+
+dataset <- tibble()
+
+for (i in files) {
+  data <- read_delim(i, delim = ';', escape_double = FALSE, trim_ws = TRUE,
+                     locale = locale(encoding = 'Latin1'))
+  data %<>% mutate_all(as.character)
+  dataset <- bind_rows(dataset, data)
+}
+
+save(campaign2010, file = 'campaign2010.Rda')
