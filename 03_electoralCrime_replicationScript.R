@@ -17,11 +17,13 @@ rstudioapi::openProject('2019 Electoral Crime.Rproj')
 # wrangle local candidate data
 source('00_tse_candidates.R')
 
-# wrangle local candidate campaign data
+# wrangle local candidate campaign data (warning: file script is massive. you
+# will want to run it on a server/cluster computing service OR via command line
+# as a background process)
 source('01_tse_campaign.R')
 
 # wrangle electoral results data at the section(lowest)-level possible
-source('00_electoralCrime_sections.R')
+source('02_tse_sections.R')
 
 # wrangle vacant municipal office data
 source('00_electoralCrime_vacancies.R')

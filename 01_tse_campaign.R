@@ -12,24 +12,18 @@ library(magrittr)
 library(readr)
 library(tidyverse)
 
-# load data
-load('campaign2004.Rda')
-load('campaign2006.Rda')
-load('campaign2008.Rda')
-load('campaign2010.Rda')
-load('campaign2012.Rda')
-load('campaign2014.Rda')
-load('campaign2016.Rda')
+# load campaign expenditures data for all elections between 2004 and 2016
+for (dataset in paste0('campaign', seq(2004, 2016, 2), '.Rda')){load(dataset)}
 
 ### body
-# reformat everything
-campaign2004 %<>% mutate_all(as.character)
-campaign2006 %<>% mutate_all(as.character)
-campaign2008 %<>% mutate_all(as.character)
-campaign2010 %<>% mutate_all(as.character)
-campaign2012 %<>% mutate_all(as.character)
-campaign2014 %<>% mutate_all(as.character)
-campaign2016 %<>% mutate_all(as.character)
+# reformat every variable in every dataset to character
+campaign2004 %<>% mutate_all(as.character) %>% mutate(ANO_ELEICAO = '2004')
+campaign2006 %<>% mutate_all(as.character) %>% mutate(ANO_ELEICAO = '2006')
+campaign2008 %<>% mutate_all(as.character) %>% mutate(ANO_ELEICAO = '2008')
+campaign2010 %<>% mutate_all(as.character) %>% mutate(ANO_ELEICAO = '2010')
+campaign2012 %<>% mutate_all(as.character) %>% mutate(ANO_ELEICAO = '2012')
+campaign2014 %<>% mutate_all(as.character) %>% mutate(ANO_ELEICAO = '2014')
+campaign2016 %<>% mutate_all(as.character) %>% mutate(ANO_ELEICAO = '2016')
 
 # rename 2004 variables
 names(campaign2004)[1:7] <- names(campaign2008)[2:8]
@@ -44,21 +38,26 @@ names(campaign2006)[21] <- names(campaign2008)[24]
 names(campaign2006)[22] <- names(campaign2008)[27]
 
 # rename 2010 vars
-campaign2010 %<>% rename(`Sigla  Partido` = `Sigla Partido`, `Tipo de documento`
-  = `Tipo do documento`, `Descriçao da despesa` = `\"Descriçao da despesa\"`)%>%
-  select(-c(`Fonte recurso`, `Espécie recurso`, `Entrega em conjunto?`))
-
+campaign2010 %<>% rename(`Sigla  Partido` = `Sigla Partido`,
+                         `Tipo de documento`= `Tipo do documento`,
+                         `Descriçao da despesa` =`\"Descriçao da despesa\"`) %>%
+                  select(-c(`Fonte recurso`, `Espécie recurso`,
+                            `Entrega em conjunto?`))
 # rename 2012 vars
 campaign2012 %<>% rename(`Sigla da UE` = `Número UE`, `Nome da UE` = Município,
-  `Tipo de documento`=`Tipo do documento`, `Cod setor econômico do fornecedor` =
-  `Cod setor econômico do doador`)
-
+                         `Tipo de documento`=`Tipo do documento`,
+                         `Cod setor econômico do fornecedor` =
+                         `Cod setor econômico do doador`)
 # rename 2014 vars
 campaign2014 %<>% rename(`Tipo de documento` = `Tipo do documento`)
 
 # bind datasets
 campaign1 <- bind_rows(campaign2004, campaign2006, campaign2008)
 campaign2 <- bind_rows(campaign2010, campaign2012, campaign2014, campaign2016)
+
+# change order for election year variable
+campaign1 %<>% select(-ANO_ELEICAO, everything(), ANO_ELEICAO)
+campaign2 %<>% select(-ANO_ELEICAO, everything(), ANO_ELEICAO)
 
 # create list of missing and matching variables in 2016 dataset
 missing <- c(1, 8, c(16:18), 22, 23, 25)
@@ -73,6 +72,17 @@ campaign2 %<>% select(-missing)
 
 # bind everything
 campaign <- bind_rows(campaign1, campaign2)
+
+# reformat campaign expenditure and convert to numeric format
+campaign %<>%
+  mutate(VR_DESPESA = VR_DESPESA %>% {as.numeric(str_replace(., ',', '.'))})
+
+# reformat campaign expenditure and convert to numeric format
+campaign %<>%
+  group_by(ANO_ELEICAO, SG_UE, NM_CANDIDATO) %>%
+  mutate(TOTAL_DESPESA = sum(VR_DESPESA)) %>%
+  filter(row_number() == 1) %>%
+  ungroup()
 
 # save to file
 save(campaign, file = 'campaign.Rda')

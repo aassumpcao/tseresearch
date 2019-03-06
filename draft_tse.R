@@ -349,3 +349,13 @@ for (i in files) {
 }
 
 save(campaign2010, file = 'campaign2010.Rda')
+
+# reformat campaign expenditure and convert to numeric format
+campaign %<>%
+  group_by(ANO_ELEICAO, SG_UE, NM_CANDIDATO) %>%
+  mutate(TOTAL_DESPESA = sum(VR_DESPESA)) %>%
+  filter(row_number() == 1) %>%
+  ungroup()
+
+
+load('campaign.Rda')
