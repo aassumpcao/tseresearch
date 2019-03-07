@@ -45,12 +45,12 @@ for (i in 1:length(states)) {
   # define actions by sequence of files
   if (i == 1) {
     # if looping over first .txt file, create dataset
-    sections2004 <- read_delim(path, ";", escape_double = FALSE,
-      col_names = FALSE, locale = locale(encoding = "Latin1"), trim_ws = TRUE)
+    sections2004 <- read_delim(path, ';', escape_double = FALSE,
+      col_names = FALSE, locale = locale(encoding = 'Latin1'), trim_ws = TRUE)
   } else {
     # if looping over any other file, load .txt and append
-    append <- read_delim(path, ";", escape_double = FALSE, col_names = FALSE,
-      locale = locale(encoding = "Latin1"), trim_ws = TRUE)
+    append <- read_delim(path, ';', escape_double = FALSE, col_names = FALSE,
+      locale = locale(encoding = 'Latin1'), trim_ws = TRUE)
     # append to 'sections2004'
     sections2004 <- rbind(sections2004, append)
   }
@@ -90,12 +90,12 @@ for (i in 1:length(states)) {
   # define actions by sequence of files
   if (i == 1) {
     # if looping over first .txt file, create dataset
-    sections2006 <- read_delim(path, ";", escape_double = FALSE,
-      col_names = FALSE, locale = locale(encoding = "Latin1"), trim_ws = TRUE)
+    sections2006 <- read_delim(path, ';', escape_double = FALSE,
+      col_names = FALSE, locale = locale(encoding = 'Latin1'), trim_ws = TRUE)
   } else {
     # if looping over any other file, load .txt and append
-    append <- read_delim(path, ";", escape_double = FALSE, col_names = FALSE,
-      locale = locale(encoding = "Latin1"), trim_ws = TRUE)
+    append <- read_delim(path, ';', escape_double = FALSE, col_names = FALSE,
+      locale = locale(encoding = 'Latin1'), trim_ws = TRUE)
     # append to 'sections2004'
     sections2006 <- rbind(sections2006, append)
   }
@@ -135,12 +135,12 @@ for (i in 1:length(states)) {
   # define actions by sequence of files
   if (i == 1) {
     # if looping over first .txt file, create dataset
-    sections2008 <- read_delim(path, ";", escape_double = FALSE,
-      col_names = FALSE, locale = locale(encoding = "Latin1"), trim_ws = TRUE)
+    sections2008 <- read_delim(path, ';', escape_double = FALSE,
+      col_names = FALSE, locale = locale(encoding = 'Latin1'), trim_ws = TRUE)
   } else {
     # if looping over any other file, load .txt and append
-    append <- read_delim(path, ";", escape_double = FALSE, col_names = FALSE,
-      locale = locale(encoding = "Latin1"), trim_ws = TRUE)
+    append <- read_delim(path, ';', escape_double = FALSE, col_names = FALSE,
+      locale = locale(encoding = 'Latin1'), trim_ws = TRUE)
     # append to 'sections2008'
     sections2008 <- rbind(sections2008, append)
   }
@@ -180,12 +180,12 @@ for (i in 1:length(states)) {
   # define actions by sequence of files
   if (i == 1) {
     # if looping over first .txt file, create dataset
-    sections2010 <- read_delim(path, ";", escape_double = FALSE,
-      col_names = FALSE, locale = locale(encoding = "Latin1"), trim_ws = TRUE)
+    sections2010 <- read_delim(path, ';', escape_double = FALSE,
+      col_names = FALSE, locale = locale(encoding = 'Latin1'), trim_ws = TRUE)
   } else {
     # if looping over any other file, load .txt and append
-    append <- read_delim(path, ";", escape_double = FALSE, col_names = FALSE,
-      locale = locale(encoding = "Latin1"), trim_ws = TRUE)
+    append <- read_delim(path, ';', escape_double = FALSE, col_names = FALSE,
+      locale = locale(encoding = 'Latin1'), trim_ws = TRUE)
     # append to 'sections2010'
     sections2010 <- rbind(sections2010, append)
   }
@@ -218,12 +218,12 @@ for (i in 1:length(states)) {
   # define actions by sequence of files
   if (i == 1) {
     # if looping over first .txt file, create dataset
-    sections2012 <- read_delim(path, ";", escape_double = FALSE,
-      col_names = FALSE, locale = locale(encoding = "Latin1"), trim_ws = TRUE)
+    sections2012 <- read_delim(path, ';', escape_double = FALSE,
+      col_names = FALSE, locale = locale(encoding = 'Latin1'), trim_ws = TRUE)
   } else {
     # if looping over any other file, load .txt and append
-    append <- read_delim(path, ";", escape_double = FALSE, col_names = FALSE,
-      locale = locale(encoding = "Latin1"), trim_ws = TRUE)
+    append <- read_delim(path, ';', escape_double = FALSE, col_names = FALSE,
+      locale = locale(encoding = 'Latin1'), trim_ws = TRUE)
     # append to 'sections2012'
     sections2012 <- rbind(sections2012, append)
   }
@@ -263,12 +263,12 @@ for (i in 1:length(states)) {
   # define actions by sequence of files
   if (i == 1) {
     # if looping over first .txt file, create dataset
-    sections2014 <- read_delim(path, ";", escape_double = FALSE,
-      col_names = FALSE, locale = locale(encoding = "Latin1"), trim_ws = TRUE)
+    sections2014 <- read_delim(path, ';', escape_double = FALSE,
+      col_names = FALSE, locale = locale(encoding = 'Latin1'), trim_ws = TRUE)
   } else {
     # if looping over any other file, load .txt and append
-    append <- read_delim(path, ";", escape_double = FALSE, col_names = FALSE,
-      locale = locale(encoding = "Latin1"), trim_ws = TRUE)
+    append <- read_delim(path, ';', escape_double = FALSE, col_names = FALSE,
+      locale = locale(encoding = 'Latin1'), trim_ws = TRUE)
     # append to 'sections2014'
     sections2014 <- rbind(sections2014, append)
   }
@@ -308,12 +308,12 @@ for (i in 1:length(states)) {
   # define actions by sequence of files
   if (i == 1) {
     # if looping over first .txt file, create dataset
-    sections2016 <- read_delim(path, ";", escape_double = FALSE,
-      col_names = FALSE, locale = locale(encoding = "Latin1"), trim_ws = TRUE)
+    sections2016 <- read_delim(path, ';', escape_double = FALSE,
+      col_names = FALSE, locale = locale(encoding = 'Latin1'), trim_ws = TRUE)
   } else {
     # if looping over any other file, load .txt and append
-    append <- read_delim(path, ";", escape_double = FALSE, col_names = FALSE,
-      locale = locale(encoding = "Latin1"), trim_ws = TRUE)
+    append <- read_delim(path, ';', escape_double = FALSE, col_names = FALSE,
+      locale = locale(encoding = 'Latin1'), trim_ws = TRUE)
     # append to 'sections2016'
     sections2016 <- rbind(sections2016, append)
   }
@@ -331,3 +331,17 @@ save(sections2016, file = 'sections2016.Rda')
 
 # remove files
 unlink('./2016section', recursive = TRUE)
+
+# bind all data
+sections <- bind_rows(sections2004, sections2006, sections2008, sections2010,
+                      sections2012, sections2014, sections2016)
+
+# collapse results to individual voting counts
+sections %<>%
+  group_by(ANO_ELEICAO, SIGLA_UE, NUM_TURNO, CODIGO_CARGO, NUM_VOTAVEL) %>%
+  summarize(votes2 = sum(QTDE_VOTOS)) %>%
+  arrange(SIGLA_UE, NUM_TURNO, CODIGO_CARGO, desc(votes2)) %>%
+  ungroup()
+
+# save to file
+save(sections, file = 'sections.Rda')

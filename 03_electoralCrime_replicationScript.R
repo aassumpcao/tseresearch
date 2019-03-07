@@ -23,10 +23,12 @@ source('00_tse_candidates.R')
 source('01_tse_campaign.R')
 
 # wrangle electoral results data at the section(lowest)-level possible
+# (warning: file script is massive. you will want to run it on a server/cluster
+# computing service OR via command line as a background process)
 source('02_tse_sections.R')
 
 # wrangle vacant municipal office data
-source('00_electoralCrime_vacancies.R')
+source('03_tse_vacancies.R')
 
 # wrangle municipal election results data
 source('00_electoralCrime_results.R')

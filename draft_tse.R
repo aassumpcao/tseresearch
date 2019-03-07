@@ -357,5 +357,20 @@ campaign %<>%
   filter(row_number() == 1) %>%
   ungroup()
 
+library(magrittr)
+library(tidyverse)
 
 load('campaign.Rda')
+
+# bind all data
+sections <- bind_rows(sections2004, sections2006, sections2008, sections2010,
+                      sections2012, sections2014, sections2016)
+
+# collapse results to individual voting counts
+sections %<>%
+  group_by(ANO_ELEICAO, SIGLA_UE, NUM_TURNO, CODIGO_CARGO, NUM_VOTAVEL) %>%
+  summarize(votes2 = sum(QTDE_VOTOS)) %>%
+  arrange(SIGLA_UE, NUM_TURNO, CODIGO_CARGO, desc(votes2)) %>%
+  ungroup()
+
+save(sections, file = 'sections.Rda')
