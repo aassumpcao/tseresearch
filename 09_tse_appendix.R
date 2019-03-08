@@ -17,6 +17,10 @@ for (i in seq(2006, 2014, 4)) {
   load(paste0('sections', as.character(i), '.Rda'))
 }
 
+# candidates datasets
+load('candidates.2010.Rda')
+
+
 # extract datasets from global environment
 results <- objects(pattern = 'results')
 sections <- objects(pattern = 'sections')
