@@ -374,3 +374,92 @@ sections %<>%
   ungroup()
 
 save(sections, file = 'sections.Rda')
+
+case.numbers
+
+localCandidates %$% table(appeals)
+
+files <- list.files('../2018 TSE Databank', 'to_munzona_20(06|10|14)')
+files <- paste0('../2018 TSE Databank/', files)
+
+lapply(files, unzip, exdir = './results')
+
+files2006 <- paste0('results/', list.files('results/', pattern = '2006'))
+files2010 <- paste0('results/', list.files('results/', pattern = '2010'))
+files2014 <- paste0('results/', list.files('results/', pattern = '2014'))
+
+files2006 <- files2006[1:27]
+files2010 <- files2010[c(1:5, 7:28)]
+files2014 <- files2014[-6]
+
+
+# loop over vacancy files for each year and create dataset
+for (i in 1:length(files2006)) {
+  path <- files2006[i]
+  if (i == 1) {
+    results2006 <- read_delim(path, ';', escape_double = FALSE,
+      col_names = FALSE, locale = locale(encoding = 'Latin1'), trim_ws = TRUE)
+  } else {
+    append <- read_delim(path, ';', escape_double = FALSE, col_names = FALSE,
+      locale = locale(encoding = 'Latin1'), trim_ws = TRUE)
+    results2006 <- rbind(results2006, append)
+  }
+  if (i == length(files2006)) {rm(append, i, path)}
+}
+
+results2006 %<>% mutate_all(as.character)
+
+# loop over vacancy files for each year and create dataset
+for (i in 1:length(files2010)) {
+  path <- files2010[i]
+  if (i == 1) {
+    results2010 <- read_delim(path, ';', escape_double = FALSE,
+      col_names = FALSE, locale = locale(encoding = 'Latin1'), trim_ws = TRUE)
+  } else {
+    append <- read_delim(path, ';', escape_double = FALSE, col_names = FALSE,
+      locale = locale(encoding = 'Latin1'), trim_ws = TRUE)
+    results2010 <- rbind(results2010, append)
+  }
+  if (i == length(files2010)) {rm(append, i, path)}
+}
+
+results2010 %<>% mutate_all(as.character)
+
+# loop over vacancy files for each year and create dataset
+for (i in 1:length(files2014)) {
+  path <- files2014[i]
+  if (i == 1) {
+    results2014 <- read_delim(path, ';', escape_double = FALSE,
+      col_names = FALSE, locale = locale(encoding = 'Latin1'), trim_ws = TRUE)
+  } else {
+    append <- read_delim(path, ';', escape_double = FALSE, col_names = FALSE,
+      locale = locale(encoding = 'Latin1'), trim_ws = TRUE)
+    results2014 <- rbind(results2014, append)
+  }
+  if (i == length(files2014)) {rm(append, i, path)}
+}
+
+library(pdftools)
+
+codebook <- strsplit(codebook, '\n')
+codebook <- unlist(codebook[12:13])
+codebook <- codebook[7:44]
+
+
+codebook <- unlist(codebook[16])
+codebook <- codebook[6:29]
+codebook <- str_extract(codebook, '^(.)*(  )')
+codebook <- str_replace_all(codebook, ' +', ' ')
+codebook <- codebook[which(codebook != ' ')]
+codebook %<>% trimws()
+codebook <- str_replace_all(codebook, ' |(\\(\\*\\))', '')
+
+
+
+names(results2006) <- codebook
+names(results2010) <- codebook
+names(results2014) <- codebook
+
+save(results2006, file = 'results2006.Rda')
+save(results2010, file = 'results2010.Rda')
+save(results2014, file = 'results2014.Rda')

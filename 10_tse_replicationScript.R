@@ -1,6 +1,7 @@
 ### electoral crime under democracy script
-# to be updated
-# by andre.assumpcao
+#   to be updated
+# author: andre assumpcao
+# by andre.assumpcao@gmail.com
 
 # import statements
 library(AER)
@@ -31,7 +32,10 @@ source('02_tse_sections.R')
 source('03_tse_vacancies.R')
 
 # wrangle municipal election results data
-source('00_electoralCrime_results.R')
+source('04_tse_results.R')
+
+# wrangle candidacy rejections
+source('05_tse_rejections.R')
 
 # wrangle judicial decisions data
 source('01_electoralCrime_judDecisions.R')
