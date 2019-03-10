@@ -31,13 +31,13 @@ paths <- paste0('../2018 TSE Databank/', files)
 lapply(paths, unzip, exdir = './vacancies')
 
 # subset files and their paths by year
-files2004 <- paste0('./vacancies/', list.files('./vacancies', pattern = '2004'))
-files2006 <- paste0('./vacancies/', list.files('./vacancies', pattern = '2006'))
-files2008 <- paste0('./vacancies/', list.files('./vacancies', pattern = '2008'))
-files2010 <- paste0('./vacancies/', list.files('./vacancies', pattern = '2010'))
-files2012 <- paste0('./vacancies/', list.files('./vacancies', pattern = '2012'))
-files2014 <- paste0('./vacancies/', list.files('./vacancies', pattern = '2014'))
-files2016 <- paste0('./vacancies/', list.files('./vacancies', pattern = '2016'))
+files2004 <- list.files('./vacancies', pattern = '2004', full.names = TRUE)
+files2006 <- list.files('./vacancies', pattern = '2006', full.names = TRUE)
+files2008 <- list.files('./vacancies', pattern = '2008', full.names = TRUE)
+files2010 <- list.files('./vacancies', pattern = '2010', full.names = TRUE)
+files2012 <- list.files('./vacancies', pattern = '2012', full.names = TRUE)
+files2014 <- list.files('./vacancies', pattern = '2014', full.names = TRUE)
+files2016 <- list.files('./vacancies', pattern = '2016', full.names = TRUE)
 
 # drop elements from two vectors
 files2014 <- files2014[7]

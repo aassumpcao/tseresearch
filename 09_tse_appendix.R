@@ -10,20 +10,19 @@
 library(here)
 library(tidyverse)
 library(magrittr)
+library(readr)
 
 # load datasets
 for (i in seq(2006, 2014, 4)) {
   load(paste0('results', as.character(i), '.Rda'))
   load(paste0('sections', as.character(i), '.Rda'))
+  load(paste0('candidates.', as.character(i), '.Rda'))
 }
-
-# candidates datasets
-load('candidates.2010.Rda')
-
 
 # extract datasets from global environment
 results <- objects(pattern = 'results')
 sections <- objects(pattern = 'sections')
+candidates <- objects(pattern = 'candidates')
 
 # loop over results datasets and aggregate data up to the candidate level
 for (dataset in results) {
