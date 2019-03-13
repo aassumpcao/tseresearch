@@ -16,6 +16,7 @@ library(magrittr)
 # load dataset
 load('prevented2016.Rda')
 load('electoral.crimes.Rda')
+load('tseSentences.Rda')
 
 ### body
 # find list of reasons to reject a candidacy
@@ -55,3 +56,4 @@ electoral.crimes <- bind_rows(cand1, cand2)
 
 # remove useless objects
 rm(cand1, cand2, prevented2016, join, multipleCrimeCandidates)
+

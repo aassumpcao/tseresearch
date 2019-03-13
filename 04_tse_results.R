@@ -198,3 +198,6 @@ candidates %<>%
 # write to disk
 assign('electoral.crimes', candidates)
 save(electoral.crimes, file = './electoral.crimes.Rda')
+
+str_detect(tseSentences$sbody, '9\\.?504|64/90') %>%
+table()
