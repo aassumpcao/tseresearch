@@ -37,12 +37,12 @@ source('04_tse_results.R')
 # wrangle candidacy rejections
 source('05_tse_rejections.R')
 
-# wrangle candidates, sections, and results for elections in 2006, 2010, 2014
-source('09_tse_appendix')
-
 # wrangle judicial decisions data
-source('01_electoralCrime_judDecisions.R')
+source('06_tse_judDecisions.R')
+
+# wrangle candidates, sections, and results for elections in 2006, 2010, 2014
+source('07_tse_other.R')
 
 # produce paper analysis
-source('02_electoralCrime_analysis.R')
+source('08_tse_analysis.R')
 

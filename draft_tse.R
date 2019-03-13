@@ -463,3 +463,42 @@ names(results2014) <- codebook
 save(results2006, file = 'results2006.Rda')
 save(results2010, file = 'results2010.Rda')
 save(results2014, file = 'results2014.Rda')
+
+load('results2006.Rda')
+load('results2010.Rda')
+load('results2014.Rda')
+load('sections2006.Rda')
+load('sections2010.Rda')
+load('sections2014.Rda')
+load('candidates.2006.Rda')
+load('candidates.2010.Rda')
+load('candidates.2014.Rda')
+
+candidates.pending %$% table(DES_SITUACAO_CANDIDATURA, COD_SITUACAO_CANDIDATURA)
+
+files <- list.files('../2018 TSE Databank/', 'cassacao', full.names = TRUE)
+
+lapply(files, unzip, exdir = './cassacao')
+
+datasets <- list.files('cassacao', '2014', full.names = TRUE)
+
+read_delim(datasets[1], ';', escape_double = FALSE,
+           col_names = FALSE, locale = locale(encoding = 'Latin1'), trim_ws = TRUE)
+
+# loop over vacancy files for each year and create dataset
+for (i in 1:length(datasets)) {
+  path <- datasets[i]
+  if (i == 1) {
+    prevented2014 <- read_delim(path, ';', escape_double = FALSE,
+      col_names = TRUE, locale = locale(encoding = 'Latin1'), trim_ws = TRUE)
+  } else {
+    append <- read_delim(path, ';', escape_double = FALSE, col_names = TRUE,
+      locale = locale(encoding = 'Latin1'), trim_ws = TRUE)
+    prevented2014 <- rbind(prevented2016, append)
+  }
+  if (i == length(datasets)) {rm(append, i, path)}
+}
+
+prevented2016 %<>% mutate_all(as.character)
+save(prevented2016, file = 'prevented2016.Rda')
+
