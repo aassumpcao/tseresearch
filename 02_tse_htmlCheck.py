@@ -108,4 +108,4 @@ downloads.columns = ['scraperID', 'status']
 kwargs = {'how': 'left', 'on': 'scraperID'}
 status = numbs.merge(downloads, **kwargs)
 status = status[status['status'] != 'Download successful']
-status.reset_index(drop = True).to_csv('missingCandidates.csv')
+status.reset_index(drop = True).to_csv('./data/missingCandidates.csv')

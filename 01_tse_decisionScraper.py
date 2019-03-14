@@ -66,7 +66,7 @@ for i in range(limit):
     if (i + 1) % 1000 == 0: print(str(i + 1) + ' / ' + str(limit))
 
 # save scraper outcomes
-pd.DataFrame(results).to_csv('./scraper_status.csv')
+pd.DataFrame(results).to_csv('./data/scraper_status.csv')
 
 # quit browser
 browser.quit()

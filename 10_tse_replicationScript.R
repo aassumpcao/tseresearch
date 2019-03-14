@@ -15,34 +15,39 @@ library(tidyverse)
 # load rproj (comment out if using another R IDE)
 rstudioapi::openProject('2019 Electoral Crime.Rproj')
 
-# wrangle local candidate data
-source('00_tse_candidates.R')
+### wrangling scripts
+# these scripts wrangle all data used in this paper. you should not run them as
+# they will take long to process (> 1 hour if laptop or > 30 min if cluster).
+# these files have been created for transparency and record keeping.
 
-# wrangle local candidate campaign data (warning: file script is massive. you
-# will want to run it on a server/cluster computing service OR via command line
-# as a background process)
-source('01_tse_campaign.R')
+# wrangle local candidate data
+source('wrangling/00_tse_candidates.R')
+
+# wrangle local candidate campaign data
+source('wrangling/01_tse_campaign.R')
 
 # wrangle electoral results data at the section(lowest)-level possible
-# (warning: file script is massive. you will want to run it on a server/cluster
-# computing service OR via command line as a background process)
-source('02_tse_sections.R')
+source('wrangling/02_tse_sections.R')
 
 # wrangle vacant municipal office data
-source('03_tse_vacancies.R')
+source('wrangling/03_tse_vacancies.R')
 
 # wrangle municipal election results data
-source('04_tse_results.R')
+source('wrangling/04_tse_results.R')
 
 # wrangle candidacy rejections
-source('05_tse_rejections.R')
+source('wrangling/05_tse_rejections.R')
 
 # wrangle judicial decisions data
-source('06_tse_judDecisions.R')
+source('wrangling/06_tse_sentences.R')
 
 # wrangle candidates, sections, and results for elections in 2006, 2010, 2014
-source('07_tse_other.R')
+source('wrangling/07_tse_other.R')
+
+### analysis scripts
+# these scripts, however, should be run. they produce the paper analysis with
+# the datasets that have been wrangled/munged by the wrangling scripts.
 
 # produce paper analysis
-source('08_tse_analysis.R')
+source('analysis/08_tse_analysis.R')
 

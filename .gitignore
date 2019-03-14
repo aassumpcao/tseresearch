@@ -40,7 +40,11 @@ rsconnect/
 # Ignore folders
 html/
 __pycache__/
+data/
 *.html
+
+# Ignore text files
+*.tex
 
 # Ignore datasets
 *.csv

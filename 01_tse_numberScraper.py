@@ -45,7 +45,7 @@ browser = webdriver.Chrome(CHROMEDRIVER_PATH, options = chrome_options)
 browser.implicitly_wait(10)
 
 # import test dataset with 1,000 individuals
-candidates = pd.read_csv('candidatesPython.csv')
+candidates = pd.read_csv('./data/candidatesPython.csv')
 candidates = candidates.sample(100).reset_index(drop = True)
 limit = len(candidates)
 
@@ -81,5 +81,5 @@ browser.quit()
 casenumbers = pd.DataFrame(casenumbers)
 
 # save to file
-feather.write_dataframe(casenumbers, 'caseNumbers.feather')
-casenumbers.to_scv('caseNumbers.csv', index = False)
+feather.write_dataframe(casenumbers, './data/caseNumbers.feather')
+casenumbers.to_scv('./data/caseNumbers.csv', index = False)

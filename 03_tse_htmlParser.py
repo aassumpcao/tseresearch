@@ -34,7 +34,7 @@ summary = pd.concat([pd.DataFrame.from_dict(case) for case in summary])
 summary = summary.reset_index(drop = True)
 
 # save dataset
-summary.to_csv('tseSummary.csv', index = False, sep = '#')
+summary.to_csv('.data/tseSummary.csv', index = False, sep = '#')
 
 ### parse updates
 # parse updates and include each file's scraperID in the dictionary
@@ -56,7 +56,7 @@ updates = pd.concat([pd.DataFrame.from_dict(case) for case in updates])
 updates = updates.reset_index(drop = True)
 
 # save dataset
-updates.to_csv('tseUpdates.csv', index = False, sep = '#')
+updates.to_csv('./data/tseUpdates.csv', index = False, sep = '#')
 
 ### parse details
 # parse table details
@@ -78,7 +78,7 @@ sentences = pd.concat([pd.DataFrame.from_dict(case) for case in details])
 sentences = sentences.reset_index(drop = True)
 
 # save dataset
-sentences.to_csv('tseSentences.csv', index = False, sep = '#')
+sentences.to_csv('./data/tseSentences.csv', index = False, sep = '#')
 
 
 
