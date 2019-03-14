@@ -12,9 +12,9 @@
 library(tidyverse)
 library(magrittr)
 
-# load dataset
+# load datasets
 load('data/prevented2016.Rda')
-load('data/electoral.crimes.Rda')
+load('data/electoralResults.Rda')
 load('data/tseSentences.Rda')
 
 ### body
@@ -29,10 +29,10 @@ rejectionReasons <- prevented2016 %$%
 join <- c('ANO_ELEICAO', 'SEQUENCIAL_CANDIDATO' = 'SQ_CANDIDATO')
 
 # join candidate list with information about electoral crimes in 2016
-electoral.crimes %<>% left_join(select(prevented2016, c(3, 11:12)), by = join)
+electoralResults %<>% left_join(select(prevented2016, c(3, 11:12)), by = join)
 
 # check candidates who had more than one rejection reason listed
-multipleCrimeCandidates <- electoral.crimes %>%
+multipleCrimeCandidates <- electoralResults %>%
   group_by(scraperID) %>%
   filter(n() > 1) %>%
   select(scraperID) %>%
@@ -40,8 +40,8 @@ multipleCrimeCandidates <- electoral.crimes %>%
   unique()
 
 # subset data
-cand1 <- filter(electoral.crimes, !(scraperID %in% multipleCrimeCandidates))
-cand2 <- filter(electoral.crimes,   scraperID %in% multipleCrimeCandidates)
+cand1 <- filter(electoralResults, !(scraperID %in% multipleCrimeCandidates))
+cand2 <- filter(electoralResults,   scraperID %in% multipleCrimeCandidates)
 
 # reshape data to get multiple crimes in the same cell in the data
 cand2 %<>% group_by(scraperID) %>%
@@ -51,11 +51,12 @@ cand2 %<>% group_by(scraperID) %>%
            unite(DS_MOTIVO_CASSACAO, '1', '2', '3', sep = ';')
 
 # bind everything back
-electoral.crimes <- bind_rows(cand1, cand2)
+electoralCrimes <- bind_rows(cand1, cand2)
 
 # remove useless objects
 rm(cand1, cand2, prevented2016, join, multipleCrimeCandidates)
 
-# save rejections vector
+# save rejections vector and dataset including electoral crimes for 2016
 saveRDS(rejectionReasons, file = 'rejections.Rds')
+save(electoralCrimes, file = 'data/electoralCrimes.Rda')
 

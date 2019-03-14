@@ -13,7 +13,7 @@ library(tidyverse)
 library(magrittr)
 
 # load datasets
-load('candidates.pending.Rda')
+load('data/candidates.pending.Rda')
 for (i in seq(2004, 2016, 4)) {
   load(paste0('data/results', as.character(i), '.Rda'))
   load(paste0('data/sections', as.character(i), '.Rda'))
@@ -178,7 +178,7 @@ sections2016 %<>%
 
 # join candidates and results-by-section
 candidates2016 %<>% left_join(sections2016, by = c('SIGLA_UE', 'NUM_TURNO',
-   'CODIGO_CARGO', 'NUMERO_CANDIDATO' = 'NUM_VOTAVEL'))
+  'CODIGO_CARGO', 'NUMERO_CANDIDATO' = 'NUM_VOTAVEL'))
 
 # drop candidates who were not loaded on the electronic voting machine
 candidates2016 %<>%
@@ -187,15 +187,14 @@ candidates2016 %<>%
 
 ### wrangle final dataset
 # append 2012 and 2016 results
-candidates <- bind_rows(candidates2004, candidates2008, candidates2012,
-                        candidates2016)
+electoralResults <- bind_rows(candidates2004, candidates2008, candidates2012,
+                              candidates2016)
 
 # create sentence outcomes variable
-candidates %<>%
+electoralResults %<>%
   mutate(trialCrime  = ifelse(COD_SITUACAO_CANDIDATURA == 16, 0, 1),
          appealCrime = ifelse(is.na(votes.x), 1, 0))
 
 # write to disk
-assign('electoral.crimes', candidates)
-save(electoral.crimes, file = 'data/electoral.crimes.Rda')
+save(electoralResults, file = 'data/electoralResults.Rda')
 
