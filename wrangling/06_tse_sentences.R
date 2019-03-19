@@ -38,16 +38,15 @@ regexs <- c('(?i)ficha(.){1,4}limpa', '(?i)compra(s)?(.){1,4}voto(s)?',
             '(?i)abuso(.){1,4}poder(.){1,4}(econ[oô]mico)?',
             '(?i)conduta(.){1,4}vedada[o]',
             '(?i)(gasto|despesa)?(.){1,4}(il[íi]cit[ao]|ilegal|proibid[oa])',
-            '(?i)impugna[çc][ãa]o', '(?i)indeferi(.){1,7}(partid|coliga)')
+            '(?i)indeferi(.){1,7}(partid|coliga)')
 # Document clustering using latent Dirichlet allocation?
 # ML algorithm?
 
 # find reasons for candidacy rejection in judicial decisions
-for (regex in seq(1:7)) {
+for (regex in c(1:5, 7)) {
   tseSentences %>%
     group_by(scraperID) %>%
     mutate(rejections2 = ifelse(str_detect(sbody, regexs[regex]),
                                rejections[regex],
-                               NA_character_)) %$%
-    print(table(rejections2))
+                               NA_character_))
 }
