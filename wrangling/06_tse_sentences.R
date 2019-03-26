@@ -10,6 +10,9 @@
 # import packages
 library(tidyverse)
 library(magrittr)
+library(tidytext)
+library(stm)
+library(quanteda)
 
 # load datasets
 load('data/tseSummary.Rda')
@@ -50,3 +53,34 @@ for (regex in c(1:5, 7)) {
                                rejections[regex],
                                NA_character_))
 }
+
+# drop first row and filter empty sentences
+tseSentences %<>% slice(-1) %>% filter(nchar(sbody) > 2)
+tseSentences %>%
+  mutate_all(~str_to_lower(.)) %>%
+  mutate_all(~str_replace_all(., ',', ' ')) %>%
+  mutate_all(~str_remove_all(., '_|-'))
+
+# create list of stopwords
+stopwords <- c(stopwords::stopwords('portuguese'), 'é', 'art', 'nº', '2016',
+               'lei')
+
+# tidying dataset
+tidySentences <- tseSentences %>%
+  mutate(line = row_number()) %>%
+  unnest_tokens(word, sbody) %>%
+  anti_join(tibble(word = stopwords))
+
+# create document-feature (word) matrix
+dfmSentences <- tidySentences %>%
+  count(scraperID, word, sort = TRUE) %>%
+  cast_dfm(scraperID, word, n)
+
+# run structural topic model
+topicModel <- stm(dfmSentences, K = 8, init.type = 'Spectral')
+
+# print results
+summary(topicModel)
+
+# tidy results
+beta.results <- tidy(topicModel)

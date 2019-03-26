@@ -500,3 +500,39 @@ for (i in 1:length(datasets)) {
 
 prevented2016 %<>% mutate_all(as.character)
 save(prevented2016, file = 'prevented2016.Rda')
+
+library(tidytext)
+library(stm)
+library(quanteda)
+
+# drop first row and filter empty sentences
+tseSentences %<>% slice(-1) %>% filter(nchar(sbody) > 2)
+tseSentences %>%
+  mutate_all(~str_to_lower(.)) %>%
+  mutate_all(~str_replace_all(., ',', ' ')) %>%
+  mutate_all(~str_remove_all(., '_|-'))
+
+# create list of stopwords
+stopwords <- c(stopwords::stopwords('portuguese'), 'é', 'art', 'nº', '2016',
+               'lei', )
+
+# tidying dataset
+tidySentences <- tseSentences %>%
+  mutate(line = row_number()) %>%
+  unnest_tokens(word, sbody) %>%
+  anti_join(tibble(word = stopwords))
+
+# create document-feature (word) matrix
+dfmSentences <- tidySentences %>%
+  count(scraperID, word, sort = TRUE) %>%
+  cast_dfm(scraperID, word, n)
+
+# run structural topic model
+topicModel <- stm(dfmSentences, K = 8, init.type = 'Spectral')
+
+# print results
+summary(topicModel)
+
+# tidy results
+beta.results <- tidy(topicModel)
+
