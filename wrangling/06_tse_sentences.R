@@ -10,9 +10,6 @@
 # import packages
 library(tidyverse)
 library(magrittr)
-# library(tidytext)
-# library(stm)
-library(quanteda)
 
 # load datasets
 load('data/tseSummary.Rda')
@@ -66,7 +63,7 @@ tseSentences %<>%
 
 # create list of stopwords
 stopwords <- c(stopwords::stopwords('portuguese'), 'é', 'art', 'nº', '2016',
-               'lei', '2012', 'i', 'g', 'fls', 'tse', 'ata', 'n', 'ser')
+               'lei', '2012', 'i', 'g', 'fls', 'tse', 'ata', 'n', 'ser', '')
 
 # # tidy dataset for text classification
 # tidySentences <- tseSentences %>%
@@ -88,7 +85,7 @@ spectralModel <- stm::stm(dfmSentences, K = 8, init.type = 'Spectral',
                           verbose = FALSE)
 
 # save to disk to avoid running this again
-saveRDS(spectralModel, 'spectralModel.Rds')
+saveRDS(spectralModel, 'data/spectralModel.Rds')
 
 # print results
 summary(spectralModel)
@@ -105,6 +102,7 @@ spectralBeta %>%
   ggplot(aes(y = beta, x = term, fill = as.factor(topic))) +
     geom_col(alpha = .8, show.legend = FALSE) +
     facet_wrap(~topic, scales = 'free_y') +
+    drlib::scale_x_reordered() +
     coord_flip()
 
 # save beta matrix clustering plot
@@ -113,11 +111,12 @@ ggsave('plots/spectralBeta.png')
 # build gamma matrix
 spectralGamma <- tidytext::tidy(spectralModel, matrix = 'gamma',
                                 document_names = rownames(dfmSentences))
-summary(spectralGamma$gamma)
-# plot gamma matrix
+
+# plot gamma matrix (which matches sentences to candidacy rejection reasons)
 ggplot(spectralGamma, aes(x = gamma, fill = as.factor(topic))) +
   geom_histogram(alpha = .8, show.legend = FALSE, binwidth = .1) +
   facet_wrap(~topic, ncol = 3) +
+  drlib::scale_x_reordered() +
   labs(title = 'Sentence Probability by Conviction Type',
        subtitle = 'Each topic is associated with 1-3 stories',
        y = 'Number of sentences', x = expression(gamma))
@@ -127,42 +126,44 @@ ggsave('plots/spectralGamma.png')
 
 ### lda algorithm
 # run lda clustering model
-ldaModel <- stm::stm(dfmSentences, K = 8, init.type = 'LDA', verbose = TRUE)
+ldaModel <- stm::stm(dfmSentences, K = 8, init.type = 'LDA', verbose = FALSE)
 
 # save to disk to avoid running this again
-saveRDS(ldaModel, 'ldaModel.Rds')
+saveRDS(ldaModel, 'data/ldaModel.Rds')
 
 # print results
 summary(ldaModel)
 
 # tidy results
-spectralBeta <- tidytext::tidy(ldaModel)
+ldaBeta <- tidytext::tidy(ldaModel)
 
 # build beta matrix and plot it (which is the matrix tying words to topics == 8
 # candidacy rejections in this case)
-spectralBeta %>%
+ldaBeta %>%
   group_by(topic) %>%
   top_n(10) %>%
   ungroup() %>%
   ggplot(aes(y = beta, x = term, fill = as.factor(topic))) +
     geom_col(alpha = .8, show.legend = FALSE) +
     facet_wrap(~topic, scales = 'free_y') +
+    drlib::scale_x_reordered() +
     coord_flip()
 
 # save beta matrix clustering plot
-ggsave('plots/betaClusteringPlot.png')
+ggsave('plots/ldaBeta.png')
 
 # build gamma matrix
-spectralGamma <- tidytext::tidy(ldaModel, matrix = 'gamma',
-                                document_names = rownames(dfmSentences))
-summary(spectralGamma$gamma)
-# plot gamma matrix
-ggplot(spectralGamma, aes(x = gamma, fill = as.factor(topic))) +
+ldaGamma <- tidytext::tidy(ldaModel, matrix = 'gamma',
+                           document_names = rownames(dfmSentences))
+
+# plot gamma matrix (which matches sentences to candidacy rejection reasons)
+ggplot(ldaGamma, aes(x = gamma, fill = as.factor(topic))) +
   geom_histogram(alpha = .8, show.legend = FALSE, binwidth = .1) +
   facet_wrap(~topic, ncol = 3) +
+  drlib::scale_x_reordered() +
   labs(title = 'Sentence Probability by Conviction Type',
        subtitle = 'Each topic is associated with 1-3 stories',
        y = 'Number of sentences', x = expression(gamma))
 
 # save gamma matrix probability plot
-ggsave('plots/gammaProbabilityPlot.png')
+ggsave('plots/ldaGamma.png')
