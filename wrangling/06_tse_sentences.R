@@ -10,8 +10,8 @@
 # import packages
 library(tidyverse)
 library(magrittr)
-library(tidytext)
-library(stm)
+# library(tidytext)
+# library(stm)
 library(quanteda)
 
 # load datasets
@@ -23,6 +23,7 @@ load('data/electoralCrimes.Rda')
 # load reasons for rejection
 rejections <- readRDS('rejections.Rds')
 
+### wrangle sentences
 # create new order of severity of crimes
 neworder <- c(5, 3, 1, 4, 6, 7, 8, 2)
 rejections <-  rejections[neworder]
@@ -42,8 +43,6 @@ regexs <- c('(?i)ficha(.){1,4}limpa', '(?i)compra(s)?(.){1,4}voto(s)?',
             '(?i)conduta(.){1,4}vedada[o]',
             '(?i)(gasto|despesa)?(.){1,4}(il[íi]cit[ao]|ilegal|proibid[oa])',
             '(?i)indeferi(.){1,7}(partid|coliga)')
-# Document clustering using latent Dirichlet allocation?
-# ML algorithm?
 
 # find reasons for candidacy rejection in judicial decisions
 for (regex in c(1:5, 7)) {
@@ -54,33 +53,57 @@ for (regex in c(1:5, 7)) {
                                NA_character_))
 }
 
-# drop first row and filter empty sentences
+# drop first row (invalid) and filter empty sentences. next, clean text for
+# later classification.
 tseSentences %<>% slice(-1) %>% filter(nchar(sbody) > 2)
-tseSentences %>%
+tseSentences %<>%
   mutate_all(~str_to_lower(.)) %>%
-  mutate_all(~str_replace_all(., ',', ' ')) %>%
+  mutate_all(~str_replace_all(., ',|\\.', ' ')) %>%
   mutate_all(~str_remove_all(., '_|-'))
 
 # create list of stopwords
 stopwords <- c(stopwords::stopwords('portuguese'), 'é', 'art', 'nº', '2016',
-               'lei')
+               'lei', '2012', 'i', 'g', 'fls', 'tse', 'ata', 'n')
 
-# tidying dataset
-tidySentences <- tseSentences %>%
-  mutate(line = row_number()) %>%
-  unnest_tokens(word, sbody) %>%
-  anti_join(tibble(word = stopwords))
+# # tidy dataset for text classification
+# tidySentences <- tseSentences %>%
+#   mutate(line = row_number()) %>%
+#   tidytext::unnest_tokens(word, sbody) %>%
+#   anti_join(tibble(word = stopwords))
 
+### run spectral clustering algorithms (k-means)
 # create document-feature (word) matrix
-dfmSentences <- tidySentences %>%
+dfmSentences <- tseSentences %>%
+  mutate(line = row_number()) %>%
+  tidytext::unnest_tokens(word, sbody) %>%
+  anti_join(tibble(word = stopwords)) %>%
   count(scraperID, word, sort = TRUE) %>%
-  cast_dfm(scraperID, word, n)
+  tidytext::cast_dfm(scraperID, word, n)
 
-# run structural topic model
-topicModel <- stm(dfmSentences, K = 8, init.type = 'Spectral')
+# run spectral clustering topic model
+topicModel <- stm::stm(dfmSentences, K = 8, init.type = 'Spectral')
 
 # print results
 summary(topicModel)
 
 # tidy results
-beta.results <- tidy(topicModel)
+beta.results <- tidytext::tidy(topicModel)
+
+# build beta matrix (which is the matrix tying words to topics == 8 candidacy
+# rejections in this case)
+beta.results %>%
+  group_by(topic) %>%
+  top_n(10) %>%
+  ungroup() %>%
+  ggplot(aes(y = beta, x = term, fill = as.factor(topic))) +
+    geom_col(alpha = .8, show.legend = FALSE) +
+    facet_wrap(~topic, scales = 'free_y') +
+    coord_flip()
+
+# save beta matrix clustering plot
+ggsave('plots/betaClusteringPlot.png')
+
+# build gamma matrix
+gamma.results <- tidytext::tidy(topicModel, matrix = 'gamma',
+                                document_names = row_names(dfmSentences))
+
