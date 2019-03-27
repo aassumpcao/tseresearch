@@ -58,12 +58,15 @@ for (regex in c(1:5, 7)) {
 tseSentences %<>% slice(-1) %>% filter(nchar(sbody) > 2)
 tseSentences %<>%
   mutate_all(~str_to_lower(.)) %>%
+  mutate_all(~str_replace_all(., '64(.)?90', '6490')) %>%
+  mutate_all(~str_replace_all(., '9(\\.)?504', '9504')) %>%
+  mutate_all(~str_replace_all(., 'n º', 'nº')) %>%
   mutate_all(~str_replace_all(., ',|\\.', ' ')) %>%
   mutate_all(~str_remove_all(., '_|-'))
 
 # create list of stopwords
 stopwords <- c(stopwords::stopwords('portuguese'), 'é', 'art', 'nº', '2016',
-               'lei', '2012', 'i', 'g', 'fls', 'tse', 'ata', 'n')
+               'lei', '2012', 'i', 'g', 'fls', 'tse', 'ata', 'n', 'ser')
 
 # # tidy dataset for text classification
 # tidySentences <- tseSentences %>%
@@ -71,7 +74,6 @@ stopwords <- c(stopwords::stopwords('portuguese'), 'é', 'art', 'nº', '2016',
 #   tidytext::unnest_tokens(word, sbody) %>%
 #   anti_join(tibble(word = stopwords))
 
-### run spectral clustering algorithms (k-means)
 # create document-feature (word) matrix
 dfmSentences <- tseSentences %>%
   mutate(line = row_number()) %>%
@@ -80,18 +82,65 @@ dfmSentences <- tseSentences %>%
   count(scraperID, word, sort = TRUE) %>%
   tidytext::cast_dfm(scraperID, word, n)
 
+### run spectral clustering algorithms (k-means)
 # run spectral clustering topic model
-topicModel <- stm::stm(dfmSentences, K = 8, init.type = 'Spectral')
+spectralModel <- stm::stm(dfmSentences, K = 8, init.type = 'Spectral',
+                          verbose = FALSE)
+
+# save to disk to avoid running this again
+saveRDS(spectralModel, 'spectralModel.Rds')
 
 # print results
-summary(topicModel)
+summary(spectralModel)
 
 # tidy results
-beta.results <- tidytext::tidy(topicModel)
+spectralBeta <- tidytext::tidy(spectralModel)
 
-# build beta matrix (which is the matrix tying words to topics == 8 candidacy
-# rejections in this case)
-beta.results %>%
+# build beta matrix and plot it (which is the matrix tying words to topics == 8
+# candidacy rejections in this case)
+spectralBeta %>%
+  group_by(topic) %>%
+  top_n(10) %>%
+  ungroup() %>%
+  ggplot(aes(y = beta, x = term, fill = as.factor(topic))) +
+    geom_col(alpha = .8, show.legend = FALSE) +
+    facet_wrap(~topic, scales = 'free_y') +
+    coord_flip()
+
+# save beta matrix clustering plot
+ggsave('plots/spectralBeta.png')
+
+# build gamma matrix
+spectralGamma <- tidytext::tidy(spectralModel, matrix = 'gamma',
+                                document_names = rownames(dfmSentences))
+summary(spectralGamma$gamma)
+# plot gamma matrix
+ggplot(spectralGamma, aes(x = gamma, fill = as.factor(topic))) +
+  geom_histogram(alpha = .8, show.legend = FALSE, binwidth = .1) +
+  facet_wrap(~topic, ncol = 3) +
+  labs(title = 'Sentence Probability by Conviction Type',
+       subtitle = 'Each topic is associated with 1-3 stories',
+       y = 'Number of sentences', x = expression(gamma))
+
+# save gamma matrix probability plot
+ggsave('plots/spectralGamma.png')
+
+### lda algorithm
+# run lda clustering model
+ldaModel <- stm::stm(dfmSentences, K = 8, init.type = 'LDA', verbose = TRUE)
+
+# save to disk to avoid running this again
+saveRDS(ldaModel, 'ldaModel.Rds')
+
+# print results
+summary(ldaModel)
+
+# tidy results
+spectralBeta <- tidytext::tidy(ldaModel)
+
+# build beta matrix and plot it (which is the matrix tying words to topics == 8
+# candidacy rejections in this case)
+spectralBeta %>%
   group_by(topic) %>%
   top_n(10) %>%
   ungroup() %>%
@@ -104,6 +153,16 @@ beta.results %>%
 ggsave('plots/betaClusteringPlot.png')
 
 # build gamma matrix
-gamma.results <- tidytext::tidy(topicModel, matrix = 'gamma',
-                                document_names = row_names(dfmSentences))
+spectralGamma <- tidytext::tidy(ldaModel, matrix = 'gamma',
+                                document_names = rownames(dfmSentences))
+summary(spectralGamma$gamma)
+# plot gamma matrix
+ggplot(spectralGamma, aes(x = gamma, fill = as.factor(topic))) +
+  geom_histogram(alpha = .8, show.legend = FALSE, binwidth = .1) +
+  facet_wrap(~topic, ncol = 3) +
+  labs(title = 'Sentence Probability by Conviction Type',
+       subtitle = 'Each topic is associated with 1-3 stories',
+       y = 'Number of sentences', x = expression(gamma))
 
+# save gamma matrix probability plot
+ggsave('plots/gammaProbabilityPlot.png')
