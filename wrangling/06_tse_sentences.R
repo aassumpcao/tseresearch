@@ -18,42 +18,49 @@ load('data/tseSentences.Rda')
 load('data/electoralCrimes.Rda')
 
 # load reasons for rejection
-rejections <- readRDS('rejections.Rds')
+narrow.reasons <- readRDS('rejections.Rds') %>% str_remove_all('\\.$')
 
 ### wrangle sentences
-# create new order of severity of crimes
+# create new order of severity of electoral crimes
 neworder <- c(5, 3, 1, 4, 6, 7, 8, 2)
-rejections <-  rejections[neworder]
+narrow.reasons <- narrow.reasons[neworder]
 
-# transform rejections variable using 2016 data. it takes priority over judicial
-# decisions because it is explicitly reported by tse
-for (rejection in seq(1:8)) {
-  electoralCrimes %<>%
-    mutate(rejections = ifelse(match(DS_MOTIVO_CASSACAO, rejections[rejection]),
-                               rejections[rejection],
-                               NA_character_))
+# convert reasons to regex versions
+narrow.reasons.regex <- narrow.reasons %>%
+  str_replace_all('\\(', '\\\\(') %>%
+  str_replace_all('\\.', '\\\\.') %>%
+  str_replace_all('\\)', '\\\\)')
+
+# create empty rejections vector
+electoralCrimes$rejections <- NA_character_
+
+# split training and testing data
+tseTrain <- filter(electoralCrimes, !is.na(DS_MOTIVO_CASSACAO))
+tseTest  <- filter(electoralCrimes,  is.na(DS_MOTIVO_CASSACAO))
+
+# create narrow rejection reasons
+for (i in seq(8, 1)) {
+  tseTrain %<>% mutate(narrow.rejection = ifelse(
+    str_detect(DS_MOTIVO_CASSACAO, reasons.regex[i]), reasons[i], rejections))
+
 }
 
-# create list of regex patterns to match each reason for rejection
-regexs <- c('(?i)ficha(.){1,4}limpa', '(?i)compra(s)?(.){1,4}voto(s)?',
-            '(?i)abuso(.){1,4}poder(.){1,4}(econ[oô]mico)?',
-            '(?i)conduta(.){1,4}vedada[o]',
-            '(?i)(gasto|despesa)?(.){1,4}(il[íi]cit[ao]|ilegal|proibid[oa])',
-            '(?i)indeferi(.){1,7}(partid|coliga)')
+# create broad rejection reasons
+tseTrain %<>% mutate(broad.rejection = narrow.rejection %>%
+  {case_when(str_detect(., '64') ~ 'Ficha Limpa',
+             str_detect(., '97') ~ 'Lei das Eleições',
+             str_detect(., 'Ausência') ~ 'Requisito Faltante',
+             str_detect(., 'Indeferimento') ~ 'Partido/Coligação')})
 
-# find reasons for candidacy rejection in judicial decisions
-for (regex in c(1:5, 7)) {
-  tseSentences %>%
-    group_by(scraperID) %>%
-    mutate(rejections2 = ifelse(str_detect(sbody, regexs[regex]),
-                               rejections[regex],
-                               NA_character_))
-}
+# join rejection reasons and their sentences
+tseTrain <- tseSentences %>%
+  mutate(scraperID = as.character(scraperID)) %>%
+  inner_join(tseTrain, 'scraperID') %>%
+  filter(!is.na(sbody) | nchar(sbody) > 2)
 
 # drop first row (invalid) and filter empty sentences. next, clean text for
 # later classification.
-tseSentences %<>% slice(-1) %>% filter(nchar(sbody) > 2)
-tseSentences %<>%
+tseTrain %<>%
   mutate_all(~str_to_lower(.)) %>%
   mutate_all(~str_replace_all(., '64(.)?90', '6490')) %>%
   mutate_all(~str_replace_all(., '9(\\.)?504', '9504')) %>%
