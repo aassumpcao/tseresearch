@@ -42,7 +42,6 @@ tseTest  <- filter(electoralCrimes,  is.na(DS_MOTIVO_CASSACAO))
 for (i in seq(8, 1)) {
   tseTrain %<>% mutate(narrow.rejection = ifelse(
     str_detect(DS_MOTIVO_CASSACAO, reasons.regex[i]), reasons[i], rejections))
-
 }
 
 # create broad rejection reasons
@@ -61,27 +60,23 @@ tseTrain <- tseSentences %>%
 # drop first row (invalid) and filter empty sentences. next, clean text for
 # later classification.
 tseTrain %<>%
-  mutate_all(~str_to_lower(.)) %>%
-  mutate_all(~str_replace_all(., '64(.)?90', '6490')) %>%
-  mutate_all(~str_replace_all(., '9(\\.)?504', '9504')) %>%
-  mutate_all(~str_replace_all(., ',|\\.', ' ')) %>%
-  mutate_all(~str_replace_all(., 'n º', 'nº')) %>%
-  mutate_all(~str_replace_all(., 'art( )?', 'art')) %>%
-  mutate_all(~str_replace_all(., 'lei eleitoral', 'leieleitoral')) %>%
-  mutate_all(~str_remove_all(., '_|-|\\(|\\)'))
+  mutate_at(vars(1:2), ~str_to_lower(.)) %>%
+  mutate_at(vars(1:2), ~str_squish(.)) %>%
+  mutate_at(vars(1:2), ~str_replace_all(., '64(.)?90', '6490')) %>%
+  mutate_at(vars(1:2), ~str_replace_all(., '9(\\.)?504', '9504')) %>%
+  mutate_at(vars(1:2), ~str_replace_all(., ',|\\.', ' ')) %>%
+  mutate_at(vars(1:2), ~str_replace_all(., 'n º', 'nº')) %>%
+  mutate_at(vars(1:2), ~str_replace_all(., 'art( )?', 'art')) %>%
+  mutate_at(vars(1:2), ~str_replace_all(., 'lei eleitoral', 'leieleitoral')) %>%
+  mutate_at(vars(1:2), ~str_remove_all(., '_|-|\\(|\\)'))
 
 # create list of stopwords
 stopwords <- c(stopwords::stopwords('portuguese'), 'é', 'art', 'nº', '2016',
                'lei', '2012', 'i', 'g', 'fls', 'tse', 'ata', 'n', 'ser')
 
-# # tidy dataset for text classification
-# tidySentences <- tseSentences %>%
-#   mutate(line = row_number()) %>%
-#   tidytext::unnest_tokens(word, sbody) %>%
-#   anti_join(tibble(word = stopwords))
-
+### tidy data for text classification
 # create document-feature (word) matrix
-dfmSentences <- tseSentences %>%
+dfmSentences <- tseTrain %>%
   mutate(line = row_number()) %>%
   tidytext::unnest_tokens(word, sbody) %>%
   anti_join(tibble(word = stopwords)) %>%
@@ -90,8 +85,8 @@ dfmSentences <- tseSentences %>%
 
 ### run spectral clustering algorithms (k-means)
 # run spectral clustering topic model
-spectralModel <- stm::stm(dfmSentences, K = 8, init.type = 'Spectral',
-                          verbose = FALSE)
+spectralModel <- stm::stm(dfmSentences, K = 4, init.type = 'Spectral',
+                          verbose = TRUE)
 
 # save to disk to avoid running this again
 saveRDS(spectralModel, 'data/spectralModel.Rds')
