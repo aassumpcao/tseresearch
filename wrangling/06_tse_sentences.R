@@ -10,8 +10,8 @@
 # import packages
 library(tidyverse)
 library(magrittr)
-library(tidytext)
-library(stm)
+# library(tidytext)
+# library(stm)
 library(quanteda)
 
 # load datasets
@@ -42,8 +42,6 @@ regexs <- c('(?i)ficha(.){1,4}limpa', '(?i)compra(s)?(.){1,4}voto(s)?',
             '(?i)conduta(.){1,4}vedada[o]',
             '(?i)(gasto|despesa)?(.){1,4}(il[íi]cit[ao]|ilegal|proibid[oa])',
             '(?i)indeferi(.){1,7}(partid|coliga)')
-# Document clustering using latent Dirichlet allocation?
-# ML algorithm?
 
 # find reasons for candidacy rejection in judicial decisions
 for (regex in c(1:5, 7)) {
@@ -68,19 +66,19 @@ stopwords <- c(stopwords::stopwords('portuguese'), 'é', 'art', 'nº', '2016',
 # tidying dataset
 tidySentences <- tseSentences %>%
   mutate(line = row_number()) %>%
-  unnest_tokens(word, sbody) %>%
+  tidytext::unnest_tokens(word, sbody) %>%
   anti_join(tibble(word = stopwords))
 
 # create document-feature (word) matrix
 dfmSentences <- tidySentences %>%
   count(scraperID, word, sort = TRUE) %>%
-  cast_dfm(scraperID, word, n)
+  tidytext::cast_dfm(scraperID, word, n)
 
 # run structural topic model
-topicModel <- stm(dfmSentences, K = 8, init.type = 'Spectral')
+topicModel <- stm::stm(dfmSentences, K = 8, init.type = 'Spectral')
 
 # print results
 summary(topicModel)
 
 # tidy results
-beta.results <- tidy(topicModel)
+beta.results <- tidytext::tidy(topicModel)

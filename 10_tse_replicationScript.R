@@ -4,16 +4,17 @@
 # by andre.assumpcao@gmail.com
 
 # import statements
-library(AER)
-library(here)
-library(magrittr)
-library(pdftools)
-library(readr)
-library(stargazer)
-library(tidyverse)
-library(tidytext)
-library(stm)
-library(quanteda)
+if (!require(AER))       {install.packages('AER')}
+if (!require(here))      {install.packages('here')}
+if (!require(magrittr))  {install.packages('magrittr')}
+if (!require(pdftools))  {install.packages('pdftools')}
+if (!require(quanteda))  {install.packages('quanteda')}
+if (!require(readr))     {install.packages('readr')}
+if (!require(stargazer)) {install.packages('stargazer')}
+if (!require(stm))       {install.packages('stm')}
+if (!require(stopwords)) {install.packages('stopwords')}
+if (!require(tidytext))  {install.packages('tidytext')}
+if (!require(tidyverse)) {install.packages('tidyverse')}
 
 # load rproj (comment out if using another R IDE)
 rstudioapi::openProject('2019 Electoral Crime.Rproj')
