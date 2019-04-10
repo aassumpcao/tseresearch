@@ -6,9 +6,10 @@ import pandas as pd
 import os
 import matplotlib.pyplot as plt
 from io import StringIO
+from sklearn.feature_extraction.text import TfidfVectorizer
 
 # load dataset
-df = pd.read_csv('Consumer_Complaints.csv', dtype = 'str')
+df = pd.read_csv('Consumer_complaints.csv', dtype = 'str')
 
 # check how data looks like
 df.head()
@@ -33,3 +34,17 @@ id_to_category = dict(category_id_df[['category_id', 'Product']].values)
 # reset index
 df = df.reset_index()
 
+# plot the complaint balance
+fig = plt.figure(figsize = (8, 6))
+df.groupby('Product').Consumer_complaint_narrative.count().plot.bar(ylim = 0)
+plt.show()
+
+# let us find the tf-idf for each term in the dataset
+tfidf = TfidfVectorizer(sublinear_tf = True, min_df = 10, norm = 'l2',
+                        encoding = 'latin-1', ngram_range = (1, 2),
+                        stop_words = 'english')
+
+# create document-feature matrix
+features = tfidf.fit_transform(df.Consumer_complaint_narrative).toarray()
+labels = df.category_id
+features.shape

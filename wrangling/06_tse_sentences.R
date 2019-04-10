@@ -8,6 +8,7 @@
 
 ### import statements
 # import packages
+library(tidytext)
 library(tidyverse)
 library(magrittr)
 
@@ -76,13 +77,13 @@ stopwords <- c(stopwords::stopwords('portuguese'), 'é', 'art', 'nº', '2016',
                'lei', '2012', 'i', 'g', 'fls', 'tse', 'ata', 'n', 'ser')
 
 ### tidy data for text classification
-# create document-feature (word) matrix
-dfmSentences <- tseTrain %>%
+# produce tf-idf scores
+tfidfSentences <- tseTrain %>%
   mutate(line = row_number()) %>%
   tidytext::unnest_tokens(word, sbody) %>%
   anti_join(tibble(word = stopwords)) %>%
   count(scraperID, word, sort = TRUE) %>%
-  tidytext::cast_dfm(scraperID, word, n)
+  tidytext::bind_tf_idf(word, scraperID, n)
 
 ### run spectral clustering algorithms (k-means)
 # run spectral clustering topic model
