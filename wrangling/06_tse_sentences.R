@@ -8,7 +8,6 @@
 
 ### import statements
 # import packages
-library(tidytext)
 library(tidyverse)
 library(magrittr)
 
@@ -19,21 +18,21 @@ load('data/tseSentences.Rda')
 load('data/electoralCrimes.Rda')
 
 # load reasons for rejection
-narrow.reasons <- readRDS('rejections.Rds') %>% str_remove_all('\\.$')
+broad.reasons <- readRDS('rejections.Rds') %>% str_remove_all('\\.$')
 
 ### wrangle sentences
 # create new order of severity of electoral crimes
 neworder <- c(5, 3, 1, 4, 6, 7, 8, 2)
-narrow.reasons <- narrow.reasons[neworder]
+broad.reasons <- broad.reasons[neworder]
 
 # convert reasons to regex versions
-narrow.reasons.regex <- narrow.reasons %>%
+broad.reasons.regex <- broad.reasons %>%
   str_replace_all('\\(', '\\\\(') %>%
   str_replace_all('\\.', '\\\\.') %>%
   str_replace_all('\\)', '\\\\)')
 
 # create empty rejections vector
-electoralCrimes$rejections <- NA_character_
+electoralCrimes$broad.rejection <- NA_character_
 
 # split training and testing data
 tseTrain <- filter(electoralCrimes, !is.na(DS_MOTIVO_CASSACAO))
@@ -41,13 +40,13 @@ tseTest  <- filter(electoralCrimes,  is.na(DS_MOTIVO_CASSACAO))
 
 # create narrow rejection reasons
 for (i in seq(8, 1)) {
-  tseTrain %<>% mutate(narrow.rejection = ifelse(str_detect(DS_MOTIVO_CASSACAO,
-    narrow.reasons.regex[i]), narrow.reasons[i], rejections))
+  tseTrain %<>% mutate(broad.rejection = ifelse(str_detect(DS_MOTIVO_CASSACAO,
+    broad.reasons.regex[i]), broad.reasons[i], broad.rejection))
   if (i == 1) {rm(i)}
 }
 
 # create broad rejection reasons
-tseTrain %<>% mutate(broad.rejection = narrow.rejection %>%
+tseTrain %<>% mutate(narrow.rejection = broad.rejection %>%
   {case_when(str_detect(., '64') ~ 'Ficha Limpa',
              str_detect(., '97') ~ 'Lei das Eleições',
              str_detect(., 'Ausência') ~ 'Requisito Faltante',
@@ -83,7 +82,25 @@ tfidfSentences <- tseTrain %>%
   tidytext::unnest_tokens(word, sbody) %>%
   anti_join(tibble(word = stopwords)) %>%
   count(scraperID, word, sort = TRUE) %>%
-  tidytext::bind_tf_idf(word, scraperID, n)
+  tidytext::bind_tf_idf(word, scraperID, n) %>%
+  left_join(tseTrain, 'scraperID') %>%
+  select(1:6, narrow.rejection)
+
+# visualize word contribution to each category
+tfidfSentences %>%
+  group_by(narrow.rejection) %>%
+  arrange(-tf_idf) %>%
+  filter(row_number() < 11) %>%
+  ungroup() %>%
+  mutate(word = drlib::reorder_within(word, tf_idf, narrow.rejection)) %>%
+  ggplot(aes(word, tf_idf, fill = narrow.rejection)) +
+  geom_col(alpha = 0.8, show.legend = FALSE) +
+  facet_wrap(~ narrow.rejection, scales = 'free', ncol = 2) +
+  drlib::scale_x_reordered() +
+  coord_flip() +
+  theme(strip.text = element_text(size = 11)) +
+  labs(title = 'Most Important Words by Candidacy Rejection',
+       x = NULL, y = 'tf-idf')
 
 ### run spectral clustering algorithms (k-means)
 # run spectral clustering topic model
