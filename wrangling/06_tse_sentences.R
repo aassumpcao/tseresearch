@@ -40,8 +40,9 @@ tseTest  <- filter(electoralCrimes,  is.na(DS_MOTIVO_CASSACAO))
 
 # create narrow rejection reasons
 for (i in seq(8, 1)) {
-  tseTrain %<>% mutate(narrow.rejection = ifelse(
-    str_detect(DS_MOTIVO_CASSACAO, reasons.regex[i]), reasons[i], rejections))
+  tseTrain %<>% mutate(narrow.rejection = ifelse(str_detect(DS_MOTIVO_CASSACAO,
+    narrow.reasons.regex[i]), narrow.reasons[i], rejections))
+  if (i == 1) {rm(i)}
 }
 
 # create broad rejection reasons
