@@ -1,12 +1,20 @@
-# notebook
-# andre assumpcao
+### electoral crime and performance paper
+#   this script implements machine learning algorithm to classify sentence type
+# author: andre assumpcao
+# by andre.assumpcao@gmail.com
 
-# import staments
+# import statements
 import pandas as pd
 import os
 import matplotlib.pyplot as plt
 from io import StringIO
-from sklearn.feature_extraction.text import TfidfVectorizer
+
+# import scikit-learn modules
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.svm import LinearSVC
 
 # load dataset
 df = pd.read_csv('Consumer_complaints.csv', dtype = 'str')
@@ -39,12 +47,25 @@ fig = plt.figure(figsize = (8, 6))
 df.groupby('Product').Consumer_complaint_narrative.count().plot.bar(ylim = 0)
 plt.show()
 
-# let us find the tf-idf for each term in the dataset
-tfidf = TfidfVectorizer(sublinear_tf = True, min_df = 10, norm = 'l2',
-                        encoding = 'latin-1', ngram_range = (1, 2),
-                        stop_words = 'english')
 
-# create document-feature matrix
-features = tfidf.fit_transform(df.Consumer_complaint_narrative).toarray()
-labels = df.category_id
-features.shape
+models = [
+    RandomForestClassifier(n_estimators = 200, max_depth = 3, random_state = 0),
+    LinearSVC(),
+    MultinomialNB(),
+    LogisticRegression(random_state = 0),
+]
+
+CV = 5
+
+cv_df = pd.DataFrame(index = range(CV * len(models)))
+
+entries = []
+
+for model in models:
+  model_name = model.__class__.__name__
+  accuracies = cross_val_score(model, features, labels, scoring='accuracy', cv=CV)
+  for fold_idx, accuracy in enumerate(accuracies):
+    entries.append((model_name, fold_idx, accuracy))
+
+
+cv_df = pd.DataFrame(entries, columns=['model_name', 'fold_idx', 'accuracy'])

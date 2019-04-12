@@ -1,6 +1,6 @@
 ### electoral crime paper
 # candidates wrangling
-#   this script wrangles the candidates in all local elections in brazil between
+#   this script wrangles the candidates in all local elections in Brazil between
 #   2004 and 2016.
 # author: andre assumpcao
 # email:  andre.assumpcao@gmail.com
@@ -74,3 +74,6 @@ candidatesPending <- localCandidates %>%
 # save dataset with candidates who had candidacy on appeal
 save(candidatesPending, file = 'data/candidatesPending.Rda')
 write_csv(candidatesPending, 'data/candidatesPending.csv')
+
+# remove all for serial sourcing
+rm(list = ls())
