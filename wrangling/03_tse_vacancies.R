@@ -147,3 +147,6 @@ save(vacancies2012, file = 'data/vacancies2012.Rda')
 save(vacancies2014, file = 'data/vacancies2014.Rda')
 save(vacancies2016, file = 'data/vacancies2016.Rda')
 save(vacancies, file = 'data/vacancies.Rda')
+
+# remove all for serial sourcing
+rm(list = ls())

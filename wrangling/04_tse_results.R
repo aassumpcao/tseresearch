@@ -198,3 +198,5 @@ electoralResults %<>%
 # write to disk
 save(electoralResults, file = 'data/electoralResults.Rda')
 
+# remove all for serial sourcing
+rm(list = ls())

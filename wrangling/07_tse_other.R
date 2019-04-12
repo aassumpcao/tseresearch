@@ -123,5 +123,9 @@ candidates %<>%
   mutate(trialCrime  = ifelse(COD_SITUACAO_CANDIDATURA == 16, 0, 1),
          appealCrime = ifelse(is.na(votes.x), 1, 0))
 
+# save to file
 assign('stateFederalCandidates', candidates)
 save(stateFederalCandidates, file = 'data/stateFederalCandidates.Rda')
+
+# remove all for serial sourcing
+rm(list = ls())

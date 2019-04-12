@@ -92,3 +92,6 @@ campaign %<>%
 
 # save to file
 save(campaign, file = 'data/campaign.Rda')
+
+# remove all for serial sourcing
+rm(list = ls())

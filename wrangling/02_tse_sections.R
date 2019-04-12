@@ -345,3 +345,6 @@ sections %<>%
 
 # save to file
 save(sections, file = 'data/sections.Rda')
+
+# remove all for serial sourcing
+rm(list = ls())

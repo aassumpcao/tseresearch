@@ -60,3 +60,5 @@ rm(cand1, cand2, prevented2016, join, multipleCrimeCandidates)
 saveRDS(rejectionReasons, file = 'rejections.Rds')
 save(electoralCrimes, file = 'data/electoralCrimes.Rda')
 
+# remove all for serial sourcing
+rm(list = ls())
