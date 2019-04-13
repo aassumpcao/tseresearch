@@ -116,13 +116,14 @@ dtmTestSlice  <- DocumentTermMatrix(tseCorpusTrain, list(dictionary = fivefreq))
 ### 1. multinomial naive bayes classification
 # transform word frequency into word occurrence indicator for all words in all
 # sentence groups
-trainNB  <- apply(dtmTrainSlice,  2,
+trainNB  <- apply(dtmTrainSlice, 2,
               function(x){factor(ifelse(x > 0, 1, 0), c(0, 1), c('No', 'Yes'))})
-testNB   <- apply(dtmTestSlice,  2,
+testNB   <- apply(dtmTestSlice, 2,
               function(x){factor(ifelse(x > 0, 1, 0), c(0, 1), c('No', 'Yes'))})
 
-# train the text classification and track total time
-nbModel <- e1071::naiveBayes(trainNB, tseTrain$broad.rejection, laplace = 1)
+# train the text classification and predict categories
+nbModel <- e1071::naiveBayes(trainNB, factor(tseTrain$broad.rejection), 1)
+nbPreds <- predict(nbModel, newdata = trainNB)
 
-
-
+# check predictions
+confMatrix <- confusionMatrix(nbPreds, factor(tseTrain$broad.rejection))
