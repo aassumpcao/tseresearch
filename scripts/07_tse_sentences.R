@@ -7,9 +7,9 @@
 # by andre.assumpcao@gmail.com
 
 # import libraries
-library(caret)
 library(magrittr)
 library(tidyverse)
+library(caret)
 library(tm)
 
 # use all available cores in computation
@@ -85,7 +85,7 @@ tse %<>%
   arrange(DS_MOTIVO_CASSACAO)
 
 # object spliting sample into train and test datasets
-split <- nrow(filter(tse, !is.na(DS_MOTIVO_CASSACAO)))
+split <- which(!is.na(tse$DS_MOTIVO_CASSACAO))
 
 # create list of stopwords
 stopwords <- c(stopwords::stopwords('portuguese'), 'é', 'art', 'nº', '2016',
@@ -99,41 +99,51 @@ tseCorpus <- Corpus(VectorSource(tse$sbody)) %>%
 tseDtm <- DocumentTermMatrix(tseCorpus)
 
 # split training and testing data and document-term matrix
-tseTrain <- filter(tse, !is.na(DS_MOTIVO_CASSACAO))
-tseTest  <- filter(tse,  is.na(DS_MOTIVO_CASSACAO))
-dtmTrain <- tseDtm[1:split,]
-dtmTest  <- tseDtm[(split + 1):nrow(tse),]
-tseCorpusTrain <- tseCorpus[1:split]
-tseCorpusTest  <- tseCorpus[(split + 1):nrow(tse)]
+tseTrain <- tse[split,]
+tseTest  <- tse[-split,]
+dtmTrain <- tseDtm[split,]
+dtmTest  <- tseDtm[-split,]
+tseCorpusTrain <- tseCorpus[split]
+tseCorpusTest  <- tseCorpus[-split]
 
 # select features: words that appear in less than five sentences should be
 # dropped
 fivefreq <- findFreqTerms(dtmTrain, 5)
 dtmTrainSlice <- DocumentTermMatrix(tseCorpusTrain, list(dictionary = fivefreq))
 fivefreq <- findFreqTerms(dtmTest, 5)
-dtmTestSlice  <- DocumentTermMatrix(tseCorpusTrain, list(dictionary = fivefreq))
+dtmTestSlice  <- DocumentTermMatrix(tseCorpusTest, list(dictionary = fivefreq))
 
 # transform word frequency into word occurrence indicator for all words in all
 # sentence groups
-trainNB <- apply(dtmTrainSlice, 2,
-             function(x){factor(ifelse(x > 0, 1, 0), c(0, 1), c('No', 'Yes'))})
-testNB  <- apply(dtmTestSlice, 2,
-             function(x){factor(ifelse(x > 0, 1, 0), c(0, 1), c('No', 'Yes'))})
+train <- apply(dtmTrainSlice, 2,
+           function(x){factor(ifelse(x > 0, 1, 0), c(0, 1), c('No', 'Yes'))})
+test  <- apply(dtmTestSlice, 2,
+           function(x){factor(ifelse(x > 0, 1, 0), c(0, 1), c('No', 'Yes'))})
+
+# transform to dataset
+train %<>% as_tibble(.name_repair = 'universal') %>% mutate_all(as.factor)
+test  %<>% as_tibble(.name_repair = 'universal') %>% mutate_all(as.factor)
+
+# remove unnecessary objects for caret classification
+rm(list = objects(pattern = 'dtm|corpus|stopwords|fivefreq|split|narrow|broad'))
 
 ### 1. multinomial naive bayes classification
 # obs: all running times are reported with respect to a MacBook Pro 2017, i5
 # 2.3Ghz processor with 2 cores.
 # train the text classification using naive bayes' algorithm and predict
 # categories.
-# running time: 17s
-nbModel <- e1071::naiveBayes(trainNB, factor(tseTrain$broad.rejection), 1)
+# running time: 3s
+nbModel <- e1071::naiveBayes(train, factor(tseTrain$broad.rejection), 1)
+nbModel <- train(train, factor(tseTrain$broad.rejection),
+                 method = 'nb', fL = 1, verbose = TRUE,
+                 trControl = trainControl(method = 'cv', verboseIter = TRUE))
 
 # predict categorical outcomes using the nb algorithm.
 # running time: 21min
-nbPreds <- predict(nbModel, newdata = trainNB)
+nbPreds <- predict(nbModel, newdata = train)
 
 # check predictions
-caret::confusionMatrix(nbPreds, factor(tseTrain$broad.rejection))
+confusionMatrix(nbPreds, factor(tseTrain$broad.rejection))
 
 # save models and predictions to file
 saveRDS(nbModel, 'analysis/01nbModel.Rds')
@@ -144,14 +154,14 @@ saveRDS(nbPreds, 'analysis/01nbPreds.Rds')
 # the words in each sentence as the matrix of independent variables
 # running time: > 4h
 logitModel <- nnet::multinom(factor(tseTrain$broad.rejection) ~ .,
-                             data = as_tibble(trainNB),
+                             data = train,
                              MaxNWts = 49300)
 
 # prediction running time: 90s
-logitPreds <- predict(logitModel, newdata = trainNB)
+logitPreds <- predict(logitModel, newdata = train)
 
 # check predictions
-caret::confusionMatrix(logitPreds, factor(tseTrain$broad.rejection))
+confusionMatrix(logitPreds, factor(tseTrain$broad.rejection))
 
 # save models and predictions to file
 saveRDS(logitModel, 'analysis/02logitModel.Rds')
@@ -160,15 +170,21 @@ saveRDS(logitPreds, 'analysis/02logitPreds.Rds')
 ### 3. support vector machine (svm)
 # support vector machines try to fit hyperplanes separating data categories
 # using the words in each sentence as the matrix of independent variables
-# running time: 120s
-svmModel <- e1071::svm(factor(tseTrain$broad.rejection) ~ ., as_tibble(trainNB),
+# running time: 112s
+svmModel <- e1071::svm(factor(tseTrain$broad.rejection) ~ ., train,
                        scale = FALSE, kernel = 'linear', cost = 5)
 
-# prediction running time: 50s
-svmPreds <- predict(svmModel, newdata = trainNB)
+
+svm2 <- train(train, factor(tseTrain$broad.rejection),
+              method = 'svmLinear2', cost = 5, verbose = TRUE,
+              trControl = trainControl(method = 'cv', verboseIter = TRUE))
+
+
+# prediction running time: 37s
+svmPreds <- predict(svmModel0, newdata = train)
 
 # check predictions
-caret::confusionMatrix(svmPreds, factor(tseTrain$broad.rejection))
+confusionMatrix(svmPreds, factor(tseTrain$broad.rejection))
 
 # save models and predictions to file
 saveRDS(svmModel, 'analysis/03svmModel.Rds')
@@ -180,15 +196,14 @@ saveRDS(svmPreds, 'analysis/03svmPreds.Rds')
 # categories
 # running time: 17 min when using 500 decision trees.
 RFModel <- randomForest::randomForest(factor(tseTrain$broad.rejection) ~ .,
-  data = mutate_all(as_tibble(trainNB, .name_repair = 'universal'), as.factor),
+  data = train,
   ntree = 100, do.trace = TRUE, na.action = na.exclude)
 
 # prediction running time: 60s
-RFPreds <- predict(RFModel, newdata = mutate_all(as_tibble(trainNB,
-  .name_repair = 'universal'), as.factor))
+RFPreds <- predict(RFModel, newdata = train)
 
 # check predictions
-caret::confusionMatrix(RFPreds, factor(tseTrain$broad.rejection))
+confusionMatrix(RFPreds, factor(tseTrain$broad.rejection))
 
 # save models and predictions to file
 saveRDS(RFModel, 'analysis/04RFModel.Rds')
