@@ -175,13 +175,17 @@ saveRDS(svmModel, 'analysis/03svmModel.Rds')
 saveRDS(svmPreds, 'analysis/03svmPreds.Rds')
 
 ### 4. random forest
-#
-# running time: 120s
-RFModel <- e1071::svm(factor(tseTrain$broad.rejection) ~ ., as_tibble(trainNB),
-                       scale = FALSE, kernel = 'linear', cost = 5)
+# random forest is an classification algorithm that creates multiple (random)
+# 'forests' of decision trees linking up features (words) to classes (sentence)
+# categories
+# running time: 17 min when using 500 decision trees.
+RFModel <- randomForest::randomForest(factor(tseTrain$broad.rejection) ~ .,
+  data = mutate_all(as_tibble(trainNB, .name_repair = 'universal'), as.factor),
+  ntree = 100, do.trace = TRUE, na.action = na.exclude)
 
-# prediction running time: 50s
-RFPreds <- predict(RFModel, newdata = trainNB)
+# prediction running time: 60s
+RFPreds <- predict(RFModel, newdata = mutate_all(as_tibble(trainNB,
+  .name_repair = 'universal'), as.factor))
 
 # check predictions
 caret::confusionMatrix(RFPreds, factor(tseTrain$broad.rejection))
@@ -189,3 +193,7 @@ caret::confusionMatrix(RFPreds, factor(tseTrain$broad.rejection))
 # save models and predictions to file
 saveRDS(RFModel, 'analysis/04RFModel.Rds')
 saveRDS(RFPreds, 'analysis/04RFPreds.Rds')
+
+### 5. boosting trees
+# 5.1 adaboost
+# 5.2 xgboost

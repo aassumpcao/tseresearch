@@ -59,5 +59,5 @@ source('scripts/08_tse_other.R')
 # the datasets that have been wrangled/munged by the wrangling scripts.
 
 # produce paper analysis
-source('analysis/10_tse_analysis.R')
+source('script/10_tse_analysis.R')
 
