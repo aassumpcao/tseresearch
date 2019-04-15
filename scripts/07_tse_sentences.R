@@ -21,6 +21,12 @@ load('data/tseUpdates.Rda')
 load('data/tseSentences.Rda')
 load('data/electoralCrimes.Rda')
 
+# # if working off VCL
+# load('electoralcrime/train.Rda')
+# load('electoralcrime/test.Rda')
+# load('electoralcrime/tseTrain.Rda')
+# load('electoralcrime/tseTest.Rda')
+
 # load reasons for rejection
 narrow.reasons <- readRDS('analysis/rejections.Rds') %>% str_remove_all('\\.$')
 
@@ -120,26 +126,32 @@ train <- apply(dtmTrainSlice, 2,
 test  <- apply(dtmTestSlice, 2,
            function(x){factor(ifelse(x > 0, 1, 0), c(0, 1), c('No', 'Yes'))})
 
-# transform to dataset
-train %<>% as_tibble(.name_repair = 'universal') %>% mutate_all(as.factor)
-test  %<>% as_tibble(.name_repair = 'universal') %>% mutate_all(as.factor)
+# function to drop na from analysis
+drop.na <- which(is.na(tseTrain$broad.rejection))
+
+# transform dfm object to dataset
+train <- as_tibble(train, .name_repair = 'universal') %>%
+         mutate_all(as.factor) %>%
+         {.[-drop.na,]}
+test  <- as_tibble(test,  .name_repair = 'universal') %>%
+         mutate_all(as.factor) %>%
+         {.[-drop.na,]}
 
 # remove unnecessary objects for caret classification
-rm(list = objects(pattern = 'dtm|corpus|stopwords|fivefreq|split|narrow|broad'))
+rm(list = objects(pattern = '[Dd]tm|Corpus|stopwo|fivefr|split|narrow|broad'))
 
 ### 1. multinomial naive bayes classification
 # obs: all running times are reported with respect to a MacBook Pro 2017, i5
 # 2.3Ghz processor with 2 cores.
 # train the text classification using naive bayes' algorithm and predict
 # categories.
-# running time: 3s
-nbModel <- e1071::naiveBayes(train, factor(tseTrain$broad.rejection), 1)
+# running time: > 30 min
 nbModel <- train(train, factor(tseTrain$broad.rejection),
-                 method = 'nb', fL = 1, verbose = TRUE,
+                 method = 'nb', fL = 1, verbose = TRUE, na.action = na.exclude,
                  trControl = trainControl(method = 'cv', verboseIter = TRUE))
 
 # predict categorical outcomes using the nb algorithm.
-# running time: 21min
+# running time: 25min
 nbPreds <- predict(nbModel, newdata = train)
 
 # check predictions
@@ -156,6 +168,13 @@ saveRDS(nbPreds, 'analysis/01nbPreds.Rds')
 logitModel <- nnet::multinom(factor(tseTrain$broad.rejection) ~ .,
                              data = train,
                              MaxNWts = 49300)
+
+system.time(
+logitModel <- train(train, factor(tseTrain$broad.rejection),
+                    method = 'multinom', verbose = TRUE,
+                    weights = 49300, na.action = na.exclude,
+                    trControl = trainControl(method = 'cv', verboseIter = TRUE))
+)
 
 # prediction running time: 90s
 logitPreds <- predict(logitModel, newdata = train)
