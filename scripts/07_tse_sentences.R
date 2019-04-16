@@ -151,7 +151,7 @@ nbModel <- train(train, factor(tseTrain$broad.rejection),
                  trControl = trainControl(method = 'cv', verboseIter = TRUE))
 
 # predict categorical outcomes using the nb algorithm.
-# running time: 25min
+# running time: > 25min
 nbPreds <- predict(nbModel, newdata = train)
 
 # check predictions
@@ -171,11 +171,12 @@ logitModel <- nnet::multinom(factor(tseTrain$broad.rejection) ~ .,
 
 system.time(
 logitModel <- train(train, factor(tseTrain$broad.rejection),
-                    method = 'multinom', verbose = TRUE,
-                    weights = 49300, na.action = na.exclude,
-                    trControl = trainControl(method = 'cv', verboseIter = TRUE))
+                    method = 'multinom', verbose = TRUE, weights = 49300,
+                    na.action = na.exclude,
+                    trControl = trainControl(method = 'cv',
+                                             sampling = 'up',
+                                             verboseIter = TRUE))
 )
-
 # prediction running time: 90s
 logitPreds <- predict(logitModel, newdata = train)
 
@@ -193,11 +194,13 @@ saveRDS(logitPreds, 'analysis/02logitPreds.Rds')
 svmModel <- e1071::svm(factor(tseTrain$broad.rejection) ~ ., train,
                        scale = FALSE, kernel = 'linear', cost = 5)
 
-
-svm2 <- train(train, factor(tseTrain$broad.rejection),
-              method = 'svmLinear2', cost = 5, verbose = TRUE,
-              trControl = trainControl(method = 'cv', verboseIter = TRUE))
-
+system.time(
+svmModel <- train(train, factor(tseTrain$broad.rejection),
+              method = 'svmLinear2', verbose = TRUE,
+              trControl = trainControl(method = 'cv',
+                                       sampling = 'up',
+                                       verboseIter = TRUE))
+)
 
 # prediction running time: 37s
 svmPreds <- predict(svmModel0, newdata = train)

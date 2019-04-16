@@ -57,7 +57,7 @@ cse <- function(reg) {
 
   # Body:
   #   call to vcovHC
-  rob <- sqrt(diag(sandwich::vcovHC(reg, type = "HC1")))
+  rob <- sqrt(diag(sandwich::vcovHC(reg, type = 'HC1')))
 
   #   return matrix
   return(rob)
