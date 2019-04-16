@@ -21,12 +21,6 @@ load('data/tseUpdates.Rda')
 load('data/tseSentences.Rda')
 load('data/electoralCrimes.Rda')
 
-# # if working off VCL
-# load('electoralcrime/train.Rda')
-# load('electoralcrime/test.Rda')
-# load('electoralcrime/tseTrain.Rda')
-# load('electoralcrime/tseTest.Rda')
-
 # load reasons for rejection
 narrow.reasons <- readRDS('analysis/rejections.Rds') %>% str_remove_all('\\.$')
 
@@ -129,13 +123,17 @@ test  <- apply(dtmTestSlice, 2,
 # function to drop na from analysis
 drop.na <- which(is.na(tseTrain$broad.rejection))
 
-# transform dfm object to dataset
+# transform dfm object to dataset and remove NA
 train <- as_tibble(train, .name_repair = 'universal') %>%
          mutate_all(as.factor) %>%
          {.[-drop.na,]}
 test  <- as_tibble(test,  .name_repair = 'universal') %>%
          mutate_all(as.factor) %>%
          {.[-drop.na,]}
+
+# remove NA
+tseTrain <- tseTrain[-drop.na,]
+tseTest  <- tseTest[-drop.na,]
 
 # remove unnecessary objects for caret classification
 rm(list = objects(pattern = '[Dd]tm|Corpus|stopwo|fivefr|split|narrow|broad'))
@@ -145,13 +143,11 @@ rm(list = objects(pattern = '[Dd]tm|Corpus|stopwo|fivefr|split|narrow|broad'))
 # 2.3Ghz processor with 2 cores.
 # train the text classification using naive bayes' algorithm and predict
 # categories.
-# running time: > 30 min
-nbModel <- train(train, factor(tseTrain$broad.rejection),
-                 method = 'nb', fL = 1, verbose = TRUE, na.action = na.exclude,
-                 trControl = trainControl(method = 'cv', verboseIter = TRUE))
+# running time: > 5s
+nbModel <- e1071::naiveBayes(train, factor(tseTrain$broad.rejection), 1)
 
 # predict categorical outcomes using the nb algorithm.
-# running time: > 25min
+# running time: > 20min
 nbPreds <- predict(nbModel, newdata = train)
 
 # check predictions
@@ -169,14 +165,6 @@ logitModel <- nnet::multinom(factor(tseTrain$broad.rejection) ~ .,
                              data = train,
                              MaxNWts = 49300)
 
-system.time(
-logitModel <- train(train, factor(tseTrain$broad.rejection),
-                    method = 'multinom', verbose = TRUE, weights = 49300,
-                    na.action = na.exclude,
-                    trControl = trainControl(method = 'cv',
-                                             sampling = 'up',
-                                             verboseIter = TRUE))
-)
 # prediction running time: 90s
 logitPreds <- predict(logitModel, newdata = train)
 
@@ -194,14 +182,6 @@ saveRDS(logitPreds, 'analysis/02logitPreds.Rds')
 svmModel <- e1071::svm(factor(tseTrain$broad.rejection) ~ ., train,
                        scale = FALSE, kernel = 'linear', cost = 5)
 
-system.time(
-svmModel <- train(train, factor(tseTrain$broad.rejection),
-              method = 'svmLinear2', verbose = TRUE,
-              trControl = trainControl(method = 'cv',
-                                       sampling = 'up',
-                                       verboseIter = TRUE))
-)
-
 # prediction running time: 37s
 svmPreds <- predict(svmModel0, newdata = train)
 
@@ -218,8 +198,7 @@ saveRDS(svmPreds, 'analysis/03svmPreds.Rds')
 # categories
 # running time: 17 min when using 500 decision trees.
 RFModel <- randomForest::randomForest(factor(tseTrain$broad.rejection) ~ .,
-  data = train,
-  ntree = 100, do.trace = TRUE, na.action = na.exclude)
+  data = train, ntree = 100, do.trace = TRUE, na.action = na.exclude)
 
 # prediction running time: 60s
 RFPreds <- predict(RFModel, newdata = train)
