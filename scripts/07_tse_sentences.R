@@ -215,6 +215,7 @@ saveRDS(RFPreds, 'analysis/04RFPreds.Rds')
 # adaboost is a classification method which sequentially sets different weights
 # to parameters and data points so that it classifies
 # include y in dataset to fit formula argument
+# load('data/train.Rda');load('data/tseTrain.Rda')
 train %<>% mutate(y = factor(tseTrain$broad.rejection))
 
 # model running time:
