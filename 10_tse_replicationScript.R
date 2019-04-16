@@ -8,6 +8,7 @@ if (!require(AER))       {install.packages('AER')}
 if (!require(caret))     {install.packages('caret')}
 if (!require(doMC))      {install.packages('DoMC')}
 if (!require(e1071))     {install.packages('e1071')}
+if (!require(adabag))    {install.packages('adabag')}
 if (!require(here))      {install.packages('here')}
 if (!require(magrittr))  {install.packages('magrittr')}
 if (!require(nnet))      {install.packages('nnet')}
@@ -26,7 +27,7 @@ rstudioapi::openProject('2019 Electoral Crime.Rproj')
 
 ### wrangling scripts
 # these scripts wrangle all data used in this paper. you should not run them as
-# they will take a lot of time to process (> 5 hour if laptop or > 1 hour if
+# they will take a lot of time to process (> 15 hours if laptop or > 3 hour if
 # cluster). these files have been created for data wrangling replication,
 # transparency, and record keeping purposes.
 

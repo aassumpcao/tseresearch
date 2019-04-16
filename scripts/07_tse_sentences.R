@@ -143,11 +143,11 @@ rm(list = objects(pattern = '[Dd]tm|Corpus|stopwo|fivefr|split|narrow|broad'))
 # 2.3Ghz processor with 2 cores.
 # train the text classification using naive bayes' algorithm and predict
 # categories.
-# running time: > 5s
+# model running time: > 5s
 nbModel <- e1071::naiveBayes(train, factor(tseTrain$broad.rejection), 1)
 
 # predict categorical outcomes using the nb algorithm.
-# running time: > 20min
+# prediction running time: > 20min
 nbPreds <- predict(nbModel, newdata = train)
 
 # check predictions
@@ -160,7 +160,7 @@ saveRDS(nbPreds, 'analysis/01nbPreds.Rds')
 ### 2. logistic regression
 # run multinomial logit trying to predict each of the sentence categories using
 # the words in each sentence as the matrix of independent variables
-# running time: > 4h
+# model running time: > 4h
 logitModel <- nnet::multinom(factor(tseTrain$broad.rejection) ~ .,
                              data = train,
                              MaxNWts = 49300)
@@ -178,7 +178,7 @@ saveRDS(logitPreds, 'analysis/02logitPreds.Rds')
 ### 3. support vector machine (svm)
 # support vector machines try to fit hyperplanes separating data categories
 # using the words in each sentence as the matrix of independent variables
-# running time: 112s
+# model running time: 112s
 svmModel <- e1071::svm(factor(tseTrain$broad.rejection) ~ ., train,
                        scale = FALSE, kernel = 'linear', cost = 5)
 
@@ -193,10 +193,10 @@ saveRDS(svmModel, 'analysis/03svmModel.Rds')
 saveRDS(svmPreds, 'analysis/03svmPreds.Rds')
 
 ### 4. random forest
-# random forest is an classification algorithm that creates multiple (random)
+# random forest is a classification algorithm that creates multiple (random)
 # 'forests' of decision trees linking up features (words) to classes (sentence)
 # categories
-# running time: 17 min when using 500 decision trees.
+# model running time: 17 min when using 500 decision trees.
 RFModel <- randomForest::randomForest(factor(tseTrain$broad.rejection) ~ .,
   data = train, ntree = 100, do.trace = TRUE, na.action = na.exclude)
 
@@ -212,4 +212,43 @@ saveRDS(RFPreds, 'analysis/04RFPreds.Rds')
 
 ### 5. boosting trees
 # 5.1 adaboost
+# adaboost is a classification method which sequentially sets different weights
+# to parameters and data points so that it classifies
+# include y in dataset to fit formula argument
+train %<>% mutate(y = factor(tseTrain$broad.rejection))
+
+# model running time:
+system.time(
+adaBoostModel <- adabag::boosting(y ~ ., data = train)
+)
+
+# prediction running time:
+system.time(
+adaPreds <- adabag::predict.boosting(adaBoostModel, newdata = train)
+)
+
+# save models and predictions to file
+saveRDS(adaBoostModel, 'analysis/051adaBoostModel.Rds')
+saveRDS(adaBoostPreds, 'analysis/051adaBoostPreds.Rds')
+
+
 # 5.2 xgboost
+#
+# create list of xgb_parameters and xgb matrix
+xgbParams <- list('objective' = 'multi:softprob', 'num_class' = 4)
+xgbMatrix <- xgb.Dmatrix(data = train[,1:12069], label = train[,12070])
+
+# model running time:
+system.time(
+xgBoostModel <- xgboost::xgb.train(xgb_params, data = xgbMatrix, nrounds = 2,
+                                   verbose = TRUE)
+)
+
+# prediction running time:
+system.time(
+xgBoostPreds <- predict(xgBoostModel, newdata = train)
+)
+
+# save models and predictions to file
+saveRDS(xgBoostModel, 'analysis/052xgBoostModel.Rds')
+saveRDS(xgBoostPreds, 'analysis/052xgBoostPreds.Rds')
