@@ -132,15 +132,15 @@ tseTest  <- tseTest[-drop.na,]
 rm(list = objects(pattern = '[Dd]tm|Corpus|stopwo|fivefr|split|narrow|broad'))
 
 ### 1. multinomial naive bayes classification
-# obs: all running times are reported with respect to a MacBook Pro 2017, i5
-# 2.3Ghz processor with 2 cores.
+# obs: all running times are reported with respect to a a 10-CPU, 24-core, 8GB
+# memory cluster computing service.
 # train the text classification using naive bayes' algorithm and predict
 # categories.
-# model running time: ~5s
+# model running time: ~ 5 seconds
 nbModel <- e1071::naiveBayes(train, factor(tseTrain$broad.rejection), 1)
 
 # predict categorical outcomes using the nb algorithm.
-# prediction running time: ~18min
+# prediction running time: ~ 18 minutes
 nbPreds <- predict(nbModel, newdata = train)
 
 # check predictions
@@ -153,12 +153,12 @@ saveRDS(nbPreds, 'analysis/01nbPreds.Rds')
 ### 2. logistic regression
 # run multinomial logit trying to predict each of the sentence categories using
 # the words in each sentence as the matrix of independent variables
-# model running time: > 4h
+# model running time: ~ 1 hour
 logitModel <- nnet::multinom(factor(tseTrain$broad.rejection) ~ .,
                              data = train,
                              MaxNWts = 49300)
 
-# prediction running time: 90s
+# prediction running time: 6 seconds
 logitPreds <- predict(logitModel, newdata = train)
 
 # check predictions
@@ -171,11 +171,11 @@ saveRDS(logitPreds, 'analysis/02logitPreds.Rds')
 ### 3. support vector machine (svm)
 # support vector machines try to fit hyperplanes separating data categories
 # using the words in each sentence as the matrix of independent variables
-# model running time: 112s
+# model running time: 44 seconds
 svmModel <- e1071::svm(factor(tseTrain$broad.rejection) ~ ., train,
                        scale = FALSE, kernel = 'linear', cost = 5)
 
-# prediction running time: 37s
+# prediction running time: 11s
 svmPreds <- predict(svmModel0, newdata = train)
 
 # check predictions
@@ -189,11 +189,11 @@ saveRDS(svmPreds, 'analysis/03svmPreds.Rds')
 # random forest is a classification algorithm that creates multiple (random)
 # 'forests' of decision trees linking up features (words) to classes (sentence)
 # categories
-# model running time: 17 min when using 500 decision trees.
+# model running time: 25 minutes
 RFModel <- randomForest::randomForest(factor(tseTrain$broad.rejection) ~ .,
   data = train, ntree = 100, do.trace = TRUE, na.action = na.exclude)
 
-# prediction running time: 60s
+# prediction running time: 3.5 seconds
 RFPreds <- predict(RFModel, newdata = train)
 
 # check predictions
@@ -202,3 +202,6 @@ confusionMatrix(RFPreds, factor(tseTrain$broad.rejection))
 # save models and predictions to file
 saveRDS(RFModel, 'analysis/04RFModel.Rds')
 saveRDS(RFPreds, 'analysis/04RFPreds.Rds')
+
+# remove all for serial sourcing
+rm(list = ls())

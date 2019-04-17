@@ -49,11 +49,14 @@ source('scripts/05_tse_results.R')
 # wrangle candidacy rejections
 source('scripts/06_tse_rejections.R')
 
-# wrangle judicial decisions data
-source('scripts/07_tse_sentences.R')
+# wrangle judicial decisions and produce classification algorithm
+source('scripts/07_tse_train_sentences.R')
+
+# wrangle judicial decisions and apply classification algorithm
+source('scripts/08_tse_test_sentences.R')
 
 # wrangle candidates, sections, and results for elections in 2006, 2010, 2014
-source('scripts/08_tse_other.R')
+source('scripts/09_tse_other.R')
 
 ### analysis scripts
 # these scripts, however, should be run. they produce the paper analysis with
