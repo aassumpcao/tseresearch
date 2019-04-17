@@ -29,9 +29,6 @@ narrow.reasons <- readRDS('analysis/rejections.Rds') %>% str_remove_all('\\.$')
 # 2. logistic regression (logit)
 # 3. support vector machine (svm)
 # 4. random forest
-# 5. boosting trees:
-#     5.1 adaboost
-#     5.2 xgboost
 
 ### text cleanup
 # create new order of severity of electoral crimes
@@ -115,20 +112,16 @@ dtmTestSlice  <- DocumentTermMatrix(tseCorpusTest, list(dictionary = fivefreq))
 
 # transform word frequency into word occurrence indicator for all words in all
 # sentence groups
-train <- apply(dtmTrainSlice, 2,
-           function(x){factor(ifelse(x > 0, 1, 0), c(0, 1), c('No', 'Yes'))})
-test  <- apply(dtmTestSlice, 2,
-           function(x){factor(ifelse(x > 0, 1, 0), c(0, 1), c('No', 'Yes'))})
+train <- apply(dtmTrainSlice, 2, function(x){ifelse(x > 0, 1, 0)})
+test  <- apply(dtmTestSlice,  2, function(x){ifelse(x > 0, 1, 0)})
 
 # function to drop na from analysis
 drop.na <- which(is.na(tseTrain$broad.rejection))
 
 # transform dfm object to dataset and remove NA
 train <- as_tibble(train, .name_repair = 'universal') %>%
-         mutate_all(as.factor) %>%
          {.[-drop.na,]}
 test  <- as_tibble(test,  .name_repair = 'universal') %>%
-         mutate_all(as.factor) %>%
          {.[-drop.na,]}
 
 # remove NA
@@ -143,11 +136,11 @@ rm(list = objects(pattern = '[Dd]tm|Corpus|stopwo|fivefr|split|narrow|broad'))
 # 2.3Ghz processor with 2 cores.
 # train the text classification using naive bayes' algorithm and predict
 # categories.
-# model running time: > 5s
+# model running time: ~5s
 nbModel <- e1071::naiveBayes(train, factor(tseTrain$broad.rejection), 1)
 
 # predict categorical outcomes using the nb algorithm.
-# prediction running time: > 20min
+# prediction running time: ~18min
 nbPreds <- predict(nbModel, newdata = train)
 
 # check predictions
@@ -209,47 +202,3 @@ confusionMatrix(RFPreds, factor(tseTrain$broad.rejection))
 # save models and predictions to file
 saveRDS(RFModel, 'analysis/04RFModel.Rds')
 saveRDS(RFPreds, 'analysis/04RFPreds.Rds')
-
-### 5. boosting trees
-# 5.1 adaboost
-# adaboost is a classification method which sequentially sets different weights
-# to parameters and data points so that it classifies
-# include y in dataset to fit formula argument
-# load('data/train.Rda');load('data/tseTrain.Rda')
-train %<>% mutate(y = factor(tseTrain$broad.rejection))
-
-# model running time:
-system.time(
-adaBoostModel <- adabag::boosting(y ~ ., data = train)
-)
-
-# prediction running time:
-system.time(
-adaPreds <- adabag::predict.boosting(adaBoostModel, newdata = train)
-)
-
-# save models and predictions to file
-saveRDS(adaBoostModel, 'analysis/051adaBoostModel.Rds')
-saveRDS(adaBoostPreds, 'analysis/051adaBoostPreds.Rds')
-
-
-# 5.2 xgboost
-#
-# create list of xgb_parameters and xgb matrix
-xgbParams <- list('objective' = 'multi:softprob', 'num_class' = 4)
-xgbMatrix <- xgb.Dmatrix(data = train[,1:12069], label = train[,12070])
-
-# model running time:
-system.time(
-xgBoostModel <- xgboost::xgb.train(xgb_params, data = xgbMatrix, nrounds = 2,
-                                   verbose = TRUE)
-)
-
-# prediction running time:
-system.time(
-xgBoostPreds <- predict(xgBoostModel, newdata = train)
-)
-
-# save models and predictions to file
-saveRDS(xgBoostModel, 'analysis/052xgBoostModel.Rds')
-saveRDS(xgBoostPreds, 'analysis/052xgBoostPreds.Rds')
