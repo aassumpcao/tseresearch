@@ -35,3 +35,7 @@ caret::confusionMatrix(nbPreds,    factor(tseTrain$broad.rejection))
 caret::confusionMatrix(logitPreds, factor(tseTrain$broad.rejection))
 caret::confusionMatrix(svmPreds,   factor(tseTrain$broad.rejection))
 caret::confusionMatrix(RFPreds,    factor(tseTrain$broad.rejection))
+
+# find overlapping words
+overlapping.features <- names(train) %in% names(test)
+overlapping.features %>% {length(.[. == TRUE])}
