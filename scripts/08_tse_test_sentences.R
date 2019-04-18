@@ -9,6 +9,7 @@
 # import libraries
 library(magrittr)
 library(tidyverse)
+library(caret)
 
 # use all available cores in computation
 doMC::registerDoMC(cores = parallel::detectCores())

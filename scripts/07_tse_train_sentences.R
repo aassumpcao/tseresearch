@@ -176,7 +176,7 @@ svmModel <- e1071::svm(factor(tseTrain$broad.rejection) ~ ., train,
                        scale = FALSE, kernel = 'linear', cost = 5)
 
 # prediction running time: 11s
-svmPreds <- predict(svmModel0, newdata = train)
+svmPreds <- predict(svmModel, newdata = train)
 
 # check predictions
 confusionMatrix(svmPreds, factor(tseTrain$broad.rejection))
