@@ -4,16 +4,25 @@
 # by andre.assumpcao@gmail.com
 
 # import statements
+from io                              import StringIO
+from sklearn.ensemble                import RandomForestClassifier
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.linear_model            import LogisticRegression
+from sklearn.manifold                import TSNE
+from sklearn.model_selection         import cross_val_score
+from sklearn.naive_bayes             import MultinomialNB
+from sklearn.model_selection         import train_test_split
+from sklearn.metrics                 import confusion_matrix
+from sklearn.svm                     import SVC
+import imblearn
 import codecs
 import glob
 import matplotlib.pyplot as plt
 import numpy as np
+import os
 import pandas as pd
 import re
-import os
-from io import StringIO
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.manifold import TSNE
+import seaborn as sns
 
 # define clear function
 clear = lambda: os.system('clear')
@@ -97,4 +106,93 @@ plt.legend()
 plt.show()
 
 ### train and test models
-#
+# 1. multinomial naive bayes classification (nb)
+# 2. logistic regression (logit)
+#### 3. support vector machine (svm)
+# 4. random forest
+
+# create list of models used. their parameters have been tuned already
+models = [
+    MultinomialNB(),
+    LogisticRegression(random_state = 0, solver = 'lbfgs',
+                       multi_class = 'auto'),
+    SVC(kernel = 'linear', C = 5),
+    RandomForestClassifier(n_estimators = 200, max_depth = 3,
+                           random_state = 0)
+]
+
+# set the number of cross-validation folds
+CV = 5
+
+# create a dataset of the different models at each fold
+cv_df = pd.DataFrame(index = range(CV * len(models)))
+
+# create empty list to store model results
+entries = []
+
+# loop over list of models and run tests
+for model in models:
+    # extract model name from model attribute
+    model_name = model.__class__.__name__
+    # compute accuracy scores across cross-validation exercise
+    accuracies = cross_val_score(model, features, labels, scoring = 'accuracy',
+                                 cv = CV)
+    # append fold id and accuracy scores to entries list
+    for fold_idx, accuracy in enumerate(accuracies):
+        entries.append((model_name, fold_idx, accuracy))
+    # fill in the cross-validation dataset
+    cv_df = pd.DataFrame(entries,
+                         columns = ['model_name', 'fold_idx', 'accuracy'])
+
+# produce boxplots depicting model performance
+sns.boxplot(x = 'model_name', y = 'accuracy', data = cv_df)
+sns.stripplot(x = 'model_name', y = 'accuracy', data = cv_df,
+              size = 8, jitter = True, edgecolor = 'gray', linewidth = 2)
+
+# display plot
+plt.show()
+
+# display list of results
+cv_df.groupby('model_name').accuracy.mean()
+
+### interpreting models
+# here, we want to make sure our models are not overfitting our samples.
+# we want to run these processes more than once to guarantee this is not
+# happening.
+
+# here's one try using logistic regression
+model = LogisticRegression(random_state = 0, solver = 'lbfgs',
+                           multi_class = 'auto')
+
+# produce train, test, and split elements to subset the dataset
+split = train_test_split(features, labels, df.index, test_size = 0.33,
+                         random_state = 0)
+
+# assign elements of the split object to each of the objects below
+X_train       = split[0]
+X_test        = split[1]
+y_train       = split[2]
+y_test        = split[3]
+indices_train = split[4]
+indices_test  = split[5]
+
+# fit features to classes in train dataset
+model.fit(X_train, y_train)
+
+# predict y probabilities using x's in test data
+y_pred_proba = model.predict_proba(X_test)
+y_pred = model.predict(X_test)
+
+# create confusion matrix to check misclassification
+conf_mat = confusion_matrix(y_test, y_pred)
+
+# produce heatmat so that we can visualize what's going on with the
+# classification algorithm
+sns.heatmap(conf_mat, annot = True, fmt = 'd',
+            xticklabels = classes_id_df.classes.values,
+            yticklabels = classes_id_df.classes.values)
+
+# include labels and show
+plt.ylabel('Actual')
+plt.xlabel('Predicted')
+plt.show()

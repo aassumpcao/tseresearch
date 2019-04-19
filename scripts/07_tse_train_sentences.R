@@ -66,6 +66,9 @@ tse <- tseSentences %>%
   inner_join(electoralCrimes, 'scraperID') %>%
   filter(!is.na(sbody) | nchar(sbody) > 3)
 
+# write csv for python analysis
+write_delim(tse, 'data/tse.txt', ',')
+
 # drop first row (invalid) and filter empty sentences. next, clean text for
 # later classification.
 tse %<>%
