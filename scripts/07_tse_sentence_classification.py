@@ -32,3 +32,32 @@ clear = lambda: os.system('clear')
 
 # load dataset
 tse = pd.read_csv('data/tse.csv', dtype = 'str')
+tse = tse[tse.sbody.notnull()]
+stopwords = codecs.open('data/stopwords.txt', 'r', 'utf-8').read().split('\n')
+stopwords = stopwords[:-1]
+
+# rename class variable and create factor
+tse = tse.rename(columns = {'broad.rejection': 'class'})
+tse['classID'] = tse['class'].factorize()[0]
+
+# create new variables and dictionaries
+class_id_tse = tse[['class', 'classID']].drop_duplicates()
+class_id_tse = class_id_tse.sort_values('classID').reset_index(drop = True)
+class_to_ids = dict(class_id_tse.values)
+ids_to_class = dict(class_id_tse[['classID', 'class']].values)
+
+### create tf-idf measures to inspect and transform data
+# pass kwargs to tf-idf vectorizer to construct a measure of word
+# importance
+kwargs = {'sublinear_tf': True, 'min_df': 5, 'stop_words': stopwords,
+          'encoding': 'utf-8', 'ngram_range': (1, 2), 'norm': 'l2'}
+
+# create tf-idf vector
+tfidf = TfidfVectorizer(**kwargs)
+
+# create features vector (words) and classes
+features = tfidf.fit_transform(tse.sbody).toarray()
+labels = tse.classID
+
+# check dimensionality of data: 16,199 rows; 103,968 features
+features.shape

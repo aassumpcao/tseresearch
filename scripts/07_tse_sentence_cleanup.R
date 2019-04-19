@@ -66,30 +66,36 @@ tse <- tseSentences %>%
   inner_join(electoralCrimes, 'scraperID') %>%
   filter(!is.na(sbody) | nchar(sbody) > 3)
 
-# write csv for python analysis
-write_delim(tse, 'data/tse.txt', ',')
-
 # drop first row (invalid) and filter empty sentences. next, clean text for
 # later classification.
 tse %<>%
   mutate_at(vars(1:2), ~str_to_lower(.)) %>%
-  mutate_at(vars(1:2), ~str_replace_all(., '\n|\r|\t|\\.', ' ')) %>%
-  mutate_at(vars(1:2), ~str_squish(.)) %>%
+  mutate_at(vars(1:2), ~str_replace_all(., 'ju[íi]z' , ' juiz')) %>%
+  mutate_at(vars(1:2), ~str_replace_all(., '\n|\r|\t|\\.|:|;|,', ' ')) %>%
   mutate_at(vars(1:2), ~str_replace_all(., '64(.)?90', '6490')) %>%
   mutate_at(vars(1:2), ~str_replace_all(., '9(\\.)?504', '9504')) %>%
-  mutate_at(vars(1:2), ~removePunctuation(., FALSE, TRUE, TRUE)) %>%
   mutate_at(vars(1:2), ~str_replace_all(., 'n º', 'nº')) %>%
-  mutate_at(vars(1:2), ~str_replace_all(., 'art( )?', 'art')) %>%
-  mutate_at(vars(1:2), ~str_replace_all(., 'lei eleitoral', 'leieleitoral')) %>%
+  mutate_at(vars(1:2), ~str_replace_all(., 'art( )*', 'art ')) %>%
   mutate_at(vars(1:2), ~str_remove_all(., '_|\\(|\\)')) %>%
-  arrange(DS_MOTIVO_CASSACAO)
+  mutate_at(vars(1:2), ~str_replace_all(., '~|`|´|^|º|\\"' , '')) %>%
+  mutate_at(vars(1:2), ~str_squish(.)) %>%
+  arrange(DS_MOTIVO_CASSACAO) %>%
+  select(scraperID, broad.rejection, narrow.rejection, shead, sbody)
+
+# write as txt
+write.csv(tse, 'data/tse.csv', row.names = FALSE)
 
 # object spliting sample into train and test datasets
 split <- which(!is.na(tse$DS_MOTIVO_CASSACAO))
 
 # create list of stopwords
 stopwords <- c(stopwords::stopwords('portuguese'), 'é', 'art', 'nº', '2016',
-               'lei', '2012', 'i', 'g', 'fls', 'tse', 'ata', 'n', 'ser')
+               'lei', '2012', 'i', 'g', 'fls', 'tse', 'ata', 'n', 'ser', 'ie',
+               'juiz', 'juiza')
+
+# export to file
+paste0(stopwords, collapse = '\n') %>% writeLines(file('data/stopwords.txt'))
+
 
 # create corpus object
 tseCorpus <- Corpus(VectorSource(tse$sbody)) %>%
