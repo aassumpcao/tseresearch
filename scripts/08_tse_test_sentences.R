@@ -20,6 +20,7 @@ load('data/test.Rda')
 load('data/tseTrain.Rda')
 load('data/tseTest.Rda')
 
+### body
 # load prediction objects and models
 nbModel    <- readRDS('analysis/01nbModel.Rds')
 nbPreds    <- readRDS('analysis/01nbPreds.Rds')
@@ -36,6 +37,5 @@ caret::confusionMatrix(logitPreds, factor(tseTrain$broad.rejection))
 caret::confusionMatrix(svmPreds,   factor(tseTrain$broad.rejection))
 caret::confusionMatrix(RFPreds,    factor(tseTrain$broad.rejection))
 
-# find overlapping words
-overlapping.features <- names(train) %in% names(test)
-overlapping.features %>% {length(.[. == TRUE])}
+#
+predict(logitModel, newdata = test)

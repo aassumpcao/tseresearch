@@ -41,6 +41,7 @@ rsconnect/
 html/
 __pycache__/
 data/
+bbc/
 *.html
 
 # Ignore text files
