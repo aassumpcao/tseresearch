@@ -6,18 +6,7 @@
 # author: andre assumpcao
 # by andre.assumpcao@gmail.com
 
-# import statements
-from imblearn.over_sampling          import SMOTE
-from io                              import StringIO
-from sklearn.ensemble                import RandomForestClassifier
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.linear_model            import LogisticRegression
-#from sklearn.manifold                import TSNE
-from sklearn.model_selection         import cross_val_score
-from sklearn.naive_bayes             import MultinomialNB
-from sklearn.model_selection         import train_test_split
-from sklearn.metrics                 import confusion_matrix
-from sklearn.svm                     import SVC
+# import standard libraries
 import codecs
 import glob
 import matplotlib.pyplot as plt
@@ -25,7 +14,18 @@ import numpy as np
 import os
 import pandas as pd
 import re
-# import seaborn as sns
+import seaborn as sns
+
+# import scikit-learn libraries
+from imblearn.over_sampling          import SMOTE
+from sklearn.ensemble                import RandomForestClassifier
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.linear_model            import LogisticRegression
+from sklearn.model_selection         import cross_val_score
+from sklearn.naive_bayes             import MultinomialNB
+from sklearn.model_selection         import train_test_split
+from sklearn.metrics                 import confusion_matrix
+from sklearn.svm                     import SVC
 
 # define clear function
 clear = lambda: os.system('clear')
@@ -79,7 +79,7 @@ testlabels = labels[split:]
 sm = SMOTE()
 trainfeatures, trainlabels = sm.fit_sample(trainfeatures, trainlabels)
 
-### train and test models
+### train models
 # 1. multinomial naive bayes classification (nb)
 # 2. logistic regression (logit)
 # 3. support vector machine (svm)
@@ -91,7 +91,7 @@ trainfeatures, trainlabels = sm.fit_sample(trainfeatures, trainlabels)
 models = [
     MultinomialNB(alpha = 1),
     LogisticRegression(random_state = 0, solver = 'lbfgs',
-                       multi_class = 'auto'),
+                       multi_class = 'auto', max_iter = 1000),
     SVC(kernel = 'linear', C = 5),
     RandomForestClassifier(n_estimators = 100, max_depth = 3,
                            random_state = 0)
@@ -107,3 +107,33 @@ cv_df = pd.DataFrame(index = range(CV * len(models)))
 
 # create empty list to store model results
 entries = []
+
+# loop over list of models and run tests
+for model in models:
+    # extract model name from model attribute
+    mname = model.__class__.__name__
+    # compute accuracy scores across cross-validation exercise
+    accuracies = cross_val_score(model, trainfeatures, trainlabels,
+                                 scoring = 'accuracy', cv = CV)
+    # append fold id and accuracy scores to entries list
+    for fold_idx, accuracy in enumerate(accuracies):
+        entries.append((mname, fold_idx, accuracy))
+        # print loop progress
+        print(str(mname) + ': ' + str(fold_idx) + ' / ' str(len(accuracies)))
+    # fill in the cross-validation dataset
+    cv_df = pd.DataFrame(entries, columns = ['mname', 'fold_idx', 'accuracy'])
+    # print loop progress
+    print(str(mname) + ' computation concluded.')
+
+# produce boxplots depicting model performance
+sns.boxplot(x = 'mname', y = 'accuracy', data = cv_df)
+sns.stripplot(x = 'mname', y = 'accuracy', data = cv_df,
+              size = 8, jitter = True, edgecolor = 'gray', linewidth = 2)
+
+# display plot
+plt.show()
+
+# display list of results
+cv_df.groupby('mname').accuracy.mean()
+
+### test models
