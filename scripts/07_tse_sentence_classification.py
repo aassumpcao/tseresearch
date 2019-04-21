@@ -13,6 +13,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import os
 import pandas as pd
+import pickle
 import re
 import seaborn as sns
 
@@ -23,12 +24,10 @@ from sklearn.ensemble                import GradientBoostingClassifier
 from sklearn.ensemble                import RandomForestClassifier
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model            import LogisticRegression
-from sklearn.metrics                 import confusion_matrix
-from sklearn.model_selection         import cross_val_score
+from sklearn.model_selection         import cross_validate
 from sklearn.model_selection         import train_test_split
 from sklearn.naive_bayes             import MultinomialNB
 from sklearn.svm                     import SVC
-from sklearn.tree                    import DecisionTreeClassifier
 
 # define clear function
 clear = lambda: os.system('clear')
@@ -109,35 +108,38 @@ CV = 5
 # create empty list to store model results
 entries = []
 
+# create list of cross validation arguments outside of function
+cvargs = {'X': trainfeatures, 'y': trainlabels, 'n_jobs': -1, 'verbose': 2,
+          'scoring': {'acc': 'accuracy', 'prec': 'precision'}, 'cv': CV,
+          'return_train_score': True}
+
 # run cross-validation for all models (> 10 hours of processing time)
 for model in models:
     # extract model name from model attribute
     mname = model.__class__.__name__
     # compute accuracy scores across cross-validation exercise
-    accuracies = cross_val_score(model, trainfeatures, trainlabels,
-                                 scoring = 'accuracy', cv = CV, verbose = 1)
-    # append fold id and accuracy scores to entries list
-    for fold_idx, accuracy in enumerate(accuracies):
-        entries.append((mname, fold_idx, accuracy))
-        # print loop progress
-        print(str(mname) + ': ' + str(fold_idx))
+    metrics = cross_validate(model, **cvargs)
+    # add model name to dictionary of results
+    metrics['model'] = [mname] * 5
+    # append results to entries list
+    entries.append(metrics)
     # print loop progress
     print(str(mname) + ' computation concluded.')
 
-# fill in the cross-validation dataset
-cv_df = pd.DataFrame(entries, columns = ['mname', 'fold_idx', 'accuracy'])
+# fill in the cross-validation dataset and save to file
+performance = pd.concat([pd.DataFrame(entry) for entry in entries])
+performance.to_csv('data/modelPerformance.csv', index = False)
 
-# produce boxplots depicting model performance
-sns.boxplot(x = 'mname', y = 'accuracy', data = cv_df)
-sns.stripplot(x = 'mname', y = 'accuracy', data = cv_df,
-              size = 8, jitter = True, edgecolor = 'gray', linewidth = 2)
+# # produce boxplots depicting model performance
+# sns.boxplot(x = 'mname', y = 'accuracy', data = cv_df)
+# sns.stripplot(x = 'mname', y = 'accuracy', data = cv_df,
+#               size = 8, jitter = True, edgecolor = 'gray', linewidth = 2)
 
-# display plot
-plt.show()
-plt.savefig('analysis/modelAccuracy.png')
+# # display plot
+# plt.show()
+# plt.savefig('analysis/modelAccuracy.png')
 
 # display list of results
-cv_df.groupby('mname').accuracy.mean()
-cv_df.to_csv('data/modelAccuracy.csv', index = False)
+# cv_df.groupby('mname').accuracy.mean()
 
 ### test models
