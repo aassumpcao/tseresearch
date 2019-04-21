@@ -18,14 +18,17 @@ import seaborn as sns
 
 # import scikit-learn libraries
 from imblearn.over_sampling          import SMOTE
+from sklearn.ensemble                import AdaBoostClassifier
+from sklearn.ensemble                import GradientBoostingClassifier
 from sklearn.ensemble                import RandomForestClassifier
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model            import LogisticRegression
-from sklearn.model_selection         import cross_val_score
-from sklearn.naive_bayes             import MultinomialNB
-from sklearn.model_selection         import train_test_split
 from sklearn.metrics                 import confusion_matrix
+from sklearn.model_selection         import cross_val_score
+from sklearn.model_selection         import train_test_split
+from sklearn.naive_bayes             import MultinomialNB
 from sklearn.svm                     import SVC
+from sklearn.tree                    import DecisionTreeClassifier
 
 # define clear function
 clear = lambda: os.system('clear')
@@ -87,43 +90,42 @@ trainfeatures, trainlabels = sm.fit_sample(trainfeatures, trainlabels)
 # 5. adaptive boosting
 # 6. gradient boosting
 
+# create decision tree parameter for boosting
+# dt = DecisionTreeClassifier()
+
 # create list of models used. their parameters have been tuned already
 models = [
-    MultinomialNB(alpha = 1),
-    LogisticRegression(random_state = 0, solver = 'lbfgs',
-                       multi_class = 'auto', max_iter = 1000),
-    SVC(kernel = 'linear', C = 5),
-    RandomForestClassifier(n_estimators = 100, max_depth = 3,
-                           random_state = 0)
-    # adaptive boosting
-    # gradient boosting
+    MultinomialNB(),
+    LogisticRegression(solver = 'lbfgs', multi_class = 'auto', max_iter = 500),
+    SVC(kernel = 'linear', verbose = True),
+    RandomForestClassifier(n_estimators = 100, max_depth = 3, verbose = 1),
+    AdaBoostClassifier(n_estimators = 100),
+    GradientBoostingClassifier(learning_rate = 1, verbose = 1)
 ]
 
 # set the number of cross-validation folds
 CV = 5
 
-# create a dataset of the different models at each fold
-cv_df = pd.DataFrame(index = range(CV * len(models)))
-
 # create empty list to store model results
 entries = []
 
-# loop over list of models and run tests
+# run cross-validation for all models (> 10 hours of processing time)
 for model in models:
     # extract model name from model attribute
     mname = model.__class__.__name__
     # compute accuracy scores across cross-validation exercise
     accuracies = cross_val_score(model, trainfeatures, trainlabels,
-                                 scoring = 'accuracy', cv = CV)
+                                 scoring = 'accuracy', cv = CV, verbose = 1)
     # append fold id and accuracy scores to entries list
     for fold_idx, accuracy in enumerate(accuracies):
         entries.append((mname, fold_idx, accuracy))
         # print loop progress
-        print(str(mname) + ': ' + str(fold_idx) + ' / ' str(len(accuracies)))
-    # fill in the cross-validation dataset
-    cv_df = pd.DataFrame(entries, columns = ['mname', 'fold_idx', 'accuracy'])
+        print(str(mname) + ': ' + str(fold_idx))
     # print loop progress
     print(str(mname) + ' computation concluded.')
+
+# fill in the cross-validation dataset
+cv_df = pd.DataFrame(entries, columns = ['mname', 'fold_idx', 'accuracy'])
 
 # produce boxplots depicting model performance
 sns.boxplot(x = 'mname', y = 'accuracy', data = cv_df)
@@ -132,8 +134,10 @@ sns.stripplot(x = 'mname', y = 'accuracy', data = cv_df,
 
 # display plot
 plt.show()
+plt.savefig('analysis/modelAccuracy.png')
 
 # display list of results
 cv_df.groupby('mname').accuracy.mean()
+cv_df.to_csv('data/modelAccuracy.csv', index = False)
 
 ### test models
