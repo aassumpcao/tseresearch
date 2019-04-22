@@ -49,8 +49,14 @@ source('scripts/05_tse_results.R')
 # wrangle candidacy rejections
 source('scripts/06_tse_rejections.R')
 
-# wrangle judicial decisions and produce classification algorithm
-source('scripts/07_tse_train_sentences.R')
+# wrangle text in sentences for classification
+source('scripts/07_tse_sentence_cleanup.R')
+
+# python3.7: install packages from requirements.txt to run the next script
+system2('cat scripts/requirements.txt | xargs -n 1 pip install')
+
+# python3.7: create sentence classification algorithm from 2016 sentences
+system2('python scripts/07_tse_train_sentence_classification.py &')
 
 # wrangle judicial decisions and apply classification algorithm
 source('scripts/08_tse_test_sentences.R')

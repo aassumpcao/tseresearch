@@ -8,13 +8,10 @@
 
 # import standard libraries
 import codecs
-import glob
 import matplotlib.pyplot as plt
 import numpy as np
 import os
 import pandas as pd
-import pickle
-import re
 import seaborn as sns
 
 # import scikit-learn libraries
@@ -24,8 +21,7 @@ from sklearn.ensemble                import GradientBoostingClassifier
 from sklearn.ensemble                import RandomForestClassifier
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model            import LogisticRegression
-from sklearn.model_selection         import cross_validate
-from sklearn.model_selection         import train_test_split
+from sklearn.model_selection         import cross_validate, train_test_split
 from sklearn.naive_bayes             import MultinomialNB
 from sklearn.svm                     import SVC
 
@@ -92,7 +88,7 @@ trainfeatures, trainlabels = sm.fit_sample(trainfeatures, trainlabels)
 # create decision tree parameter for boosting
 # dt = DecisionTreeClassifier()
 
-# create list of models used. their parameters have been tuned already
+# create list of models used. their parameters have already been tuned
 models = [
     MultinomialNB(),
     LogisticRegression(solver = 'lbfgs', multi_class = 'auto', max_iter = 500),
