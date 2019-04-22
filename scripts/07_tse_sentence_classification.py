@@ -59,7 +59,8 @@ tfidf = TfidfVectorizer(**kwargs)
 
 # create features vector (words) and classes
 features = tfidf.fit_transform(tse.sbody).toarray()
-labels = tse.classID
+labels   = tse.classID
+candIDs  = tse.scraperID
 
 # check dimensionality of data: 16,199 rows; 103,968 features
 features.shape
@@ -67,15 +68,18 @@ features.shape
 # split up features and labels so that we have two datasets: one in
 # which we know sentence class and one in which we don't know sentence
 # class
-trainfeatures = features[:split]
-testfeatures = features[split:]
-trainlabels = labels[:split]
-testlabels = labels[split:]
+trainFeatures = features[:split]
+trainLabels   = labels[:split]
+trainTse      = tse[:split]
+testFeatures  = features[split:]
+testLabels    = labels[split:]
+testTse       = tse[split:]
+testCandIDs   = candIDs[split:]
 
 # oversample train data so that we have fairly balanced classes for
 # training models
 sm = SMOTE()
-trainfeatures, trainlabels = sm.fit_sample(trainfeatures, trainlabels)
+trainFeatures, trainLabels = sm.fit_sample(trainFeatures, trainLabels)
 
 ### train models
 # 1. multinomial naive bayes classification (nb)
@@ -84,9 +88,6 @@ trainfeatures, trainlabels = sm.fit_sample(trainfeatures, trainlabels)
 # 4. random forest
 # 5. adaptive boosting
 # 6. gradient boosting
-
-# create decision tree parameter for boosting
-# dt = DecisionTreeClassifier()
 
 # create list of models used. their parameters have already been tuned
 models = [
@@ -105,16 +106,16 @@ CV = 5
 entries = []
 
 # create list of cross validation arguments outside of function
-cvargs = {'X': trainfeatures, 'y': trainlabels, 'n_jobs': -1, 'verbose': 2,
-          'scoring': {'acc': 'accuracy', 'precision': 'f1_micro'}, 'cv': CV,
-          'return_train_score': True}
+cvkwargs = {'X': trainFeatures, 'y': trainLabels, 'n_jobs': -1, 'verbose': 2,
+            'scoring': {'acc': 'accuracy', 'f1micro': 'f1_micro'}, 'cv': CV,
+            'return_train_score': True}
 
-# run cross-validation for all models (> 10 hours of processing time)
+# run cross-validation for all models (> 10 hours of execution time)
 for model in models:
     # extract model name from model attribute
     mname = model.__class__.__name__
     # compute accuracy scores across cross-validation exercise
-    metrics = cross_validate(model, **cvargs)
+    metrics = cross_validate(model, **cvkwargs)
     # add model name to dictionary of results
     metrics['model'] = [mname] * 5
     # append results to entries list
@@ -126,16 +127,58 @@ for model in models:
 performance = pd.concat([pd.DataFrame(entry) for entry in entries])
 performance.to_csv('data/modelPerformance.csv', index = False)
 
-# # produce boxplots depicting model performance
-# sns.boxplot(x = 'mname', y = 'accuracy', data = cv_df)
-# sns.stripplot(x = 'mname', y = 'accuracy', data = cv_df,
-#               size = 8, jitter = True, edgecolor = 'gray', linewidth = 2)
+# # load dataset after running everything else on longleaf
+# performance = pd.read_csv('data/modelPerformance.csv')
 
-# # display plot
-# plt.show()
-# plt.savefig('analysis/modelAccuracy.png')
+# 1. accuracy produce boxplots depicting model performance
+sns.boxplot(x = 'model', y = 'train_acc', data = performance)
+sns.stripplot(x = 'model', y = 'train_acc', data = performance,
+              size = 8, jitter = True, edgecolor = 'gray', linewidth = 2)
 
-# display list of results
-# cv_df.groupby('mname').accuracy.mean()
+# display plot
+plt.show()
+plt.savefig('analysis/cvTrainAccuracy.png')
+
+# 2. f1_micro: produce boxplots depicting model performance
+sns.boxplot(x = 'model', y = 'train_f1micro', data = performance)
+sns.stripplot(x = 'model', y = 'train_f1micro', data = performance, size = 8,
+              jitter = True, edgecolor = 'gray', linewidth = 2)
+
+# display plot
+plt.show()
+plt.savefig('analysis/cvTrainAccuracy.png')
 
 ### test models
+# here, we are implementing the preferred algorithm on the train data,
+# which was held out during the training process.
+
+# call best performing model: xgboost
+model = GradientBoostingClassifier(learning_rate = 1, verbose = 1)
+
+# produce train, test, and split elements to subset the dataset
+train = train_test_split(trainFeatures, trainLabels, trainTse.index,
+                         test_size = 0, shuffle = False)
+test  = train_test_split(testFeatures, testLabels, testTse.index,
+                         test_size = 1, shuffle = False)
+
+# subset train data
+x_train, y_train, indices_train = train[:-1:2]
+
+# fit features to classes in train dataset
+model.fit(x_train, y_train)
+
+# subset test data
+x_test, y_test, indices_test = test[:-1:2]
+
+# predict y's and their probabilities using x's in test data
+y_pred_proba = model.predict_proba(x_test)
+y_pred = model.predict(x_test)
+
+# save predicted values and probabilities to file
+np.savetxt('data/y_pred_proba.txt', y_pred_proba, '%f', ',')
+np.savetxt('data/y_pred.txt', y_pred, '%d', ',')
+
+# load predicted values and probabilities onto python
+y_pred_proba = np.loadtxt('data/y_pred_proba.txt', ',')
+y_pred = np.loadtxt('data/y_pred.txt', ',')
+

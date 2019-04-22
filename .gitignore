@@ -52,3 +52,6 @@ bbc/
 *.Rda
 *.txt
 *.zip
+
+# Ignore specific files
+scripts/07_sentence_test.py

@@ -5,22 +5,13 @@
 
 # import statements (== packages required to run all scripts)
 if (!require(AER))       {install.packages('AER')}
-if (!require(caret))     {install.packages('caret')}
-if (!require(doMC))      {install.packages('DoMC')}
-if (!require(e1071))     {install.packages('e1071')}
-if (!require(adabag))    {install.packages('adabag')}
 if (!require(here))      {install.packages('here')}
 if (!require(magrittr))  {install.packages('magrittr')}
-if (!require(nnet))      {install.packages('nnet')}
 if (!require(pdftools))  {install.packages('pdftools')}
-if (!require(quanteda))  {install.packages('quanteda')}
 if (!require(readr))     {install.packages('readr')}
 if (!require(stargazer)) {install.packages('stargazer')}
-if (!require(stm))       {install.packages('stm')}
 if (!require(stopwords)) {install.packages('stopwords')}
-if (!require(tidytext))  {install.packages('tidytext')}
 if (!require(tidyverse)) {install.packages('tidyverse')}
-if (!require(tm))        {install.packages('tm')}
 
 # load rproj (comment out if using another R IDE)
 rstudioapi::openProject('2019 Electoral Crime.Rproj')
