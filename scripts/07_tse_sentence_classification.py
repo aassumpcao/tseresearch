@@ -110,7 +110,7 @@ entries = []
 
 # create list of cross validation arguments outside of function
 cvargs = {'X': trainfeatures, 'y': trainlabels, 'n_jobs': -1, 'verbose': 2,
-          'scoring': {'acc': 'accuracy', 'prec': 'precision'}, 'cv': CV,
+          'scoring': {'acc': 'accuracy', 'precision': 'f1_micro'}, 'cv': CV,
           'return_train_score': True}
 
 # run cross-validation for all models (> 10 hours of processing time)
