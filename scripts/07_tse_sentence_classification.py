@@ -46,7 +46,7 @@ ids_to_class = dict(class_id_tse[['classID', 'class']].values)
 
 # sort data by class so that we can manually split dataset later
 tse = tse.sort_values('classID', ascending = False).reset_index(drop = True)
-split = len(tse[tse['classID'] != -1]) - 1
+split = len(tse[tse['classID'] != -1])
 
 ### create tf-idf measures to inspect and transform data
 # pass kwargs to tf-idf vectorizer to construct a measure of word
@@ -60,7 +60,7 @@ tfidf = TfidfVectorizer(**kwargs)
 # create features vector (words) and classes
 features = tfidf.fit_transform(tse.sbody).toarray()
 labels   = tse.classID
-candIDs  = tse.scraperID
+scraper  = tse.scraperID
 
 # check dimensionality of data: 16,199 rows; 103,968 features
 features.shape
@@ -68,13 +68,9 @@ features.shape
 # split up features and labels so that we have two datasets: one in
 # which we know sentence class and one in which we don't know sentence
 # class
-trainFeatures = features[:split]
-trainLabels   = labels[:split]
-trainTse      = tse[:split]
-testFeatures  = features[split:]
-testLabels    = labels[split:]
-testTse       = tse[split:]
-testCandIDs   = candIDs[split:]
+trainFeatures, testFeatures = features[:split], features[split:]
+trainLabels, testLabels = labels[:split], labels[split:]
+testScraper = scraper[split:]
 
 # oversample train data so that we have fairly balanced classes for
 # training models
@@ -130,6 +126,9 @@ performance.to_csv('data/modelPerformance.csv', index = False)
 # # load dataset after running everything else on longleaf
 # performance = pd.read_csv('data/modelPerformance.csv')
 
+# quickly visualize performance
+performance.groupby(['model']).train_acc.mean()
+
 # 1. accuracy produce boxplots depicting model performance
 sns.boxplot(x = 'model', y = 'train_acc', data = performance)
 sns.stripplot(x = 'model', y = 'train_acc', data = performance,
@@ -153,32 +152,49 @@ plt.savefig('analysis/cvTrainAccuracy.png')
 # which was held out during the training process.
 
 # call best performing model: xgboost
-model = GradientBoostingClassifier(learning_rate = 1, verbose = 1)
+xgboost = GradientBoostingClassifier(learning_rate = 1, verbose = 1)
+svmlinr = SVC(kernel = 'linear', verbose = True, probability = True)
 
 # produce train, test, and split elements to subset the dataset
-train = train_test_split(trainFeatures, trainLabels, trainTse.index,
-                         test_size = 0, shuffle = False)
-test  = train_test_split(testFeatures, testLabels, testTse.index,
-                         test_size = 1, shuffle = False)
+kwarg = {'shuffle': False}
+train = train_test_split(trainFeatures, trainLabels, test_size = 0, **kwarg)
+test  = train_test_split(testFeatures, testLabels, test_size = 1, **kwarg)
 
 # subset train data
-x_train, y_train, indices_train = train[:-1:2]
+x_train, y_train = train[:-1:2]
 
-# fit features to classes in train dataset
-model.fit(x_train, y_train)
+# xgboost and svmlinr: fit features to classes in train dataset
+xgboost.fit(x_train, y_train)
+svmlinr.fit(x_train, y_train)
 
 # subset test data
-x_test, y_test, indices_test = test[:-1:2]
+x_test, y_test = test[:-1:2]
 
-# predict y's and their probabilities using x's in test data
-y_pred_proba = model.predict_proba(x_test)
-y_pred = model.predict(x_test)
+# xgboost: predict y's and their probabilities using x's in test data
+y_pred_proba_xg = xgboost.predict_proba(x_test)
+y_pred_xg = xgboost.predict(x_test)
 
-# save predicted values and probabilities to file
-np.savetxt('data/y_pred_proba.txt', y_pred_proba, '%f', ',')
-np.savetxt('data/y_pred.txt', y_pred, '%d', ',')
+# svmlinr: predict y's and their probabilities using x's in test data
+y_pred_proba_svm = svmlinr.predict_proba(x_test)
+y_pred_svm = svmlinr.predict(x_test)
 
-# load predicted values and probabilities onto python
-y_pred_proba = np.loadtxt('data/y_pred_proba.txt', ',')
-y_pred = np.loadtxt('data/y_pred.txt', ',')
+# xgboost: save predicted values and probabilities to file
+np.savetxt('data/y_pred_proba_xg.txt', y_pred_proba_xg, '%f', ',')
+np.savetxt('data/y_pred_xg.txt', y_pred_xg, '%d', ',')
+
+# svmlinr: save predicted values and probabilities to file
+np.savetxt('data/y_pred_proba_svm.txt', y_pred_proba_svm, '%f', ',')
+np.savetxt('data/y_pred_svm.txt', y_pred_svm, '%d', ',')
+
+# xgboost: load predicted values and probabilities onto python
+y_pred_proba_xg = np.loadtxt('data/y_pred_proba_xg.txt', delimiter = ',')
+y_pred_xg = np.loadtxt('data/y_pred_xg.txt')
+
+# svmlinr: load predicted values and probabilities onto python
+y_pred_proba_svm = np.loadtxt('data/y_pred_proba_svm.txt', delimiter = ',')
+y_pred_svm = np.loadtxt('data/y_pred_svm.txt')
+
+# create new datasets with predictions
+pd.DataFrame({'xgPred': y_pred_xg, 'scraperID': testScraper})
+
 
