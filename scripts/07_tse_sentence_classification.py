@@ -52,7 +52,7 @@ split = len(tse[tse['classID'] != -1])
 # pass kwargs to tf-idf vectorizer to construct a measure of word
 # importance
 kwargs = {'sublinear_tf': True, 'min_df': 5, 'stop_words': stopwords,
-          'encoding': 'utf-8', 'ngram_range': (1, 2), 'norm': 'l2'}
+    'encoding': 'utf-8', 'ngram_range': (1, 2), 'norm': 'l2'}
 
 # create tf-idf vector
 tfidf = TfidfVectorizer(**kwargs)
@@ -127,16 +127,16 @@ performance.to_csv('data/modelPerformance.csv', index = False)
 # performance = pd.read_csv('data/modelPerformance.csv')
 
 # quickly visualize performance
-performance.groupby(['model']).train_acc.mean()
+performance.groupby(['model']).test_acc.mean()
 
 # 1. accuracy produce boxplots depicting model performance
-sns.boxplot(x = 'model', y = 'train_acc', data = performance)
-sns.stripplot(x = 'model', y = 'train_acc', data = performance,
-              size = 8, jitter = True, edgecolor = 'gray', linewidth = 2)
+sns.boxplot(x = 'model', y = 'test_acc', data = performance)
+sns.stripplot(x = 'model', y = 'test_acc', data = performance, size = 8,
+              jitter = True, edgecolor = 'gray', linewidth = 2)
 
 # display plot
 plt.show()
-plt.savefig('analysis/cvTrainAccuracy.png')
+plt.savefig('analysis/cvTestAccuracy.png')
 
 # 2. f1_micro: produce boxplots depicting model performance
 sns.boxplot(x = 'model', y = 'train_f1micro', data = performance)
@@ -155,28 +155,17 @@ plt.savefig('analysis/cvTrainAccuracy.png')
 xgboost = GradientBoostingClassifier(learning_rate = 1, verbose = 1)
 svmlinr = SVC(kernel = 'linear', verbose = True, probability = True)
 
-# produce train, test, and split elements to subset the dataset
-kwarg = {'shuffle': False}
-train = train_test_split(trainFeatures, trainLabels, test_size = 0, **kwarg)
-test  = train_test_split(testFeatures, testLabels, test_size = 1, **kwarg)
-
-# subset train data
-x_train, y_train = train[:-1:2]
-
 # xgboost and svmlinr: fit features to classes in train dataset
-xgboost.fit(x_train, y_train)
-svmlinr.fit(x_train, y_train)
-
-# subset test data
-x_test, y_test = test[:-1:2]
+xgboost.fit(trainFeatures, trainLabels)
+svmlinr.fit(trainFeatures, trainLabels)
 
 # xgboost: predict y's and their probabilities using x's in test data
-y_pred_proba_xg = xgboost.predict_proba(x_test)
-y_pred_xg = xgboost.predict(x_test)
+y_pred_proba_xg = xgboost.predict_proba(testFeatures)
+y_pred_xg = xgboost.predict(testFeatures)
 
 # svmlinr: predict y's and their probabilities using x's in test data
-y_pred_proba_svm = svmlinr.predict_proba(x_test)
-y_pred_svm = svmlinr.predict(x_test)
+y_pred_proba_svm = svmlinr.predict_proba(testFeatures)
+y_pred_svm = svmlinr.predict(testFeatures)
 
 # xgboost: save predicted values and probabilities to file
 np.savetxt('data/y_pred_proba_xg.txt', y_pred_proba_xg, '%f', ',')
