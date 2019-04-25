@@ -21,7 +21,7 @@ from sklearn.ensemble                import GradientBoostingClassifier
 from sklearn.ensemble                import RandomForestClassifier
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model            import LogisticRegression
-from sklearn.model_selection         import cross_validate, train_test_split
+from sklearn.model_selection         import cross_validate
 from sklearn.naive_bayes             import MultinomialNB
 from sklearn.svm                     import SVC
 
@@ -157,6 +157,7 @@ xgboost = GradientBoostingClassifier(learning_rate = 1, verbose = 1)
 svmlinr = SVC(kernel = 'linear', verbose = True, probability = True)
 
 # xgboost and svmlinr: fit features to classes in train dataset
+# (> 15 hours execution time)
 xgboost.fit(trainFeatures, trainLabels)
 svmlinr.fit(trainFeatures, trainLabels)
 
@@ -184,8 +185,27 @@ np.savetxt('data/y_pred_svm.txt', y_pred_svm, '%d', ',')
 # y_pred_proba_svm = np.loadtxt('data/y_pred_proba_svm.txt', delimiter = ',')
 # y_pred_svm = np.loadtxt('data/y_pred_svm.txt')
 
-# create new datasets with predictions
-tseObserved  = pd.DataFrame({'rulingClass': trainLabels, 'scraperID': })
-tsePredicted = pd.DataFrame({'svmPred': y_pred_svm, 'xgPred': y_pred_xg, 'scraperID': testScraper})
+# create new datasets with observed and predicted classes
+tseObserved  = pd.DataFrame({'rulingClass': labels[:split],
+                             'scraperID': trainScraper})
+tsePredicted = pd.DataFrame({'svmPred': y_pred_svm, 'xgPred': y_pred_xg,
+                             'scraperID': testScraper})
 
+# join arrays
+arrays = [y_pred_proba_xg, y_pred_proba_svm]
 
+# create new dataset with the class probability from svm and xg algos
+tseClassProb = pd.concat([pd.DataFrame(array) for array in arrays], axis = 1)
+tseClassProb['scraperID'] = testScraper
+
+# rename dataset columns
+tseClassProb.columns = [
+    'xgClass0Prob', 'xgClass1Prob', 'xgClass2Prob', 'xgClass3Prob',
+    'svmClass0Prob', 'svmClass1Prob', 'svmClass2Prob', 'svmClass3Prob'
+]
+
+# save to file
+saveargs = {'index': False, 'float_format': '%f'}
+tseObserved.to_csv('data/tseObserved.csv', **saveargs)
+tsePredicted.to_csv('data/tsePredicted.csv', **saveargs)
+tseClassProb.to_csv('data/tseClassProb.csv', **saveargs)
