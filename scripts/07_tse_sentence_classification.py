@@ -69,8 +69,8 @@ features.shape
 # which we know sentence class and one in which we don't know sentence
 # class
 trainFeatures, testFeatures = features[:split], features[split:]
-trainLabels, testLabels = labels[:split], labels[split:]
-testScraper = scraper[split:]
+trainLabels, testLabels     = labels[:split], labels[split:]
+trainScraper, testScraper   = scraper[:split], scraper[split:]
 
 # oversample train data so that we have fairly balanced classes for
 # training models
@@ -128,6 +128,7 @@ performance.to_csv('data/modelPerformance.csv', index = False)
 
 # quickly visualize performance
 performance.groupby(['model']).test_acc.mean()
+performance.groupby(['model']).test_f1micro.mean()
 
 # 1. accuracy produce boxplots depicting model performance
 sns.boxplot(x = 'model', y = 'test_acc', data = performance)
@@ -139,13 +140,13 @@ plt.show()
 plt.savefig('analysis/cvTestAccuracy.png')
 
 # 2. f1_micro: produce boxplots depicting model performance
-sns.boxplot(x = 'model', y = 'train_f1micro', data = performance)
-sns.stripplot(x = 'model', y = 'train_f1micro', data = performance, size = 8,
+sns.boxplot(x = 'model', y = 'test_f1micro', data = performance)
+sns.stripplot(x = 'model', y = 'test_f1micro', data = performance, size = 8,
               jitter = True, edgecolor = 'gray', linewidth = 2)
 
 # display plot
 plt.show()
-plt.savefig('analysis/cvTrainAccuracy.png')
+plt.savefig('analysis/cvTestAccuracy.png')
 
 ### test models
 # here, we are implementing the preferred algorithm on the train data,
@@ -175,15 +176,16 @@ np.savetxt('data/y_pred_xg.txt', y_pred_xg, '%d', ',')
 np.savetxt('data/y_pred_proba_svm.txt', y_pred_proba_svm, '%f', ',')
 np.savetxt('data/y_pred_svm.txt', y_pred_svm, '%d', ',')
 
-# xgboost: load predicted values and probabilities onto python
-y_pred_proba_xg = np.loadtxt('data/y_pred_proba_xg.txt', delimiter = ',')
-y_pred_xg = np.loadtxt('data/y_pred_xg.txt')
+# # xgboost: load predicted values and probabilities onto python
+# y_pred_proba_xg = np.loadtxt('data/y_pred_proba_xg.txt', delimiter = ',')
+# y_pred_xg = np.loadtxt('data/y_pred_xg.txt')
 
-# svmlinr: load predicted values and probabilities onto python
-y_pred_proba_svm = np.loadtxt('data/y_pred_proba_svm.txt', delimiter = ',')
-y_pred_svm = np.loadtxt('data/y_pred_svm.txt')
+# # svmlinr: load predicted values and probabilities onto python
+# y_pred_proba_svm = np.loadtxt('data/y_pred_proba_svm.txt', delimiter = ',')
+# y_pred_svm = np.loadtxt('data/y_pred_svm.txt')
 
 # create new datasets with predictions
-pd.DataFrame({'xgPred': y_pred_xg, 'scraperID': testScraper})
+tseObserved  = pd.DataFrame({'rulingClass': trainLabels, 'scraperID': })
+tsePredicted = pd.DataFrame({'svmPred': y_pred_svm, 'xgPred': y_pred_xg, 'scraperID': testScraper})
 
 
