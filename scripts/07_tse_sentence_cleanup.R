@@ -16,7 +16,7 @@ load('data/tseSentences.Rda')
 load('data/electoralCrimes.Rda')
 
 # load reasons for rejection
-narrow.reasons <- readRDS('analysis/rejections.Rds') %>% str_remove_all('\\.$')
+narrow.reasons <- readRDS('data/rejections.Rds') %>% str_remove_all('\\.$')
 
 # create new order of severity of electoral crimes
 neworder <- c(5, 3, 1, 4, 6, 7, 8, 2)
