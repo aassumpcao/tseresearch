@@ -52,7 +52,7 @@ split = len(tse[tse['classID'] != -1])
 # pass kwargs to tf-idf vectorizer to construct a measure of word
 # importance
 kwargs = {'sublinear_tf': True, 'min_df': 5, 'stop_words': stopwords,
-    'encoding': 'utf-8', 'ngram_range': (1, 2), 'norm': 'l2'}
+          'encoding': 'utf-8', 'ngram_range': (1, 2), 'norm': 'l2'}
 
 # create tf-idf vector
 tfidf = TfidfVectorizer(**kwargs)
@@ -196,13 +196,15 @@ arrays = [y_pred_proba_xg, y_pred_proba_svm]
 
 # create new dataset with the class probability from svm and xg algos
 tseClassProb = pd.concat([pd.DataFrame(array) for array in arrays], axis = 1)
-tseClassProb['scraperID'] = testScraper
 
 # rename dataset columns
 tseClassProb.columns = [
     'xgClass0Prob', 'xgClass1Prob', 'xgClass2Prob', 'xgClass3Prob',
     'svmClass0Prob', 'svmClass1Prob', 'svmClass2Prob', 'svmClass3Prob'
 ]
+
+# add scraperID column
+tseClassProb['scraperID'] = testScraper.reset_index(drop = True)
 
 # save to file
 saveargs = {'index': False, 'float_format': '%f'}

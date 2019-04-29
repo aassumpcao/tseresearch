@@ -66,11 +66,12 @@ tse %<>%
   mutate_at(vars(1:2), ~str_remove_all(., '_|\\(|\\)')) %>%
   mutate_at(vars(1:2), ~str_replace_all(., '~|`|´|^|º|\\"' , '')) %>%
   mutate_at(vars(1:2), ~str_squish(.)) %>%
-  arrange(DS_MOTIVO_CASSACAO) %>%
-  select(scraperID, broad.rejection, narrow.rejection, shead, sbody)
+  arrange(DS_MOTIVO_CASSACAO)
 
-# write as txt
-write.csv(tse, 'data/tse.csv', row.names = FALSE)
+# write to file
+save(electoralCrimes, file = 'data/tseAnalysis.Rda')
+select(tse, scraperID, broad.rejection, narrow.rejection, shead, sbody) %>%
+  write_csv('data/tse.csv')
 
 # create list of stopwords
 stopwords <- c(stopwords::stopwords('portuguese'), 'é', 'art', 'nº', '2016',
