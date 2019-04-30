@@ -11,20 +11,37 @@ library(magrittr)
 library(tidyverse)
 
 # load data
-load('data/tseComplete.Rda')
+load('data/tseAnalysis.Rda')
 load('data/tseSummary.Rda')
-load('data/electoralCrimes.Rda')
 
 # load csv files
-tseObserved  <- read_csv('data/tseObserved.csv')
-tsePredicted <- read_csv('data/tsePredicted.csv')
+tseObserved  <- read_csv('data/tseObserved.csv') %>%
+                mutate(scraperID = as.character(scraperID))
+tsePredicted <- read_csv('data/tsePredicted.csv') %>%
+                mutate(scraperID = as.character(scraperID))
 tseClassProb <- read_csv('data/tseClassProb.csv')
 
 # define same classes as python
 classes <- c('Ficha Limpa' = 0, 'Lei das Eleições' = 1,
              'Requisito Faltante' = 2, 'Partido/Coligação' = 3)
 
-#
+# build analysis dataset from scratch
+tse.analysis <- electoralCrimes %>%
+  select(scraperID, ruling.class = broad.rejection)
+
+# join the predictions for each ruling class
+tse.analysis %<>%
+  left_join(tseObserved, by = 'scraperID') %>%
+  distinct(scraperID, .keep_all = TRUE) %>%
+  select(-rulingClass) %>%
+  left_join(tsePredicted, by = 'scraperID') %>%
+  distinct(scraperID, .keep_all = TRUE) %>%
+  select(-xgPred) %>%
+  mutate(ruling.class = ruling.class %>% {ifelse(is.na(.), svmPred, .)}) %$%
+  table(ruling.class)
 
 
-rm(list = ls())
+
+
+
+
