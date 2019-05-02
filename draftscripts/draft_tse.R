@@ -536,3 +536,27 @@ summary(topicModel)
 # tidy results
 beta.results <- tidy(topicModel)
 
+# define relevant election years
+years <- seq(2004, 2016, 4)
+
+# change variable identifying office type in vacancies dataset and filter down
+vacancies %<>%
+  mutate(CODIGO_CARGO = ifelse(ANO_ELEICAO == 2016, CD_CARGO, CODIGO_CARGO)) %>%
+  filter(ANO_ELEICAO %in% years)
+
+
+
+
+left_join(
+  filter(sections, ANO_ELEICAO %in% years),
+  filter(vacancies, ANO_ELEICAO %in% years),
+  by = c('SIGLA_UE', 'CODIGO_CARGO', 'ANO_ELEICAO')) %>%
+filter(!(NUM_VOTAVEL %in% c(95, 96, 97))) %>%
+group_by(SIGLA_UE, ANO_ELEICAO, CODIGO_CARGO, NUM_TURNO, QTDE_VAGAS) %>%
+summarize(total_votes = sum(votes2)) %>%
+mutate(votes1 = case_when(CODIGO_CARGO == 11 ~ floor(total_votes / 2),
+                          CODIGO_CARGO == 13 ~ floor(total_votes / QTDE_VAGAS))
+)
+
+
+filter(vacancies, ANO_ELEICAO == 2014) %$% table(CODIGO_CARGO)
