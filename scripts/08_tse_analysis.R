@@ -63,7 +63,6 @@ tse.analysis %<>% select(-svmPred) %>% left_join(electoralCrimes, 'scraperID')
 
 # compute necessary votes used criteria 1 and 2.
 elections <- left_join(sections, vacancies, by = c('SIGLA_UE', 'CODIGO_CARGO')) %>%
-
   filter(!(NUM_VOTAVEL %in% c(95, 96, 97))) %>%
   group_by(SIGLA_UE, CODIGO_CARGO, NUM_TURNO, QTDE_VAGAS) %>%
   summarize(total_votes = sum(votes2)) %>%

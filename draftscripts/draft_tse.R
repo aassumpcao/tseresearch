@@ -536,27 +536,41 @@ summary(topicModel)
 # tidy results
 beta.results <- tidy(topicModel)
 
-# define relevant election years
-years <- seq(2004, 2016, 4)
+# define relevant election years and criteria for join function across datasets
+years <- seq(2004, 2012, 4)
+joinkey.1 <- c('SIGLA_UE', 'CODIGO_CARGO', 'ANO_ELEICAO')
+joinkey.2 <- c('SIGLA_UE' = 'SG_UE', 'CODIGO_CARGO' = 'CD_CARGO', 'ANO_ELEICAO')
 
-# change variable identifying office type in vacancies dataset and filter down
-vacancies %<>%
-  mutate(CODIGO_CARGO = ifelse(ANO_ELEICAO == 2016, CD_CARGO, CODIGO_CARGO)) %>%
-  filter(ANO_ELEICAO %in% years)
+# split dataset for later join
+vacancies.1 <- filter(vacancies, ANO_ELEICAO != 2016)
+vacancies.2 <- filter(vacancies, ANO_ELEICAO == 2016)
+
+# split dataset for later join
+sections.1 <- filter(vacancies, ANO_ELEICAO != 2016)
+sections.2 <- filter(vacancies, ANO_ELEICAO != 2016)
+
+# create elections dataset
+sections %>%
+  left_join(filter(vacancies, ANO_ELEICAO %in% years), joinkey.1) %>%
+  # mutate(SIGLA_UE = as.integer(SIGLA_UE)) %>%
+  left_join(filter(vacancies, ANO_ELEICAO == 2016), joinkey.2) %>%
+  mutate(QTDE_VAGAS = ifelse(ANO_ELEICAO == 2016, QT_VAGAS, QTDE_VAGAS)) %>%
+  filter(!(NUM_VOTAVEL %in% c(95, 96, 97))) %>%
+  group_by(SIGLA_UE, ANO_ELEICAO, CODIGO_CARGO, NUM_TURNO, QTDE_VAGAS) %>%
+  summarize(total_votes = sum(votes2)) %>%
+  mutate(votes1 = case_when(CODIGO_CARGO == 11 ~ floor(total_votes / 2),
+    CODIGO_CARGO == 13 ~ floor(total_votes / QTDE_VAGAS))
+  )
 
 
 
+vacancies %>%
+  {left_join(filter(sections, ANO_ELEICAO %in% years), ., joinkey)} %>%
+  filter(!(NUM_VOTAVEL %in% c(95, 96, 97))) %>%
+  group_by(SIGLA_UE, ANO_ELEICAO, CODIGO_CARGO, NUM_TURNO, QTDE_VAGAS) %>%
+  summarize(total_votes = sum(votes2)) %>%
+  mutate(votes1 = case_when(CODIGO_CARGO == 11 ~ floor(total_votes / 2),
+    CODIGO_CARGO == 13 ~ floor(total_votes / QTDE_VAGAS))
+  ) -> elections
 
-left_join(
-  filter(sections, ANO_ELEICAO %in% years),
-  filter(vacancies, ANO_ELEICAO %in% years),
-  by = c('SIGLA_UE', 'CODIGO_CARGO', 'ANO_ELEICAO')) %>%
-filter(!(NUM_VOTAVEL %in% c(95, 96, 97))) %>%
-group_by(SIGLA_UE, ANO_ELEICAO, CODIGO_CARGO, NUM_TURNO, QTDE_VAGAS) %>%
-summarize(total_votes = sum(votes2)) %>%
-mutate(votes1 = case_when(CODIGO_CARGO == 11 ~ floor(total_votes / 2),
-                          CODIGO_CARGO == 13 ~ floor(total_votes / QTDE_VAGAS))
-)
-
-
-filter(vacancies, ANO_ELEICAO == 2014) %$% table(CODIGO_CARGO)
+elections
