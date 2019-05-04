@@ -46,6 +46,7 @@ tse.analysis %<>%
 # convert ruling class numbers into the same earlier categories
 for (i in 1:4) {
   tse.analysis$ruling.class %<>% {ifelse(. == i - 1, names(classes)[[i]], .)}
+  if (i == 4) {rm(i)}
 }
 
 # join with earlier data
@@ -72,8 +73,7 @@ vacancies %<>%
     SIGLA_UE     = ifelse(ANO_ELEICAO == 2016, str_pad(SG_UE, 5, pad = '0'),
                           SIGLA_UE),
     CODIGO_CARGO = ifelse(ANO_ELEICAO == 2016, CD_CARGO, CODIGO_CARGO),
-    QTDE_VAGAS   = ifelse(ANO_ELEICAO == 2016, QT_VAGAS, QTDE_VAGAS)
-  )
+    QTDE_VAGAS   = ifelse(ANO_ELEICAO == 2016, QT_VAGAS, QTDE_VAGAS))
 
 # create first and second vote variable (for maj. and prop. elections)
 elections <- vacancies %>%
@@ -82,8 +82,7 @@ elections <- vacancies %>%
   group_by(SIGLA_UE, ANO_ELEICAO, CODIGO_CARGO, NUM_TURNO, QTDE_VAGAS) %>%
   summarize(total_votes = sum(votes2)) %>%
   mutate(votes1 = case_when(CODIGO_CARGO == 11 ~ floor(total_votes / 2),
-    CODIGO_CARGO == 13 ~ floor(total_votes / QTDE_VAGAS))
-  )
+    CODIGO_CARGO == 13 ~ floor(total_votes / QTDE_VAGAS)))
 
 # create third vote variable (for proportional elections)
 elections <- sections %>%
@@ -92,3 +91,72 @@ elections <- sections %>%
   {left_join(elections, ., joinkey.2)} %>%
   filter(QTDE_VAGAS == rank) %>%
   ungroup()
+
+# define last conditions for total votes
+elections$election_votes <- elections %$%
+  ifelse(CODIGO_CARGO == 13 & (votes2 >= votes1), votes1, votes2)
+
+# remove useless objects ls()
+rm(list = objects(pattern = 'lass|join|Summ|Pred|Obser|years|local'))
+
+# rename variables in the remaining datasets
+tse.analysis %<>%
+  mutate_all(as.character) %>%
+  transmute(election.year              = ANO_ELEICAO,
+            election.stage             = NUM_TURNO,
+            election.state             = SIGLA_UF,
+            election.ID                = SIGLA_UE,
+            office.ID                  = CODIGO_CARGO,
+            scraper.ID                 = scraperID,
+            candidate.ID               = SEQUENCIAL_CANDIDATO,
+            candidate.number           = NUMERO_CANDIDATO,
+            candidate.name             = NOME_CANDIDATO,
+            candidate.ssn              = CPF_CANDIDATO,
+            candidate.dob              = DATA_NASCIMENTO,
+            candidate.age              = IDADE_DATA_ELEICAO,
+            candidate.ethnicity        = DESCRICAO_COR_RACA,
+            candidate.ethnicity.ID     = CODIGO_COR_RACA,
+            candidate.gender           = DESCRICAO_SEXO,
+            candidate.gender.ID        = CODIGO_SEXO,
+            candidate.occupation       = DESCRICAO_OCUPACAO,
+            candidate.occupation.ID    = CODIGO_OCUPACAO,
+            candidate.education        = DESCRICAO_GRAU_INSTRUCAO,
+            candidate.education.ID     = COD_GRAU_INSTRUCAO,
+            candidate.maritalstatus    = DESCRICAO_ESTADO_CIVIL,
+            candidate.maritalstatus.ID = CODIGO_ESTADO_CIVIL,
+            candidate.votes            = as.integer(votes),
+            candidacy.situation        = DES_SITUACAO_CANDIDATURA,
+            candidacy.situation.ID     = COD_SITUACAO_CANDIDATURA,
+            candidacy.expenditures     = DESPESA_MAX_CAMPANHA,
+            candidacy.invalid.ontrial  = trialCrime,
+            candidacy.invalid.onappeal = appealCrime,
+            candidate.ruling.class     = ruling.class,
+            party.number               = NUMERO_PARTIDO,
+            party.coalition            = COMPOSICAO_LEGENDA)
+
+elections %<>%
+  mutate_all(as.character) %>%
+  transmute(election.year            = ANO_ELEICAO,
+            election.stage           = NUM_TURNO,
+            election.ID              = SIGLA_UE,
+            office.ID                = CODIGO_CARGO,
+            office.vacancies         = QTDE_VAGAS,
+            elected.candidate.number = NUM_VOTAVEL,
+            votes.total              = as.integer(total_votes),
+            votes.foroffice          = as.integer(election_votes))
+
+# create final dataset
+tse.analysis %>%
+  left_join(elections, by = c('election.year', 'election.stage',
+    'election.ID', 'office.ID')) %>%
+  mutate(
+    candidate.votes  = as.integer(candidate.votes),
+    outcome.elected  = ifelse(candidate.votes >= votes.foroffice, 1, 0),
+    outcome.share    = round((candidate.votes / votes.total) * 100, digits = 2),
+    outcome.distance = round((candidate.votes - votes.foroffice) * 100 /
+                             votes.total, digits = 2)) %>%
+  select(
+    contains('election'), matches('office\\.'), contains('outcome'),
+    contains('votes'), contains('candidate'), contains('candidacy'),
+    contains('party')
+  )
