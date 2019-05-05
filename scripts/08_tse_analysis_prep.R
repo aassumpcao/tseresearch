@@ -259,8 +259,7 @@ campaign %>%
   group_by(office.ID) %>%
   mutate(x = ifelse(is.na(x), mean(x, na.rm = TRUE), x)) %>%
   ungroup() %>%
-  rename(candidacy.expenditures.actual = x) ->
-  tse.analysis
+  rename(candidacy.expenditures.actual = x) -> tse.analysis
 
 # add turnout
 # add ses variables
