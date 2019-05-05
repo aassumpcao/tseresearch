@@ -576,4 +576,31 @@ sections %>%
     CODIGO_CARGO == 13 ~ floor(total_votes / QTDE_VAGAS))
   )
 
+# test campaign data
+library(tidyverse)
+library(magrittr)
+load('data/campaign.Rda')
 
+# select variables in final dataset that will be used to match campaign spending
+campaign.match <- tse.analysis %>% select(1, 4:6, 15)
+
+# define joinkey
+joinkey <- c('ANO_ELEICAO' = 'election.year', 'SG_UE' = 'election.ID',
+             'NR_CANDIDATO' = 'candidate.number')
+
+# filter observations down to municipal elections
+campaign %>%
+  filter(ANO_ELEICAO %in% seq(2004, 2016, 4) & DS_CARGO != 'Vice-prefeito') %>%
+  mutate(CD_CARGO = ifelse(DS_CARGO == 'Vereador', 13, 11)) %>%
+  inner_join(campaign.match, joinkey) %>%
+  group_by(scraper.ID) %>%
+  summarize(x = sum(TOTAL_DESPESA)) %>%
+  {left_join(tse.analysis, ., 'scraper.ID')} %>%
+  select(1:30, x, 31:36) %>%
+  group_by(election.ID) %>%
+  mutate(x = ifelse(is.na(x), mean(x, na.rm = TRUE), x)) %>%
+  group_by(office.ID) %>%
+  mutate(x = ifelse(is.na(x), mean(x, na.rm = TRUE), x)) %>%
+  ungroup() %>%
+  rename(candidacy.expenditures.actual = x) ->
+  tse.analysis
