@@ -7,6 +7,7 @@
 # author: andre assumpcao
 # by andre.assumpcao@gmail.com
 
+### data and library calls
 # import libraries
 library(magrittr)
 library(tidyverse)
@@ -25,6 +26,25 @@ tsePredicted <- read_csv('data/tsePredicted.csv') %>%
                 mutate(scraperID = as.character(scraperID))
 tseClassProb <- read_csv('data/tseClassProb.csv')
 
+### function definitions
+# define function to calculate age from dob
+calc_age <- function(birthDate, refDate = Sys.Date()) {
+  # Args:
+  #   birthDate: argument taking up date of birth (YMD format)
+  #   refDate:   reference date to calculate age (also YMD format)
+
+  # Returns:
+  #   individual's age in years
+
+  # Body:
+  #   make one call to lubridate functions
+  time <- lubridate::as.period(lubridate::interval(birthDate, refDate), 'year')
+
+  #   return year element of period object
+  return(time$year)
+}
+
+### body
 # define same classes as python
 classes <- c('Ficha Limpa' = 0, 'Lei das Eleições' = 1,
              'Requisito Faltante' = 2, 'Partido/Coligação' = 3)
@@ -130,7 +150,7 @@ tse.analysis %<>%
             candidacy.expenditures     = DESPESA_MAX_CAMPANHA,
             candidacy.invalid.ontrial  = trialCrime,
             candidacy.invalid.onappeal = appealCrime,
-            candidate.ruling.class     = ruling.class,
+            candidacy.ruling.class     = ruling.class,
             party.number               = NUMERO_PARTIDO,
             party.coalition            = COMPOSICAO_LEGENDA)
 
@@ -145,8 +165,8 @@ elections %<>%
             votes.total              = as.integer(total_votes),
             votes.foroffice          = as.integer(election_votes))
 
-# create final dataset
-tse.analysis %>%
+# prepare outcomes in final dataset
+tse.analysis %<>%
   left_join(elections, by = c('election.year', 'election.stage',
     'election.ID', 'office.ID')) %>%
   mutate(
@@ -154,9 +174,61 @@ tse.analysis %>%
     outcome.elected  = ifelse(candidate.votes >= votes.foroffice, 1, 0),
     outcome.share    = round((candidate.votes / votes.total) * 100, digits = 2),
     outcome.distance = round((candidate.votes - votes.foroffice) * 100 /
-                             votes.total, digits = 2)) %>%
+                              votes.total, digits = 2)
+  ) %>%
   select(
     contains('election'), matches('office\\.'), contains('outcome'),
     contains('votes'), contains('candidate'), contains('candidacy'),
     contains('party')
+  )
+
+# prepare covariates
+#   1. age
+#   2. gender
+#   3. education
+#   4. marital status
+#   5. ethnicity             - not available before 2016
+#   6. campaign expenditures - not available for preliminary analysis
+#   7. candidate's political experience
+
+# fix age
+tse.analysis %<>%
+  mutate(dob = lubridate::dmy(candidate.dob), candidate.dob = dob) %>%
+  mutate(age = case_when(election.year == 2004 ~ calc_age(dob, '2004-10-03'),
+                         election.year == 2008 ~ calc_age(dob, '2008-10-05'),
+                         election.year == 2012 ~ calc_age(dob, '2012-10-07'),
+                         election.year == 2016 ~ calc_age(dob, '2016-10-02'))
+  ) %>%
+  mutate(age = ifelse(is.na(age), as.integer(mean(age, na.rm = TRUE)), age)) %>%
+  mutate(age = ifelse(age > 86, 2008 - age, age), candidate.age = age) %>%
+  select(-age, -dob)
+tse.analysis
+# fix gender
+tse.analysis %<>%
+  mutate(candidate.male = ifelse(candidate.gender.ID != 4, 1, 0)) %>%
+  select(1:20, candidate.male, 23:37)
+
+# fix education
+tse.analysis %<>%
+  select(-candidate.education.ID) %>%
+  mutate(candidate.education = str_remove(candidate.education, 'ENSINO')) %>%
+  mutate(candidate.education = str_trim(candidate.education)) %>%
+  mutate(candidate.education = ifelse(candidate.education == 'NÃO INFORMADO',
+                                      'SUPERIOR COMPLETO', candidate.education)
+  )
+
+# fix marital status
+tse.analysis %<>%
+  mutate(candidate.maritalstatus = ifelse(
+    candidate.maritalstatus == 'NÃO INFORMADO', 'SOLTEIRO(A)',
+    candidate.maritalstatus)
+  ) %>%
+  select(-candidate.maritalstatus.ID)
+
+# fix candidacy expenditures
+tse.analysis %<>%
+  mutate(candidacy.expenditures = as.integer(candidacy.expenditures)) %>%
+  mutate(candidacy.expenditures = ifelse(is.na(candidacy.expenditures) |
+    candidacy.expenditures == -1, mean(candidacy.expenditures, na.rm = TRUE),
+    candidacy.expenditures)
   )

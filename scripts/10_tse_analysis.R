@@ -285,7 +285,7 @@ analysis <- candidates %>%
   )
 
 ################################################################################
-# prepare covariates for summary statistics
+# prepare covariates
 #   1. age
 #   2. gender
 #   3. education

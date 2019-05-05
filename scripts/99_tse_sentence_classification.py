@@ -152,7 +152,7 @@ plt.savefig('analysis/cvTestAccuracy.png')
 # here, we are implementing the preferred algorithm on the train data,
 # which was held out during the training process.
 
-# call best performing model: xgboost
+# call best performing models: svm (1st) and xgboost (2nd)
 xgboost = GradientBoostingClassifier(learning_rate = 1, verbose = 1)
 svmlinr = SVC(kernel = 'linear', verbose = True, probability = True)
 
