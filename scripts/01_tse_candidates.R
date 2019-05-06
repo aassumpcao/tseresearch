@@ -7,7 +7,6 @@
 
 ### import statements
 # import packages
-library(here)
 library(magrittr)
 library(readr)
 library(tidyverse)

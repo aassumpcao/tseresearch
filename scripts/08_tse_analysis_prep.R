@@ -14,6 +14,7 @@ library(tidyverse)
 
 # load data
 load('data/campaign.Rda')
+load('data/details.Rda')
 load('data/sections.Rda')
 load('data/tseAnalysis.Rda')
 load('data/tseSummary.Rda')
@@ -262,7 +263,10 @@ campaign %>%
   rename(candidacy.expenditures.actual = x) -> tse.analysis
 
 # add turnout
-# add ses variables
+
 
 # remove useless objects
 rm(joinkey, campaign.match)
+
+# remove all for serial sourcing
+rm(list = ls())

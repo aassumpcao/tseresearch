@@ -604,3 +604,96 @@ campaign %>%
   ungroup() %>%
   rename(candidacy.expenditures.actual = x) ->
   tse.analysis
+
+######## detalhes
+
+# extract column names from accompanying .pdf file
+codebook <- pdf_text('LEIAME.pdf')
+codebook <- strsplit(codebook, '\n')
+codebook <- unlist(codebook[22])[5:34]
+
+# fix names
+codebook %<>% substr(0, 26) %>% {sub('\\(\\*\\)', '', .)} %>% trimws()
+codebook <- codebook[which(codebook != '')]
+
+# find files
+files <- list.files('../2018 TSE Databank/', pattern = 'detalh(.)*(04|8|12|16)')
+paths <- paste0('../2018 TSE Databank/', files)
+
+# unzip 2004 election files
+mapply(unzip, paths, MoreArgs = list(exdir = './detalhes'))
+
+# wait for all files to be unzipped
+Sys.sleep(15)
+
+# get file names
+detalhes2004 <- list.files('./detalhes', pattern = '2004', full.names = TRUE)
+detalhes2008 <- list.files('./detalhes', pattern = '2008', full.names = TRUE)
+detalhes2012 <- list.files('./detalhes', pattern = '2012', full.names = TRUE)
+detalhes2016 <- list.files('./detalhes', pattern = '2016', full.names = TRUE)
+
+# build dataset
+details2004 <- tibble()
+
+# loop over election years and create datasets
+for (i in detalhes2004) {
+  # read each txt file
+  temp.ds <- read_delim(i, ';', escape_double = FALSE, col_names = FALSE,
+    col_type = cols(.default = 'c'), locale = locale(encoding = 'Latin1'),
+    trim_ws = TRUE)
+  # bind to empty dtaset
+  details2004 <- bind_rows(details2004, temp.ds)
+}
+
+# build dataset
+details2008 <- tibble()
+
+# loop over election years and create datasets
+for (i in detalhes2008) {
+  # read each txt file
+  temp.ds <- read_delim(i, ';', escape_double = FALSE, col_names = FALSE,
+    col_type = cols(.default = 'c'), locale = locale(encoding = 'Latin1'),
+    trim_ws = TRUE)
+  # bind to empty dtaset
+  details2008 <- bind_rows(details2008, temp.ds)
+}
+
+# build dataset
+details2012 <- tibble()
+
+# loop over election years and create datasets
+for (i in detalhes2012) {
+  # read each txt file
+  temp.ds <- read_delim(i, ';', escape_double = FALSE, col_names = FALSE,
+    col_type = cols(.default = 'c'), locale = locale(encoding = 'Latin1'),
+    trim_ws = TRUE)
+  # bind to empty dtaset
+  details2012 <- bind_rows(details2012, temp.ds)
+}
+
+# build dataset
+details2016 <- tibble()
+
+# loop over election years and create datasets
+for (i in detalhes2016) {
+  # read each txt file
+  temp.ds <- read_delim(i, ';', escape_double = FALSE, col_names = FALSE,
+    col_type = cols(.default = 'c'), locale = locale(encoding = 'Latin1'),
+    trim_ws = TRUE)
+  # bind to empty dtaset
+  details2016 <- bind_rows(details2016, temp.ds)
+}
+
+# remove files
+unlink('./detalhes', recursive = TRUE)
+
+# bind everything
+details <- bind_rows(details2004, details2008, details2012, details2016)
+
+# assign var names
+names(details) <- codebook
+
+# save to file
+save(details, file = 'data/details.Rda')
+
+details %>% View()
