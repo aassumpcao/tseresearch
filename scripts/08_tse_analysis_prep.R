@@ -174,7 +174,8 @@ tse.analysis %<>%
     'election.ID', 'office.ID')) %>%
   mutate(
     candidate.votes  = as.integer(candidate.votes),
-    outcome.elected  = ifelse(candidate.votes >= votes.foroffice, 1, 0),
+    outcome.elected  = as.integer(ifelse(candidate.votes >= votes.foroffice,
+                                         1, 0)),
     outcome.share    = round((candidate.votes / votes.total) * 100, digits = 2),
     outcome.distance = round((candidate.votes - votes.foroffice) * 100 /
                               votes.total, digits = 2)
@@ -289,12 +290,16 @@ turnout %<>%
 joinkey <- c('election.year', 'election.ID', 'office.ID')
 
 # join tse.analysis and turnout
-tse.analysis %>%
+tse.analysis %<>%
   left_join(turnout, joinkey) %>%
   rename(votes.valid = votes.total) %>%
   select(scraper.ID, matches('^election'), matches('outcome'),
-         matches('^office'), matches('candidate'), matches('candidacy'),
-         matches('party'), matches('^votes')) %>% View()
+    matches('^office'), matches('candidate'), matches('candidacy'),
+    matches('party'), matches('^votes')
+  )
+
+# save to file
+save(tse.analysis, file = 'data/tseFinal.Rda')
 
 # remove all for serial sourcing
 rm(list = ls())
