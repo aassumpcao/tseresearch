@@ -137,7 +137,7 @@ sns.stripplot(x = 'model', y = 'test_acc', data = performance, size = 8,
 
 # display plot
 plt.show()
-plt.savefig('analysis/cvTestAccuracy.png')
+plt.savefig('plots/cvTestAccuracy.png')
 
 # 2. f1_micro: produce boxplots depicting model performance
 sns.boxplot(x = 'model', y = 'test_f1micro', data = performance)
@@ -146,7 +146,7 @@ sns.stripplot(x = 'model', y = 'test_f1micro', data = performance, size = 8,
 
 # display plot
 plt.show()
-plt.savefig('analysis/cvTestAccuracy.png')
+plt.savefig('plots/cvTestAccuracy.png')
 
 ### test models
 # here, we are implementing the preferred algorithm on the train data,

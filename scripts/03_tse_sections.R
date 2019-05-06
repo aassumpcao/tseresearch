@@ -427,13 +427,13 @@ for (i in detalhes2016) {
 unlink('./detalhes', recursive = TRUE)
 
 # bind everything
-details <- bind_rows(details2004, details2008, details2012, details2016)
+turnout <- bind_rows(details2004, details2008, details2012, details2016)
 
 # assign var names
-names(details) <- codebook
+names(turnout) <- codebook
 
 # save to file
-save(details, file = 'data/details.Rda')
+save(turnout, file = 'data/turnout.Rda')
 
 # remove all for serial sourcing
 rm(list = ls())

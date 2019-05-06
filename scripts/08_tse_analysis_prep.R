@@ -14,8 +14,8 @@ library(tidyverse)
 
 # load data
 load('data/campaign.Rda')
-load('data/details.Rda')
 load('data/sections.Rda')
+load('data/turnout.Rda')
 load('data/tseAnalysis.Rda')
 load('data/tseSummary.Rda')
 load('data/vacancies.Rda')
@@ -104,7 +104,8 @@ elections <- vacancies %>%
   group_by(SIGLA_UE, ANO_ELEICAO, CODIGO_CARGO, NUM_TURNO, QTDE_VAGAS) %>%
   summarize(total_votes = sum(votes2)) %>%
   mutate(votes1 = case_when(CODIGO_CARGO == 11 ~ floor(total_votes / 2),
-    CODIGO_CARGO == 13 ~ floor(total_votes / QTDE_VAGAS)))
+    CODIGO_CARGO == 13 ~ floor(total_votes / QTDE_VAGAS))
+  )
 
 # create third vote variable (for proportional elections)
 elections <- sections %>%
@@ -221,7 +222,8 @@ tse.analysis %<>%
 tse.analysis %<>%
   mutate(candidate.maritalstatus = ifelse(
     candidate.maritalstatus == 'NÃO INFORMADO', 'SOLTEIRO(A)',
-    candidate.maritalstatus)) %>%
+    candidate.maritalstatus)
+  ) %>%
   select(-candidate.maritalstatus.ID)
 
 # define vector for finding political occupations
@@ -262,11 +264,37 @@ campaign %>%
   ungroup() %>%
   rename(candidacy.expenditures.actual = x) -> tse.analysis
 
-# add turnout
+# wrangle turnout
+turnout %<>%
+  mutate(SIGLA_UE = str_pad(SIGLA_UE, 5, 'left', '0')) %>%
+  group_by(ANO_ELEICAO, SIGLA_UE, CODIGO_CARGO) %>%
+  summarize(
+    votes.election  = sum(as.integer(QTD_APTOS)),
+    votes.turnout   = sum(as.integer(QTD_COMPARECIMENTO)),
+    votes.absention = sum(as.integer(QTD_ABSTENCOES)),
+    votes.invalid   = sum(as.integer(QT_VOTOS_NULOS),
+                          as.integer(QT_VOTOS_BRANCOS)),
+    votes.null      = sum(as.integer(QT_VOTOS_NULOS)),
+    votes.blank     = sum(as.integer(QT_VOTOS_BRANCOS))
+  ) %>%
+  ungroup() %>%
+  rename(
+    election.year   = ANO_ELEICAO,
+    election.ID     = SIGLA_UE,
+    office.ID       = CODIGO_CARGO
+  ) %>%
+  select(matches('[a-z]'))
 
+# define joinkey
+joinkey <- c('election.year', 'election.ID', 'office.ID')
 
-# remove useless objects
-rm(joinkey, campaign.match)
+# join tse.analysis and turnout
+tse.analysis %>%
+  left_join(turnout, joinkey) %>%
+  rename(votes.valid = votes.total) %>%
+  select(scraper.ID, matches('^election'), matches('outcome'),
+         matches('^office'), matches('candidate'), matches('candidacy'),
+         matches('party'), matches('^votes')) %>% View()
 
 # remove all for serial sourcing
 rm(list = ls())
