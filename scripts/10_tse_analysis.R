@@ -56,6 +56,9 @@ tse.analysis %<>%
   mutate_at(vars(integers), as.integer) %>%
   mutate_at(vars(factors), as.factor)
 
+# remove variable indexes
+rm(integers, factors)
+
 ### tables and analyses
 # produce summary statistics table
 stargazer(
@@ -92,14 +95,48 @@ stargazer(
 
 # reversals table
 # run tabulation of convictions
-reversals.table <- tse.analysis %$%
+reversals <- tse.analysis %$%
   table(candidacy.invalid.ontrial, candidacy.invalid.onappeal)
 
 # do the math for table
-percent1 <- reversals.table[1,2] / (reversals.table[1,1] + reversals.table[1,2])
-percent2 <- reversals.table[2,1] / (reversals.table[2,2] + reversals.table[2,1])
+reversals[1, 2] / (reversals[1, 1] + reversals[1, 2])
+reversals[2, 1] / (reversals[2, 2] + reversals[2, 1])
+
+# covariate balance test
+covariates.balance <- c(instrumented, instrument, covariates)
+
+# create empty vector
+stats <- c()
+
+# loop over and run regressions for each covariate to test balance across groups
+for (index in seq(3, 8)) {
+
+  # extract indexes of variables which should remain as covariates
+  indexes <- c(1, 2, setdiff(seq(3, 8), c(index)))
+
+  # glue them together
+  covariates.matrix <- paste(covariates.balance[indexes], collapse = ' + ')
+
+  # glue them to index variable, which should be the outcome of the regression
+  formula <- paste(covariates.balance[index], covariates.matrix, sep = ' ~ ')
+
+  # convert to formula
+  formula <- as.formula(formula)
+
+  # run regression and output results
+  mutate_at(tse.analysis, vars(23:24), as.integer) %>%
+    {c(stats, summary(lm(formula, data = .))$coefficients[2, ])} ->
+    stats
+}
+
+stats[seq(1, 24, 4)]
+stats[seq(2, 24, 4)]
+stats[seq(3, 24, 4)]
+stats[seq(4, 24, 4)]
 
 
+# create balance table
+balance.table <- tibble(var.name = covariates, point.est = NA_character_,
+                        se = NA_character_, p.value = NA_character_)
 
-
-
+mutate_at(tse.analysis, vars(23:24), as.integer)
