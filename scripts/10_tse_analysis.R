@@ -15,6 +15,28 @@ library(tidyverse)
 # load data
 load('data/tseFinal.Rda')
 
+### function definitions
+# function to conduct t-tests across parameters in different regressions
+t.test2 <- function(mean1, mean2, se1, se2){
+  # Args:
+  #   mean1, mean2: means of each parameter
+  #   se1, se2:     standard errors of each parameter
+
+  # Returns:
+  #   test statistics
+
+  # Body:
+  #   compute statistics and return results
+  se <- se1 + se2
+  df <- ((se1 + se2)^2) / ((se1)^2 / (9470-1) + (se2)^2 / (9470-1))
+  t  <- (mean1 - mean2) / se
+  result <- c(mean1 - mean2, se, t, 2 * pt(-abs(t), df))
+  names(result) <- c('Mean Difference', 'Std. Error', 't value', 'Pr(>|t|)')
+
+  # return call
+  return(result)
+}
+
 ### define y's and x's used in analysis and their labels
 # outcome labels
 outcomes <- c('outcome.elected', 'outcome.distance', 'outcome.share')
@@ -102,41 +124,35 @@ reversals <- tse.analysis %$%
 reversals[1, 2] / (reversals[1, 1] + reversals[1, 2])
 reversals[2, 1] / (reversals[2, 2] + reversals[2, 1])
 
-# covariate balance test
-covariates.balance <- c(instrumented, instrument, covariates)
+# test for heterogeneous judicial behavior between trial and appeals: i am
+# interested in knowing whether justices change change the factors affecting
+# ruling when elections have passed.
 
-# create empty vector
-stats <- c()
+# regression for factors affecting trial
+tse.analysis %>%
+  {lfe::felm(candidacy.invalid.ontrial ~ candidate.age + candidate.male +
+    candidate.maritalstatus + candidate.education + candidate.experience +
+    candidacy.expenditures.actual | election.year + election.ID +
+    party.coalition, .)} -> covariate.balance.instrumented
 
-# loop over and run regressions for each covariate to test balance across groups
-for (index in seq(3, 8)) {
+# regression for factors affecting appeals
+tse.analysis %>%
+  {lfe::felm(candidacy.invalid.onappeal ~ candidate.age + candidate.male +
+    candidate.maritalstatus + candidate.education + candidate.experience +
+    candidacy.expenditures.actual | election.year + election.ID +
+    party.coalition, .)} -> covariate.balance.instrument
 
-  # extract indexes of variables which should remain as covariates
-  indexes <- c(1, 2, setdiff(seq(3, 8), c(index)))
+# check point estimates and standard errors in each regression
+covariate.balance.instrumented %>% {summary(.)$coefficients[, c(1, 2)]}
+covariate.balance.instrument   %>% {summary(.)$coefficients[, c(1, 2)]}
 
-  # glue them together
-  covariates.matrix <- paste(covariates.balance[indexes], collapse = ' + ')
 
-  # glue them to index variable, which should be the outcome of the regression
-  formula <- paste(covariates.balance[index], covariates.matrix, sep = ' ~ ')
 
-  # convert to formula
-  formula <- as.formula(formula)
-
-  # run regression and output results
-  mutate_at(tse.analysis, vars(23:24), as.integer) %>%
-    {c(stats, summary(lm(formula, data = .))$coefficients[2, ])} ->
-    stats
+for (i in 1:15){
+  t.test2(
+    summary(covariate.balance.instrumented)$coefficients[i, 1],
+    summary(covariate.balance.instrument)$coefficients[i, 1],
+    summary(covariate.balance.instrumented)$coefficients[i, 2],
+    summary(covariate.balance.instrument)$coefficients[i, 2]
+  )
 }
-
-stats[seq(1, 24, 4)]
-stats[seq(2, 24, 4)]
-stats[seq(3, 24, 4)]
-stats[seq(4, 24, 4)]
-
-
-# create balance table
-balance.table <- tibble(var.name = covariates, point.est = NA_character_,
-                        se = NA_character_, p.value = NA_character_)
-
-mutate_at(tse.analysis, vars(23:24), as.integer)

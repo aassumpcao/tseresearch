@@ -697,3 +697,30 @@ names(turnout) <- codebook
 save(turnout, file = 'data/turnout.Rda')
 
 turnout %>% View()
+
+# covariate balance test
+covariates.balance <- c(instrumented, covariates)
+
+# create empty vector
+stats <- c()
+
+# loop over and run regressions for each covariate to test balance across groups
+for (index in seq(2, length(covariates.balance))) {
+
+  # extract indexes of variables which should remain as covariates
+  indexes <- c(1, setdiff(seq(2, length(covariates.balance)), c(index)))
+
+  # glue them together
+  covariates.matrix <- paste(covariates.balance[indexes], collapse = ' + ')
+
+  # glue them to index variable, which should be the outcome of the regression
+  formula <- paste(covariates.balance[index], covariates.matrix, sep = ' ~ ')
+
+  # convert to formula
+  formula <- as.formula(formula)
+
+  # run regression and output results
+  mutate_at(tse.analysis, vars(23:24), as.integer) %>%
+    {c(stats, summary(lm(formula, data = .))$coefficients[2, ])} ->
+    stats
+}
