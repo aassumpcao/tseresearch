@@ -8,9 +8,11 @@
 
 ### data and library calls
 # import libraries
+library(lfe)
 library(magrittr)
 library(stargazer)
 library(tidyverse)
+library(xtable)
 
 # load data
 load('data/tseFinal.Rda')
@@ -31,7 +33,7 @@ t.test2 <- function(mean1, mean2, se1, se2){
   df <- ((se1 + se2)^2) / ((se1)^2 / (9470-1) + (se2)^2 / (9470-1))
   t  <- (mean1 - mean2) / se
   result <- c(mean1 - mean2, se, t, 2 * pt(-abs(t), df))
-  names(result) <- c('Mean Difference', 'Std. Error', 't value', 'Pr(>|t|)')
+  names(result) <- c('Difference in Means', 'Std. Error', 't-stat', 'p-value')
 
   # return call
   return(result)
@@ -39,22 +41,22 @@ t.test2 <- function(mean1, mean2, se1, se2){
 
 ### define y's and x's used in analysis and their labels
 # outcome labels
-outcomes <- c('outcome.elected', 'outcome.distance', 'outcome.share')
+outcomes       <- c('outcome.elected', 'outcome.distance', 'outcome.share')
 outcome.labels <- c('Probability of Election',
-  'Vote Distance to Election Cutoff (in p.p.)',
-  'Total Vote Share (in p.p.)')
+                    'Vote Distance to Election Cutoff (in p.p.)',
+                    'Total Vote Share (in p.p.)')
 
 # define instruments and their labels
-instrument <- 'candidacy.invalid.onappeal'
-instrumented <- 'candidacy.invalid.ontrial'
+instrument        <- 'candidacy.invalid.onappeal'
+instrumented      <- 'candidacy.invalid.ontrial'
 instrument.labels <- c('Convicted at Trial', 'Convicted on Appeal')
 
 # define independent variables and their labels
-covariates <- c('candidate.age', 'candidate.male', 'candidate.education',
-  'candidate.maritalstatus', 'candidate.experience',
-  'candidacy.expenditures.actual')
+covariates       <- c('candidate.age', 'candidate.male', 'candidate.education',
+                     'candidate.maritalstatus', 'candidate.experience',
+                     'candidacy.expenditures.actual')
 covariate.labels <- c('Age', 'Male', 'Level of Education', 'Marital Status',
-  'Political Experience', 'Campaign Expenditures (in R$)')
+                      'Political Experience', 'Campaign Expenditures (in R$)')
 
 ### define matrices of fixed effects
 # party
@@ -77,6 +79,16 @@ factors  <- c(2, 5, 9, 21, 23:24, 33:35)
 tse.analysis %<>%
   mutate_at(vars(integers), as.integer) %>%
   mutate_at(vars(factors), as.factor)
+
+# define levels for education and marital status variables
+labels1 <- c('Illiterate', 'Completed ES/MS', 'Incomplete ES/MS',
+             'Can Read and Write', 'Completed HS', 'Incomplete HS',
+             'Completed College', 'Incomplete College')
+labels2 <- c('Married', 'Divorced', 'Legally Divorced', 'Single', 'Widowed')
+
+# assign factors
+tse.analysis$candidate.education %<>% factor(labels = labels1)
+tse.analysis$candidate.maritalstatus %<>% factor(labels = labels2)
 
 # remove variable indexes
 rm(integers, factors)
@@ -115,7 +127,7 @@ stargazer(
   summary.stat = c('n', 'mean', 'sd', 'min', 'max')
 )
 
-# reversals table
+### reversals table
 # run tabulation of convictions
 reversals <- tse.analysis %$%
   table(candidacy.invalid.ontrial, candidacy.invalid.onappeal)
@@ -124,35 +136,133 @@ reversals <- tse.analysis %$%
 reversals[1, 2] / (reversals[1, 1] + reversals[1, 2])
 reversals[2, 1] / (reversals[2, 2] + reversals[2, 1])
 
-# test for heterogeneous judicial behavior between trial and appeals: i am
-# interested in knowing whether justices change change the factors affecting
-# ruling when elections have passed.
+### test for heterogeneous judicial behavior between trial and appeals
+# i am interested in knowing whether justices change change the factors
+# affecting ruling when elections have passed.
 
 # regression for factors affecting trial
 tse.analysis %>%
-  {lfe::felm(candidacy.invalid.ontrial ~ candidate.age + candidate.male +
+  {felm(candidacy.invalid.ontrial ~ candidate.age + candidate.male +
     candidate.maritalstatus + candidate.education + candidate.experience +
     candidacy.expenditures.actual | election.year + election.ID +
-    party.coalition, .)} -> covariate.balance.instrumented
+    party.coalition, data = .)} -> covariate.balance.instrumented
 
 # regression for factors affecting appeals
 tse.analysis %>%
-  {lfe::felm(candidacy.invalid.onappeal ~ candidate.age + candidate.male +
+  {felm(candidacy.invalid.onappeal ~ candidate.age + candidate.male +
     candidate.maritalstatus + candidate.education + candidate.experience +
     candidacy.expenditures.actual | election.year + election.ID +
-    party.coalition, .)} -> covariate.balance.instrument
+    party.coalition, data = .)} -> covariate.balance.instrument
 
 # check point estimates and standard errors in each regression
 covariate.balance.instrumented %>% {summary(.)$coefficients[, c(1, 2)]}
 covariate.balance.instrument   %>% {summary(.)$coefficients[, c(1, 2)]}
 
+# create table of judicial behavior
+judicial.behavior <- tibble()
 
-
+# loop over stats and create vector
 for (i in 1:15){
-  t.test2(
+  # create datavector
+  vector <- t.test2(
     summary(covariate.balance.instrumented)$coefficients[i, 1],
     summary(covariate.balance.instrument)$coefficients[i, 1],
     summary(covariate.balance.instrumented)$coefficients[i, 2],
     summary(covariate.balance.instrument)$coefficients[i, 2]
   )
+  # bind to data
+  judicial.behavior <- bind_rows(judicial.behavior, vector)
 }
+
+# format variable names to include in table
+var.names <- summary(covariate.balance.instrument)$coefficients %>%
+  {dimnames(.)[[1]]} %>%
+  str_remove_all('candida(cy|te)\\.|education|maritalstatus|\\.actual')
+var.names[c(1, 2)] %<>% str_to_sentence()
+var.names[c(14, 15)] <- covariate.labels[c(5, 6)]
+
+# format judicial behavior dataset
+judicial.behavior %>%
+  mutate(Variable = var.names) %>%
+  select(Variable, everything()) %>%
+  mutate_at(vars(2:4), ~sprintf(., fmt = '%.3f')) %>%
+  slice(1:2, 14:15, 3:13) %>%
+  xtable(label = 'tab:heterogeneous_sentencing', digits = 3) %>%
+  print.xtable(floating = FALSE, hline.after = c(-1, -1, 0, 14, 15, 15),
+               include.rownames = FALSE)
+
+### first-stage tests
+# produce tables testing the first-stage strength
+tse.analysis %>%
+  {lm(candidacy.invalid.ontrial ~ candidacy.invalid.onappeal, data = .)} %>%
+  summary() -> fs1
+
+tse.analysis %>%
+  {felm(candidacy.invalid.ontrial ~ candidacy.invalid.onappeal + candidate.age +
+    candidate.male + candidate.experience + candidacy.expenditures.actual +
+    candidate.maritalstatus + candidate.education, data= . , exactDOF = T)} %>%
+  summary() -> fs2
+
+tse.analysis %>%
+  {felm(candidacy.invalid.ontrial ~ candidacy.invalid.onappeal + candidate.age +
+    candidate.male + candidate.experience + candidacy.expenditures.actual +
+    candidate.maritalstatus + candidate.education|election.year + election.ID +
+    party.coalition, data = ., exactDOF = TRUE)} %>%
+  summary() -> fs3
+
+# extract point estimates and s.e.'s for graph and tables
+point.estimates1 <- fs1$coefficients[2, c(1, 2)]
+point.estimates2 <- fs2$coefficients[2, c(1, 2)]
+point.estimates3 <- fs3$coefficients[1, c(1, 2)]
+
+# extract f-stat for graphs and tables
+f.stat1 <- fs1$fstatistic[1]
+f.stat2 <- fs2$fstat
+f.stat3 <- fs3$P.fstat['F']
+
+# build vectors with point estimates and 10%, 5%, and 1% CIs around estimates
+fs.estimate1 <- point.estimates1 %>%
+  {c(.[1], .[1] - qnorm(.1) * .[2], .[1] + qnorm(.1) * .[2],
+     .[1] - qnorm(.05) * .[2], .[1] + qnorm(.05) * .[2],
+     .[1] - qnorm(.01) * .[2], .[1] + qnorm(.01) * .[2])} %>%
+  unname() %>%
+  round(3)
+fs.estimate2 <- point.estimates2 %>%
+  {c(.[1], .[1] - qnorm(.1) * .[2], .[1] + qnorm(.1) * .[2],
+     .[1] - qnorm(.05) * .[2], .[1] + qnorm(.05) * .[2],
+     .[1] - qnorm(.01) * .[2], .[1] + qnorm(.01) * .[2])} %>%
+  unname() %>%
+  round(3)
+fs.estimate3 <- point.estimates3 %>%
+  {c(.[1], .[1] - qnorm(.1) * .[2], .[1] + qnorm(.1) * .[2],
+     .[1] - qnorm(.05) * .[2], .[1] + qnorm(.05) * .[2],
+     .[1] - qnorm(.01) * .[2], .[1] + qnorm(.01) * .[2])} %>%
+  unname() %>%
+  round(3)
+
+# edit variable names
+variable.names <- c('estimate', 'ci_upper10', 'ci_lower10', 'ci_upper5',
+                    'ci_lower5', 'ci_upper1', 'ci_lower1')
+# build dataset
+fs.estimates <- tibble(fs.estimate1, fs.estimate2, fs.estimate3) %>%
+                t() %>%
+                as_tibble()
+# assign names
+names(fs.estimates) <- variable.names
+
+# build graph
+ggplot(fs.estimates, aes(y = estimate, x = c(1:3))) +
+  geom_point(size = 4) +
+  geom_errorbar(aes(ymax = ci_upper10, ymin = ci_lower10)) +
+  geom_errorbar(aes(ymax = ci_upper5, ymin = ci_lower5)) +
+  geom_errorbar(aes(ymax = ci_upper1, ymin = ci_lower1))
+
+
+
+
+
+
+
+
+# remove unnecessary objects
+rm(list = objects(pattern = 'fs|f\\.stat|point\\.estimate|names'))
