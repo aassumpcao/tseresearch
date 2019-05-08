@@ -246,22 +246,35 @@ variable.names <- c('estimate', 'ci_upper10', 'ci_lower10', 'ci_upper5',
 # build dataset
 fs.estimates <- tibble(fs.estimate1, fs.estimate2, fs.estimate3) %>%
                 t() %>%
-                as_tibble()
+                as_tibble() %>%
+                mutate(group = c('90% CI', '95% CI', '99% CI'))
 # assign names
-names(fs.estimates) <- variable.names
+names(fs.estimates)[1:7] <- variable.names
 
-# build graph
+# define x labels for ggplot
+labels <- c(f.stat1, f.stat2, f.stat3) %>%
+  round(1) %>%
+  format(big.mark = ',') %>%
+  trimws() %>%
+  {paste0('(F-stat = ', ., ')')} %>%
+  {paste(c('No Covariates', 'Individual Covariates',
+           'Individual Covariates \n and Fixed-Effects'), ., sep = '\n')}
+
+# build plot
 ggplot(fs.estimates, aes(y = estimate, x = c(1:3))) +
   geom_point(size = 4) +
-  geom_errorbar(aes(ymax = ci_upper10, ymin = ci_lower10)) +
-  geom_errorbar(aes(ymax = ci_upper5, ymin = ci_lower5)) +
-  geom_errorbar(aes(ymax = ci_upper1, ymin = ci_lower1))
-
-
-
-
-
-
+  geom_text(aes(label = estimate), nudge_x = .2, family = 'LM Roman 10') +
+  geom_errorbar(aes(ymax = ci_upper10, ymin = ci_lower10), show.legend = TRUE,
+    width = .5, color = 'grey74', position = position_nudge(x = 0, y = 0)) +
+  geom_errorbar(aes(ymax = ci_upper5,  ymin = ci_lower5),  width = .5,
+    color = 'grey49', position = position_nudge(x = 0, y = 0)) +
+  geom_errorbar(aes(ymax = ci_upper1,  ymin = ci_lower1),  width = .5,
+    color = 'grey10', position = position_nudge(x = 0, y = 0)) +
+  scale_x_discrete(breaks = c(1:3), limits = c(1:3), labels = labels) +
+  labs(y = 'Instrument Point Estimates', x = element_blank()) +
+  theme(axis.title = element_text(size = 10),
+        axis.text.x = element_text(size = 10, lineheight = 1.1),
+        text = element_text(family = 'LM Roman 10'))
 
 
 # remove unnecessary objects
