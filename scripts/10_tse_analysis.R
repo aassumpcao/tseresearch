@@ -200,7 +200,7 @@ tse.analysis %>%
 tse.analysis %>%
   {felm(candidacy.invalid.ontrial ~ candidacy.invalid.onappeal + candidate.age +
     candidate.male + candidate.experience + candidacy.expenditures.actual +
-    candidate.maritalstatus + candidate.education, data= . , exactDOF = T)} %>%
+    candidate.maritalstatus + candidate.education, data = ., exactDOF = T)} %>%
   summary() -> fs2
 
 tse.analysis %>%
@@ -240,16 +240,17 @@ fs.estimate3 <- point.estimates3 %>%
   unname() %>%
   round(3)
 
-# edit variable names
-variable.names <- c('estimate', 'ci_upper10', 'ci_lower10', 'ci_upper5',
-                    'ci_lower5', 'ci_upper1', 'ci_lower1')
 # build dataset
-fs.estimates <- tibble(fs.estimate1, fs.estimate2, fs.estimate3) %>%
-                t() %>%
-                as_tibble() %>%
-                mutate(group = c('90% CI', '95% CI', '99% CI'))
-# assign names
-names(fs.estimates)[1:7] <- variable.names
+models       <- rep(c('model1', 'model2', 'model3'), 3)
+ci_bound     <- rep(c('90% CI', '95% CI', '99% CI'), each = 3)
+estimate     <- rep(c(fs.estimate1[1], fs.estimate2[1], fs.estimate3[1]), 3)
+ci_upper     <- c(fs.estimate1[2], fs.estimate2[2], fs.estimate3[2],
+                  fs.estimate1[4], fs.estimate2[4], fs.estimate3[4],
+                  fs.estimate1[6], fs.estimate2[6], fs.estimate3[6])
+ci_lower     <- c(fs.estimate1[3], fs.estimate2[3], fs.estimate3[3],
+                  fs.estimate1[5], fs.estimate2[5], fs.estimate3[5],
+                  fs.estimate1[7], fs.estimate2[7], fs.estimate3[7])
+fs.estimates <- tibble(models, ci_bound, estimate, ci_upper, ci_lower)
 
 # define x labels for ggplot
 labels <- c(f.stat1, f.stat2, f.stat3) %>%
@@ -261,21 +262,24 @@ labels <- c(f.stat1, f.stat2, f.stat3) %>%
            'Individual Covariates \n and Fixed-Effects'), ., sep = '\n')}
 
 # build plot
-ggplot(fs.estimates, aes(y = estimate, x = c(1:3))) +
+ggplot(fs.estimates, aes(y = estimate, x = models, group = ci_bound)) +
   geom_point(size = 4) +
-  geom_text(aes(label = estimate), nudge_x = .2, family = 'LM Roman 10') +
-  geom_errorbar(aes(ymax = ci_upper10, ymin = ci_lower10), show.legend = TRUE,
-    width = .5, color = 'grey74', position = position_nudge(x = 0, y = 0)) +
-  geom_errorbar(aes(ymax = ci_upper5,  ymin = ci_lower5),  width = .5,
-    color = 'grey49', position = position_nudge(x = 0, y = 0)) +
-  geom_errorbar(aes(ymax = ci_upper1,  ymin = ci_lower1),  width = .5,
-    color = 'grey10', position = position_nudge(x = 0, y = 0)) +
-  scale_x_discrete(breaks = c(1:3), limits = c(1:3), labels = labels) +
+  geom_text(aes(label = estimate), nudge_x = .15, family = 'LM Roman 10') +
+  geom_errorbar(aes(ymax = ci_upper, ymin = ci_lower, color = ci_bound),
+    width = .25, position = position_nudge(x = 0, y = 0)) +
+  scale_color_manual(values = paste0('grey', c(74, 49, 10)),
+    name = 'Confidence Intervals') +
+  scale_x_discrete(labels = labels) +
   labs(y = 'Instrument Point Estimates', x = element_blank()) +
-  theme(axis.title = element_text(size = 10),
+  theme_bw() +
+  theme(axis.title = element_text(size = 10), legend.position = 'top',
         axis.text.x = element_text(size = 10, lineheight = 1.1),
-        text = element_text(family = 'LM Roman 10'))
+        text = element_text(family = 'LM Roman 10'),
+        panel.grid.major = element_line(color = 'snow3', linetype = 'dashed'),
+        panel.grid.minor = element_line(color = 'snow3', linetype = 'dashed'))
 
+# save plot
+ggsave('fsestimates.png', device = 'png', path = 'plots', dpi = 300)
 
 # remove unnecessary objects
 rm(list = objects(pattern = 'fs|f\\.stat|point\\.estimate|names'))
