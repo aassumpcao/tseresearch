@@ -8,6 +8,7 @@
 
 ### data and library calls
 # import libraries
+library(AER)
 library(lfe)
 library(magrittr)
 library(stargazer)
@@ -19,7 +20,7 @@ load('data/tseFinal.Rda')
 
 ### function definitions
 # function to conduct t-tests across parameters in different regressions
-t.test2 <- function(mean1, mean2, se1, se2){
+t.test2 <- function(mean1, mean2, se1, se2) {
   # Args:
   #   mean1, mean2: means of each parameter
   #   se1, se2:     standard errors of each parameter
@@ -29,6 +30,8 @@ t.test2 <- function(mean1, mean2, se1, se2){
 
   # Body:
   #   compute statistics and return results
+
+  # function
   se <- se1 + se2
   df <- ((se1 + se2)^2) / ((se1)^2 / (9470-1) + (se2)^2 / (9470-1))
   t  <- (mean1 - mean2) / se
@@ -40,7 +43,7 @@ t.test2 <- function(mean1, mean2, se1, se2){
 }
 
 # define function to calculate corrected SEs for OLS, IV, and FELM regressions
-cse <- function(reg){
+cse <- function(reg) {
   # Args:
   #   reg: regression object
 
@@ -49,15 +52,18 @@ cse <- function(reg){
 
   # Body:
   #   compute standard errors in different ways if lm, ivreg or felm classes
+
+  # function
   if (class(reg) == 'lm') {
     rob <- sqrt(diag(sandwich::vcovHC(reg, type = 'HC1')))
   } else if (class(reg) == 'felm') {
     rob <- summary(reg, robust = TRUE)$coefficients[, 2]
+  } else if (class(reg) == 'ivreg') {
+    rob <- ivpack::robust.se(reg)[,2]
   } else {
     message('not implemented yet')
   }
-
-  #   return matrix
+  # return matrix
   return(rob)
 }
 
@@ -307,7 +313,7 @@ ggplot(fs.estimates, aes(y = estimate, x = models, group = ci_bound)) +
   )
 
 # save plot
-ggsave('fsestimates.png', device = 'png', path = 'plots', dpi = 300)
+ggsave('firststage.png', device = 'png', path = 'plots', dpi = 300)
 
 # remove unnecessary objects
 rm(list = objects(pattern = 'fs|f\\.stat|point\\.estimate|names|models|ci'))
@@ -345,5 +351,52 @@ stargazer(
   omit.stat = c('ser', 'f', 'rsq'),
   omit.yes.no = c('Yes', '-'),
   table.placement = '!htbp'
+)
+
+### hausman tests of instrument strength
+# produce graphs testing the first-stage strength
+tse.analysis %>%
+  {ivreg(outcome.elected ~
+    candidacy.invalid.ontrial | candidacy.invalid.onappeal, data = .)} -> iv1
+
+tse.analysis %>%
+  {ivreg(outcome.distance ~
+    candidacy.invalid.ontrial | candidacy.invalid.onappeal, data = .)} -> iv2
+
+filter(tse.analysis, office.ID == 13) %>%
+  {ivreg(outcome.distance ~
+    candidacy.invalid.ontrial | candidacy.invalid.onappeal, data = .)} -> iv3
+
+filter(tse.analysis, office.ID == 11) %>%
+  {ivreg(outcome.distance ~
+    candidacy.invalid.ontrial | candidacy.invalid.onappeal, data = .)} -> iv4
+
+tse.analysis %>%
+  {ivreg(outcome.share ~
+    candidacy.invalid.ontrial | candidacy.invalid.onappeal, data = .)} -> iv5
+
+# create hausman dataset
+hausman <- objects(pattern = 'iv') %>%
+           lapply(get) %>%
+           lapply(summary, diagnostics = TRUE) %>%
+           lapply(function(x){x$diagnostics[2, c(3, 4)]}) %>%
+           unlist()
+
+# print table
+tibble(
+  Outcome = str_remove_all(outcome.labels, '\\((.)*\\)') %>% trimws() %>%
+    {c(.[1], .[2], 'City Councilor', 'Mayor', .[3])},
+  `Hausman Statistic` = hausman[seq(1, 10, 2)] %>% sprintf(fmt = '%.2f'),
+  `p-value` = hausman[seq(2, 10, 2)] %>% sprintf(fmt = '%.3f')
+) %>%
+xtable(
+  label = 'tab:hausman',
+  align = c('r', 'l', 'D{.}{.}{-2}', 'D{.}{.}{-3}'),
+  digits = c(0, 0, 2, -3)
+) %>%
+print.xtable(
+  floating = FALSE,
+  hline.after = c(-1, -1, 0, 5, 5),
+  include.rownames = FALSE
 )
 

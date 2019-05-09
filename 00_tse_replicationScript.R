@@ -13,6 +13,7 @@
 # import statements (== packages required to run all scripts in R)
 if (!require(AER))       {install.packages('AER')}
 if (!require(here))      {install.packages('here')}
+if (!require(ivpack))    {install.packages('ivpack')}
 if (!require(lfe))       {install.packages('lfe')}
 if (!require(magrittr))  {install.packages('magrittr')}
 if (!require(pdftools))  {install.packages('pdftools')}

@@ -792,3 +792,4 @@ stargazer(
   summary.logical = TRUE,
   summary.stat = c('n', 'mean', 'sd', 'min', 'max')
 )
+
