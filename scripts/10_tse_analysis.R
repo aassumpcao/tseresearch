@@ -39,6 +39,28 @@ t.test2 <- function(mean1, mean2, se1, se2){
   return(result)
 }
 
+# define function to calculate corrected SEs for OLS, IV, and FELM regressions
+cse <- function(reg){
+  # Args:
+  #   reg: regression object
+
+  # Returns:
+  #   matrix of robust standard errors
+
+  # Body:
+  #   compute standard errors in different ways if lm, ivreg or felm classes
+  if (class(reg) == 'lm') {
+    rob <- sqrt(diag(sandwich::vcovHC(reg, type = 'HC1')))
+  } else if (class(reg) == 'felm') {
+    rob <- summary(reg, robust = TRUE)$coefficients[, 2]
+  } else {
+    message('not implemented yet')
+  }
+
+  #   return matrix
+  return(rob)
+}
+
 ### define y's and x's used in analysis and their labels
 # outcome labels
 outcomes       <- c('outcome.elected', 'outcome.distance', 'outcome.share')
@@ -107,7 +129,7 @@ stargazer(
   title = 'Descriptive Statistics',
   style = 'default',
   summary = TRUE,
-  # out = './tables/sumstats.tex',
+  # out = 'tables/sumstats.tex',
   out.header = FALSE,
   covariate.labels = c(covariate.labels[c(1:2, 5:6)],
                        instrument.labels,
@@ -198,33 +220,31 @@ judicial.behavior %>%
 rm(list = objects(pattern = 'balance|var\\.names|judicial\\.behavior|vector'))
 
 ### first-stage tests
-# produce tables testing the first-stage strength
+# produce graphs testing the first-stage strength
 tse.analysis %>%
-  {lm(candidacy.invalid.ontrial ~ candidacy.invalid.onappeal, data = .)} %>%
-  summary() -> fs1
+  {lm(candidacy.invalid.ontrial ~ candidacy.invalid.onappeal, data = .)} -> fs1
 
 tse.analysis %>%
   {felm(candidacy.invalid.ontrial ~ candidacy.invalid.onappeal + candidate.age +
     candidate.male + candidate.experience + candidacy.expenditures.actual +
-    candidate.maritalstatus + candidate.education, data = ., exactDOF = T)} %>%
-  summary() -> fs2
+    candidate.maritalstatus + candidate.education, data = .,
+    exactDOF = TRUE)} -> fs2
 
 tse.analysis %>%
   {felm(candidacy.invalid.ontrial ~ candidacy.invalid.onappeal + candidate.age +
     candidate.male + candidate.experience + candidacy.expenditures.actual +
     candidate.maritalstatus + candidate.education|election.year + election.ID +
-    party.coalition, data = ., exactDOF = TRUE)} %>%
-  summary() -> fs3
+    party.coalition, data = ., exactDOF = TRUE)} -> fs3
 
 # extract point estimates and s.e.'s for graph and tables
-point.estimates1 <- fs1$coefficients[2, c(1, 2)]
-point.estimates2 <- fs2$coefficients[2, c(1, 2)]
-point.estimates3 <- fs3$coefficients[1, c(1, 2)]
+point.estimates1 <- c(summary(fs1)$coefficients[2, 1], cse(fs1)[2])
+point.estimates2 <- c(summary(fs2)$coefficients[2, 1], cse(fs2)[2])
+point.estimates3 <- c(summary(fs3)$coefficients[1, 1], cse(fs3)[1])
 
 # extract f-stat for graphs and tables
-f.stat1 <- fs1$fstatistic[1]
-f.stat2 <- fs2$fstat
-f.stat3 <- fs3$P.fstat['F']
+f.stat1 <- summary(fs1)$fstatistic[1]
+f.stat2 <- summary(fs2)$fstat
+f.stat3 <- summary(fs3)$P.fstat['F']
 
 # build vectors with point estimates and 10%, 5%, and 1% CIs around estimates
 fs.estimate1 <- point.estimates1 %>%
@@ -277,12 +297,14 @@ ggplot(fs.estimates, aes(y = estimate, x = models, group = ci_bound)) +
     name = 'Confidence Intervals') +
   scale_x_discrete(labels = labels) +
   labs(y = 'Instrument Point Estimates', x = element_blank()) +
+  ylim(min = .65, max = .8) +
   theme_bw() +
   theme(axis.title = element_text(size = 10), legend.position = 'top',
         axis.text.x = element_text(size = 10, lineheight = 1.1),
         text = element_text(family = 'LM Roman 10'),
         panel.grid.major = element_line(color = 'snow3', linetype = 'dashed'),
-        panel.grid.minor = element_line(color = 'snow3', linetype = 'dashed'))
+        panel.grid.minor = element_line(color = 'snow3', linetype = 'dashed')
+  )
 
 # save plot
 ggsave('fsestimates.png', device = 'png', path = 'plots', dpi = 300)
@@ -290,5 +312,38 @@ ggsave('fsestimates.png', device = 'png', path = 'plots', dpi = 300)
 # remove unnecessary objects
 rm(list = objects(pattern = 'fs|f\\.stat|point\\.estimate|names|models|ci'))
 
-### hausman
+# produce tables showing first-stage strength
+stargazer(
+
+  # first-stage regressions
+  list(fs1, fs2, fs3),
+
+  # table cosmetics
+  type = 'text',
+  title = 'First-Stage Regressions of Convictions at Trial and on Appeal',
+  style = 'default',
+  # out = 'tables/firststage.tex',
+  out.header = FALSE,
+  covariate.labels = instrument.labels[2],
+  dep.var.caption = paste0('Outcome: ', instrument.labels[1]),
+  dep.var.labels.include = FALSE,
+  align = TRUE,
+  se = list(cse(fs1), cse(fs2), cse(fs3)),
+  column.sep.width = '4pt',
+  digit.separate = 3,
+  digits = 3,
+  digits.extra = 0,
+  font.size = 'scriptsize',
+  header = FALSE,
+  initial.zero = FALSE,
+  model.names = FALSE,
+  keep = c('invalid'),
+  label = 'tab:firststage',
+  no.space = FALSE,
+  omit = c('constant', 'party|electoral'),
+  omit.labels = c('Individual Controls', 'Fixed-Effects'),
+  omit.stat = c('ser', 'f', 'rsq'),
+  omit.yes.no = c('Yes', '-'),
+  table.placement = '!htbp'
+)
 

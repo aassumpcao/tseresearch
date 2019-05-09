@@ -760,3 +760,35 @@ var0 <- tse.analysis[tse.analysis$candidacy.invalid.onappeal == 0, 'outcome.elec
 var1 <- tse.analysis[tse.analysis$candidacy.invalid.onappeal == 1, 'outcome.elected'] %>% unlist() %>% var(na.rm = TRUE)
 
 t.appeal <- (mean0 - mean1) / ((var0/n0 + var1/n1)^(1/2))
+
+stargazer(
+
+  # summmary table
+  as.data.frame(
+    tse.analysis[, c(covariates, instrumented, instrument, outcomes)]
+  ),
+
+  # table cosmetics
+  type = 'text',
+  title = 'Descriptive Statistics',
+  style = 'default',
+  summary = TRUE,
+  # out = './tables/sumstats.tex',
+  out.header = FALSE,
+  covariate.labels = c(covariate.labels[c(1:2, 5:6)],
+                       instrument.labels,
+                       outcome.labels),
+  align = FALSE,
+  digit.separate = 3,
+  digits = 3,
+  digits.extra = 2,
+  font.size = 'scriptsize',
+  header = FALSE,
+  initial.zero = FALSE,
+  model.names = FALSE,
+  label = 'tab:sumstats',
+  no.space = FALSE,
+  table.placement = '!htbp',
+  summary.logical = TRUE,
+  summary.stat = c('n', 'mean', 'sd', 'min', 'max')
+)

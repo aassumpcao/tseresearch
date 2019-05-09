@@ -48,7 +48,7 @@ calc_age <- function(birthDate, refDate = Sys.Date()) {
 }
 
 # define function to calculate corrected SEs for OLS regression
-cse <- function(reg) {
+robust <- function(reg) {
   # Args:
   #   reg: regression object
 
