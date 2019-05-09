@@ -724,3 +724,39 @@ for (index in seq(2, length(covariates.balance))) {
     {c(stats, summary(lm(formula, data = .))$coefficients[2, ])} ->
     stats
 }
+
+tse.analysis %$% table(outcome.elected, candidacy.invalid.ontrial)
+tse.analysis %$% table(outcome.elected, candidacy.invalid.onappeal)
+a <- t.test(candidacy.invalid.ontrial ~ outcome.elected, data = tse.analysis, var.equal = FALSE)
+b <- t.test(candidacy.invalid.onappeal ~ outcome.elected, data = tse.analysis, var.equal = FALSE)
+
+
+a %>% str()
+
+
+t.test2(a$estimate[2], b$estimate[2],
+        (a$estimate[2] - a$estimate[1]) / a$statistic,
+        (b$estimate[2] - b$estimate[1])/ b$statistic)
+
+
+(a$estimate[1] - a$estimate[2]) / 23.082
+
+mean0 <- tse.analysis[tse.analysis$candidacy.invalid.ontrial == 0, 'outcome.elected'] %>% unlist() %>% mean(na.rm = TRUE)
+mean1 <- tse.analysis[tse.analysis$candidacy.invalid.ontrial == 1, 'outcome.elected'] %>% unlist() %>% mean(na.rm = TRUE)
+n0 <- tse.analysis[tse.analysis$candidacy.invalid.ontrial == 0, 'outcome.elected'] %>% filter(!is.na(outcome.elected)) %>% nrow()
+n1 <- tse.analysis[tse.analysis$candidacy.invalid.ontrial == 1, 'outcome.elected'] %>% filter(!is.na(outcome.elected)) %>% nrow()
+
+var0 <- tse.analysis[tse.analysis$candidacy.invalid.ontrial == 0, 'outcome.elected'] %>% unlist() %>% var(na.rm = TRUE)
+var1 <- tse.analysis[tse.analysis$candidacy.invalid.ontrial == 1, 'outcome.elected'] %>% unlist() %>% var(na.rm = TRUE)
+
+t.trial <- (mean0 - mean1) / ((var0/n0 + var1/n1)^(1/2))
+
+mean0 <- tse.analysis[tse.analysis$candidacy.invalid.onappeal == 0, 'outcome.elected'] %>% unlist() %>% mean(na.rm = TRUE)
+mean1 <- tse.analysis[tse.analysis$candidacy.invalid.onappeal == 1, 'outcome.elected'] %>% unlist() %>% mean(na.rm = TRUE)
+n0 <- tse.analysis[tse.analysis$candidacy.invalid.onappeal == 0, 'outcome.elected'] %>% filter(!is.na(outcome.elected)) %>% nrow()
+n1 <- tse.analysis[tse.analysis$candidacy.invalid.onappeal == 1, 'outcome.elected'] %>% filter(!is.na(outcome.elected)) %>% nrow()
+
+var0 <- tse.analysis[tse.analysis$candidacy.invalid.onappeal == 0, 'outcome.elected'] %>% unlist() %>% var(na.rm = TRUE)
+var1 <- tse.analysis[tse.analysis$candidacy.invalid.onappeal == 1, 'outcome.elected'] %>% unlist() %>% var(na.rm = TRUE)
+
+t.appeal <- (mean0 - mean1) / ((var0/n0 + var1/n1)^(1/2))

@@ -91,7 +91,7 @@ tse.analysis$candidate.education %<>% factor(labels = labels1)
 tse.analysis$candidate.maritalstatus %<>% factor(labels = labels2)
 
 # remove variable indexes
-rm(integers, factors)
+rm(integers, factors, labels1, labels2)
 
 ### tables and analyses
 # produce summary statistics table
@@ -136,23 +136,26 @@ reversals <- tse.analysis %$%
 reversals[1, 2] / (reversals[1, 1] + reversals[1, 2])
 reversals[2, 1] / (reversals[2, 2] + reversals[2, 1])
 
+# remove useless objects
+rm(reversals)
+
 ### test for heterogeneous judicial behavior between trial and appeals
 # i am interested in knowing whether justices change change the factors
 # affecting ruling when elections have passed.
 
 # regression for factors affecting trial
 tse.analysis %>%
-  {felm(candidacy.invalid.ontrial ~ candidate.age + candidate.male +
-    candidate.maritalstatus + candidate.education + candidate.experience +
-    candidacy.expenditures.actual | election.year + election.ID +
-    party.coalition, data = .)} -> covariate.balance.instrumented
+  {felm(candidacy.invalid.ontrial ~ outcome.elected + candidate.age +
+    candidate.male + candidate.maritalstatus + candidate.education +
+    candidate.experience + candidacy.expenditures.actual | election.year +
+    election.ID + party.coalition, data = .)} -> covariate.balance.instrumented
 
 # regression for factors affecting appeals
 tse.analysis %>%
-  {felm(candidacy.invalid.onappeal ~ candidate.age + candidate.male +
-    candidate.maritalstatus + candidate.education + candidate.experience +
-    candidacy.expenditures.actual | election.year + election.ID +
-    party.coalition, data = .)} -> covariate.balance.instrument
+  {felm(candidacy.invalid.onappeal ~ outcome.elected + candidate.age +
+    candidate.male + candidate.maritalstatus + candidate.education +
+    candidate.experience + candidacy.expenditures.actual | election.year +
+    election.ID + party.coalition, data = .)} -> covariate.balance.instrument
 
 # check point estimates and standard errors in each regression
 covariate.balance.instrumented %>% {summary(.)$coefficients[, c(1, 2)]}
@@ -162,8 +165,8 @@ covariate.balance.instrument   %>% {summary(.)$coefficients[, c(1, 2)]}
 judicial.behavior <- tibble()
 
 # loop over stats and create vector
-for (i in 1:15){
-  # create datavector
+for (i in 1:16){
+  # create data vector
   vector <- t.test2(
     summary(covariate.balance.instrumented)$coefficients[i, 1],
     summary(covariate.balance.instrument)$coefficients[i, 1],
@@ -178,18 +181,21 @@ for (i in 1:15){
 var.names <- summary(covariate.balance.instrument)$coefficients %>%
   {dimnames(.)[[1]]} %>%
   str_remove_all('candida(cy|te)\\.|education|maritalstatus|\\.actual')
-var.names[c(1, 2)] %<>% str_to_sentence()
-var.names[c(14, 15)] <- covariate.labels[c(5, 6)]
+var.names[c(2, 3)] %<>% str_to_sentence()
+var.names[c(1, 14, 15)] <- c('Elected to Office', covariate.labels[c(5, 6)])
 
 # format judicial behavior dataset
 judicial.behavior %>%
   mutate(Variable = var.names) %>%
   select(Variable, everything()) %>%
   mutate_at(vars(2:4), ~sprintf(., fmt = '%.3f')) %>%
-  slice(1:2, 14:15, 3:13) %>%
+  slice(1:3, 14:16, 4:13) %>%
   xtable(label = 'tab:heterogeneous_sentencing', digits = 3) %>%
-  print.xtable(floating = FALSE, hline.after = c(-1, -1, 0, 14, 15, 15),
+  print.xtable(floating = FALSE, hline.after = c(-1, -1, 0, 16, 16),
                include.rownames = FALSE)
+
+# remove useless objects
+rm(list = objects(pattern = 'balance|var\\.names|judicial\\.behavior|vector'))
 
 ### first-stage tests
 # produce tables testing the first-stage strength
@@ -241,18 +247,18 @@ fs.estimate3 <- point.estimates3 %>%
   round(3)
 
 # build dataset
-models       <- rep(c('model1', 'model2', 'model3'), 3)
-ci_bound     <- rep(c('90% CI', '95% CI', '99% CI'), each = 3)
-estimate     <- rep(c(fs.estimate1[1], fs.estimate2[1], fs.estimate3[1]), 3)
-ci_upper     <- c(fs.estimate1[2], fs.estimate2[2], fs.estimate3[2],
-                  fs.estimate1[4], fs.estimate2[4], fs.estimate3[4],
-                  fs.estimate1[6], fs.estimate2[6], fs.estimate3[6])
-ci_lower     <- c(fs.estimate1[3], fs.estimate2[3], fs.estimate3[3],
-                  fs.estimate1[5], fs.estimate2[5], fs.estimate3[5],
-                  fs.estimate1[7], fs.estimate2[7], fs.estimate3[7])
+models <- rep(c('model1', 'model2', 'model3'), 3)
+ci_bound <- rep(c('90% CI', '95% CI', '99% CI'), each = 3)
+estimate <- rep(c(fs.estimate1[1], fs.estimate2[1], fs.estimate3[1]), 3)
+ci_upper <- c(fs.estimate1[2], fs.estimate2[2], fs.estimate3[2],
+              fs.estimate1[4], fs.estimate2[4], fs.estimate3[4],
+              fs.estimate1[6], fs.estimate2[6], fs.estimate3[6])
+ci_lower <- c(fs.estimate1[3], fs.estimate2[3], fs.estimate3[3],
+              fs.estimate1[5], fs.estimate2[5], fs.estimate3[5],
+              fs.estimate1[7], fs.estimate2[7], fs.estimate3[7])
 fs.estimates <- tibble(models, ci_bound, estimate, ci_upper, ci_lower)
 
-# define x labels for ggplot
+# define x-axis labels for ggplot
 labels <- c(f.stat1, f.stat2, f.stat3) %>%
   round(1) %>%
   format(big.mark = ',') %>%
@@ -267,7 +273,7 @@ ggplot(fs.estimates, aes(y = estimate, x = models, group = ci_bound)) +
   geom_text(aes(label = estimate), nudge_x = .15, family = 'LM Roman 10') +
   geom_errorbar(aes(ymax = ci_upper, ymin = ci_lower, color = ci_bound),
     width = .25, position = position_nudge(x = 0, y = 0)) +
-  scale_color_manual(values = paste0('grey', c(74, 49, 10)),
+  scale_color_manual(values = c('grey74', 'yellow4', 'grey10'),
     name = 'Confidence Intervals') +
   scale_x_discrete(labels = labels) +
   labs(y = 'Instrument Point Estimates', x = element_blank()) +
@@ -282,4 +288,7 @@ ggplot(fs.estimates, aes(y = estimate, x = models, group = ci_bound)) +
 ggsave('fsestimates.png', device = 'png', path = 'plots', dpi = 300)
 
 # remove unnecessary objects
-rm(list = objects(pattern = 'fs|f\\.stat|point\\.estimate|names'))
+rm(list = objects(pattern = 'fs|f\\.stat|point\\.estimate|names|models|ci'))
+
+### hausman
+
