@@ -478,7 +478,7 @@ filter(tse.analysis, office.ID == 13) %>%
     candidate.maritalstatus + candidate.education, data = .)} -> ols8
 
 filter(tse.analysis, office.ID == 13) %>%
-  {felm(outcome.distance ~ candidacy.invalid.ontrial ~ candidate.age +
+  {felm(outcome.distance ~ candidacy.invalid.ontrial + candidate.age +
     candidate.male + candidate.experience + candidacy.expenditures.actual +
     candidate.maritalstatus + candidate.education | election.year +
     election.ID + party.coalition, data = ., exactDOF = TRUE)} -> ols9
@@ -492,7 +492,7 @@ filter(tse.analysis, office.ID == 11) %>%
     candidate.maritalstatus + candidate.education, data = .)} -> ols11
 
 filter(tse.analysis, office.ID == 11) %>%
-  {felm(outcome.distance ~ candidacy.invalid.ontrial ~ candidate.age +
+  {felm(outcome.distance ~ candidacy.invalid.ontrial + candidate.age +
     candidate.male + candidate.experience + candidacy.expenditures.actual +
     candidate.maritalstatus + candidate.education | election.year +
     election.ID + party.coalition, data = ., exactDOF = TRUE)} -> ols12
@@ -610,6 +610,18 @@ stargazer(
   table.placement = '!htbp'
 )
 
+# extract f-stat for graphs and tables
+c('\textit{F}-stat ',
+  summary(ols1)$fstatistic[1] %>% round(2),
+  summary(ols2)$fstatistic[1] %>% round(2),
+  summary(ols3)$P.fstat['F'] %>% round(2),
+  summary(ss1)$P.fstat['F'] %>% round(2),
+  summary(ss2)$P.fstat['F'] %>% round(2),
+  summary(ss3)$P.fstat['F'] %>% round(2),
+  ' \\'
+) %>%
+paste0(collapse = ' & ')
+
 # produce tables with outcome two
 stargazer(
 
@@ -648,6 +660,18 @@ stargazer(
   table.placement = '!htbp'
 )
 
+# extract f-stat for graphs and tables
+c('\textit{F}-stat ',
+  summary(ols4)$fstatistic[1] %>% round(2),
+  summary(ols5)$fstatistic[1] %>% round(2),
+  summary(ols6)$P.fstat['F'] %>% round(2),
+  summary(ss4)$P.fstat['F'] %>% round(2),
+  summary(ss5)$P.fstat['F'] %>% round(2),
+  summary(ss6)$P.fstat['F'] %>% round(2),
+  ' \\'
+) %>%
+paste0(collapse = ' & ')
+
 # produce tables with outcome three for city councilor and mayor sample
 stargazer(
 
@@ -659,15 +683,15 @@ stargazer(
   title = paste('The Effect of Electoral Crimes on the Vote Distance to',
                 'Election Cutoff', sep = ' '),
   style = 'default',
-  # out = 'tables/secondstageoutcome2.tex',
+  # out = 'tables/secondstageoutcome3.tex',
   out.header = FALSE,
-  column.labels = rep(c('OLS', 'IV'), each = 3),
-  column.separate = rep(1, 6),
-  covariate.labels = instrument.labels[2],
+  column.labels = rep(c('OLS', 'IV'), 2),
+  column.separate = rep(1, 4),
+  covariate.labels = instrument.labels[1],
   dep.var.caption = paste0('Outcome: ', outcome.labels[3]),
   dep.var.labels.include = FALSE,
   align = TRUE,
-  se = list(cse(ols9), cse(ols12), cse(ss9), cse(ss12)),
+  se = list(cse(ols9), cse(ss9), cse(ols12), cse(ss12)),
   p.auto = TRUE,
   column.sep.width = '4pt',
   digit.separate = 3,
@@ -678,7 +702,7 @@ stargazer(
   initial.zero = FALSE,
   model.names = FALSE,
   keep = c('invalid'),
-  label = 'tab:secondstageoutcome2',
+  label = 'tab:secondstageoutcome3',
   no.space = FALSE,
   omit = c('constant', 'party|electoral'),
   omit.labels = c('Individual Controls', 'Fixed-Effects'),
@@ -686,3 +710,13 @@ stargazer(
   omit.yes.no = c('Yes', '-'),
   table.placement = '!htbp'
 )
+
+# extract f-stat for graphs and tables
+c('\textit{F}-stat ',
+  summary(ols9)$fstatistic[1] %>% round(2),
+  summary(ols12)$P.fstat['F'] %>% round(2),
+  summary(ss9)$P.fstat['F'] %>% round(2),
+  summary(ss12)$P.fstat['F'] %>% round(2),
+  ' \\'
+) %>%
+paste0(collapse = ' & ')
