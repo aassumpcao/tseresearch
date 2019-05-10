@@ -12,6 +12,7 @@ rm(list = ls())
 ### data and library calls
 # import libraries
 library(AER)
+# library(extrafont)
 library(lfe)
 library(magrittr)
 library(stargazer)
@@ -328,14 +329,14 @@ labels <- c(f.stat1, f.stat2, f.stat3) %>%
   round(1) %>%
   format(big.mark = ',') %>%
   trimws() %>%
-  {paste0('(F-stat = ', ., ')')} %>%
+  {paste0('(F = ', ., ')')} %>%
   {paste(c('No Covariates', 'Individual Covariates',
-           'Individual Covariates \n and Fixed-Effects'), ., sep = '\n')}
+           'Individual Covariates \n and Fixed Effects'), ., sep = '\n')}
 
 # build plot
 ggplot(fs.estimates, aes(y = estimate, x = models, group = ci_bound)) +
-  geom_point(size = 4) +
-  geom_text(aes(label = estimate), nudge_x = .15, family = 'LM Roman 10') +
+  geom_point(size = 2) +
+  geom_text(aes(label = estimate), nudge_x = .15, family = 'LM Roman 10', size = 4) +
   geom_errorbar(aes(ymax = ci_upper, ymin = ci_lower, color = ci_bound),
     width = .25, position = position_nudge(x = 0, y = 0)) +
   scale_color_manual(values = c('grey74', 'yellow4', 'grey10'),
@@ -344,15 +345,21 @@ ggplot(fs.estimates, aes(y = estimate, x = models, group = ci_bound)) +
   labs(y = 'Instrument Point Estimates', x = element_blank()) +
   ylim(min = .65, max = .8) +
   theme_bw() +
-  theme(axis.title = element_text(size = 10), legend.position = 'top',
-        axis.text.x = element_text(size = 10, lineheight = 1.1),
+  theme(axis.title = element_text(size = 10),
+        axis.text.y = element_text(size = 10, lineheight = 1.1, face = 'bold'),
+        axis.text.x = element_text(size = 10, lineheight = 1.1, face = 'bold'),
         text = element_text(family = 'LM Roman 10'),
         panel.grid.major = element_line(color = 'snow3', linetype = 'dashed'),
-        panel.grid.minor = element_line(color = 'snow3', linetype = 'dashed')
+        panel.grid.minor = element_line(color = 'snow3', linetype = 'dashed'),
+        panel.border = element_rect(colour = 'black', size = 1),
+        legend.text = element_text(size = 10),
+        legend.position = 'top'
   )
 
-# # save plot
-# ggsave('firststage.png', device = 'png', path = 'plots', dpi = 300)
+# save plot
+library(extrafont)
+ggsave('firststage.pdf', device = 'pdf', path = 'plots', dpi = 100,
+       width = 6.5, height = 4)
 
 # remove unnecessary objects
 rm(list = objects(pattern = 'f\\.stat|point\\.estimate|names|models|ci'))
@@ -713,10 +720,17 @@ stargazer(
 
 # extract f-stat for graphs and tables
 c('\textit{F}-stat ',
-  summary(ols9)$fstatistic[1] %>% round(2),
+  summary(ols9)$P.fstat['F']  \documentclass{article}
+\usepackage{standalone}
+\title{My Book}
+\author{Me}
+\begin{document}
+\maketitle
+\input{Section1.tex}
+\end{document}%>% round(2),
   summary(ols12)$P.fstat['F'] %>% round(2),
-  summary(ss9)$P.fstat['F'] %>% round(2),
-  summary(ss12)$P.fstat['F'] %>% round(2),
+  summary(ss9)$P.fstat['F']   %>% round(2),
+  summary(ss12)$P.fstat['F']  %>% round(2),
   ' \\'
 ) %>%
 paste0(collapse = ' & ')
