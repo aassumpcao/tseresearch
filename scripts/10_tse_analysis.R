@@ -6,6 +6,9 @@
 # author: andre assumpcao
 # by andre.assumpcao@gmail.com
 
+# for testing purposes only!
+rm(list = ls())
+
 ### data and library calls
 # import libraries
 library(AER)
@@ -33,13 +36,42 @@ t.test2 <- function(mean1, mean2, se1, se2) {
 
   # function
   se <- se1 + se2
-  df <- ((se1 + se2)^2) / ((se1)^2 / (9470-1) + (se2)^2 / (9470-1))
+  df <- ((se1 + se2)^2) / ((se1)^2 / (9442 - 1) + (se2)^2 / (9442 - 1))
   t  <- (mean1 - mean2) / se
   result <- c(mean1 - mean2, se, t, 2 * pt(-abs(t), df))
   names(result) <- c('Difference in Means', 'Std. Error', 't-stat', 'p-value')
 
   # return call
   return(result)
+}
+
+# function to change names of instrumented variable in felm regression so that
+# stargazer outputs everything in the same row
+cbeta <- function(reg) {
+  # Args:
+  #   reg: regression object
+
+  # Returns:
+  #   matrix of robust standard errors
+
+  # Body:
+  #   compute standard errors in different ways if lm, ivreg or felm classes
+
+  # function
+  if (class(reg) == 'felm') {
+    if (length(reg$coefficients) > 1) {
+      row.names(reg$coefficients)[2] <- 'candidacy.invalid.ontrial'
+      row.names(reg$beta)[2]         <- 'candidacy.invalid.ontrial'
+      names(reg$rse)[2]              <- 'candidacy.invalid.ontrial'
+    } else if (length(reg$coefficients) == 1) {
+      row.names(reg$coefficients)[1] <- 'candidacy.invalid.ontrial'
+      row.names(reg$beta)[1]         <- 'candidacy.invalid.ontrial'
+      names(reg$rse)[1]              <- 'candidacy.invalid.ontrial'
+    }
+  }
+
+  # return call
+  return(reg)
 }
 
 # define function to calculate corrected SEs for OLS, IV, and FELM regressions
@@ -57,22 +89,29 @@ cse <- function(reg) {
   if (class(reg) == 'lm') {
     rob <- sqrt(diag(sandwich::vcovHC(reg, type = 'HC1')))
   } else if (class(reg) == 'felm') {
-    rob <- summary(reg, robust = TRUE)$coefficients[, 2]
+    if (length(reg$coefficients > 1)) {
+      reg <- cbeta(reg)
+      rob <- summary(reg, robust = TRUE)$coefficients[, 2]
+    }
+
   } else if (class(reg) == 'ivreg') {
-    rob <- ivpack::robust.se(reg)[,2]
+    rob <- ivpack::robust.se(reg)[, 2]
   } else {
     message('not implemented yet')
   }
+  # # fix coefficient names
+  # names(rob) %<>% str_replace(fixed('`candidacy.invalid.ontrial(fit)`'),
+  #                             fixed('candidacy.invalid.ontrial'))
   # return matrix
   return(rob)
 }
 
 ### define y's and x's used in analysis and their labels
 # outcome labels
-outcomes       <- c('outcome.elected', 'outcome.distance', 'outcome.share')
+outcomes       <- c('outcome.elected', 'outcome.share', 'outcome.distance')
 outcome.labels <- c('Probability of Election',
-                    'Vote Distance to Election Cutoff (in p.p.)',
-                    'Total Vote Share (in p.p.)')
+                    'Total Vote Share (in p.p.)',
+                    'Vote Distance to Election Cutoff (in p.p.)')
 
 # define instruments and their labels
 instrument        <- 'candidacy.invalid.onappeal'
@@ -210,7 +249,7 @@ var.names <- summary(covariate.balance.instrument)$coefficients %>%
   {dimnames(.)[[1]]} %>%
   str_remove_all('candida(cy|te)\\.|education|maritalstatus|\\.actual')
 var.names[c(2, 3)] %<>% str_to_sentence()
-var.names[c(1, 14, 15)] <- c('Elected to Office', covariate.labels[c(5, 6)])
+var.names[c(1, 15, 16)] <- c('Elected to Office', covariate.labels[c(5, 6)])
 
 # format judicial behavior dataset
 judicial.behavior %>%
@@ -312,11 +351,11 @@ ggplot(fs.estimates, aes(y = estimate, x = models, group = ci_bound)) +
         panel.grid.minor = element_line(color = 'snow3', linetype = 'dashed')
   )
 
-# save plot
-ggsave('firststage.png', device = 'png', path = 'plots', dpi = 300)
+# # save plot
+# ggsave('firststage.png', device = 'png', path = 'plots', dpi = 300)
 
 # remove unnecessary objects
-rm(list = objects(pattern = 'fs|f\\.stat|point\\.estimate|names|models|ci'))
+rm(list = objects(pattern = 'f\\.stat|point\\.estimate|names|models|ci'))
 
 # produce tables showing first-stage strength
 stargazer(
@@ -360,19 +399,19 @@ tse.analysis %>%
     candidacy.invalid.ontrial | candidacy.invalid.onappeal, data = .)} -> iv1
 
 tse.analysis %>%
-  {ivreg(outcome.distance ~
+  {ivreg(outcome.share ~
     candidacy.invalid.ontrial | candidacy.invalid.onappeal, data = .)} -> iv2
 
-filter(tse.analysis, office.ID == 13) %>%
+tse.analysis %>%
   {ivreg(outcome.distance ~
     candidacy.invalid.ontrial | candidacy.invalid.onappeal, data = .)} -> iv3
 
-filter(tse.analysis, office.ID == 11) %>%
+filter(tse.analysis, office.ID == 13) %>%
   {ivreg(outcome.distance ~
     candidacy.invalid.ontrial | candidacy.invalid.onappeal, data = .)} -> iv4
 
-tse.analysis %>%
-  {ivreg(outcome.share ~
+filter(tse.analysis, office.ID == 11) %>%
+  {ivreg(outcome.distance ~
     candidacy.invalid.ontrial | candidacy.invalid.onappeal, data = .)} -> iv5
 
 # create hausman dataset
@@ -385,13 +424,13 @@ hausman <- objects(pattern = 'iv') %>%
 # print table
 tibble(
   Outcome = str_remove_all(outcome.labels, '\\((.)*\\)') %>% trimws() %>%
-    {c(.[1], .[2], 'City Councilor', 'Mayor', .[3])},
+    c('City Councilor', 'Mayor'),
   `Hausman Statistic` = hausman[seq(1, 10, 2)] %>% sprintf(fmt = '%.2f'),
   `p-value` = hausman[seq(2, 10, 2)] %>% sprintf(fmt = '%.3f')
 ) %>%
 xtable(
-  label = 'tab:hausman',
-  align = c('r', 'l', 'D{.}{.}{-2}', 'D{.}{.}{-3}'),
+  label  = 'tab:hausman',
+  align  = c('r', 'l', 'D{.}{.}{-2}', 'D{.}{.}{-3}'),
   digits = c(0, 0, 2, -3)
 ) %>%
 print.xtable(
@@ -400,3 +439,250 @@ print.xtable(
   include.rownames = FALSE
 )
 
+### ols results
+# create regression objects using the three outcomes and two samples
+tse.analysis %>%
+  {lm(outcome.elected ~ candidacy.invalid.ontrial, data = .)} -> ols1
+
+tse.analysis %>%
+  {lm(outcome.elected ~ candidacy.invalid.ontrial + candidate.age +
+    candidate.male + candidate.experience + candidacy.expenditures.actual +
+    candidate.maritalstatus + candidate.education, data = .)} -> ols2
+
+tse.analysis %>%
+  {felm(outcome.elected ~ candidacy.invalid.ontrial + candidate.age +
+    candidate.male + candidate.experience + candidacy.expenditures.actual +
+    candidate.maritalstatus + candidate.education | election.year +
+    election.ID + party.coalition, data = ., exactDOF = TRUE)} -> ols3
+
+tse.analysis %>%
+  {lm(outcome.share ~ candidacy.invalid.ontrial, data = .)} -> ols4
+
+tse.analysis %>%
+  {lm(outcome.share ~ candidacy.invalid.ontrial + candidate.age +
+    candidate.male + candidate.experience + candidacy.expenditures.actual +
+    candidate.maritalstatus + candidate.education, data = .)} -> ols5
+
+tse.analysis %>%
+  {felm(outcome.share ~ candidacy.invalid.ontrial + candidate.age +
+    candidate.male + candidate.experience + candidacy.expenditures.actual +
+    candidate.maritalstatus + candidate.education | election.year +
+    election.ID + party.coalition, data = ., exactDOF = TRUE)} -> ols6
+
+filter(tse.analysis, office.ID == 13) %>%
+  {lm(outcome.distance ~ candidacy.invalid.ontrial, data = .)} -> ols7
+
+filter(tse.analysis, office.ID == 13) %>%
+  {lm(outcome.distance ~ candidacy.invalid.ontrial + candidate.age +
+    candidate.male + candidate.experience + candidacy.expenditures.actual +
+    candidate.maritalstatus + candidate.education, data = .)} -> ols8
+
+filter(tse.analysis, office.ID == 13) %>%
+  {felm(outcome.distance ~ candidacy.invalid.ontrial ~ candidate.age +
+    candidate.male + candidate.experience + candidacy.expenditures.actual +
+    candidate.maritalstatus + candidate.education | election.year +
+    election.ID + party.coalition, data = ., exactDOF = TRUE)} -> ols9
+
+filter(tse.analysis, office.ID == 11) %>%
+  {lm(outcome.distance ~ candidacy.invalid.ontrial, data = .)} -> ols10
+
+filter(tse.analysis, office.ID == 11) %>%
+  {lm(outcome.distance ~ candidacy.invalid.ontrial + candidate.age +
+    candidate.male + candidate.experience + candidacy.expenditures.actual +
+    candidate.maritalstatus + candidate.education, data = .)} -> ols11
+
+filter(tse.analysis, office.ID == 11) %>%
+  {felm(outcome.distance ~ candidacy.invalid.ontrial ~ candidate.age +
+    candidate.male + candidate.experience + candidacy.expenditures.actual +
+    candidate.maritalstatus + candidate.education | election.year +
+    election.ID + party.coalition, data = ., exactDOF = TRUE)} -> ols12
+
+### instrumental variables results
+# create regression objects using the three outcomes and two samples
+# create regressions using outcome.elected and outcome.share as y
+tse.analysis %>%
+  {felm(outcome.elected ~ 1 | 0 | (candidacy.invalid.ontrial ~
+    candidacy.invalid.onappeal), data = ., exactDOF = TRUE)} -> ss1
+
+tse.analysis %>%
+  {felm(outcome.elected ~ 1 | 0 | (candidacy.invalid.ontrial ~
+    candidacy.invalid.onappeal + candidate.age + candidate.male +
+    candidate.experience + candidacy.expenditures.actual +
+    candidate.maritalstatus + candidate.education), data = .,
+    exactDOF = TRUE)} -> ss2
+
+tse.analysis %>%
+  {felm(outcome.elected ~ 1 | election.year + election.ID + party.coalition |
+    (candidacy.invalid.ontrial ~ candidacy.invalid.onappeal + candidate.age +
+    candidate.male + candidate.experience + candidacy.expenditures.actual +
+    candidate.maritalstatus + candidate.education), data = .,
+    exactDOF = TRUE)} -> ss3
+
+tse.analysis %>%
+  {felm(outcome.share ~ 1 | 0 | (candidacy.invalid.ontrial ~
+    candidacy.invalid.onappeal), data = ., exactDOF = TRUE)} -> ss4
+
+tse.analysis %>%
+  {felm(outcome.share ~ 1 | 0 | (candidacy.invalid.ontrial ~
+    candidacy.invalid.onappeal + candidate.age + candidate.male +
+    candidate.experience + candidacy.expenditures.actual +
+    candidate.maritalstatus + candidate.education), data = .,
+    exactDOF = TRUE)} -> ss5
+
+tse.analysis %>%
+  {felm(outcome.share ~ 1 | election.year + election.ID + party.coalition |
+    (candidacy.invalid.ontrial ~ candidacy.invalid.onappeal + candidate.age +
+    candidate.male + candidate.experience + candidacy.expenditures.actual +
+    candidate.maritalstatus + candidate.education), data = .,
+    exactDOF = TRUE)} -> ss6
+
+filter(tse.analysis, office.ID == 13) %>%
+  {felm(outcome.distance ~ 1 | 0 | (candidacy.invalid.ontrial ~
+    candidacy.invalid.onappeal), data = ., exactDOF = TRUE)} -> ss7
+
+filter(tse.analysis, office.ID == 13) %>%
+  {felm(outcome.distance ~ 1 | 0 | (candidacy.invalid.ontrial ~
+    candidacy.invalid.onappeal + candidate.age + candidate.male +
+    candidate.experience + candidacy.expenditures.actual +
+    candidate.maritalstatus + candidate.education), data = .,
+    exactDOF = TRUE)} -> ss8
+
+filter(tse.analysis, office.ID == 13) %>%
+  {felm(outcome.distance ~ 1 | election.year + election.ID + party.coalition |
+    (candidacy.invalid.ontrial ~ candidacy.invalid.onappeal + candidate.age +
+    candidate.male + candidate.experience + candidacy.expenditures.actual +
+    candidate.maritalstatus + candidate.education), data = .,
+    exactDOF = TRUE)} -> ss9
+
+filter(tse.analysis, office.ID == 11) %>%
+  {felm(outcome.distance ~ 1 | 0 | (candidacy.invalid.ontrial ~
+    candidacy.invalid.onappeal), data = ., exactDOF = TRUE)} -> ss10
+
+filter(tse.analysis, office.ID == 11) %>%
+  {felm(outcome.distance ~ 1 | 0 | (candidacy.invalid.ontrial ~
+    candidacy.invalid.onappeal + candidate.age + candidate.male +
+    candidate.experience + candidacy.expenditures.actual +
+    candidate.maritalstatus + candidate.education), data = .,
+    exactDOF = TRUE)} -> ss11
+
+filter(tse.analysis, office.ID == 11) %>%
+  {felm(outcome.distance ~ 1 | election.year + election.ID + party.coalition |
+    (candidacy.invalid.ontrial ~ candidacy.invalid.onappeal + candidate.age +
+    candidate.male + candidate.experience + candidacy.expenditures.actual +
+    candidate.maritalstatus + candidate.education), data = .,
+    exactDOF = TRUE)} -> ss12
+
+# produce tables with outcome one
+stargazer(
+
+  # first-stage regressions
+  list(ols1, ols2, ols3, cbeta(ss1), cbeta(ss2), cbeta(ss3)),
+
+  # table cosmetics
+  type = 'text',
+  title = 'The Effect of Electoral Crimes on the Probability of Election',
+  style = 'default',
+  # out = 'tables/secondstageoutcome1.tex',
+  out.header = FALSE,
+  column.labels = rep(c('OLS', 'IV'), each = 3),
+  column.separate = rep(1, 6),
+  covariate.labels = instrument.labels[1],
+  dep.var.caption = paste0('Outcome: ', outcome.labels[1]),
+  dep.var.labels.include = FALSE,
+  align = TRUE,
+  se = list(cse(ols1), cse(ols2), cse(ols3), cse(ss1), cse(ss2), cse(ss3)),
+  p.auto = TRUE,
+  column.sep.width = '4pt',
+  digit.separate = 3,
+  digits = 3,
+  digits.extra = 0,
+  font.size = 'scriptsize',
+  header = FALSE,
+  initial.zero = FALSE,
+  model.names = FALSE,
+  keep = c('invalid'),
+  label = 'tab:secondstageoutcome1',
+  no.space = FALSE,
+  omit = c('constant', 'party|electoral'),
+  omit.labels = c('Individual Controls', 'Fixed-Effects'),
+  omit.stat = c('ser', 'f', 'rsq'),
+  omit.yes.no = c('Yes', '-'),
+  table.placement = '!htbp'
+)
+
+# produce tables with outcome two
+stargazer(
+
+  # first-stage regressions
+  list(ols4, ols5, ols6, cbeta(ss4), cbeta(ss5), cbeta(ss6)),
+
+  # table cosmetics
+  type = 'text',
+  title = 'The Effect of Electoral Crimes on the Total Vote Share',
+  style = 'default',
+  # out = 'tables/secondstageoutcome2.tex',
+  out.header = FALSE,
+  column.labels = rep(c('OLS', 'IV'), each = 3),
+  column.separate = rep(1, 6),
+  covariate.labels = instrument.labels[2],
+  dep.var.caption = paste0('Outcome: ', outcome.labels[2]),
+  dep.var.labels.include = FALSE,
+  align = TRUE,
+  se = list(cse(ols4), cse(ols5), cse(ols6), cse(ss4), cse(ss5), cse(ss6)),
+  p.auto = TRUE,
+  column.sep.width = '4pt',
+  digit.separate = 3,
+  digits = 3,
+  digits.extra = 0,
+  font.size = 'scriptsize',
+  header = FALSE,
+  initial.zero = FALSE,
+  model.names = FALSE,
+  keep = c('invalid'),
+  label = 'tab:secondstageoutcome2',
+  no.space = FALSE,
+  omit = c('constant', 'party|electoral'),
+  omit.labels = c('Individual Controls', 'Fixed-Effects'),
+  omit.stat = c('ser', 'f', 'rsq'),
+  omit.yes.no = c('Yes', '-'),
+  table.placement = '!htbp'
+)
+
+# produce tables with outcome three for city councilor and mayor sample
+stargazer(
+
+  # first-stage regressions
+  list(ols9, cbeta(ss9), ols12, cbeta(ss12)),
+
+  # table cosmetics
+  type = 'text',
+  title = paste('The Effect of Electoral Crimes on the Vote Distance to',
+                'Election Cutoff', sep = ' '),
+  style = 'default',
+  # out = 'tables/secondstageoutcome2.tex',
+  out.header = FALSE,
+  column.labels = rep(c('OLS', 'IV'), each = 3),
+  column.separate = rep(1, 6),
+  covariate.labels = instrument.labels[2],
+  dep.var.caption = paste0('Outcome: ', outcome.labels[3]),
+  dep.var.labels.include = FALSE,
+  align = TRUE,
+  se = list(cse(ols9), cse(ols12), cse(ss9), cse(ss12)),
+  p.auto = TRUE,
+  column.sep.width = '4pt',
+  digit.separate = 3,
+  digits = 3,
+  digits.extra = 0,
+  font.size = 'scriptsize',
+  header = FALSE,
+  initial.zero = FALSE,
+  model.names = FALSE,
+  keep = c('invalid'),
+  label = 'tab:secondstageoutcome2',
+  no.space = FALSE,
+  omit = c('constant', 'party|electoral'),
+  omit.labels = c('Individual Controls', 'Fixed-Effects'),
+  omit.stat = c('ser', 'f', 'rsq'),
+  omit.yes.no = c('Yes', '-'),
+  table.placement = '!htbp'
+)

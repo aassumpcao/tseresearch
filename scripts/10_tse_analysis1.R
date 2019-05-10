@@ -636,3 +636,84 @@ stargazer(
   omit.yes.no = c('Yes', '-'),
   table.placement = '!htbp'
 )
+
+objects(pattern = 'ols') %>%
+lapply(get) %>%
+lapply(summary) %>%
+lapply('[', 'coefficients')
+
+ols1 %>% str()
+ss1 %>% str()
+ols1$coefficients
+
+row.names(ss1$coefficients)[2] <- 'candidacy.invalid.ontrial'
+row.names(ss1$beta)[2] <- 'candidacy.invalid.ontrial'
+stargazer(list(ols1, ss1), type = 'text', style = 'default')
+
+fix_beta <- function(reg) {
+
+  if (class(reg) == 'felm') {
+    row.names(reg$coefficients)[2] <- 'candidacy.invalid.ontrial'
+    row.names(reg$beta)[2] <- 'candidacy.invalid.ontrial'
+  } else {
+    message('No fixing is necessary.')
+  }
+  return(reg)
+}
+
+
+tse.analysis %>%
+  {felm(outcome.elected ~ 1 | 0 | (candidacy.invalid.ontrial ~
+    candidacy.invalid.onappeal), data = ., exactDOF = TRUE)} -> ss1
+
+ss1$coefficients
+ss2$coefficients
+ss3$coefficients
+
+ss1$beta
+ss2$beta
+ss3$beta
+
+row.names(ss1$coefficients)[2] <- 'candidacy.invalid.ontrial'
+row.names(ss2$coefficients)[2] <- 'candidacy.invalid.ontrial'
+row.names(ss3$coefficients)[1] <- 'candidacy.invalid.ontrial'
+
+row.names(ss1$beta)[2] <- 'candidacy.invalid.ontrial'
+row.names(ss2$beta)[2] <- 'candidacy.invalid.ontrial'
+row.names(ss3$beta)[1] <- 'candidacy.invalid.ontrial'
+
+ss1 %>% str()
+
+for (i in ss1) {print(i)}
+
+x <- 1:10
+
+row.names(ss1$coefficients)[2] <- 'candidacy.invalid.ontrial'
+row.names(ss1$beta)[2] <- 'candidacy.invalid.ontrial'
+names(ss1$rse)[2] <- 'candidacy.invalid.ontrial'
+
+row.names(ss2$coefficients)[2] <- 'candidacy.invalid.ontrial'
+row.names(ss2$beta)[2] <- 'candidacy.invalid.ontrial'
+names(ss2$rse)[2] <- 'candidacy.invalid.ontrial'
+
+row.names(ss3$coefficients)[1] <- 'candidacy.invalid.ontrial'
+row.names(ss3$beta)[1] <- 'candidacy.invalid.ontrial'
+names(ss3$rse)[1] <- 'candidacy.invalid.ontrial'
+
+
+
+
+cbeta <- function(reg) {
+  if (class(reg) == 'felm') {
+    if (length(reg$coefficients) > 1) {
+      row.names(reg$coefficients)[2] <- 'candidacy.invalid.ontrial'
+      row.names(reg$beta)[2] <- 'candidacy.invalid.ontrial'
+      names(reg$rse)[2] <- 'candidacy.invalid.ontrial'
+    } else if (length(reg$coefficients) == 1) {
+      row.names(reg$coefficients)[1] <- 'candidacy.invalid.ontrial'
+      row.names(reg$beta)[1] <- 'candidacy.invalid.ontrial'
+      names(reg$rse)[1] <- 'candidacy.invalid.ontrial'
+    }
+  }
+  return(reg)
+}

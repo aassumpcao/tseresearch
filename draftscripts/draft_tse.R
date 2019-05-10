@@ -793,3 +793,36 @@ stargazer(
   summary.stat = c('n', 'mean', 'sd', 'min', 'max')
 )
 
+
+### next steps.
+
+
+tse.analysis %>%
+  {felm(outcome.elected ~ 1 | 0 | (candidacy.invalid.ontrial ~
+    candidacy.invalid.onappeal), data = ., exactDOF = TRUE)} %>% summary()
+
+tse.analysis %>%
+  {felm(outcome.elected ~ 1 | 0 | (candidacy.invalid.ontrial ~
+    candidacy.invalid.onappeal + candidate.age + candidate.male +
+    candidate.experience + candidacy.expenditures.actual +
+    candidate.maritalstatus + candidate.education), data = .,
+    exactDOF = TRUE)} -> fs5
+
+tse.analysis %>%
+  {felm(outcome.elected ~ 1 | election.year + election.ID + party.coalition |
+    (candidacy.invalid.ontrial ~ candidacy.invalid.onappeal + candidate.age +
+    candidate.male + candidate.experience + candidacy.expenditures.actual +
+    candidate.maritalstatus + candidate.education), data = .,
+    exactDOF = TRUE)} -> fs6
+
+fs4 %>% summary()
+fs5 %>% summary()
+fs6 %>% summary(diagnostics = TRUE)
+fs7 %>% summary()
+fs8 %>% summary()
+
+tse.analysis %>%
+  {felm(outcome.elected ~ candidacy.invalid.ontrial + candidate.age +
+    candidate.male + candidate.experience + candidacy.expenditures.actual +
+    candidate.maritalstatus + candidate.education | election.year + election.ID + party.coalition, data = .,
+    exactDOF = TRUE)} -> fs8
