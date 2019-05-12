@@ -826,3 +826,61 @@ tse.analysis %>%
     candidate.male + candidate.experience + candidacy.expenditures.actual +
     candidate.maritalstatus + candidate.education | election.year + election.ID + party.coalition, data = .,
     exactDOF = TRUE)} -> fs8
+
+# create function to simulate distribution of ols and iv coefficients
+coef_simulation <- function(sample = 1000, rep = 1000, ...) {
+
+# create vector of betas and s.e.
+ols.beta <- c()
+ols.se   <- c()
+iv.beta  <- c()
+iv.se    <- c()
+
+# create distribution of betas
+for (i in 1:rep) {
+  # created new dataset
+  sampled.dataset <- sample_n(tse.analysis, size = sample, ...)
+
+  # run ols model
+  ols.model <- sampled.dataset %>%
+    {felm(outcome.elected ~ candidacy.invalid.ontrial + candidate.age +
+      candidate.male + candidate.experience + candidacy.expenditures.actual +
+      candidate.maritalstatus + candidate.education | election.year +
+      election.ID + party.coalition,
+      data = ., exactDOF = TRUE)}
+
+  # run iv model
+  iv.model <- sampled.dataset %>%
+    {felm(outcome.elected ~ 1 | election.year + election.ID + party.coalition |
+      (candidacy.invalid.ontrial ~ candidacy.invalid.onappeal + candidate.age +
+      candidate.male + candidate.experience + candidacy.expenditures.actual +
+      candidate.maritalstatus + candidate.education),
+      data = ., exactDOF = TRUE)}
+
+  # check models
+  ols.beta <- c(ols.beta, summary(ols.model)$coefficients[1, 1])
+  ols.se   <- c(ols.se,   summary(ols.model)$coefficients[1, 2])
+  iv.beta  <- c(iv.beta,  summary(iv.model)$coefficients[1, 1])
+  iv.se    <- c(iv.se,    summary(iv.model)$coefficients[1, 2])
+
+  if (i %% 100 == 0) {print(paste0(i, ' concluded / ', rep, ' total.'))}
+
+}
+
+# output dataset
+object <- tibble(ols.beta, ols.se, iv.beta, iv.se)
+
+# return object
+return(object)
+
+}
+
+ggplot(object, aes(ols.beta)) +
+  geom_histogram(fill = 'red', alpha = .5, bins = 50) +
+  geom_histogram(aes(iv.beta), fill = 'blue', alpha = .5, bins = 50)
+
+stargazer(list(fs1, fs2, fs3), type = 'text', se = list(cse(fs1), cse(fs2), cse(fs3)))
+
+row.names(fs3$coefficients)
+
+cse(fs3, fs = TRUE)

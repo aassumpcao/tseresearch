@@ -59,16 +59,14 @@ cbeta <- function(reg) {
   #   compute standard errors in different ways if lm, ivreg or felm classes
 
   # function
+  # check number of coefficients
+  i <- ifelse(length(reg$coefficients) > 1, 2, 1)
+
+  # assign
   if (class(reg) == 'felm') {
-    if (length(reg$coefficients) > 1) {
-      row.names(reg$coefficients)[2] <- 'candidacy.invalid.ontrial'
-      row.names(reg$beta)[2]         <- 'candidacy.invalid.ontrial'
-      names(reg$rse)[2]              <- 'candidacy.invalid.ontrial'
-    } else if (length(reg$coefficients) == 1) {
-      row.names(reg$coefficients)[1] <- 'candidacy.invalid.ontrial'
-      row.names(reg$beta)[1]         <- 'candidacy.invalid.ontrial'
-      names(reg$rse)[1]              <- 'candidacy.invalid.ontrial'
-    }
+    row.names(reg$coefficients)[i] <- 'candidacy.invalid.ontrial'
+    row.names(reg$beta)[i]         <- 'candidacy.invalid.ontrial'
+    names(reg$rse)[i]              <- 'candidacy.invalid.ontrial'
   }
 
   # return call
@@ -76,7 +74,7 @@ cbeta <- function(reg) {
 }
 
 # define function to calculate corrected SEs for OLS, IV, and FELM regressions
-cse <- function(reg) {
+cse <- function(reg, fs = FALSE) {
   # Args:
   #   reg: regression object
 
@@ -91,7 +89,7 @@ cse <- function(reg) {
     rob <- sqrt(diag(sandwich::vcovHC(reg, type = 'HC1')))
   } else if (class(reg) == 'felm') {
     if (length(reg$coefficients > 1)) {
-      reg <- cbeta(reg)
+      if (fs == FALSE) {reg <- cbeta(reg)}
       rob <- summary(reg, robust = TRUE)$coefficients[, 2]
     }
 
@@ -109,34 +107,20 @@ cse <- function(reg) {
 
 ### define y's and x's used in analysis and their labels
 # outcome labels
-outcomes       <- c('outcome.elected', 'outcome.share', 'outcome.distance')
 outcome.labels <- c('Probability of Election',
                     'Total Vote Share (in p.p.)',
                     'Vote Distance to Election Cutoff (in p.p.)')
 
 # define instruments and their labels
-instrument        <- 'candidacy.invalid.onappeal'
-instrumented      <- 'candidacy.invalid.ontrial'
 instrument.labels <- c('Convicted at Trial', 'Convicted on Appeal')
 
-# define independent variables and their labels
-covariates       <- c('candidate.age', 'candidate.male', 'candidate.education',
-                     'candidate.maritalstatus', 'candidate.experience',
-                     'candidacy.expenditures.actual')
+# define independent variables labels
 covariate.labels <- c('Age', 'Male', 'Level of Education', 'Marital Status',
                       'Political Experience', 'Campaign Expenditures (in R$)')
 
 ### define matrices of fixed effects
-# party
-party.fe    <- 'party.coalition'
-party.label <- 'Political Coalition'
-
-# municipal election
-mun.fe      <- 'election.ID'
+# municipality and time
 mun.label   <- 'Municipal Election'
-
-# election year
-time.fe     <- 'election.year'
 time.label  <- 'Election Year'
 
 # define variable types for analysis
@@ -212,18 +196,16 @@ rm(reversals)
 # affecting ruling when elections have passed.
 
 # regression for factors affecting trial
-tse.analysis %>%
-  {felm(candidacy.invalid.ontrial ~ outcome.elected + candidate.age +
-    candidate.male + candidate.maritalstatus + candidate.education +
-    candidate.experience + candidacy.expenditures.actual | election.year +
-    election.ID + party.coalition, data = .)} -> covariate.balance.instrumented
+covariate.balance.instrumented <- felm(candidacy.invalid.ontrial ~
+  outcome.elected + candidate.age + candidate.male + candidate.maritalstatus +
+  candidate.education + candidate.experience + candidacy.expenditures.actual |
+  party.coalition, data = tse.analysis)
 
 # regression for factors affecting appeals
-tse.analysis %>%
-  {felm(candidacy.invalid.onappeal ~ outcome.elected + candidate.age +
-    candidate.male + candidate.maritalstatus + candidate.education +
-    candidate.experience + candidacy.expenditures.actual | election.year +
-    election.ID + party.coalition, data = .)} -> covariate.balance.instrument
+covariate.balance.instrument <- felm(candidacy.invalid.onappeal ~
+  outcome.elected + candidate.age + candidate.male + candidate.maritalstatus +
+  candidate.education + candidate.experience + candidacy.expenditures.actual |
+  party.coalition, data = tse.analysis)
 
 # check point estimates and standard errors in each regression
 covariate.balance.instrumented %>% {summary(.)$coefficients[, c(1, 2)]}
@@ -267,25 +249,21 @@ rm(list = objects(pattern = 'balance|var\\.names|judicial\\.behavior|vector'))
 
 ### first-stage tests
 # produce graphs testing the first-stage strength
-tse.analysis %>%
-  {lm(candidacy.invalid.ontrial ~ candidacy.invalid.onappeal, data = .)} -> fs1
-
-tse.analysis %>%
-  {felm(candidacy.invalid.ontrial ~ candidacy.invalid.onappeal + candidate.age +
-    candidate.male + candidate.experience + candidacy.expenditures.actual +
-    candidate.maritalstatus + candidate.education, data = .,
-    exactDOF = TRUE)} -> fs2
-
-tse.analysis %>%
-  {felm(candidacy.invalid.ontrial ~ candidacy.invalid.onappeal + candidate.age +
-    candidate.male + candidate.experience + candidacy.expenditures.actual +
-    candidate.maritalstatus + candidate.education|election.year + election.ID +
-    party.coalition, data = ., exactDOF = TRUE)} -> fs3
+fs1 <- lm(candidacy.invalid.ontrial ~ candidacy.invalid.onappeal,
+  data = tse.analysis)
+fs2 <- felm(candidacy.invalid.ontrial ~ candidacy.invalid.onappeal +
+  candidate.age + candidate.male + candidate.experience +
+  candidacy.expenditures.actual + candidate.maritalstatus +
+  candidate.education, data = tse.analysis, exactDOF = TRUE)
+fs3 <- felm(candidacy.invalid.ontrial ~ candidacy.invalid.onappeal +
+  candidate.age + candidate.male + candidate.experience +
+  candidacy.expenditures.actual + candidate.maritalstatus +
+  candidate.education | party.coalition, data = tse.analysis, exactDOF = TRUE)
 
 # extract point estimates and s.e.'s for graph and tables
-point.estimates1 <- c(summary(fs1)$coefficients[2, 1], cse(fs1)[2])
-point.estimates2 <- c(summary(fs2)$coefficients[2, 1], cse(fs2)[2])
-point.estimates3 <- c(summary(fs3)$coefficients[1, 1], cse(fs3)[1])
+point.estimates1 <- c(summary(fs1)$coefficients[2, 1], cse(fs1, fs = TRUE)[2])
+point.estimates2 <- c(summary(fs2)$coefficients[2, 1], cse(fs2, fs = TRUE)[2])
+point.estimates3 <- c(summary(fs3)$coefficients[1, 1], cse(fs3, fs = TRUE)[1])
 
 # extract f-stat for graphs and tables
 f.stat1 <- summary(fs1)$fstatistic[1]
@@ -356,10 +334,10 @@ ggplot(fs.estimates, aes(y = estimate, x = models, group = ci_bound)) +
         legend.position = 'top'
   )
 
-# save plot
-library(extrafont)
-ggsave('firststage.pdf', device = 'pdf', path = 'plots', dpi = 100,
-       width = 6.5, height = 4)
+# # save plot
+# library(extrafont)
+# ggsave('firststage.pdf', device = 'pdf', path = 'plots', dpi = 100,
+#        width = 6.5, height = 4)
 
 # remove unnecessary objects
 rm(list = objects(pattern = 'f\\.stat|point\\.estimate|names|models|ci'))
@@ -380,7 +358,8 @@ stargazer(
   dep.var.caption = paste0('Outcome: ', instrument.labels[1]),
   dep.var.labels.include = FALSE,
   align = TRUE,
-  se = list(cse(fs1), cse(fs2), cse(fs3)),
+  se = list(cse(fs1, fs = TRUE), cse(fs2, fs = TRUE), cse(fs3, fs = TRUE)),
+  p.auto = TRUE,
   column.sep.width = '4pt',
   digit.separate = 3,
   digits = 3,
@@ -392,7 +371,7 @@ stargazer(
   keep = c('invalid'),
   label = 'tab:firststage',
   no.space = FALSE,
-  omit = c('constant', 'party|electoral'),
+  omit = c('constant|education|maritalstatus', 'party|electoral'),
   omit.labels = c('Individual Controls', 'Fixed-Effects'),
   omit.stat = c('ser', 'f', 'rsq'),
   omit.yes.no = c('Yes', '-'),
@@ -404,19 +383,15 @@ stargazer(
 tse.analysis %>%
   {ivreg(outcome.elected ~
     candidacy.invalid.ontrial | candidacy.invalid.onappeal, data = .)} -> iv1
-
 tse.analysis %>%
   {ivreg(outcome.share ~
     candidacy.invalid.ontrial | candidacy.invalid.onappeal, data = .)} -> iv2
-
 tse.analysis %>%
   {ivreg(outcome.distance ~
     candidacy.invalid.ontrial | candidacy.invalid.onappeal, data = .)} -> iv3
-
 filter(tse.analysis, office.ID == 13) %>%
   {ivreg(outcome.distance ~
     candidacy.invalid.ontrial | candidacy.invalid.onappeal, data = .)} -> iv4
-
 filter(tse.analysis, office.ID == 11) %>%
   {ivreg(outcome.distance ~
     candidacy.invalid.ontrial | candidacy.invalid.onappeal, data = .)} -> iv5
@@ -448,136 +423,115 @@ print.xtable(
 
 ### ols results
 # create regression objects using the three outcomes and two samples
-tse.analysis %>%
-  {lm(outcome.elected ~ candidacy.invalid.ontrial, data = .)} -> ols1
+# outcome 1: probability of election
+ols1 <- lm(outcome.elected ~ candidacy.invalid.ontrial, data = tse.analysis)
+ols2 <- lm(outcome.elected ~ candidacy.invalid.ontrial + candidate.age +
+  candidate.male + candidate.experience + candidacy.expenditures.actual +
+  candidate.maritalstatus + candidate.education, data = tse.analysis)
+ols3 <- felm(outcome.elected ~ candidacy.invalid.ontrial + candidate.age +
+  candidate.male + candidate.experience + candidacy.expenditures.actual +
+  candidate.maritalstatus + candidate.education | election.ID + election.year,
+  data = tse.analysis, exactDOF = TRUE)
 
-tse.analysis %>%
-  {lm(outcome.elected ~ candidacy.invalid.ontrial + candidate.age +
-    candidate.male + candidate.experience + candidacy.expenditures.actual +
-    candidate.maritalstatus + candidate.education, data = .)} -> ols2
+# outcome 2: vote share
+ols4 <- lm(outcome.share ~ candidacy.invalid.ontrial, data = tse.analysis)
+ols5 <- lm(outcome.share ~ candidacy.invalid.ontrial + candidate.age +
+  candidate.male + candidate.experience + candidacy.expenditures.actual +
+  candidate.maritalstatus + candidate.education, data = tse.analysis)
+ols6 <- felm(outcome.share ~ candidacy.invalid.ontrial + candidate.age +
+  candidate.male + candidate.experience + candidacy.expenditures.actual +
+  candidate.maritalstatus + candidate.education | election.ID + election.year,
+  data = tse.analysis, exactDOF = TRUE)
 
-tse.analysis %>%
-  {felm(outcome.elected ~ candidacy.invalid.ontrial + candidate.age +
-    candidate.male + candidate.experience + candidacy.expenditures.actual +
-    candidate.maritalstatus + candidate.education | election.year +
-    election.ID + party.coalition, data = ., exactDOF = TRUE)} -> ols3
-
-tse.analysis %>%
-  {lm(outcome.share ~ candidacy.invalid.ontrial, data = .)} -> ols4
-
-tse.analysis %>%
-  {lm(outcome.share ~ candidacy.invalid.ontrial + candidate.age +
-    candidate.male + candidate.experience + candidacy.expenditures.actual +
-    candidate.maritalstatus + candidate.education, data = .)} -> ols5
-
-tse.analysis %>%
-  {felm(outcome.share ~ candidacy.invalid.ontrial + candidate.age +
-    candidate.male + candidate.experience + candidacy.expenditures.actual +
-    candidate.maritalstatus + candidate.education | election.year +
-    election.ID + party.coalition, data = ., exactDOF = TRUE)} -> ols6
-
-filter(tse.analysis, office.ID == 13) %>%
-  {lm(outcome.distance ~ candidacy.invalid.ontrial, data = .)} -> ols7
-
-filter(tse.analysis, office.ID == 13) %>%
+# outcome 3: distance to election cutoff for city councilor candidates
+ols7 <- filter(tse.analysis, office.ID == 13) %>%
+  {lm(outcome.distance ~ candidacy.invalid.ontrial, data = .)}
+ols8 <- filter(tse.analysis, office.ID == 13) %>%
   {lm(outcome.distance ~ candidacy.invalid.ontrial + candidate.age +
     candidate.male + candidate.experience + candidacy.expenditures.actual +
-    candidate.maritalstatus + candidate.education, data = .)} -> ols8
-
-filter(tse.analysis, office.ID == 13) %>%
+    candidate.maritalstatus + candidate.education, data = .)}
+ols9 <- filter(tse.analysis, office.ID == 13) %>%
   {felm(outcome.distance ~ candidacy.invalid.ontrial + candidate.age +
     candidate.male + candidate.experience + candidacy.expenditures.actual +
-    candidate.maritalstatus + candidate.education | election.year +
-    election.ID + party.coalition, data = ., exactDOF = TRUE)} -> ols9
+    candidate.maritalstatus + candidate.education | election.ID + election.year,
+    data = ., exactDOF = TRUE)}
 
-filter(tse.analysis, office.ID == 11) %>%
-  {lm(outcome.distance ~ candidacy.invalid.ontrial, data = .)} -> ols10
-
-filter(tse.analysis, office.ID == 11) %>%
+# outcome 3: distance to election cutoff for mayor candidates
+ols10 <- filter(tse.analysis, office.ID == 11) %>%
+  {lm(outcome.distance ~ candidacy.invalid.ontrial, data = .)}
+ols11 <- filter(tse.analysis, office.ID == 11) %>%
   {lm(outcome.distance ~ candidacy.invalid.ontrial + candidate.age +
     candidate.male + candidate.experience + candidacy.expenditures.actual +
-    candidate.maritalstatus + candidate.education, data = .)} -> ols11
-
-filter(tse.analysis, office.ID == 11) %>%
+    candidate.maritalstatus + candidate.education, data = .)}
+ols12 <- filter(tse.analysis, office.ID == 11) %>%
   {felm(outcome.distance ~ candidacy.invalid.ontrial + candidate.age +
     candidate.male + candidate.experience + candidacy.expenditures.actual +
-    candidate.maritalstatus + candidate.education | election.year +
-    election.ID + party.coalition, data = ., exactDOF = TRUE)} -> ols12
+    candidate.maritalstatus + candidate.education | election.ID + election.year,
+    data = ., exactDOF = TRUE)}
 
 ### instrumental variables results
 # create regression objects using the three outcomes and two samples
-# create regressions using outcome.elected and outcome.share as y
-tse.analysis %>%
+# create regressions using outcome.elected and outcome.share as yss1 <-
+ss1 <- tse.analysis %>%
   {felm(outcome.elected ~ 1 | 0 | (candidacy.invalid.ontrial ~
-    candidacy.invalid.onappeal), data = ., exactDOF = TRUE)} -> ss1
-
-tse.analysis %>%
-  {felm(outcome.elected ~ 1 | 0 | (candidacy.invalid.ontrial ~
-    candidacy.invalid.onappeal + candidate.age + candidate.male +
+    candidacy.invalid.onappeal), data = ., exactDOF = TRUE)}
+ss2 <- tse.analysis %>%
+  {felm(outcome.elected ~ candidate.age + candidate.male +
     candidate.experience + candidacy.expenditures.actual +
-    candidate.maritalstatus + candidate.education), data = .,
-    exactDOF = TRUE)} -> ss2
-
-tse.analysis %>%
-  {felm(outcome.elected ~ 1 | election.year + election.ID + party.coalition |
-    (candidacy.invalid.ontrial ~ candidacy.invalid.onappeal + candidate.age +
-    candidate.male + candidate.experience + candidacy.expenditures.actual +
-    candidate.maritalstatus + candidate.education), data = .,
-    exactDOF = TRUE)} -> ss3
-
-tse.analysis %>%
+    candidate.maritalstatus + candidate.education | 0 |
+    (candidacy.invalid.ontrial ~ candidacy.invalid.onappeal), data = .,
+    exactDOF = TRUE)}
+ss3 <- tse.analysis %>%
+  {felm(outcome.elected ~ candidate.age + candidate.male +
+    candidate.experience + candidacy.expenditures.actual +
+    candidate.maritalstatus + candidate.education | election.ID + election.year|
+    (candidacy.invalid.ontrial ~ candidacy.invalid.onappeal), data = .,
+    exactDOF = TRUE)}
+ss4 <- tse.analysis %>%
   {felm(outcome.share ~ 1 | 0 | (candidacy.invalid.ontrial ~
-    candidacy.invalid.onappeal), data = ., exactDOF = TRUE)} -> ss4
-
-tse.analysis %>%
-  {felm(outcome.share ~ 1 | 0 | (candidacy.invalid.ontrial ~
-    candidacy.invalid.onappeal + candidate.age + candidate.male +
+    candidacy.invalid.onappeal), data = ., exactDOF = TRUE)}
+ss5 <- tse.analysis %>%
+  {felm(outcome.share ~ candidate.age + candidate.male +
     candidate.experience + candidacy.expenditures.actual +
-    candidate.maritalstatus + candidate.education), data = .,
-    exactDOF = TRUE)} -> ss5
-
-tse.analysis %>%
-  {felm(outcome.share ~ 1 | election.year + election.ID + party.coalition |
-    (candidacy.invalid.ontrial ~ candidacy.invalid.onappeal + candidate.age +
+    candidate.maritalstatus + candidate.education | 0 |
+    (candidacy.invalid.ontrial ~ candidacy.invalid.onappeal), data = .,
+    exactDOF = TRUE)}
+ss6 <- tse.analysis %>%
+  {felm(outcome.share ~ candidate.age +
     candidate.male + candidate.experience + candidacy.expenditures.actual +
-    candidate.maritalstatus + candidate.education), data = .,
-    exactDOF = TRUE)} -> ss6
-
-filter(tse.analysis, office.ID == 13) %>%
+    candidate.maritalstatus + candidate.education | election.ID + election.year|
+    (candidacy.invalid.ontrial ~ candidacy.invalid.onappeal), data = .,
+    exactDOF = TRUE)}
+ss7 <- filter(tse.analysis, office.ID == 13) %>%
   {felm(outcome.distance ~ 1 | 0 | (candidacy.invalid.ontrial ~
-    candidacy.invalid.onappeal), data = ., exactDOF = TRUE)} -> ss7
-
-filter(tse.analysis, office.ID == 13) %>%
-  {felm(outcome.distance ~ 1 | 0 | (candidacy.invalid.ontrial ~
-    candidacy.invalid.onappeal + candidate.age + candidate.male +
+    candidacy.invalid.onappeal), data = ., exactDOF = TRUE)}
+ss8 <- filter(tse.analysis, office.ID == 13) %>%
+  {felm(outcome.distance ~ candidate.age + candidate.male +
     candidate.experience + candidacy.expenditures.actual +
-    candidate.maritalstatus + candidate.education), data = .,
-    exactDOF = TRUE)} -> ss8
-
-filter(tse.analysis, office.ID == 13) %>%
-  {felm(outcome.distance ~ 1 | election.year + election.ID + party.coalition |
-    (candidacy.invalid.ontrial ~ candidacy.invalid.onappeal + candidate.age +
-    candidate.male + candidate.experience + candidacy.expenditures.actual +
-    candidate.maritalstatus + candidate.education), data = .,
-    exactDOF = TRUE)} -> ss9
-
-filter(tse.analysis, office.ID == 11) %>%
-  {felm(outcome.distance ~ 1 | 0 | (candidacy.invalid.ontrial ~
-    candidacy.invalid.onappeal), data = ., exactDOF = TRUE)} -> ss10
-
-filter(tse.analysis, office.ID == 11) %>%
-  {felm(outcome.distance ~ 1 | 0 | (candidacy.invalid.ontrial ~
-    candidacy.invalid.onappeal + candidate.age + candidate.male +
+    candidate.maritalstatus + candidate.education | 0 |
+    (candidacy.invalid.ontrial ~ candidacy.invalid.onappeal), data = .,
+    exactDOF = TRUE)}
+ss9 <- filter(tse.analysis, office.ID == 13) %>%
+  {felm(outcome.distance ~ candidate.age + candidate.male +
     candidate.experience + candidacy.expenditures.actual +
-    candidate.maritalstatus + candidate.education), data = .,
-    exactDOF = TRUE)} -> ss11
-
-filter(tse.analysis, office.ID == 11) %>%
-  {felm(outcome.distance ~ 1 | election.year + election.ID + party.coalition |
-    (candidacy.invalid.ontrial ~ candidacy.invalid.onappeal + candidate.age +
-    candidate.male + candidate.experience + candidacy.expenditures.actual +
-    candidate.maritalstatus + candidate.education), data = .,
-    exactDOF = TRUE)} -> ss12
+    candidate.maritalstatus + candidate.education | election.ID + election.year|
+    (candidacy.invalid.ontrial ~ candidacy.invalid.onappeal), data = .,
+    exactDOF = TRUE)}
+ss10 <- filter(tse.analysis, office.ID == 11) %>%
+  {felm(outcome.distance ~ 1 | 0 | (candidacy.invalid.ontrial ~
+    candidacy.invalid.onappeal), data = ., exactDOF = TRUE)}
+ss11 <- filter(tse.analysis, office.ID == 11) %>%
+  {felm(outcome.distance ~ candidate.age + candidate.male +
+    candidate.experience + candidacy.expenditures.actual +
+    candidate.maritalstatus + candidate.education | 0 |
+    (candidacy.invalid.ontrial ~ candidacy.invalid.onappeal), data = .,
+    exactDOF = TRUE)}
+ss12 <- filter(tse.analysis, office.ID == 11) %>%
+  {felm(outcome.distance ~ candidate.age + candidate.male +
+    candidate.experience + candidacy.expenditures.actual +
+    candidate.maritalstatus + candidate.education | election.ID + election.year|
+    (candidacy.invalid.ontrial ~ candidacy.invalid.onappeal), data = .,
+    exactDOF = TRUE)}
 
 # produce tables with outcome one
 stargazer(
@@ -621,10 +575,10 @@ stargazer(
 c('\textit{F}-stat ',
   summary(ols1)$fstatistic[1] %>% round(2),
   summary(ols2)$fstatistic[1] %>% round(2),
-  summary(ols3)$P.fstat['F'] %>% round(2),
-  summary(ss1)$P.fstat['F'] %>% round(2),
-  summary(ss2)$P.fstat['F'] %>% round(2),
-  summary(ss3)$P.fstat['F'] %>% round(2),
+  summary(ols3)$P.fstat['F']  %>% round(2),
+  summary(ss1)$P.fstat['F']   %>% round(2),
+  summary(ss2)$P.fstat['F']   %>% round(2),
+  summary(ss3)$P.fstat['F']   %>% round(2),
   ' \\'
 ) %>%
 paste0(collapse = ' & ')
@@ -671,10 +625,10 @@ stargazer(
 c('\textit{F}-stat ',
   summary(ols4)$fstatistic[1] %>% round(2),
   summary(ols5)$fstatistic[1] %>% round(2),
-  summary(ols6)$P.fstat['F'] %>% round(2),
-  summary(ss4)$P.fstat['F'] %>% round(2),
-  summary(ss5)$P.fstat['F'] %>% round(2),
-  summary(ss6)$P.fstat['F'] %>% round(2),
+  summary(ols6)$P.fstat['F']  %>% round(2),
+  summary(ss4)$P.fstat['F']   %>% round(2),
+  summary(ss5)$P.fstat['F']   %>% round(2),
+  summary(ss6)$P.fstat['F']   %>% round(2),
   ' \\'
 ) %>%
 paste0(collapse = ' & ')
@@ -720,14 +674,7 @@ stargazer(
 
 # extract f-stat for graphs and tables
 c('\textit{F}-stat ',
-  summary(ols9)$P.fstat['F']  \documentclass{article}
-\usepackage{standalone}
-\title{My Book}
-\author{Me}
-\begin{document}
-\maketitle
-\input{Section1.tex}
-\end{document}%>% round(2),
+  summary(ols9)$P.fstat['F']  %>% round(2),
   summary(ols12)$P.fstat['F'] %>% round(2),
   summary(ss9)$P.fstat['F']   %>% round(2),
   summary(ss12)$P.fstat['F']  %>% round(2),
