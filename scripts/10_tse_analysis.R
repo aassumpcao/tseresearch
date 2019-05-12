@@ -59,14 +59,16 @@ cbeta <- function(reg) {
   #   compute standard errors in different ways if lm, ivreg or felm classes
 
   # function
-  # check number of coefficients
-  i <- ifelse(length(reg$coefficients) > 1, 2, 1)
+  # check where the coefficient with the wrong name is
+  i <- which(str_detect(row.names(reg$coefficients), fixed('(fit)')))
+  j <- which(str_detect(row.names(reg$beta), fixed('(fit)')))
+  w <- which(str_detect(names(reg$rse), fixed('(fit)')))
 
   # assign
   if (class(reg) == 'felm') {
     row.names(reg$coefficients)[i] <- 'candidacy.invalid.ontrial'
-    row.names(reg$beta)[i]         <- 'candidacy.invalid.ontrial'
-    names(reg$rse)[i]              <- 'candidacy.invalid.ontrial'
+    row.names(reg$beta)[j]         <- 'candidacy.invalid.ontrial'
+    names(reg$rse)[w]              <- 'candidacy.invalid.ontrial'
   }
 
   # return call
@@ -88,11 +90,8 @@ cse <- function(reg, fs = FALSE) {
   if (class(reg) == 'lm') {
     rob <- sqrt(diag(sandwich::vcovHC(reg, type = 'HC1')))
   } else if (class(reg) == 'felm') {
-    if (length(reg$coefficients > 1)) {
-      if (fs == FALSE) {reg <- cbeta(reg)}
-      rob <- summary(reg, robust = TRUE)$coefficients[, 2]
-    }
-
+    if (fs == FALSE) {reg <- cbeta(reg)}
+    rob <- summary(reg, robust = TRUE)$coefficients[, 2]
   } else if (class(reg) == 'ivreg') {
     rob <- ivpack::robust.se(reg)[, 2]
   } else {
@@ -107,14 +106,20 @@ cse <- function(reg, fs = FALSE) {
 
 ### define y's and x's used in analysis and their labels
 # outcome labels
+outcomes       <- c('outcome.elected', 'outcome.share', 'outcome.distance')
 outcome.labels <- c('Probability of Election',
                     'Total Vote Share (in p.p.)',
                     'Vote Distance to Election Cutoff (in p.p.)')
 
 # define instruments and their labels
+instrument        <- 'candidacy.invalid.onappeal'
+instrumented      <- 'candidacy.invalid.ontrial'
 instrument.labels <- c('Convicted at Trial', 'Convicted on Appeal')
 
 # define independent variables labels
+covariates       <- c('candidate.age', 'candidate.male', 'candidate.education',
+                      'candidate.maritalstatus', 'candidate.experience',
+                      'candidacy.expenditures.actual')
 covariate.labels <- c('Age', 'Male', 'Level of Education', 'Marital Status',
                       'Political Experience', 'Campaign Expenditures (in R$)')
 
@@ -199,13 +204,13 @@ rm(reversals)
 covariate.balance.instrumented <- felm(candidacy.invalid.ontrial ~
   outcome.elected + candidate.age + candidate.male + candidate.maritalstatus +
   candidate.education + candidate.experience + candidacy.expenditures.actual |
-  party.coalition, data = tse.analysis)
+  election.ID + election.year + party.coalition, data = tse.analysis)
 
 # regression for factors affecting appeals
 covariate.balance.instrument <- felm(candidacy.invalid.onappeal ~
   outcome.elected + candidate.age + candidate.male + candidate.maritalstatus +
   candidate.education + candidate.experience + candidacy.expenditures.actual |
-  party.coalition, data = tse.analysis)
+  election.ID + election.year + party.coalition, data = tse.analysis)
 
 # check point estimates and standard errors in each regression
 covariate.balance.instrumented %>% {summary(.)$coefficients[, c(1, 2)]}
@@ -258,7 +263,8 @@ fs2 <- felm(candidacy.invalid.ontrial ~ candidacy.invalid.onappeal +
 fs3 <- felm(candidacy.invalid.ontrial ~ candidacy.invalid.onappeal +
   candidate.age + candidate.male + candidate.experience +
   candidacy.expenditures.actual + candidate.maritalstatus +
-  candidate.education | party.coalition, data = tse.analysis, exactDOF = TRUE)
+  candidate.education | election.ID + election.year, data = tse.analysis,
+  exactDOF = TRUE)
 
 # extract point estimates and s.e.'s for graph and tables
 point.estimates1 <- c(summary(fs1)$coefficients[2, 1], cse(fs1, fs = TRUE)[2])
@@ -268,7 +274,7 @@ point.estimates3 <- c(summary(fs3)$coefficients[1, 1], cse(fs3, fs = TRUE)[1])
 # extract f-stat for graphs and tables
 f.stat1 <- summary(fs1)$fstatistic[1]
 f.stat2 <- summary(fs2)$fstat
-f.stat3 <- summary(fs3)$P.fstat['F']
+f.stat3 <- summary(fs3)$F.fstat[1]
 
 # build vectors with point estimates and 10%, 5%, and 1% CIs around estimates
 fs.estimate1 <- point.estimates1 %>%
@@ -576,9 +582,9 @@ c('\textit{F}-stat ',
   summary(ols1)$fstatistic[1] %>% round(2),
   summary(ols2)$fstatistic[1] %>% round(2),
   summary(ols3)$P.fstat['F']  %>% round(2),
-  summary(ss1)$P.fstat['F']   %>% round(2),
-  summary(ss2)$P.fstat['F']   %>% round(2),
-  summary(ss3)$P.fstat['F']   %>% round(2),
+  summary(ss1)$F.fstat[1]     %>% round(2),
+  summary(ss2)$F.fstat[1]     %>% round(2),
+  summary(ss3)$F.fstat[1]     %>% round(2),
   ' \\'
 ) %>%
 paste0(collapse = ' & ')
@@ -625,10 +631,10 @@ stargazer(
 c('\textit{F}-stat ',
   summary(ols4)$fstatistic[1] %>% round(2),
   summary(ols5)$fstatistic[1] %>% round(2),
-  summary(ols6)$P.fstat['F']  %>% round(2),
-  summary(ss4)$P.fstat['F']   %>% round(2),
-  summary(ss5)$P.fstat['F']   %>% round(2),
-  summary(ss6)$P.fstat['F']   %>% round(2),
+  summary(ols6)$F.fstat[1]    %>% round(2),
+  summary(ss4)$F.fstat[1]     %>% round(2),
+  summary(ss5)$F.fstat[1]     %>% round(2),
+  summary(ss6)$F.fstat[1]     %>% round(2),
   ' \\'
 ) %>%
 paste0(collapse = ' & ')
@@ -674,10 +680,10 @@ stargazer(
 
 # extract f-stat for graphs and tables
 c('\textit{F}-stat ',
-  summary(ols9)$P.fstat['F']  %>% round(2),
-  summary(ols12)$P.fstat['F'] %>% round(2),
-  summary(ss9)$P.fstat['F']   %>% round(2),
-  summary(ss12)$P.fstat['F']  %>% round(2),
+  summary(ols9)$F.fstat[1]  %>% round(2),
+  summary(ols12)$F.fstat[1] %>% round(2),
+  summary(ss9)$F.fstat[1]   %>% round(2),
+  summary(ss12)$F.fstat[1]  %>% round(2),
   ' \\'
 ) %>%
 paste0(collapse = ' & ')

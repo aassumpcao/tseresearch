@@ -884,3 +884,6 @@ stargazer(list(fs1, fs2, fs3), type = 'text', se = list(cse(fs1), cse(fs2), cse(
 row.names(fs3$coefficients)
 
 cse(fs3, fs = TRUE)
+
+
+summary(fs3)$F.fstat[1]
