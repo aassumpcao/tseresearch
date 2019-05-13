@@ -878,3 +878,123 @@ return(object)
 ggplot(object, aes(ols.beta)) +
   geom_histogram(fill = 'red', alpha = .5, bins = 50) +
   geom_histogram(aes(iv.beta), fill = 'blue', alpha = .5, bins = 50)
+
+### test for the correlation between instrument and other covariates
+# here i want to know whether the instrument might be significantly correlated
+# with other covariates beyond the endogenous correlation between the
+# instrumented variable and covariates. solution: run ols with instrument
+# straight into second-stage
+# outcome 1: probability of election
+ols13 <- lm(outcome.elected ~ candidacy.invalid.onappeal, data = tse.analysis)
+ols14 <- lm(outcome.elected ~ candidacy.invalid.onappeal + candidate.age +
+  candidate.male + candidate.experience + candidacy.expenditures.actual +
+  candidate.maritalstatus + candidate.education, data = tse.analysis)
+ols15 <- felm(outcome.elected ~ candidacy.invalid.onappeal + candidate.age +
+  candidate.male + candidate.experience + candidacy.expenditures.actual +
+  candidate.maritalstatus + candidate.education | election.ID + election.year +
+  party.number, data = tse.analysis, exactDOF = TRUE)
+
+# outcome 2: vote share
+ols16 <- lm(outcome.share ~ candidacy.invalid.onappeal, data = tse.analysis)
+ols17 <- lm(outcome.share ~ candidacy.invalid.onappeal + candidate.age +
+  candidate.male + candidate.experience + candidacy.expenditures.actual +
+  candidate.maritalstatus + candidate.education, data = tse.analysis)
+ols18 <- felm(outcome.share ~ candidacy.invalid.onappeal + candidate.age +
+  candidate.male + candidate.experience + candidacy.expenditures.actual +
+  candidate.maritalstatus + candidate.education | election.ID + election.year +
+  party.number, data = tse.analysis, exactDOF = TRUE)
+
+# outcome 3: distance to election cutoff for city councilor candidates
+ols19 <- filter(tse.analysis, office.ID == 13) %>%
+  {lm(outcome.distance ~ candidacy.invalid.onappeal, data = .)}
+ols20 <- filter(tse.analysis, office.ID == 13) %>%
+  {lm(outcome.distance ~ candidacy.invalid.onappeal + candidate.age +
+    candidate.male + candidate.experience + candidacy.expenditures.actual +
+    candidate.maritalstatus + candidate.education, data = .)}
+ols21 <- filter(tse.analysis, office.ID == 13) %>%
+  {felm(outcome.distance ~ candidacy.invalid.onappeal + candidate.age +
+    candidate.male + candidate.experience + candidacy.expenditures.actual +
+    candidate.maritalstatus + candidate.education | election.ID + election.year+
+    party.number, data = ., exactDOF = TRUE)}
+
+# outcome 3: distance to election cutoff for mayor candidates
+ols22 <- filter(tse.analysis, office.ID == 11) %>%
+  {lm(outcome.distance ~ candidacy.invalid.onappeal, data = .)}
+ols23 <- filter(tse.analysis, office.ID == 11) %>%
+  {lm(outcome.distance ~ candidacy.invalid.onappeal + candidate.age +
+    candidate.male + candidate.experience + candidacy.expenditures.actual +
+    candidate.maritalstatus + candidate.education, data = .)}
+ols24 <- filter(tse.analysis, office.ID == 11) %>%
+  {felm(outcome.distance ~ candidacy.invalid.onappeal + candidate.age +
+    candidate.male + candidate.experience + candidacy.expenditures.actual +
+    candidate.maritalstatus + candidate.education | election.ID + election.year+
+    party.number, data = ., exactDOF = TRUE)}
+
+# define list of models to extract betas and std errors
+models <- objects(pattern = 'ols')
+
+# recover betas
+betas <- models %>%
+  lapply(get) %>%
+  lapply(summary) %>%
+  lapply(function(x){x$coefficients[, 1]}) %>%
+  unlist() %>%
+  {.[str_detect(names(.), 'invalid')]}
+
+# recover standard errors
+stderr <- models %>%
+  lapply(get) %>%
+  lapply(cse) %>%
+  unlist() %>%
+  {.[str_detect(names(.), 'invalid')]}
+
+# define vectors for dataset
+outcomes <- c('Elected', 'Share', 'Distance C.C.', 'Distance Mayor')
+models <- c('no.covariates', 'covariates', 'covariates.fe')
+comparison <- rep(paste(rep(outcomes, each = 3), models, sep = '.'), 2)
+endogenous <- rep(c('Trial', 'Appeals'), each = 12)
+
+# build dataset
+instrument.check <- tibble(outcomes = rep(rep(outcomes, each = 3), 2),
+  models = rep(models, 8), comparison, endogenous, stderr,
+  ci_upper = betas + qnorm(.005) * stderr,
+  ci_lower = betas - qnorm(.005) * stderr,
+  group = paste0(models, endogenous)
+) %>%
+mutate(
+  outcomes = factor(outcomes, levels = unique(outcomes)),
+  comparison = factor(comparison,
+                      levels = unique(unlist(comparison))),
+  endogenous = factor(endogenous, levels = c('Trial', 'Appeals')))
+
+# build plot
+ggplot(instrument.check, aes(y = betas, x = models, color = endogenous)) +
+  geom_point(aes(color = endogenous), position = position_dodge(width = .75)) +
+  geom_errorbar(aes(ymax = ci_upper, ymin = ci_lower, color = endogenous),
+    width = .25, position = position_dodge(width = .75)) +
+  scale_color_manual(values = c('grey56', 'grey10'), name = 'Coefficients') +
+  scale_x_discrete(
+    labels = rep(c('No Covariates', 'Individual Covariates',
+                   'Individual \n Covariates \n and Fixed Effects'), 4)) +
+  labs(y = 'Point Estimates and 99% CIs', x = element_blank()) +
+  facet_wrap(outcomes ~ ., scales = 'free_y') +
+  theme_bw() +
+  theme(axis.title = element_text(size = 10),
+        axis.text.y = element_text(size = 10, lineheight = 1.1, face = 'bold'),
+        axis.text.x = element_text(size = 10, lineheight = 1.1, face = 'bold'),
+        text = element_text(family = 'LM Roman 10'),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_line(color = 'lightcyan4',
+                                        linetype = 'dotted'),
+        panel.border = element_rect(colour = 'black', size = 1),
+        legend.text = element_text(size = 10),
+        legend.position = 'top'
+  )
+
+# save plot
+library(extrafont)
+ggsave('instrumentcorrelation.pdf', device = cairo_pdf, path = 'plots',
+       dpi = 100, width = 10, height = 5)
+
+# remove unnecessary objects
+rm(outcomes, models, comparison, endogenous, instrument.check, betas, stderr)
