@@ -949,29 +949,30 @@ stderr <- models %>%
   {.[str_detect(names(.), 'invalid')]}
 
 # define vectors for dataset
-outcomes <- c('Elected', 'Share', 'Distance C.C.', 'Distance Mayor')
+outcomes <- c('Probability of Election', 'Vote Share', 'Vote Distance to Cutoff (City Councilor)', 'Vote Distance to Cutoff (Mayor)')
 models <- c('no.covariates', 'covariates', 'covariates.fe')
 comparison <- rep(paste(rep(outcomes, each = 3), models, sep = '.'), 2)
 endogenous <- rep(c('Trial', 'Appeals'), each = 12)
 
 # build dataset
 instrument.check <- tibble(outcomes = rep(rep(outcomes, each = 3), 2),
-  models = rep(models, 8), comparison, endogenous, stderr,
+  betas, models = rep(models, 8), comparison, endogenous, stderr,
   ci_upper = betas + qnorm(.005) * stderr,
   ci_lower = betas - qnorm(.005) * stderr,
   group = paste0(models, endogenous)
 ) %>%
 mutate(
   outcomes = factor(outcomes, levels = unique(outcomes)),
+  models = factor(models, unique(models)),
   comparison = factor(comparison,
                       levels = unique(unlist(comparison))),
   endogenous = factor(endogenous, levels = c('Trial', 'Appeals')))
 
 # build plot
 ggplot(instrument.check, aes(y = betas, x = models, color = endogenous)) +
-  geom_point(aes(color = endogenous), position = position_dodge(width = .75)) +
+  geom_point(aes(color = endogenous), position = position_dodge(width = .25)) +
   geom_errorbar(aes(ymax = ci_upper, ymin = ci_lower, color = endogenous),
-    width = .25, position = position_dodge(width = .75)) +
+    width = .25, position = position_dodge(width = .25)) +
   scale_color_manual(values = c('grey56', 'grey10'), name = 'Coefficients') +
   scale_x_discrete(
     labels = rep(c('No Covariates', 'Individual Covariates',
@@ -988,7 +989,8 @@ ggplot(instrument.check, aes(y = betas, x = models, color = endogenous)) +
                                         linetype = 'dotted'),
         panel.border = element_rect(colour = 'black', size = 1),
         legend.text = element_text(size = 10),
-        legend.position = 'top'
+        legend.position = 'top',
+        strip.text.x = element_text(size = 10, face = 'bold')
   )
 
 # save plot

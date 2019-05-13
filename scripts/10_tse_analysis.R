@@ -269,26 +269,25 @@ ggplot(fs.estimates, aes(y = estimate, x = models, group = ci_bound)) +
   geom_errorbar(aes(ymax = ci_upper, ymin = ci_lower, color = ci_bound),
     width = .25, position = position_nudge(x = 0, y = 0)) +
   scale_color_manual(values = c('grey74', 'yellow4', 'grey10'),
-    name = 'Confidence Intervals') +
+    name = 'Confidence Intervals:') +
   scale_x_discrete(labels = labels) +
   labs(y = 'Instrument Point Estimates', x = element_blank()) +
   ylim(min = .65, max = .8) +
   theme_bw() +
-  theme(axis.title = element_text(size = 10),
+  theme(axis.title  = element_text(size = 10),
         axis.text.y = element_text(size = 10, lineheight = 1.1, face = 'bold'),
         axis.text.x = element_text(size = 10, lineheight = 1.1, face = 'bold'),
         text = element_text(family = 'LM Roman 10'),
-        panel.grid.major = element_line(color = 'snow3', linetype = 'dashed'),
-        panel.grid.minor = element_line(color = 'snow3', linetype = 'dashed'),
         panel.border = element_rect(colour = 'black', size = 1),
-        legend.text = element_text(size = 10),
-        legend.position = 'top'
+        legend.text  = element_text(size = 10), legend.position = 'top',
+        panel.grid.major = element_line(color = 'snow3', linetype = 'dotted'),
+        panel.grid.minor = element_line(color = 'snow3', linetype = 'dotted')
   )
 
-# save plot
-library(extrafont)
-ggsave('firststage.pdf', device = cairo_pdf, path = 'plots', dpi = 100,
-       width = 6.5, height = 4)
+# # save plot
+# library(extrafont)
+# ggsave('firststage.pdf', device = cairo_pdf, path = 'plots', dpi = 100,
+#        width = 7, height = 5)
 
 # remove unnecessary objects
 rm(list = objects(pattern = 'f\\.stat|point\\.estimate|names|models|ci'))
@@ -697,3 +696,205 @@ judicial.behavior %>%
 
 # remove useless objects
 rm(list = objects(pattern = 'balance|var\\.names|judicial\\.behavior|vector'))
+
+### test for the correlation between instrument and other covariates
+# here i want to know whether the instrument might be significantly correlated
+# with other covariates beyond the endogenous correlation between the
+# instrumented variable and covariates. solution: run ols with instrument
+# straight into second-stage
+
+# outcome 1: probability of election
+ols13 <- lm(outcome.elected ~ candidacy.invalid.onappeal, data = tse.analysis)
+ols14 <- lm(outcome.elected ~ candidacy.invalid.onappeal + candidate.age +
+  candidate.male + candidate.experience + candidacy.expenditures.actual +
+  candidate.maritalstatus + candidate.education, data = tse.analysis)
+ols15 <- felm(outcome.elected ~ candidacy.invalid.onappeal + candidate.age +
+  candidate.male + candidate.experience + candidacy.expenditures.actual +
+  candidate.maritalstatus + candidate.education | election.ID + election.year +
+  party.number, data = tse.analysis, exactDOF = TRUE)
+
+# outcome 2: vote share
+ols16 <- lm(outcome.share ~ candidacy.invalid.onappeal, data = tse.analysis)
+ols17 <- lm(outcome.share ~ candidacy.invalid.onappeal + candidate.age +
+  candidate.male + candidate.experience + candidacy.expenditures.actual +
+  candidate.maritalstatus + candidate.education, data = tse.analysis)
+ols18 <- felm(outcome.share ~ candidacy.invalid.onappeal + candidate.age +
+  candidate.male + candidate.experience + candidacy.expenditures.actual +
+  candidate.maritalstatus + candidate.education | election.ID + election.year +
+  party.number, data = tse.analysis, exactDOF = TRUE)
+
+# outcome 3: distance to election cutoff for city councilor candidates
+ols19 <- filter(tse.analysis, office.ID == 13) %>%
+  {lm(outcome.distance ~ candidacy.invalid.onappeal, data = .)}
+ols20 <- filter(tse.analysis, office.ID == 13) %>%
+  {lm(outcome.distance ~ candidacy.invalid.onappeal + candidate.age +
+    candidate.male + candidate.experience + candidacy.expenditures.actual +
+    candidate.maritalstatus + candidate.education, data = .)}
+ols21 <- filter(tse.analysis, office.ID == 13) %>%
+  {felm(outcome.distance ~ candidacy.invalid.onappeal + candidate.age +
+    candidate.male + candidate.experience + candidacy.expenditures.actual +
+    candidate.maritalstatus + candidate.education | election.ID + election.year+
+    party.number, data = ., exactDOF = TRUE)}
+
+# outcome 3: distance to election cutoff for mayor candidates
+ols22 <- filter(tse.analysis, office.ID == 11) %>%
+  {lm(outcome.distance ~ candidacy.invalid.onappeal, data = .)}
+ols23 <- filter(tse.analysis, office.ID == 11) %>%
+  {lm(outcome.distance ~ candidacy.invalid.onappeal + candidate.age +
+    candidate.male + candidate.experience + candidacy.expenditures.actual +
+    candidate.maritalstatus + candidate.education, data = .)}
+ols24 <- filter(tse.analysis, office.ID == 11) %>%
+  {felm(outcome.distance ~ candidacy.invalid.onappeal + candidate.age +
+    candidate.male + candidate.experience + candidacy.expenditures.actual +
+    candidate.maritalstatus + candidate.education | election.ID + election.year+
+    party.number, data = ., exactDOF = TRUE)}
+
+# define list of models to extract betas and std errors
+models <- objects(pattern = 'ols')
+
+# recover betas
+betas <- models %>%
+  lapply(get) %>%
+  lapply(summary) %>%
+  lapply(function(x){x$coefficients[, 1]}) %>%
+  unlist() %>%
+  {.[str_detect(names(.), 'invalid')]}
+
+# recover standard errors
+stderr <- models %>%
+  lapply(get) %>%
+  lapply(cse) %>%
+  unlist() %>%
+  {.[str_detect(names(.), 'invalid')]}
+
+# define vectors for dataset
+outcomes <- c('Probability of Election', 'Vote Share',
+              'Vote Distance to Cutoff (City Councilor)',
+              'Vote Distance to Cutoff (Mayor)')
+models <- c('no.covariates', 'covariates', 'covariates.fe')
+comparison <- rep(paste(rep(outcomes, each = 3), models, sep = '.'), 2)
+endogenous <- rep(c('Trial', 'Appeals'), each = 12)
+
+# build dataset
+tibble(outcomes = rep(rep(outcomes, each = 3), 2), betas, models = rep(models,
+  8), comparison, endogenous, stderr, ci_upper = betas + qnorm(0.005) *
+  stderr, ci_lower = betas - qnorm(0.005) * stderr, group = paste0(models,
+  endogenous)) %>%
+mutate(outcomes = factor(outcomes, levels = unique(outcomes)),
+  models = factor(models, unique(models)), comparison = factor(comparison,
+    levels = unique(unlist(comparison))), endogenous = factor(endogenous,
+    levels = c("Trial", "Appeals"))) -> instrument.check
+
+# build plot
+ggplot(instrument.check, aes(y = betas, x = models, color = endogenous)) +
+  geom_point(aes(color = endogenous), position = position_dodge(width = .25)) +
+  geom_errorbar(aes(ymax = ci_upper, ymin = ci_lower, color = endogenous),
+    width = .25, position = position_dodge(width = .25)) +
+  scale_color_manual(values = c('grey56', 'grey10'), name = 'Coefficients:') +
+  scale_x_discrete(
+    labels = rep(c('No Covariates', 'Individual Covariates',
+                   'Individual \n Covariates \n and Fixed Effects'), 4)) +
+  labs(y = 'Point Estimates and 99% CIs', x = element_blank()) +
+  facet_wrap(outcomes ~ ., scales = 'free_y') +
+  theme_bw() +
+  theme(axis.title  = element_text(size = 10),
+        axis.text.y = element_text(size = 10, lineheight = 1.1, face = 'bold'),
+        axis.text.x = element_text(size = 10, lineheight = 1.1, face = 'bold'),
+        text = element_text(family = 'LM Roman 10'),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_line(color = 'lightcyan4',
+                                        linetype = 'dotted'),
+        panel.border = element_rect(colour = 'black', size = 1),
+        legend.text  = element_text(size = 10), legend.position = 'top',
+        strip.text.x = element_text(size = 10, face = 'bold')
+  )
+
+# # save plot
+# library(extrafont)
+# ggsave('instrumentcorrelation.pdf', device = cairo_pdf, path = 'plots',
+#        dpi = 100, width = 10, height = 5)
+
+# remove unnecessary objects
+rm(outcomes, models, comparison, endogenous, instrument.check, betas, stderr)
+
+### test for voter disengagement
+# there are two potential explanations for the effect here: (i) voters would be
+# switching their choices when voting OR (ii) they would be disengaging from the
+# political process altogether. this is what we test here.
+
+# disengagement at the individual level
+disengagement01 <- tse.analysis %>%
+  {felm(votes.turnout ~ candidate.age + candidate.male + candidate.experience +
+    candidacy.expenditures.actual + candidate.maritalstatus +
+    candidate.education | election.ID + election.year + party.number |
+    (candidacy.invalid.ontrial ~ candidacy.invalid.onappeal), data = .,
+    exactDOF = TRUE)}
+disengagement02 <- tse.analysis %>%
+  {felm(votes.valid ~ candidate.age + candidate.male + candidate.experience+
+    candidacy.expenditures.actual + candidate.maritalstatus +
+    candidate.education | election.ID + election.year + party.number |
+    (candidacy.invalid.ontrial ~ candidacy.invalid.onappeal), data = .,
+    exactDOF = TRUE)}
+disengagement03 <- tse.analysis %>%
+  {felm(votes.invalid ~ candidate.age + candidate.male + candidate.experience+
+    candidacy.expenditures.actual + candidate.maritalstatus +
+    candidate.education | election.ID + election.year + party.number |
+    (candidacy.invalid.ontrial ~ candidacy.invalid.onappeal), data = .,
+    exactDOF = TRUE)}
+
+# aggregate dataset to party level
+party.aggregation <- tse.analysis %>%
+  group_by(election.ID, office.ID, election.year, party.number) %>%
+  select(-matches('outcome|candidate')) %>%
+  summarize(proportion.invalid.ontrial  = sum(candidacy.invalid.ontrial) /
+    first(as.integer(office.vacancies)), proportion.invalid.onappeal =
+    sum(candidacy.invalid.onappeal) / first(as.integer(office.vacancies)),
+    votes.valid = first(votes.valid), votes.turnout = first(votes.turnout),
+    votes.invalid = first(votes.invalid)
+  ) %>%
+  ungroup()
+
+# disengagement at the party level
+disengagement04 <- party.aggregation %>%
+  {felm(votes.turnout ~ 1 | election.ID + election.year |
+    (proportion.invalid.ontrial ~ proportion.invalid.onappeal),
+    data = ., exactDOF = TRUE)}
+disengagement05 <- party.aggregation %>%
+  {felm(votes.valid ~ 1 | election.ID + election.year |
+    (proportion.invalid.ontrial ~ proportion.invalid.onappeal),
+    data = ., exactDOF = TRUE)}
+disengagement06 <- party.aggregation %>%
+  {felm(votes.invalid ~ 1 | election.ID + election.year |
+    (proportion.invalid.ontrial ~ proportion.invalid.onappeal),
+    data = ., exactDOF = TRUE)}
+
+# aggregate dataset to election level
+election.aggregation <- tse.analysis %>%
+  group_by(election.ID, office.ID, election.year) %>%
+  select(-matches('outcome|candidate')) %>%
+  summarize(proportion.invalid.ontrial  = sum(candidacy.invalid.ontrial) /
+    first(as.integer(office.vacancies)), proportion.invalid.onappeal =
+    sum(candidacy.invalid.onappeal) / first(as.integer(office.vacancies)),
+    votes.valid = first(votes.valid), votes.turnout = first(votes.turnout),
+    votes.invalid = first(votes.invalid)
+  ) %>%
+  ungroup()
+
+# disengagement at the election level
+disengagement07 <- election.aggregation %>%
+  {felm(votes.turnout ~ 1 | election.ID + election.year |
+    (proportion.invalid.ontrial ~ proportion.invalid.onappeal),
+    data = ., exactDOF = TRUE)}
+disengagement08 <- election.aggregation %>%
+  {felm(votes.valid ~ 1 | election.ID + election.year |
+    (proportion.invalid.ontrial ~ proportion.invalid.onappeal),
+    data = ., exactDOF = TRUE)}
+disengagement09 <- election.aggregation %>%
+  {felm(votes.invalid ~ 1 | election.ID + election.year |
+    (proportion.invalid.ontrial ~ proportion.invalid.onappeal),
+    data = ., exactDOF = TRUE)}
+
+# check
+objects(pattern = 'disengagement') %>%
+lapply(get) %>%
+lapply(function(x){summary(x, robust = TRUE)$coefficients})
