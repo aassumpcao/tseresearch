@@ -39,8 +39,9 @@ t.test2 <- function(mean1, mean2, se1, se2) {
   se <- se1 + se2
   df <- ((se1 + se2)^2) / ((se1)^2 / (9442 - 1) + (se2)^2 / (9442 - 1))
   t  <- (mean1 - mean2) / se
-  result <- c(mean1 - mean2, se, t, 2 * pt(-abs(t), df))
-  names(result) <- c('Difference in Means', 'Std. Error', 't-stat', 'p-value')
+  result <- c(mean1, mean2, mean1 - mean2, se, t, 2 * pt(-abs(t), df))
+  names(result) <- c('Trial', 'Appeals', 'Difference in beta', 'Std. Error',
+                     't-stat', 'p-value')
 
   # return call
   return(result)
@@ -196,66 +197,9 @@ reversals[2, 1] / (reversals[2, 2] + reversals[2, 1])
 # remove useless objects
 rm(reversals)
 
-### test for heterogeneous judicial behavior between trial and appeals
-# i am interested in knowing whether justices change change the factors
-# affecting ruling when elections have passed.
-
-# regression for factors affecting trial
-covariate.balance.instrumented <- felm(candidacy.invalid.ontrial ~
-  outcome.elected + candidate.age + candidate.male + candidate.maritalstatus +
-  candidate.education + candidate.experience + candidacy.expenditures.actual |
-  election.ID + election.year + party.coalition, data = tse.analysis)
-
-# regression for factors affecting appeals
-covariate.balance.instrument <- felm(candidacy.invalid.onappeal ~
-  outcome.elected + candidate.age + candidate.male + candidate.maritalstatus +
-  candidate.education + candidate.experience + candidacy.expenditures.actual |
-  election.ID + election.year + party.coalition, data = tse.analysis)
-
-# check point estimates and standard errors in each regression
-covariate.balance.instrumented %>% {summary(.)$coefficients[, c(1, 2)]}
-covariate.balance.instrument   %>% {summary(.)$coefficients[, c(1, 2)]}
-
-# create table of judicial behavior
-judicial.behavior <- tibble()
-
-# loop over stats and create vector
-for (i in 1:16){
-  # create data vector
-  vector <- t.test2(
-    summary(covariate.balance.instrumented)$coefficients[i, 1],
-    summary(covariate.balance.instrument)$coefficients[i, 1],
-    summary(covariate.balance.instrumented)$coefficients[i, 2],
-    summary(covariate.balance.instrument)$coefficients[i, 2]
-  )
-  # bind to data
-  judicial.behavior <- bind_rows(judicial.behavior, vector)
-}
-
-# format variable names to include in table
-var.names <- summary(covariate.balance.instrument)$coefficients %>%
-  {dimnames(.)[[1]]} %>%
-  str_remove_all('candida(cy|te)\\.|education|maritalstatus|\\.actual')
-var.names[c(2, 3)] %<>% str_to_sentence()
-var.names[c(1, 15, 16)] <- c('Elected to Office', covariate.labels[c(5, 6)])
-
-# format judicial behavior dataset
-judicial.behavior %>%
-  mutate(Variable = var.names) %>%
-  select(Variable, everything()) %>%
-  mutate_at(vars(2:4), ~sprintf(., fmt = '%.3f')) %>%
-  slice(1:3, 14:16, 4:13) %>%
-  xtable(label = 'tab:heterogeneous_sentencing', digits = 3) %>%
-  print.xtable(floating = FALSE, hline.after = c(-1, -1, 0, 16, 16),
-               include.rownames = FALSE)
-
-# remove useless objects
-rm(list = objects(pattern = 'balance|var\\.names|judicial\\.behavior|vector'))
-
 ### first-stage tests
 # produce graphs testing the first-stage strength
-fs1 <- lm(candidacy.invalid.ontrial ~ candidacy.invalid.onappeal,
-  data = tse.analysis)
+fs1 <- lm(candidacy.invalid.ontrial ~ candidacy.invalid.onappeal, tse.analysis)
 fs2 <- felm(candidacy.invalid.ontrial ~ candidacy.invalid.onappeal +
   candidate.age + candidate.male + candidate.experience +
   candidacy.expenditures.actual + candidate.maritalstatus +
@@ -263,8 +207,8 @@ fs2 <- felm(candidacy.invalid.ontrial ~ candidacy.invalid.onappeal +
 fs3 <- felm(candidacy.invalid.ontrial ~ candidacy.invalid.onappeal +
   candidate.age + candidate.male + candidate.experience +
   candidacy.expenditures.actual + candidate.maritalstatus +
-  candidate.education | election.ID + election.year, data = tse.analysis,
-  exactDOF = TRUE)
+  candidate.education | election.ID + election.year + party.number,
+  data = tse.analysis, exactDOF = TRUE)
 
 # extract point estimates and s.e.'s for graph and tables
 point.estimates1 <- c(summary(fs1)$coefficients[2, 1], cse(fs1, fs = TRUE)[2])
@@ -436,8 +380,8 @@ ols2 <- lm(outcome.elected ~ candidacy.invalid.ontrial + candidate.age +
   candidate.maritalstatus + candidate.education, data = tse.analysis)
 ols3 <- felm(outcome.elected ~ candidacy.invalid.ontrial + candidate.age +
   candidate.male + candidate.experience + candidacy.expenditures.actual +
-  candidate.maritalstatus + candidate.education | election.ID + election.year,
-  data = tse.analysis, exactDOF = TRUE)
+  candidate.maritalstatus + candidate.education | election.ID + election.year +
+  party.number, data = tse.analysis, exactDOF = TRUE)
 
 # outcome 2: vote share
 ols4 <- lm(outcome.share ~ candidacy.invalid.ontrial, data = tse.analysis)
@@ -446,8 +390,8 @@ ols5 <- lm(outcome.share ~ candidacy.invalid.ontrial + candidate.age +
   candidate.maritalstatus + candidate.education, data = tse.analysis)
 ols6 <- felm(outcome.share ~ candidacy.invalid.ontrial + candidate.age +
   candidate.male + candidate.experience + candidacy.expenditures.actual +
-  candidate.maritalstatus + candidate.education | election.ID + election.year,
-  data = tse.analysis, exactDOF = TRUE)
+  candidate.maritalstatus + candidate.education | election.ID + election.year +
+  party.number, data = tse.analysis, exactDOF = TRUE)
 
 # outcome 3: distance to election cutoff for city councilor candidates
 ols7 <- filter(tse.analysis, office.ID == 13) %>%
@@ -459,8 +403,8 @@ ols8 <- filter(tse.analysis, office.ID == 13) %>%
 ols9 <- filter(tse.analysis, office.ID == 13) %>%
   {felm(outcome.distance ~ candidacy.invalid.ontrial + candidate.age +
     candidate.male + candidate.experience + candidacy.expenditures.actual +
-    candidate.maritalstatus + candidate.education | election.ID + election.year,
-    data = ., exactDOF = TRUE)}
+    candidate.maritalstatus + candidate.education | election.ID + election.year+
+    party.number, data = ., exactDOF = TRUE)}
 
 # outcome 3: distance to election cutoff for mayor candidates
 ols10 <- filter(tse.analysis, office.ID == 11) %>%
@@ -472,8 +416,8 @@ ols11 <- filter(tse.analysis, office.ID == 11) %>%
 ols12 <- filter(tse.analysis, office.ID == 11) %>%
   {felm(outcome.distance ~ candidacy.invalid.ontrial + candidate.age +
     candidate.male + candidate.experience + candidacy.expenditures.actual +
-    candidate.maritalstatus + candidate.education | election.ID + election.year,
-    data = ., exactDOF = TRUE)}
+    candidate.maritalstatus + candidate.education | election.ID + election.year+
+    party.number, data = ., exactDOF = TRUE)}
 
 ### instrumental variables results
 # create regression objects using the three outcomes and two samples
@@ -490,22 +434,21 @@ ss2 <- tse.analysis %>%
 ss3 <- tse.analysis %>%
   {felm(outcome.elected ~ candidate.age + candidate.male +
     candidate.experience + candidacy.expenditures.actual +
-    candidate.maritalstatus + candidate.education | election.ID + election.year|
-    (candidacy.invalid.ontrial ~ candidacy.invalid.onappeal), data = .,
-    exactDOF = TRUE)}
+    candidate.maritalstatus + candidate.education | election.ID + election.year+
+    party.number | (candidacy.invalid.ontrial ~ candidacy.invalid.onappeal),
+    data = ., exactDOF = TRUE)}
 ss4 <- tse.analysis %>%
   {felm(outcome.share ~ 1 | 0 | (candidacy.invalid.ontrial ~
     candidacy.invalid.onappeal), data = ., exactDOF = TRUE)}
 ss5 <- tse.analysis %>%
-  {felm(outcome.share ~ candidate.age + candidate.male +
-    candidate.experience + candidacy.expenditures.actual +
-    candidate.maritalstatus + candidate.education | 0 |
-    (candidacy.invalid.ontrial ~ candidacy.invalid.onappeal), data = .,
-    exactDOF = TRUE)}
+  {felm(outcome.share ~ candidate.age + candidate.male + candidate.experience +
+    candidacy.expenditures.actual + candidate.maritalstatus +
+    candidate.education | 0 | (candidacy.invalid.ontrial ~
+    candidacy.invalid.onappeal), data = ., exactDOF = TRUE)}
 ss6 <- tse.analysis %>%
-  {felm(outcome.share ~ candidate.age +
-    candidate.male + candidate.experience + candidacy.expenditures.actual +
-    candidate.maritalstatus + candidate.education | election.ID + election.year|
+  {felm(outcome.share ~ candidate.age + candidate.male + candidate.experience +
+    candidacy.expenditures.actual + candidate.maritalstatus +
+    candidate.education | election.ID + election.year + party.number |
     (candidacy.invalid.ontrial ~ candidacy.invalid.onappeal), data = .,
     exactDOF = TRUE)}
 ss7 <- filter(tse.analysis, office.ID == 13) %>%
@@ -520,9 +463,9 @@ ss8 <- filter(tse.analysis, office.ID == 13) %>%
 ss9 <- filter(tse.analysis, office.ID == 13) %>%
   {felm(outcome.distance ~ candidate.age + candidate.male +
     candidate.experience + candidacy.expenditures.actual +
-    candidate.maritalstatus + candidate.education | election.ID + election.year|
-    (candidacy.invalid.ontrial ~ candidacy.invalid.onappeal), data = .,
-    exactDOF = TRUE)}
+    candidate.maritalstatus + candidate.education | election.ID + election.year+
+    party.number | (candidacy.invalid.ontrial ~ candidacy.invalid.onappeal),
+    data = ., exactDOF = TRUE)}
 ss10 <- filter(tse.analysis, office.ID == 11) %>%
   {felm(outcome.distance ~ 1 | 0 | (candidacy.invalid.ontrial ~
     candidacy.invalid.onappeal), data = ., exactDOF = TRUE)}
@@ -535,9 +478,9 @@ ss11 <- filter(tse.analysis, office.ID == 11) %>%
 ss12 <- filter(tse.analysis, office.ID == 11) %>%
   {felm(outcome.distance ~ candidate.age + candidate.male +
     candidate.experience + candidacy.expenditures.actual +
-    candidate.maritalstatus + candidate.education | election.ID + election.year|
-    (candidacy.invalid.ontrial ~ candidacy.invalid.onappeal), data = .,
-    exactDOF = TRUE)}
+    candidate.maritalstatus + candidate.education | election.ID + election.year+
+    party.number | (candidacy.invalid.ontrial ~ candidacy.invalid.onappeal),
+    data = ., exactDOF = TRUE)}
 
 # produce tables with outcome one
 stargazer(
@@ -687,3 +630,65 @@ c('\textit{F}-stat ',
   ' \\'
 ) %>%
 paste0(collapse = ' & ')
+
+
+### test for heterogeneous judicial behavior between trial and appeals
+# i am interested in knowing whether justices change change the factors
+# affecting ruling when elections have passed.
+
+# regression for factors affecting trial
+covariate.balance.instrumented <- felm(candidacy.invalid.ontrial ~
+  outcome.elected + candidate.age + candidate.male + candidate.maritalstatus +
+  candidate.education + candidate.experience + candidacy.expenditures.actual |
+  party.number | 0 | election.ID + election.year, data = tse.analysis)
+
+# regression for factors affecting appeals
+covariate.balance.instrument <- felm(candidacy.invalid.onappeal ~
+  outcome.elected + candidate.age + candidate.male + candidate.maritalstatus +
+  candidate.education + candidate.experience + candidacy.expenditures.actual |
+  party.number | 0 | election.ID + election.year, data = tse.analysis)
+
+# check point estimates and standard errors in each regression
+summary(covariate.balance.instrumented, robust = TRUE)$coefficients[, c(1, 2)]
+summary(covariate.balance.instrument,   robust = TRUE)$coefficients[, c(1, 2)]
+
+# create table of judicial behavior
+judicial.behavior <- tibble()
+
+# loop over stats and create vector
+for (i in 1:16) {
+  # create data vector
+  vector <- t.test2(
+    summary(covariate.balance.instrumented,
+      robust = TRUE)$coefficients[i, 1],
+    summary(covariate.balance.instrument,
+      robust = TRUE)$coefficients[i, 1],
+    summary(covariate.balance.instrumented,
+      robust = TRUE)$coefficients[i, 2],
+    summary(covariate.balance.instrument,
+      robust = TRUE)$coefficients[i, 2]
+  )
+  # bind to data
+  judicial.behavior <- bind_rows(judicial.behavior, vector)
+}
+
+# format variable names to include in table
+var.names <- summary(covariate.balance.instrument)$coefficients %>%
+  {dimnames(.)[[1]]} %>%
+  str_remove_all('candida(cy|te)\\.|education|maritalstatus|\\.actual')
+var.names[c(2, 3)] %<>% str_to_sentence()
+var.names[c(1, 15, 16)] <- c('Elected to Office', covariate.labels[c(5, 6)])
+
+# format judicial behavior dataset
+judicial.behavior %>%
+  mutate(Variable = var.names) %>%
+  select(Variable, everything()) %>%
+  mutate(`Difference in beta` = Trial - Appeals) %>%
+  mutate_at(vars(2:7), ~sprintf(., fmt = '%.5f')) %>%
+  slice(1:3, 15:16, 4:14) %>%
+  xtable(label = 'tab:heterogeneous_sentencing') %>%
+  print.xtable(floating = FALSE, hline.after = c(-1, -1, 0, 16, 16),
+    include.rownames = FALSE)
+
+# # remove useless objects
+# rm(list = objects(pattern = 'balance|var\\.names|judicial\\.behavior|vector'))
