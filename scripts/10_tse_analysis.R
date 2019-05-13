@@ -49,7 +49,7 @@ t.test2 <- function(mean1, mean2, se1, se2) {
 
 # function to change names of instrumented variable in felm regression so that
 # stargazer outputs everything in the same row
-cbeta <- function(reg) {
+cbeta <- function(reg, var) {
   # Args:
   #   reg: regression object
 
@@ -67,9 +67,9 @@ cbeta <- function(reg) {
 
   # assign
   if (class(reg) == 'felm') {
-    row.names(reg$coefficients)[i] <- 'candidacy.invalid.ontrial'
-    row.names(reg$beta)[j]         <- 'candidacy.invalid.ontrial'
-    names(reg$rse)[w]              <- 'candidacy.invalid.ontrial'
+    row.names(reg$coefficients)[i] <- var
+    row.names(reg$beta)[j]         <- var
+    names(reg$rse)[w]              <- var
   }
 
   # return call
@@ -91,7 +91,7 @@ cse <- function(reg, fs = FALSE) {
   if (class(reg) == 'lm') {
     rob <- sqrt(diag(sandwich::vcovHC(reg, type = 'HC1')))
   } else if (class(reg) == 'felm') {
-    if (fs == FALSE) {reg <- cbeta(reg)}
+    if (fs == FALSE) {reg <- cbeta(reg, var = 'candidacy.invalid.ontrial')}
     rob <- summary(reg, robust = TRUE)$coefficients[, 2]
   } else if (class(reg) == 'ivreg') {
     rob <- ivpack::robust.se(reg)[, 2]
