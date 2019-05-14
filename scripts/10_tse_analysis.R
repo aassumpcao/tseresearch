@@ -49,7 +49,7 @@ t.test2 <- function(mean1, mean2, se1, se2) {
 
 # function to change names of instrumented variable in felm regression so that
 # stargazer outputs everything in the same row
-cbeta <- function(reg, var) {
+cbeta <- function(reg, var = 'candidacy.invalid.ontrial') {
   # Args:
   #   reg: regression object
 
@@ -77,7 +77,7 @@ cbeta <- function(reg, var) {
 }
 
 # define function to calculate corrected SEs for OLS, IV, and FELM regressions
-cse <- function(reg, fs = FALSE) {
+cse <- function(reg, fs = FALSE, ...) {
   # Args:
   #   reg: regression object
 
@@ -91,7 +91,7 @@ cse <- function(reg, fs = FALSE) {
   if (class(reg) == 'lm') {
     rob <- sqrt(diag(sandwich::vcovHC(reg, type = 'HC1')))
   } else if (class(reg) == 'felm') {
-    if (fs == FALSE) {reg <- cbeta(reg, var = 'candidacy.invalid.ontrial')}
+    if (fs == FALSE) {reg <- cbeta(reg, ...)}
     rob <- summary(reg, robust = TRUE)$coefficients[, 2]
   } else if (class(reg) == 'ivreg') {
     rob <- ivpack::robust.se(reg)[, 2]
@@ -263,16 +263,17 @@ labels <- c(f.stat1, f.stat2, f.stat3) %>%
 
 # build plot
 ggplot(fs.estimates, aes(y = estimate, x = models, group = ci_bound)) +
-  geom_point(size = 2) +
-  geom_text(aes(label = estimate), nudge_x = .15, family = 'LM Roman 10',
+  geom_point(aes(color = ci_bound), position = position_dodge(width = .25),
+    size = 3) +
+  geom_text(aes(label = estimate), nudge_x = -.21, family = 'LM Roman 10',
     size = 4) +
   geom_errorbar(aes(ymax = ci_upper, ymin = ci_lower, color = ci_bound),
-    width = .25, position = position_nudge(x = 0, y = 0)) +
+    width = .25, position = position_dodge(width = .25)) +
   scale_color_manual(values = c('grey74', 'yellow4', 'grey10'),
     name = 'Confidence Intervals:') +
   scale_x_discrete(labels = labels) +
   labs(y = 'Instrument Point Estimates', x = element_blank()) +
-  ylim(min = .65, max = .8) +
+  ylim(min = .7, max = .8) +
   theme_bw() +
   theme(axis.title  = element_text(size = 10),
         axis.text.y = element_text(size = 10, lineheight = 1.1, face = 'bold'),
@@ -280,8 +281,10 @@ ggplot(fs.estimates, aes(y = estimate, x = models, group = ci_bound)) +
         text = element_text(family = 'LM Roman 10'),
         panel.border = element_rect(colour = 'black', size = 1),
         legend.text  = element_text(size = 10), legend.position = 'top',
-        panel.grid.major = element_line(color = 'snow3', linetype = 'dotted'),
-        panel.grid.minor = element_line(color = 'snow3', linetype = 'dotted')
+        panel.grid.major = element_line(color = 'lightcyan4',
+                                        linetype = 'dotted'),
+        panel.grid.minor = element_line(color = 'lightcyan4',
+                                        linetype = 'dotted')
   )
 
 # # save plot
