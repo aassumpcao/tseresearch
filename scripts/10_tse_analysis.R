@@ -199,6 +199,11 @@ reversals[2, 1] / (reversals[2, 2] + reversals[2, 1])
 # remove useless objects
 rm(reversals)
 
+# revert expenditures to log (and preserve original dataset for candidate
+# disengagement tests at the end)
+candidate.disengagement.analysis <- tse.analysis
+tse.analysis$candidacy.expenditures.actual %<>% {log(. + 1)}
+
 ### first-stage tests
 # produce graphs testing the first-stage strength
 fs01 <- lm(candidacy.invalid.ontrial ~ candidacy.invalid.onappeal, tse.analysis)
@@ -267,7 +272,7 @@ labels <- c(f.stat1, f.stat2, f.stat3) %>%
 ggplot(fs.estimates, aes(y = estimate, x = models, group = ci_bound)) +
   geom_point(aes(color = ci_bound), position = position_dodge(width = .25),
     size = 3) +
-  geom_text(aes(label = estimate), nudge_x = -.21, family = 'LM Roman 10',
+  geom_text(aes(label = estimate), nudge_x = -.25, family = 'LM Roman 10',
     size = 4) +
   geom_errorbar(aes(ymax = ci_upper, ymin = ci_lower, color = ci_bound),
     width = .25, position = position_dodge(width = .25)) +
@@ -378,8 +383,9 @@ print.xtable(
 
 ### ols results
 # create regression objects using the three outcomes and two samples
+
 # outcome 1: probability of election
-s)
+ols01 <- lm(outcome.elected ~ candidacy.invalid.ontrial, data = tse.analysis)
 ols02 <- lm(outcome.elected ~ candidacy.invalid.ontrial + candidate.age +
   candidate.male + candidate.experience + candidacy.expenditures.actual +
   candidate.maritalstatus + candidate.education, data = tse.analysis)
@@ -530,13 +536,13 @@ stargazer(
 c('\textit{F}-stat ',
   summary(ols01)$fstatistic[1] %>% round(2),
   summary(ols02)$fstatistic[1] %>% round(2),
-  summary(ols03)$P.fstat['F']  %>% round(2),
+  summary(ols03)$F.fstat[1]    %>% round(2),
   summary(ss01)$F.fstat[1]     %>% round(2),
   summary(ss02)$F.fstat[1]     %>% round(2),
-  summary(ss03)$F.fstat[1]     %>% round(2),
-  ' \\'
+  summary(ss03)$F.fstat[1]     %>% round(2)
 ) %>%
-paste0(collapse = ' & ')
+paste0(collapse = ' & ') %>%
+paste0(' \\')
 
 # produce tables with outcome two
 stargazer(
@@ -584,10 +590,10 @@ c('\textit{F}-stat ',
   summary(ols06)$F.fstat[1]    %>% round(2),
   summary(ss04)$F.fstat[1]     %>% round(2),
   summary(ss05)$F.fstat[1]     %>% round(2),
-  summary(ss06)$F.fstat[1]     %>% round(2),
-  ' \\'
+  summary(ss06)$F.fstat[1]     %>% round(2)
 ) %>%
-paste0(collapse = ' & ')
+paste0(collapse = ' & ') %>%
+paste0(' \\')
 
 # produce tables with outcome three for city councilor and mayor sample
 stargazer(
@@ -629,14 +635,15 @@ stargazer(
 )
 
 # extract f-stat for graphs and tables
-c('\textit{F}-stat ',
-  summary(ols09)$F.fstat[1]  %>% round(2),
-  summary(ols12)$F.fstat[1] %>% round(2),
-  summary(ss09)$F.fstat[1]   %>% round(2),
-  summary(ss12)$F.fstat[1]  %>% round(2),
-  ' \\'
-) %>%
-paste0(collapse = ' & ')
+objects(pattern = 'ols|ss') %>%
+{.[c(9, 12, 21, 24)]} %>%
+lapply(get) %>%
+lapply(function(x){summary(x)$F.fstat[1]}) %>%
+unlist() %>%
+round(2) %>%
+paste0(collapse = ' & ') %>%
+{paste0('\textit{F}-stat & ', .)} %>%
+paste0(' \\')
 
 ### test for the correlation between instrument and other covariates
 # here i want to know whether
@@ -693,7 +700,7 @@ judicial.behavior %>%
   mutate(Variable = var.names) %>%
   select(Variable, everything()) %>%
   mutate(`Difference in beta` = Trial - Appeals) %>%
-  mutate_at(vars(2:7), ~sprintf(., fmt = '%.5f')) %>%
+  mutate_at(vars(2:7), ~sprintf(., fmt = '%.3f')) %>%
   slice(1:3, 15:16, 4:14) %>%
   xtable(label = 'tab:heterogeneous_sentencing') %>%
   print.xtable(floating = FALSE, hline.after = c(-1, -1, 0, 16, 16),
@@ -837,27 +844,30 @@ disengagement01 <- filter_at(tse.analysis, vars(37, 39, 41), ~!is.na(.)) %>%
     candidate.experience + candidacy.expenditures.actual +
     candidate.maritalstatus + candidate.education | election.ID +
     election.year + party.number | (candidacy.invalid.ontrial ~
-    candidacy.invalid.onappeal), data = ., exactDOF = TRUE)}
+    candidacy.invalid.onappeal) | election.ID + election.year, data = .,
+    exactDOF = TRUE)}
 disengagement02 <- filter_at(tse.analysis, vars(37, 39, 41), ~!is.na(.)) %>%
   {felm(log(votes.valid + 1) ~ candidate.age + candidate.male +
     candidate.experience + candidacy.expenditures.actual +
     candidate.maritalstatus + candidate.education | election.ID +
     election.year + party.number | (candidacy.invalid.ontrial ~
-    candidacy.invalid.onappeal), data = ., exactDOF = TRUE)}
+    candidacy.invalid.onappeal) | election.ID + election.year, data = .,
+    exactDOF = TRUE)}
 disengagement03 <- filter_at(tse.analysis, vars(37, 39, 41), ~!is.na(.)) %>%
   {felm(log(votes.invalid + 1) ~ candidate.age + candidate.male +
     candidate.experience + candidacy.expenditures.actual +
     candidate.maritalstatus + candidate.education | election.ID +
     election.year + party.number | (candidacy.invalid.ontrial ~
-    candidacy.invalid.onappeal), data = ., exactDOF = TRUE)}
+    candidacy.invalid.onappeal) | election.ID + election.year, data = .,
+    exactDOF = TRUE)}
 
 # aggregate dataset to party level
 party.aggregation <- tse.analysis %>%
   group_by(election.ID, office.ID, election.year, party.number) %>%
   select(-matches('outcome|candidate')) %>%
   summarize(proportion.invalid.ontrial  = sum(candidacy.invalid.ontrial) /
-    first(as.integer(office.vacancies)), proportion.invalid.onappeal =
-    sum(candidacy.invalid.onappeal) / first(as.integer(office.vacancies)),
+    first(as.integer(office.vacancies)) * 100, proportion.invalid.onappeal =
+    sum(candidacy.invalid.onappeal) / first(as.integer(office.vacancies)) * 100,
     votes.valid = first(votes.valid), votes.turnout = first(votes.turnout),
     votes.invalid = first(votes.invalid)
   ) %>%
@@ -867,24 +877,24 @@ party.aggregation <- tse.analysis %>%
 # disengagement at the party level
 disengagement04 <- party.aggregation %>%
   {felm(log(votes.turnout + 1) ~ 1 | election.ID + election.year |
-    (proportion.invalid.ontrial ~ proportion.invalid.onappeal),
-    data = ., exactDOF = TRUE)}
+    (proportion.invalid.ontrial ~ proportion.invalid.onappeal) | election.ID +
+    election.year, data = ., exactDOF = TRUE)}
 disengagement05 <- party.aggregation %>%
   {felm(log(votes.valid + 1) ~ 1 | election.ID + election.year |
-    (proportion.invalid.ontrial ~ proportion.invalid.onappeal),
-    data = ., exactDOF = TRUE)}
+    (proportion.invalid.ontrial ~ proportion.invalid.onappeal) | election.ID +
+    election.year, data = ., exactDOF = TRUE)}
 disengagement06 <- party.aggregation %>%
   {felm(log(votes.invalid + 1) ~ 1 | election.ID + election.year |
-    (proportion.invalid.ontrial ~ proportion.invalid.onappeal),
-    data = ., exactDOF = TRUE)}
+    (proportion.invalid.ontrial ~ proportion.invalid.onappeal) | election.ID +
+    election.year, data = ., exactDOF = TRUE)}
 
 # aggregate dataset to election level
 election.aggregation <- tse.analysis %>%
   group_by(election.ID, office.ID, election.year) %>%
   select(-matches('outcome|candidate')) %>%
   summarize(proportion.invalid.ontrial  = sum(candidacy.invalid.ontrial) /
-    first(as.integer(office.vacancies)), proportion.invalid.onappeal =
-    sum(candidacy.invalid.onappeal) / first(as.integer(office.vacancies)),
+    first(as.integer(office.vacancies)) * 100, proportion.invalid.onappeal =
+    sum(candidacy.invalid.onappeal) / first(as.integer(office.vacancies)) * 100,
     votes.valid = first(votes.valid), votes.turnout = first(votes.turnout),
     votes.invalid = first(votes.invalid)
   ) %>%
@@ -894,43 +904,41 @@ election.aggregation <- tse.analysis %>%
 # disengagement at the election level
 disengagement07 <- election.aggregation %>%
   {felm(log(votes.turnout + 1) ~ 1 | election.ID + election.year |
-    (proportion.invalid.ontrial ~ proportion.invalid.onappeal),
-    data = ., exactDOF = TRUE)}
+    (proportion.invalid.ontrial ~ proportion.invalid.onappeal) | election.ID +
+    election.year, data = ., exactDOF = TRUE)}
 disengagement08 <- election.aggregation %>%
   {felm(log(votes.valid + 1) ~ 1 | election.ID + election.year |
-    (proportion.invalid.ontrial ~ proportion.invalid.onappeal),
-    data = ., exactDOF = TRUE)}
+    (proportion.invalid.ontrial ~ proportion.invalid.onappeal) | election.ID +
+    election.year, data = ., exactDOF = TRUE)}
 disengagement09 <- election.aggregation %>%
   {felm(log(votes.invalid + 1) ~ 1 | election.ID + election.year |
-    (proportion.invalid.ontrial ~ proportion.invalid.onappeal),
-    data = ., exactDOF = TRUE)}
+    (proportion.invalid.ontrial ~ proportion.invalid.onappeal) | election.ID +
+    election.year, data = ., exactDOF = TRUE)}
 
 # build table
 # produce tables with outcome one
 stargazer(
 
   # first-stage regressions
-  list(disengagement01, disengagement02, disengagement03,
-       disengagement04, disengagement05, disengagement06,
-       disengagement07, disengagement08, disengagement09),
+  list(disengagement04, disengagement06, disengagement07, disengagement09),
 
   # table cosmetics
   type = 'text',
-  title = 'The Effect of Electoral Crimes on the Voter Engagement',
+  title = 'The Effect of Electoral Crimes on Voter Engagement',
   style = 'default',
   # out = 'tables/disengagement.tex',
   out.header = FALSE,
-  column.labels = c('Individual-Level', 'Party-Level', 'Election-Level'),
-  column.separate = rep(3, 3),
-  covariate.labels = c(instrument.labels[1],
-                       'Share of Candidacies Invalid on Trial'),
-  dep.var.labels = rep(paste0('Outcome: ', voter.engagement), 3),
-  align = TRUE,
-  se = list(cse(disengagement01, name = NULL),cse(disengagement02, name = NULL),
-            cse(disengagement03, name = NULL),cse(disengagement04, name = NULL),
-            cse(disengagement05, name = NULL),cse(disengagement06, name = NULL),
-            cse(disengagement07, name = NULL),cse(disengagement08, name = NULL),
-            cse(disengagement09, name = NULL)),
+  column.labels = c('Party-Level', 'Election-Level'),
+  column.separate = rep(2, 2),
+  covariate.labels = 'Share of Candidacies Invalid at Trial',
+  dep.var.labels = rep(paste0('Outcome: ', voter.engagement[c(2, 3)]), 2),
+  align = FALSE,
+  apply.coef = function(x){x * 100},
+  apply.se = function(x){x * 100},
+  se = list(
+    cse(disengagement04, name = NULL), cse(disengagement06, name = NULL),
+    cse(disengagement07, name = NULL), cse(disengagement09, name = NULL)
+  ),
   p.auto = TRUE,
   column.sep.width = '4pt',
   digit.separate = 3,
@@ -945,7 +953,66 @@ stargazer(
   no.space = FALSE,
   omit = c('constant', 'party|electoral'),
   omit.labels = c('Individual Controls', 'Fixed-Effects'),
-  omit.stat = c('ser', 'f', 'rsq'),
+  omit.stat = c('ser', 'rsq'),
   omit.yes.no = c('Yes', '-'),
   table.placement = '!htbp'
 )
+
+# extract f-stat for graphs and tables and assign latex format to it
+objects(pattern = 'disengagement') %>%
+{.[c(4, 6, 7, 9)]} %>%
+lapply(get) %>%
+lapply(function(x){summary(x)$F.fstat[1]}) %>%
+unlist() %>%
+round(1) %>%
+paste0(collapse = ' & ') %>%
+{paste0('\textit{F}-stat & ', .)} %>%
+paste0(' \\')
+
+### test for candidate disengagement
+# what i am testing here is whether candidates' strategies change conditional on
+# the type of (favorable or unfavorable) ruling they see at either stage.
+# ideally, what we want to show is that candidates keep the same strategy
+# regardless of whether they see favorable rulings or not.
+
+# tests: campaign expenditures by judicial ruling and across the entire review
+# process
+# standardize candidate expenditures to offset outlier problems
+candidate.disengagement.analysis
+
+
+# test 1: campaign expenditures by judicial ruling
+trial.expenditures <- tse.analysis %$%
+  t.test(candidacy.expenditures.actual ~ candidacy.invalid.ontrial,
+         conf.level = .99)
+appeals.expenditures <- tse.analysis %$%
+  t.test(candidacy.expenditures.actual ~ candidacy.invalid.onappeal,
+         conf.level = .99)
+
+# test 2: campaign expendtireus across judicial review process
+review.expenditures <- tse.analysis %>%
+  mutate(reversed.ruling = ifelse((candidacy.invalid.ontrial == 1 &
+    candidacy.invalid.onappeal== 0) | (candidacy.invalid.ontrial == 0 &
+    candidacy.invalid.onappeal== 1), 1, 0)
+  ) %$%
+  t.test(candidacy.expenditures.actual ~ reversed.ruling, conf.level = .99)
+
+# convert vectors to datasets
+trial.expenditures   %<>% unlist() %>% {tibble(., names = names(unlist(.)))}
+appeals.expenditures %<>% unlist() %>% {tibble(., names = names(unlist(.)))}
+review.expenditures  %<>% unlist() %>% {tibble(., names = names(unlist(.)))}
+
+# build dataset
+bind_cols(trial.expenditures, appeals.expenditures, review.expenditures) %>%
+select(1, 2, 3, 5) %>%
+rename_all(~paste0('var', 1:4)) %>%
+select(var2, var1, var3, var4) %>%
+slice(-c(2, 4, 5, 8:11)) %>%
+slice(3, 4, 1, 2) %>%
+t() %>%
+as_tibble() %>%
+rename_all(~c('Favorable', 'Unfavorable', 't-stat', 'p-value')) %>%
+slice(-1) %>%
+mutate_all(~signif(as.numeric(.), digits = 3))
+
+

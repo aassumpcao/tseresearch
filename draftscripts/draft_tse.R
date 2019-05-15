@@ -980,7 +980,7 @@ ggplot(instrument.check, aes(y = betas, x = models, color = endogenous)) +
   labs(y = 'Point Estimates and 99% CIs', x = element_blank()) +
   facet_wrap(outcomes ~ ., scales = 'free_y') +
   theme_bw() +
-  theme(axis.title = element_text(size = 10),
+  theme(axis.title  = element_text(size = 10),
         axis.text.y = element_text(size = 10, lineheight = 1.1, face = 'bold'),
         axis.text.x = element_text(size = 10, lineheight = 1.1, face = 'bold'),
         text = element_text(family = 'LM Roman 10'),
@@ -988,7 +988,7 @@ ggplot(instrument.check, aes(y = betas, x = models, color = endogenous)) +
         panel.grid.minor = element_line(color = 'lightcyan4',
                                         linetype = 'dotted'),
         panel.border = element_rect(colour = 'black', size = 1),
-        legend.text = element_text(size = 10),
+        legend.text  = element_text(size = 10),
         legend.position = 'top',
         strip.text.x = element_text(size = 10, face = 'bold')
   )
@@ -1013,4 +1013,62 @@ b_tilde - ((b_zero - b_tilde) * ((r_max - r_tilde)/(r_tilde - r_zero)))
 
 objects(pattern = 'disengagement') %>%
 lapply(get) %>%
-lapply(summary)
+lapply(summary)k
+load('data/tseFinal.Rda')
+
+candidate.disengagement.analysis <- tse.analysis
+
+
+tse.analysis$candidacy.expenditures.actual %<>% {log(. + 1)}
+
+exp(8.673202)
+exp(8.868446)
+
+### test for candidate disengagement
+# what i am testing here is whether candidates' strategies change conditional on
+# the type of (favorable or unfavorable) ruling they see at either stage.
+# ideally, what we want to show is that candidates keep the same strategy
+# regardless of whether they see favorable rulings or not.
+
+# tests: campaign expenditures by judicial ruling and across the entire review
+# process using a non-parametric bootstrapped sample of expenditures.
+
+# standardize candidate expenditures to offset outlier problems
+candidate.disengagement.analysis %<>%
+  mutate(candidacy.expenditures.actual = scale(candidacy.expenditures.actual))
+
+# test 1: campaign expenditures by judicial ruling
+trial.expenditures <- candidate.disengagement.analysis %$%
+  t.test(candidacy.expenditures.actual ~ candidacy.invalid.ontrial,
+         conf.level = .99)
+appeals.expenditures <- candidate.disengagement.analysis %$%
+  t.test(candidacy.expenditures.actual ~ candidacy.invalid.onappeal,
+         conf.level = .99)
+
+# test 2: campaign expendtireus across judicial review process
+review.expenditures <- candidate.disengagement.analysis %>%
+  filter(candidacy.invalid.ontrial == 1) %$%
+  t.test(candidacy.expenditures.actual ~ candidacy.invalid.onappeal)
+
+# convert vectors to datasets
+trial.expenditures   %<>% unlist() %>% {tibble(., names = names(unlist(.)))}
+appeals.expenditures %<>% unlist() %>% {tibble(., names = names(unlist(.)))}
+review.expenditures  %<>% unlist() %>% {tibble(., names = names(unlist(.)))}
+
+# build dataset
+bind_cols(trial.expenditures, appeals.expenditures, review.expenditures) %>%
+select(1, 2, 3, 5) %>%
+rename_all(~paste0('var', 1:4)) %>%
+select(var2, var1, var3, var4) %>%
+slice(-c(2, 4, 5, 8:11)) %>%
+slice(3, 4, 1, 2) %>%
+t() %>%
+as_tibble() %>%
+rename_all(~c('Favorable', 'Unfavorable', 't-stat', 'p-value')) %>%
+slice(-1) %>%
+mutate_all(~signif(as.numeric(.), digits = 3))
+
+# remove unnecessary objects
+rm(candidate.disengagement.analysis, trial.expenditures, appeals.expenditures,
+   review.expenditures)
+

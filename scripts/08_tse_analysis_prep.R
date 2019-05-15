@@ -15,9 +15,10 @@ library(tidyverse)
 # load data
 load('data/campaign.Rda')
 load('data/sections.Rda')
-load('data/turnout.Rda')
 load('data/tseAnalysis.Rda')
 load('data/tseSummary.Rda')
+load('data/tseUpdates.Rda')
+load('data/turnout.Rda')
 load('data/vacancies.Rda')
 
 # load csv files
@@ -297,6 +298,12 @@ tse.analysis %<>%
     matches('^office'), matches('candidate'), matches('candidacy'),
     matches('party'), matches('^votes')
   )
+
+#
+
+tseSummary$stage
+tseSentences
+
 
 # save to file
 save(tse.analysis, file = 'data/tseFinal.Rda')
