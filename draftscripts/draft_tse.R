@@ -1035,7 +1035,7 @@ exp(8.868446)
 
 # standardize candidate expenditures to offset outlier problems
 candidate.disengagement.analysis %<>%
-  mutate(candidacy.expenditures.actual = scale(candidacy.expenditures.actual))
+  mutate(candidacy.expenditures.actual = candidacy.expenditures.actual)
 
 # test 1: campaign expenditures by judicial ruling
 trial.expenditures <- candidate.disengagement.analysis %$%
@@ -1066,7 +1066,14 @@ t() %>%
 as_tibble() %>%
 rename_all(~c('Favorable', 'Unfavorable', 't-stat', 'p-value')) %>%
 slice(-1) %>%
-mutate_all(~signif(as.numeric(.), digits = 3))
+mutate_all(as.numeric) %>%
+mutate_at(vars(3, 4), ~round(., digits = 3)) %>%
+mutate(`Ruling Stage` = c('Trial', 'Appeals', 'Trial')) %>%
+select(`Ruling Stage`, everything()) %>%
+xtable(label = 'tab:candidatebehavior') %>%
+print.xtable(floating = FALSE, hline.after = c(-1, -1, 0, 3, 3),
+  include.rownames = FALSE)
+
 
 # remove unnecessary objects
 rm(candidate.disengagement.analysis, trial.expenditures, appeals.expenditures,
