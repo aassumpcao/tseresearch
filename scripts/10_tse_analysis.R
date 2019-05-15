@@ -49,7 +49,7 @@ t.test2 <- function(mean1, mean2, se1, se2) {
 
 # function to change names of instrumented variable in felm regression so that
 # stargazer outputs everything in the same row
-cbeta <- function(reg, var = 'candidacy.invalid.ontrial') {
+cbeta <- function(reg, name = 'candidacy.invalid.ontrial') {
   # Args:
   #   reg: regression object
 
@@ -67,9 +67,11 @@ cbeta <- function(reg, var = 'candidacy.invalid.ontrial') {
 
   # assign
   if (class(reg) == 'felm') {
-    row.names(reg$coefficients)[i] <- var
-    row.names(reg$beta)[j]         <- var
-    names(reg$rse)[w]              <- var
+    if (!is.null(name)) {
+      row.names(reg$coefficients)[i] <- name
+      row.names(reg$beta)[j]         <- name
+      names(reg$rse)[w]              <- name
+    }
   }
 
   # return call
@@ -377,7 +379,7 @@ print.xtable(
 ### ols results
 # create regression objects using the three outcomes and two samples
 # outcome 1: probability of election
-ols01 <- lm(outcome.elected ~ candidacy.invalid.ontrial, data = tse.analysis)
+s)
 ols02 <- lm(outcome.elected ~ candidacy.invalid.ontrial + candidate.age +
   candidate.male + candidate.experience + candidacy.expenditures.actual +
   candidate.maritalstatus + candidate.education, data = tse.analysis)
@@ -825,25 +827,29 @@ rm(outcomes, models, comparison, endogenous, instrument.check, betas, stderr)
 # switching their choices when voting OR (ii) they would be disengaging from the
 # political process altogether. this is what we test here.
 
+# disengagement outcomes
+voter.engagement <- c('Voter Turnout (percent)', 'Valid Votes (percent)',
+                      'Invalid Votes (percent)')
+
 # disengagement at the individual level
-disengagement01 <- tse.analysis %>%
-  {felm(votes.turnout ~ candidate.age + candidate.male + candidate.experience +
-    candidacy.expenditures.actual + candidate.maritalstatus +
-    candidate.education | election.ID + election.year + party.number |
-    (candidacy.invalid.ontrial ~ candidacy.invalid.onappeal), data = .,
-    exactDOF = TRUE)}
-disengagement02 <- tse.analysis %>%
-  {felm(votes.valid ~ candidate.age + candidate.male + candidate.experience+
-    candidacy.expenditures.actual + candidate.maritalstatus +
-    candidate.education | election.ID + election.year + party.number |
-    (candidacy.invalid.ontrial ~ candidacy.invalid.onappeal), data = .,
-    exactDOF = TRUE)}
-disengagement03 <- tse.analysis %>%
-  {felm(votes.invalid ~ candidate.age + candidate.male + candidate.experience+
-    candidacy.expenditures.actual + candidate.maritalstatus +
-    candidate.education | election.ID + election.year + party.number |
-    (candidacy.invalid.ontrial ~ candidacy.invalid.onappeal), data = .,
-    exactDOF = TRUE)}
+disengagement01 <- filter_at(tse.analysis, vars(37, 39, 41), ~!is.na(.)) %>%
+  {felm(log(votes.turnout + 1) ~ candidate.age + candidate.male +
+    candidate.experience + candidacy.expenditures.actual +
+    candidate.maritalstatus + candidate.education | election.ID +
+    election.year + party.number | (candidacy.invalid.ontrial ~
+    candidacy.invalid.onappeal), data = ., exactDOF = TRUE)}
+disengagement02 <- filter_at(tse.analysis, vars(37, 39, 41), ~!is.na(.)) %>%
+  {felm(log(votes.valid + 1) ~ candidate.age + candidate.male +
+    candidate.experience + candidacy.expenditures.actual +
+    candidate.maritalstatus + candidate.education | election.ID +
+    election.year + party.number | (candidacy.invalid.ontrial ~
+    candidacy.invalid.onappeal), data = ., exactDOF = TRUE)}
+disengagement03 <- filter_at(tse.analysis, vars(37, 39, 41), ~!is.na(.)) %>%
+  {felm(log(votes.invalid + 1) ~ candidate.age + candidate.male +
+    candidate.experience + candidacy.expenditures.actual +
+    candidate.maritalstatus + candidate.education | election.ID +
+    election.year + party.number | (candidacy.invalid.ontrial ~
+    candidacy.invalid.onappeal), data = ., exactDOF = TRUE)}
 
 # aggregate dataset to party level
 party.aggregation <- tse.analysis %>%
@@ -855,19 +861,20 @@ party.aggregation <- tse.analysis %>%
     votes.valid = first(votes.valid), votes.turnout = first(votes.turnout),
     votes.invalid = first(votes.invalid)
   ) %>%
-  ungroup()
+  ungroup() %>%
+  filter_at(vars(votes.turnout, votes.valid, votes.invalid), ~!is.na(.))
 
 # disengagement at the party level
 disengagement04 <- party.aggregation %>%
-  {felm(votes.turnout ~ 1 | election.ID + election.year |
+  {felm(log(votes.turnout + 1) ~ 1 | election.ID + election.year |
     (proportion.invalid.ontrial ~ proportion.invalid.onappeal),
     data = ., exactDOF = TRUE)}
 disengagement05 <- party.aggregation %>%
-  {felm(votes.valid ~ 1 | election.ID + election.year |
+  {felm(log(votes.valid + 1) ~ 1 | election.ID + election.year |
     (proportion.invalid.ontrial ~ proportion.invalid.onappeal),
     data = ., exactDOF = TRUE)}
 disengagement06 <- party.aggregation %>%
-  {felm(votes.invalid ~ 1 | election.ID + election.year |
+  {felm(log(votes.invalid + 1) ~ 1 | election.ID + election.year |
     (proportion.invalid.ontrial ~ proportion.invalid.onappeal),
     data = ., exactDOF = TRUE)}
 
@@ -881,23 +888,64 @@ election.aggregation <- tse.analysis %>%
     votes.valid = first(votes.valid), votes.turnout = first(votes.turnout),
     votes.invalid = first(votes.invalid)
   ) %>%
-  ungroup()
+  ungroup() %>%
+  filter_at(vars(votes.turnout, votes.valid, votes.invalid), ~!is.na(.))
 
 # disengagement at the election level
 disengagement07 <- election.aggregation %>%
-  {felm(votes.turnout ~ 1 | election.ID + election.year |
+  {felm(log(votes.turnout + 1) ~ 1 | election.ID + election.year |
     (proportion.invalid.ontrial ~ proportion.invalid.onappeal),
     data = ., exactDOF = TRUE)}
 disengagement08 <- election.aggregation %>%
-  {felm(votes.valid ~ 1 | election.ID + election.year |
+  {felm(log(votes.valid + 1) ~ 1 | election.ID + election.year |
     (proportion.invalid.ontrial ~ proportion.invalid.onappeal),
     data = ., exactDOF = TRUE)}
 disengagement09 <- election.aggregation %>%
-  {felm(votes.invalid ~ 1 | election.ID + election.year |
+  {felm(log(votes.invalid + 1) ~ 1 | election.ID + election.year |
     (proportion.invalid.ontrial ~ proportion.invalid.onappeal),
     data = ., exactDOF = TRUE)}
 
-# check
-objects(pattern = 'disengagement') %>%
-lapply(get) %>%
-lapply(function(x){summary(x, robust = TRUE)$coefficients})
+# build table
+# produce tables with outcome one
+stargazer(
+
+  # first-stage regressions
+  list(disengagement01, disengagement02, disengagement03,
+       disengagement04, disengagement05, disengagement06,
+       disengagement07, disengagement08, disengagement09),
+
+  # table cosmetics
+  type = 'text',
+  title = 'The Effect of Electoral Crimes on the Voter Engagement',
+  style = 'default',
+  # out = 'tables/disengagement.tex',
+  out.header = FALSE,
+  column.labels = c('Individual-Level', 'Party-Level', 'Election-Level'),
+  column.separate = rep(3, 3),
+  covariate.labels = c(instrument.labels[1],
+                       'Share of Candidacies Invalid on Trial'),
+  dep.var.labels = rep(paste0('Outcome: ', voter.engagement), 3),
+  align = TRUE,
+  se = list(cse(disengagement01, name = NULL),cse(disengagement02, name = NULL),
+            cse(disengagement03, name = NULL),cse(disengagement04, name = NULL),
+            cse(disengagement05, name = NULL),cse(disengagement06, name = NULL),
+            cse(disengagement07, name = NULL),cse(disengagement08, name = NULL),
+            cse(disengagement09, name = NULL)),
+  p.auto = TRUE,
+  column.sep.width = '4pt',
+  digit.separate = 3,
+  digits = 3,
+  digits.extra = 0,
+  font.size = 'scriptsize',
+  header = FALSE,
+  initial.zero = FALSE,
+  model.names = FALSE,
+  keep = c('invalid'),
+  label = 'tab:disengagement',
+  no.space = FALSE,
+  omit = c('constant', 'party|electoral'),
+  omit.labels = c('Individual Controls', 'Fixed-Effects'),
+  omit.stat = c('ser', 'f', 'rsq'),
+  omit.yes.no = c('Yes', '-'),
+  table.placement = '!htbp'
+)

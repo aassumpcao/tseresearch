@@ -1000,3 +1000,17 @@ ggsave('instrumentcorrelation.pdf', device = cairo_pdf, path = 'plots',
 
 # remove unnecessary objects
 rm(outcomes, models, comparison, endogenous, instrument.check, betas, stderr)
+
+
+r_max   <- .13 + (.13 - .106)
+r_tilde <- .13
+r_zero  <- .106
+b_tilde <- -.178
+b_zero  <- -.193
+
+b_tilde - ((b_zero - b_tilde) * ((r_max - r_tilde)/(r_tilde - r_zero)))
+
+
+objects(pattern = 'disengagement') %>%
+lapply(get) %>%
+lapply(summary)
