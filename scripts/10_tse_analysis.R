@@ -381,6 +381,9 @@ print.xtable(
   include.rownames = FALSE
 )
 
+# # remove unnecessary objects
+# rm(iv01, iv02, iv03, iv04, iv05)
+
 ### ols results
 # create regression objects using the three outcomes and two samples
 
@@ -432,7 +435,8 @@ ols12 <- filter(tse.analysis, office.ID == 11) %>%
 
 ### instrumental variables results
 # create regression objects using the three outcomes and two samples
-# create regressions using outcome.elected and outcome.share as yss1 <-
+
+# outcome 1: probability of election
 ss01 <- tse.analysis %>%
   {felm(outcome.elected ~ 1 | 0 | (candidacy.invalid.ontrial ~
     candidacy.invalid.onappeal), data = ., exactDOF = TRUE)}
@@ -448,6 +452,8 @@ ss03 <- tse.analysis %>%
     candidate.maritalstatus + candidate.education | election.ID + election.year+
     party.number | (candidacy.invalid.ontrial ~ candidacy.invalid.onappeal),
     data = ., exactDOF = TRUE)}
+
+# outcome 2: vote share
 ss04 <- tse.analysis %>%
   {felm(outcome.share ~ 1 | 0 | (candidacy.invalid.ontrial ~
     candidacy.invalid.onappeal), data = ., exactDOF = TRUE)}
@@ -462,6 +468,8 @@ ss06 <- tse.analysis %>%
     candidate.education | election.ID + election.year + party.number |
     (candidacy.invalid.ontrial ~ candidacy.invalid.onappeal), data = .,
     exactDOF = TRUE)}
+
+# outcome 3: distance to election cutoff for city councilor candidates
 ss07 <- filter(tse.analysis, office.ID == 13) %>%
   {felm(outcome.distance ~ 1 | 0 | (candidacy.invalid.ontrial ~
     candidacy.invalid.onappeal), data = ., exactDOF = TRUE)}
@@ -477,6 +485,8 @@ ss09 <- filter(tse.analysis, office.ID == 13) %>%
     candidate.maritalstatus + candidate.education | election.ID + election.year+
     party.number | (candidacy.invalid.ontrial ~ candidacy.invalid.onappeal),
     data = ., exactDOF = TRUE)}
+
+# outcome 3: distance to election cutoff for mayor candidates
 ss10 <- filter(tse.analysis, office.ID == 11) %>%
   {felm(outcome.distance ~ 1 | 0 | (candidacy.invalid.ontrial ~
     candidacy.invalid.onappeal), data = ., exactDOF = TRUE)}
@@ -656,13 +666,15 @@ paste0(' \\')
 covariate.balance.instrumented <- felm(candidacy.invalid.ontrial ~
   outcome.elected + candidate.age + candidate.male + candidate.maritalstatus +
   candidate.education + candidate.experience + candidacy.expenditures.actual |
-  party.number | 0 | election.ID + election.year, data = tse.analysis)
+  party.number | 0 | election.ID + election.year, data = tse.analysis,
+  exactDOF = TRUE, psdef = FALSE)
 
 # regression for factors affecting appeals
 covariate.balance.instrument <- felm(candidacy.invalid.onappeal ~
   outcome.elected + candidate.age + candidate.male + candidate.maritalstatus +
   candidate.education + candidate.experience + candidacy.expenditures.actual |
-  party.number | 0 | election.ID + election.year, data = tse.analysis)
+  party.number | 0 | election.ID + election.year, data = tse.analysis,
+  exactDOF = TRUE, psdef = FALSE)
 
 # check point estimates and standard errors in each regression
 summary(covariate.balance.instrumented, robust = TRUE)$coefficients[, c(1, 2)]
@@ -845,21 +857,21 @@ disengagement01 <- filter_at(tse.analysis, vars(37, 39, 41), ~!is.na(.)) %>%
     candidate.maritalstatus + candidate.education | election.ID +
     election.year + party.number | (candidacy.invalid.ontrial ~
     candidacy.invalid.onappeal) | election.ID + election.year, data = .,
-    exactDOF = TRUE)}
+    exactDOF = TRUE, psdef = FALSE)}
 disengagement02 <- filter_at(tse.analysis, vars(37, 39, 41), ~!is.na(.)) %>%
   {felm(log(votes.valid + 1) ~ candidate.age + candidate.male +
     candidate.experience + candidacy.expenditures.actual +
     candidate.maritalstatus + candidate.education | election.ID +
     election.year + party.number | (candidacy.invalid.ontrial ~
     candidacy.invalid.onappeal) | election.ID + election.year, data = .,
-    exactDOF = TRUE)}
+    exactDOF = TRUE, psdef = FALSE)}
 disengagement03 <- filter_at(tse.analysis, vars(37, 39, 41), ~!is.na(.)) %>%
   {felm(log(votes.invalid + 1) ~ candidate.age + candidate.male +
     candidate.experience + candidacy.expenditures.actual +
     candidate.maritalstatus + candidate.education | election.ID +
     election.year + party.number | (candidacy.invalid.ontrial ~
     candidacy.invalid.onappeal) | election.ID + election.year, data = .,
-    exactDOF = TRUE)}
+    exactDOF = TRUE, psdef = FALSE)}
 
 # aggregate dataset to party level
 party.aggregation <- tse.analysis %>%
@@ -878,15 +890,15 @@ party.aggregation <- tse.analysis %>%
 disengagement04 <- party.aggregation %>%
   {felm(log(votes.turnout + 1) ~ 1 | election.ID + election.year |
     (proportion.invalid.ontrial ~ proportion.invalid.onappeal) | election.ID +
-    election.year, data = ., exactDOF = TRUE)}
+    election.year, data = ., exactDOF = TRUE, psdef = FALSE)}
 disengagement05 <- party.aggregation %>%
   {felm(log(votes.valid + 1) ~ 1 | election.ID + election.year |
     (proportion.invalid.ontrial ~ proportion.invalid.onappeal) | election.ID +
-    election.year, data = ., exactDOF = TRUE)}
+    election.year, data = ., exactDOF = TRUE, psdef = FALSE)}
 disengagement06 <- party.aggregation %>%
   {felm(log(votes.invalid + 1) ~ 1 | election.ID + election.year |
     (proportion.invalid.ontrial ~ proportion.invalid.onappeal) | election.ID +
-    election.year, data = ., exactDOF = TRUE)}
+    election.year, data = ., exactDOF = TRUE, psdef = FALSE)}
 
 # aggregate dataset to election level
 election.aggregation <- tse.analysis %>%
@@ -905,15 +917,15 @@ election.aggregation <- tse.analysis %>%
 disengagement07 <- election.aggregation %>%
   {felm(log(votes.turnout + 1) ~ 1 | election.ID + election.year |
     (proportion.invalid.ontrial ~ proportion.invalid.onappeal) | election.ID +
-    election.year, data = ., exactDOF = TRUE)}
+    election.year, data = ., exactDOF = TRUE, psdef = FALSE)}
 disengagement08 <- election.aggregation %>%
   {felm(log(votes.valid + 1) ~ 1 | election.ID + election.year |
     (proportion.invalid.ontrial ~ proportion.invalid.onappeal) | election.ID +
-    election.year, data = ., exactDOF = TRUE)}
+    election.year, data = ., exactDOF = TRUE, psdef = FALSE)}
 disengagement09 <- election.aggregation %>%
   {felm(log(votes.invalid + 1) ~ 1 | election.ID + election.year |
     (proportion.invalid.ontrial ~ proportion.invalid.onappeal) | election.ID +
-    election.year, data = ., exactDOF = TRUE)}
+    election.year, data = ., exactDOF = TRUE, psdef = FALSE)}
 
 # build table
 # produce tables with outcome one
@@ -926,7 +938,7 @@ stargazer(
   type = 'text',
   title = 'The Effect of Electoral Crimes on Voter Engagement',
   style = 'default',
-  # out = 'tables/disengagement.tex',
+  # out = 'tables/voterbehavior.tex',
   out.header = FALSE,
   column.labels = c('Party-Level', 'Election-Level'),
   column.separate = rep(2, 2),
@@ -949,7 +961,7 @@ stargazer(
   initial.zero = FALSE,
   model.names = FALSE,
   keep = c('invalid'),
-  label = 'tab:disengagement',
+  label = 'tab:voterbehavior',
   no.space = FALSE,
   omit = c('constant', 'party|electoral'),
   omit.labels = c('Individual Controls', 'Fixed-Effects'),
@@ -969,6 +981,9 @@ paste0(collapse = ' & ') %>%
 {paste0('\textit{F}-stat & ', .)} %>%
 paste0(' \\')
 
+# remove unnecessary objects
+rm(party.aggregation, election.aggregation)
+
 ### test for candidate disengagement
 # what i am testing here is whether candidates' strategies change conditional on
 # the type of (favorable or unfavorable) ruling they see at either stage.
@@ -976,26 +991,24 @@ paste0(' \\')
 # regardless of whether they see favorable rulings or not.
 
 # tests: campaign expenditures by judicial ruling and across the entire review
-# process
-# standardize candidate expenditures to offset outlier problems
-candidate.disengagement.analysis
+# process using a non-parametric bootstrapped sample of expenditures.
 
+# standardize candidate expenditures to offset outlier problems
+candidate.disengagement.analysis %<>%
+  mutate(candidacy.expenditures.actual = candidacy.expenditures.actual)
 
 # test 1: campaign expenditures by judicial ruling
-trial.expenditures <- tse.analysis %$%
+trial.expenditures <- candidate.disengagement.analysis %$%
   t.test(candidacy.expenditures.actual ~ candidacy.invalid.ontrial,
          conf.level = .99)
-appeals.expenditures <- tse.analysis %$%
+appeals.expenditures <- candidate.disengagement.analysis %$%
   t.test(candidacy.expenditures.actual ~ candidacy.invalid.onappeal,
          conf.level = .99)
 
 # test 2: campaign expendtireus across judicial review process
-review.expenditures <- tse.analysis %>%
-  mutate(reversed.ruling = ifelse((candidacy.invalid.ontrial == 1 &
-    candidacy.invalid.onappeal== 0) | (candidacy.invalid.ontrial == 0 &
-    candidacy.invalid.onappeal== 1), 1, 0)
-  ) %$%
-  t.test(candidacy.expenditures.actual ~ reversed.ruling, conf.level = .99)
+review.expenditures <- candidate.disengagement.analysis %>%
+  filter(candidacy.invalid.ontrial == 1) %$%
+  t.test(candidacy.expenditures.actual ~ candidacy.invalid.onappeal)
 
 # convert vectors to datasets
 trial.expenditures   %<>% unlist() %>% {tibble(., names = names(unlist(.)))}
@@ -1010,9 +1023,21 @@ select(var2, var1, var3, var4) %>%
 slice(-c(2, 4, 5, 8:11)) %>%
 slice(3, 4, 1, 2) %>%
 t() %>%
-as_tibble() %>%
+as_tibble(.name_repair = 'unique') %>%
 rename_all(~c('Favorable', 'Unfavorable', 't-stat', 'p-value')) %>%
 slice(-1) %>%
-mutate_all(~signif(as.numeric(.), digits = 3))
+mutate_all(as.numeric) %>%
+mutate_at(vars(3, 4), ~round(., digits = 3)) %>%
+mutate(`Ruling Stage` = c('Trial', 'Appeals', 'Trial')) %>%
+select(`Ruling Stage`, everything()) %>%
+xtable(label = 'tab:candidatebehavior') %>%
+print.xtable(floating = FALSE, hline.after = c(-1, -1, 0, 3, 3),
+  include.rownames = FALSE)
 
+# remove unnecessary objects
+rm(candidate.disengagement.analysis, trial.expenditures, appeals.expenditures,
+   review.expenditures)
+
+### heterogeneous treatment effects
+# these are the tests of differential effect conditional on conviction cases
 

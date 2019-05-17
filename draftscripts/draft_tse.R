@@ -1079,3 +1079,140 @@ print.xtable(floating = FALSE, hline.after = c(-1, -1, 0, 3, 3),
 rm(candidate.disengagement.analysis, trial.expenditures, appeals.expenditures,
    review.expenditures)
 
+### heterogeneous treatment effects
+# these are the tests of differential effect conditional on crimes
+
+# create new dataset
+hte.analysis <- filter(tse.analysis, !is.na(candidacy.ruling.class))
+hte.analysis$class <- hte.analysis$candidacy.ruling.class %>%
+  {ifelse(. %in% c('Lei das Eleições', 'Ficha Limpa'), 'Substantial', 'Procedural')} %>%
+  factor() %>%
+  {relevel(., ref = 'Procedural')}
+
+# outcome 1: probability of election
+hte01 <- hte.analysis %>%
+  {felm(outcome.elected ~ candidacy.ruling.class + candidate.age +
+    candidate.male + candidate.experience + candidacy.expenditures.actual +
+    candidate.maritalstatus + candidate.education | election.ID + election.year+
+    party.number | (candidacy.invalid.ontrial ~ candidacy.invalid.onappeal),
+    data = ., exactDOF = TRUE)}
+
+# outcome 2: vote share
+hte02 <- hte.analysis %>%
+  {felm(outcome.share ~ candidacy.ruling.class + candidate.age +
+    candidate.male + candidate.experience + candidacy.expenditures.actual +
+    candidate.maritalstatus + candidate.education | election.ID + election.year+
+    party.number | (candidacy.invalid.ontrial ~ candidacy.invalid.onappeal),
+    data = ., exactDOF = TRUE)}
+
+# outcome 3: distance to election cutoff for city councilor candidates
+hte03 <- filter(hte.analysis, office.ID == 13) %>%
+  {felm(outcome.distance ~ candidacy.ruling.class + candidate.age +
+    candidate.male + candidate.experience + candidacy.expenditures.actual +
+    candidate.maritalstatus + candidate.education | election.ID + election.year+
+    party.number | (candidacy.invalid.ontrial ~ candidacy.invalid.onappeal),
+    data = ., exactDOF = TRUE)}
+
+# outcome 3: distance to election cutoff for mayor candidates
+hte04 <- filter(hte.analysis, office.ID == 11) %>%
+  {felm(outcome.distance ~ candidacy.ruling.class + candidate.age +
+    candidate.male + candidate.experience + candidacy.expenditures.actual +
+    candidate.maritalstatus + candidate.education | election.ID + election.year+
+    party.number | (candidacy.invalid.ontrial ~ candidacy.invalid.onappeal),
+    data = ., exactDOF = TRUE)}
+
+# extract standard errors (takes about 5 minutes to execute)
+objects(pattern = 'hte[0-4]{1}') %>%
+lapply(get) %>%
+lapply(summary, robust = TRUE) %>%
+lapply(function(x){x$coefficients})
+lapply(function(x){x[str_detect(row.names(x), 'nterc|trial|class'), ]})
+
+test <- ivreg(
+  outcome.elected ~ candidacy.invalid.ontrial + candidacy.ruling.class | candidacy.invalid.onappeal + candidacy.ruling.class,
+  data = hte.analysis
+)
+
+fs <- lm(
+  candidacy.invalid.onappeal ~ candidacy.invalid.ontrial + candidacy.ruling.class,
+  data = hte.analysis
+)
+summary(fs)
+summary(test)
+ivpack::robust.se(hte01)
+
+# create new dataset
+hte.analysis <- filter(tse.analysis, !is.na(candidacy.ruling.class))
+hte.analysis$class <- hte.analysis$candidacy.ruling.class %>%
+  {ifelse(.  != 'Requisito Faltante', 'Substantial', 'Procedural')} %>%
+  factor() %>%
+  {relevel(., ref = 'Procedural')}
+
+hte01 <- hte.analysis %>%
+         #filter(hte.analysis, office.ID == 11) %>%
+  {ivreg(outcome.share ~
+         candidacy.invalid.ontrial * candidate.experience +
+         candidate.age +
+         candidate.male +
+         candidate.experience +
+         candidacy.expenditures.actual +
+         candidate.maritalstatus +
+         candidate.education +
+         election.ID +
+         election.year +
+         party.number |
+         candidacy.invalid.onappeal * candidate.experience +
+         candidate.age +
+         candidate.male +
+         candidate.experience +
+         candidacy.expenditures.actual +
+         candidate.maritalstatus +
+         candidate.education +
+         election.ID +
+         election.year +
+         party.number,
+         data = .
+  )}
+
+se <- ivpack::robust.se(hte01)
+se %>% str()
+se[c(1:10, 1852:1856),]
+
+# produce table
+stargazer(
+
+  # first-stage regressions
+  list(hte01, hte02, hte03, hte04),
+
+  # table cosmetics
+  type = 'latex',
+  title = 'Heterogeneous Effect of Electoral Crime',
+  style = 'default',
+  # out = 'tables/hte.tex',
+  out.header = FALSE,
+  column.labels = c(rep('Full Sample', 2), 'City Councilor', 'Mayor'),
+  column.separate = rep(1, 4),
+  # covariate.label =,
+  dep.var.labels = paste0('Outcome: ', outcome.labels),
+  align = TRUE,
+  coef = lapply(coefs, function(x){x[,1]}),
+  se = lapply(coefs, function(x){x[, 2]}),
+  p.auto = TRUE,
+  column.sep.width = '4pt',
+  digit.separate = 3,
+  digits = 3,
+  digits.extra = 0,
+  font.size = 'scriptsize',
+  header = FALSE,
+  initial.zero = FALSE,
+  model.names = FALSE,
+  keep = 'nterc|trial|class',
+  label = 'tab:hte',
+  no.space = FALSE,
+  # omit.labels = c('Individual Controls', 'Fixed-Effects'),
+  omit.stat = c('ser', 'f', 'rsq'),
+  omit.yes.no = c('Yes', '-'),
+  table.placement = '!htbp'
+)
+
+
