@@ -1142,37 +1142,34 @@ summary(test)
 ivpack::robust.se(hte01)
 
 # create new dataset
-hte.analysis <- filter(tse.analysis, !is.na(candidacy.ruling.class))
+hte.analysis <- filter(tse.analysis, !is.na(candidacy.ruling.class)) %>%
+                mutate(candidacy.ruling.class = relevel(candidacy.ruling.class,
+                  ref = 'Lei das Eleições'))
+
 hte.analysis$class <- hte.analysis$candidacy.ruling.class %>%
   {ifelse(.  != 'Requisito Faltante', 'Substantial', 'Procedural')} %>%
   factor() %>%
   {relevel(., ref = 'Procedural')}
 
-hte01 <- hte.analysis %>%
-         #filter(hte.analysis, office.ID == 11) %>%
-  {ivreg(outcome.share ~
-         candidacy.invalid.ontrial * candidate.experience +
-         candidate.age +
-         candidate.male +
-         candidate.experience +
-         candidacy.expenditures.actual +
-         candidate.maritalstatus +
-         candidate.education +
-         election.ID +
-         election.year +
-         party.number |
-         candidacy.invalid.onappeal * candidate.experience +
-         candidate.age +
-         candidate.male +
-         candidate.experience +
-         candidacy.expenditures.actual +
-         candidate.maritalstatus +
-         candidate.education +
-         election.ID +
-         election.year +
-         party.number,
-         data = .
+hte01 <- hte.analysis %>% #filter(office.ID == 11) %>%
+  {felm(outcome.elected ~
+        candidacy.invalid.ontrial * class +
+        candidate.age +
+        candidate.male +
+        candidate.maritalstatus +
+        candidate.education +
+        candidate.experience +
+        candidacy.expenditures.actual |
+        election.year +
+        election.ID +
+        party.number,
+        data = .,
+        exactDOF = TRUE
   )}
+summary(hte01, robust = TRUE)
+
+
+hte.analysis %$% table(class, candidacy.invalid.onappeal)
 
 se <- ivpack::robust.se(hte01)
 se %>% str()
