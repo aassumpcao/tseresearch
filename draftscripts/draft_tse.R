@@ -1182,7 +1182,7 @@ summary(hte01)$coefficients[c(1:10, 1857),]
 test <- ivpack::robust.se(hte01)
 test[c(1:10, 1279),]
 
-
+summary(hte01) %>% str()
 
 hte.analysis %$% table(class, candidacy.invalid.onappeal)
 

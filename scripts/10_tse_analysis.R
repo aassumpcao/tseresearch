@@ -1119,4 +1119,29 @@ stargazer(
   table.placement = '!htbp'
 )
 
+# extract f-stat for graphs and tables and assign latex format to it
+objects(pattern = 'disengagement') %>%
+{.[c(4, 6, 7, 9)]} %>%
+lapply(get) %>%
+lapply(function(x){summary(x)$F.fstat[1]}) %>%
+unlist() %>%
+round(1) %>%
+paste0(collapse = ' & ') %>%
+{paste0('\textit{F}-stat & ', .)} %>%
+paste0(' \\')
 
+# extract f-stats for table
+objects(pattern = '^hte0[1-4]{1}$') %>%
+lapply(get) %>%
+lapply(function(x){summary(x)$waldtest[1]}) %>%
+unlist() %>%
+round(1) %>%
+paste0(collapse = ' & ') %>%
+{paste0('\textit{F}-stat & ', .)} %>%
+paste0(' \\')
+
+# remove unnecessary objects
+rm(list = objects(pattern = 'hte'))
+
+
+summary(test) %>% str()
