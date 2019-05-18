@@ -1151,22 +1151,37 @@ hte.analysis$class <- hte.analysis$candidacy.ruling.class %>%
   factor() %>%
   {relevel(., ref = 'Procedural')}
 
-hte01 <- hte.analysis %>% #filter(office.ID == 11) %>%
-  {felm(outcome.elected ~
-        candidacy.invalid.ontrial * class +
-        candidate.age +
-        candidate.male +
-        candidate.maritalstatus +
-        candidate.education +
-        candidate.experience +
-        candidacy.expenditures.actual |
-        election.year +
-        election.ID +
-        party.number,
-        data = .,
-        exactDOF = TRUE
+hte01 <- hte.analysis %>% filter(office.ID == 13) %>%
+  {ivreg(outcome.distance ~
+         candidacy.invalid.ontrial * class +
+         candidate.age +
+         candidate.male +
+         candidate.maritalstatus +
+         candidate.education +
+         candidate.experience +
+         candidacy.expenditures.actual +
+         election.year +
+         election.ID +
+         party.number|
+         candidacy.invalid.onappeal * class +
+         candidate.age +
+         candidate.male +
+         candidate.maritalstatus +
+         candidate.education +
+         candidate.experience +
+         candidacy.expenditures.actual +
+         election.year +
+         election.ID +
+         party.number,
+         data = .
   )}
-summary(hte01, robust = TRUE)
+
+hte01$coefficients %>% length()
+summary(hte01)$coefficients[c(1:10, 1857),]
+
+test <- ivpack::robust.se(hte01)
+test[c(1:10, 1279),]
+
 
 
 hte.analysis %$% table(class, candidacy.invalid.onappeal)
@@ -1189,11 +1204,12 @@ stargazer(
   out.header = FALSE,
   column.labels = c(rep('Full Sample', 2), 'City Councilor', 'Mayor'),
   column.separate = rep(1, 4),
-  # covariate.label =,
-  dep.var.labels = paste0('Outcome: ', outcome.labels),
-  align = TRUE,
-  coef = lapply(coefs, function(x){x[,1]}),
-  se = lapply(coefs, function(x){x[, 2]}),
+  covariate.labels = c(instrument.labels[1], 'Substantial', 'Inter'),
+  dep.var.caption = '',
+  # dep.var.labels = paste0('Outcome: ', 1:4),
+  dep.var.labels.include = FALSE,
+  align = FALSE,
+  se = list(hte01.se, hte02.se, hte03.se, hte04.se),
   p.auto = TRUE,
   column.sep.width = '4pt',
   digit.separate = 3,
@@ -1203,10 +1219,11 @@ stargazer(
   header = FALSE,
   initial.zero = FALSE,
   model.names = FALSE,
-  keep = 'nterc|trial|class',
+  keep = 'invalid|class',
   label = 'tab:hte',
   no.space = FALSE,
-  # omit.labels = c('Individual Controls', 'Fixed-Effects'),
+  omit = c('education', 'party'),
+  omit.labels = c('Individual Controls', 'Fixed-Effects'),
   omit.stat = c('ser', 'f', 'rsq'),
   omit.yes.no = c('Yes', '-'),
   table.placement = '!htbp'

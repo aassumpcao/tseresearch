@@ -120,9 +120,9 @@ instrumented      <- 'candidacy.invalid.ontrial'
 instrument.labels <- c('Convicted at Trial', 'Convicted on Appeal')
 
 # define independent variables labels
-covariates       <- c('candidate.age', 'candidate.male', 'candidate.education',
-                      'candidate.maritalstatus', 'candidate.experience',
-                      'candidacy.expenditures.actual')
+covariates       <- c('candidate.age', 'candidate.male',
+                      'candidate.maritalstatus', 'candidate.education',
+                      'candidate.experience', 'candidacy.expenditures.actual')
 covariate.labels <- c('Age', 'Male', 'Level of Education', 'Marital Status',
                       'Political Experience', 'Campaign Expenditures (in R$)')
 
@@ -792,19 +792,19 @@ stderr <- models %>%
   {.[str_detect(names(.), 'invalid')]}
 
 # define vectors for dataset
-outcomes <- c('Probability of Election', 'Vote Share',
-              'Vote Distance to Cutoff (City Councilor)',
-              'Vote Distance to Cutoff (Mayor)')
+depvar <- c('Probability of Election', 'Vote Share',
+            'Vote Distance to Cutoff (City Councilor)',
+            'Vote Distance to Cutoff (Mayor)')
 models <- c('no.covariates', 'covariates', 'covariates.fe')
-comparison <- rep(paste(rep(outcomes, each = 3), models, sep = '.'), 2)
+comparison <- rep(paste(rep(depvar, each = 3), models, sep = '.'), 2)
 endogenous <- rep(c('Trial', 'Appeals'), each = 12)
 
 # build dataset
-tibble(outcomes = rep(rep(outcomes, each = 3), 2), betas, models = rep(models,
+tibble(outcomes = rep(rep(depvar, each = 3), 2), betas, models = rep(models,
   8), comparison, endogenous, stderr, ci_upper = betas + qnorm(0.005) *
   stderr, ci_lower = betas - qnorm(0.005) * stderr, group = paste0(models,
   endogenous)) %>%
-mutate(outcomes = factor(outcomes, levels = unique(outcomes)),
+mutate(outcomes = factor(outcomes, levels = unique(depvar)),
   models = factor(models, unique(models)), comparison = factor(comparison,
     levels = unique(unlist(comparison))), endogenous = factor(endogenous,
     levels = c("Trial", "Appeals"))) -> instrument.check
@@ -839,7 +839,7 @@ ggplot(instrument.check, aes(y = betas, x = models, color = endogenous)) +
 #        dpi = 100, width = 10, height = 5)
 
 # remove unnecessary objects
-rm(outcomes, models, comparison, endogenous, instrument.check, betas, stderr)
+rm(depvar, models, comparison, endogenous, instrument.check, betas, stderr)
 
 ### test for voter disengagement
 # there are two potential explanations for the effect here: (i) voters would be
@@ -1039,5 +1039,84 @@ rm(candidate.disengagement.analysis, trial.expenditures, appeals.expenditures,
    review.expenditures)
 
 ### heterogeneous treatment effects
-# these are the tests of differential effect conditional on conviction cases
+# these are the tests of differential effect conditional on conviction reason.
+# here i am testing two hypotheses: (i) whether voters do punish politicians for
+# type of electoral violation and (ii) whether strategy is beneficial from the
+# when politicians are not caught.
+
+# build new dataset containing only the politicians for which i can recover the
+# type of electoral crime
+hte.analysis <- filter(tse.analysis, !is.na(candidacy.ruling.class))
+
+# relevel ruling categories to procedural or substantial rule breaking
+hte.analysis$class <- hte.analysis$candidacy.ruling.class %>%
+  {ifelse(.  != 'Requisito Faltante', 'Substantial', 'Procedural')} %>%
+  factor() %>%
+  {relevel(., ref = 'Procedural')}
+
+# create one long ivreg regression formula for all problems
+treat <- paste0(instrumented, ' * class + ')
+instr <- paste0(instrument, ' * class + ')
+exgos <- paste0(covariates, collapse = ' + ')
+fe    <- ' + election.year + election.ID + party.number'
+equations <- paste0(outcomes, ' ~ ', treat, exgos, fe, ' | ', instr, exgos, fe)
+
+# run regressions (note: up to 5 minutes to execute)
+# outcome 1: probability of election
+hte01 <- ivreg(equations[1], data = hte.analysis)
+
+# outcome 2: vote share
+hte02 <- ivreg(equations[2], data = hte.analysis)
+
+# outcome 3: distance to election cutoff for city councilor candidates
+hte03 <- ivreg(equations[3], data = filter(hte.analysis, office.ID == 13))
+
+# outcome 3: distance to election cutoff for mayor candidates
+hte04 <- ivreg(equations[3], data = filter(hte.analysis, office.ID == 11))
+
+# compute standard errors (note: up to 5 minutes to execute)
+hte01.se <- cse(hte01)
+hte02.se <- cse(hte02)
+hte03.se <- cse(hte03)
+hte04.se <- cse(hte04)
+
+# produce table
+stargazer(
+
+  # first-stage regressions
+  list(hte01, hte02, hte03, hte04),
+
+  # table cosmetics
+  type = 'latex',
+  title = 'Heterogeneous Effect of Electoral Crime',
+  style = 'default',
+  # out = 'tables/hte.tex',
+  out.header = FALSE,
+  column.labels = c(rep('Full Sample', 2), 'City Councilor', 'Mayor'),
+  column.separate = rep(1, 4),
+  covariate.labels = c(instrument.labels[1], 'Substantial', 'Inter'),
+  dep.var.caption = '',
+  # dep.var.labels = paste0('Outcome: ', 1:4),
+  dep.var.labels.include = FALSE,
+  align = FALSE,
+  se = list(hte01.se, hte02.se, hte03.se, hte04.se),
+  p.auto = TRUE,
+  column.sep.width = '4pt',
+  digit.separate = 3,
+  digits = 3,
+  digits.extra = 0,
+  font.size = 'scriptsize',
+  header = FALSE,
+  initial.zero = FALSE,
+  model.names = FALSE,
+  keep = 'invalid|class',
+  label = 'tab:hte',
+  no.space = FALSE,
+  omit = c('education', 'party'),
+  omit.labels = c('Individual Controls', 'Fixed-Effects'),
+  omit.stat = c('ser', 'f', 'rsq'),
+  omit.yes.no = c('Yes', '-'),
+  table.placement = '!htbp'
+)
+
 
