@@ -6,7 +6,7 @@
 # author: andre assumpcao
 # by andre.assumpcao@gmail.com
 
-# for testing purposes only!
+# if not running
 rm(list = ls())
 
 ### data and library calls
@@ -100,9 +100,7 @@ cse <- function(reg, fs = FALSE, ...) {
   } else {
     message('not implemented yet')
   }
-  # # fix coefficient names
-  # names(rob) %<>% str_replace(fixed('`candidacy.invalid.ontrial(fit)`'),
-  #                             fixed('candidacy.invalid.ontrial'))
+
   # return matrix
   return(rob)
 }
@@ -655,8 +653,10 @@ paste0(collapse = ' & ') %>%
 {paste0('\textit{F}-stat & ', .)} %>%
 paste0(' \\')
 
-### test for the correlation between instrument and other covariates
-# here i want to know whether
+### test for coefficient stability
+# here i implement the tests in altonji el at. (2005), oster (2017),
+# pei et al. (2019)
+
 
 ### test for heterogeneous judicial behavior between trial and appeals
 # i am interested in knowing whether justices change change the factors
@@ -904,7 +904,7 @@ disengagement06 <- party.aggregation %>%
 election.aggregation <- tse.analysis %>%
   group_by(election.ID, office.ID, election.year) %>%
   select(-matches('outcome|candidate')) %>%
-  summarize(proportion.invalid.ontrial  = sum(candidacy.invalid.ontrial) /
+  summarize(proportion.invalid.ontrial = sum(candidacy.invalid.ontrial) /
     first(as.integer(office.vacancies)) * 100, proportion.invalid.onappeal =
     sum(candidacy.invalid.onappeal) / first(as.integer(office.vacancies)) * 100,
     votes.valid = first(votes.valid), votes.turnout = first(votes.turnout),
@@ -999,11 +999,9 @@ candidate.disengagement.analysis %<>%
 
 # test 1: campaign expenditures by judicial ruling
 trial.expenditures <- candidate.disengagement.analysis %$%
-  t.test(candidacy.expenditures.actual ~ candidacy.invalid.ontrial,
-         conf.level = .99)
+  t.test(candidacy.expenditures.actual ~ candidacy.invalid.ontrial)
 appeals.expenditures <- candidate.disengagement.analysis %$%
-  t.test(candidacy.expenditures.actual ~ candidacy.invalid.onappeal,
-         conf.level = .99)
+  t.test(candidacy.expenditures.actual ~ candidacy.invalid.onappeal)
 
 # test 2: campaign expendtireus across judicial review process
 review.expenditures <- candidate.disengagement.analysis %>%
@@ -1061,7 +1059,7 @@ exgos <- paste0(covariates, collapse = ' + ')
 fe    <- ' + election.year + election.ID + party.number'
 equations <- paste0(outcomes, ' ~ ', treat, exgos, fe, ' | ', instr, exgos, fe)
 
-# run regressions (note: up to 5 minutes to execute)
+# run regressions (note: up to 4 minutes to execute)
 # outcome 1: probability of election
 hte01 <- ivreg(equations[1], data = hte.analysis)
 
@@ -1119,29 +1117,15 @@ stargazer(
   table.placement = '!htbp'
 )
 
-# extract f-stat for graphs and tables and assign latex format to it
-objects(pattern = 'disengagement') %>%
-{.[c(4, 6, 7, 9)]} %>%
-lapply(get) %>%
-lapply(function(x){summary(x)$F.fstat[1]}) %>%
-unlist() %>%
-round(1) %>%
-paste0(collapse = ' & ') %>%
-{paste0('\textit{F}-stat & ', .)} %>%
-paste0(' \\')
-
 # extract f-stats for table
 objects(pattern = '^hte0[1-4]{1}$') %>%
 lapply(get) %>%
 lapply(function(x){summary(x)$waldtest[1]}) %>%
 unlist() %>%
-round(1) %>%
+round(2) %>%
 paste0(collapse = ' & ') %>%
 {paste0('\textit{F}-stat & ', .)} %>%
 paste0(' \\')
 
 # remove unnecessary objects
 rm(list = objects(pattern = 'hte'))
-
-
-summary(test) %>% str()

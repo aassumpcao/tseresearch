@@ -1230,3 +1230,66 @@ stargazer(
 )
 
 
+
+objects(pattern = 'ols') %>%
+lapply(get) %>%
+lapply(function(x){x$coefficients[2]})
+ols09$coefficients %>% row.names()
+summary(ols09) %>% str()
+ols01$coefficients[2]
+
+# function to measure the degree to which selection on unobservables would hurt
+# coefficient stability
+selection <- function(restricted, unrestricted, r2_max = 1,
+                      var.pattern = 'invalid'){
+  # Args:
+  #   restricted:   restricted regression object
+  #   unrestricted: unrestricted regression object
+
+  # Returns:
+  #   degree of selection or max r.squared
+
+  # Body:
+  #   extract r.squared and coefficients
+
+  # function
+  # find variable for which we want to test coefficient stability
+  if (class(restricted) == 'lm'){
+    i <- which(str_detect(names(unrestricted$coefficients), var.pattern))
+  } else {
+    i <- which(str_detect(row.names(unrestricted$coefficients), var.pattern))
+  }
+  # find variable for which we want to test coefficient stability
+  if (class(unrestricted) == 'lm'){
+    j <- which(str_detect(names(unrestricted$coefficients), var.pattern))
+  } else {
+    j <- which(str_detect(row.names(unrestricted$coefficients), var.pattern))
+  }
+
+  # extract coefficients
+  b_zero  <- restricted$coefficients[i]
+  b_tilde <- unrestricted$coefficients[j]
+
+  # extract rsquared
+  r2_zero  <- summary(restricted)$r.squared
+  r2_tilde <- summary(unrestricted)$r.squared
+
+  # calculate max r2 which would make beta insignificant (at delta == 1)
+  if (is.null(r2_max)) {
+
+    # calculate max r2
+    r2_max <- (b_tilde / (b_zero - b_tilde)) * (r2_tilde - r2_zero) + r2_tilde
+
+    # return call
+    return(unname(r2_max))
+
+  } else {
+    # calculate degree of selection on unobservables
+    delta <- (b_tilde / (b_zero - b_tilde)) *
+             ((r2_tilde - r2_zero) / (r2_max - r2_tilde))
+
+    # return call
+    return(unname(delta))
+  }
+}
+
