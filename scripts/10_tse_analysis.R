@@ -23,30 +23,6 @@ library(xtable)
 load('data/tseFinal.Rda')
 
 ### function definitions
-# function to conduct t-tests across parameters in different regressions
-t.test2 <- function(mean1, mean2, se1, se2) {
-  # Args:
-  #   mean1, mean2: means of each parameter
-  #   se1, se2:     standard errors of each parameter
-
-  # Returns:
-  #   test statistics
-
-  # Body:
-  #   compute statistics and return results
-
-  # function
-  se <- se1 + se2
-  df <- ((se1 + se2)^2) / ((se1)^2 / (9442 - 1) + (se2)^2 / (9442 - 1))
-  t  <- (mean1 - mean2) / se
-  result <- c(mean1, mean2, mean1 - mean2, se, t, 2 * pt(-abs(t), df))
-  names(result) <- c('Trial', 'Appeals', 'Difference in beta', 'Std. Error',
-                     't-stat', 'p-value')
-
-  # return call
-  return(result)
-}
-
 # function to change names of instrumented variable in felm regression so that
 # stargazer outputs everything in the same row
 cbeta <- function(reg, name = 'candidacy.invalid.ontrial') {
@@ -78,6 +54,61 @@ cbeta <- function(reg, name = 'candidacy.invalid.ontrial') {
   return(reg)
 }
 
+# function to measure the degree to which selection on unobservables would hurt
+# coefficient stability
+coefstab <- function(restricted, unrestricted, r2_max = 1,
+                     var.pattern = 'invalid'){
+  # Args:
+  #   restricted:   restricted regression object
+  #   unrestricted: unrestricted regression object
+
+  # Returns:
+  #   degree of selection or max r.squared
+
+  # Body:
+  #   extract r.squared and coefficients
+
+  # function
+  # find variable for which we want to test coefficient stability
+  if (class(restricted) == 'lm'){
+    i <- which(str_detect(names(restricted$coefficients), var.pattern))
+  } else {
+    i <- which(str_detect(row.names(restricted$coefficients), var.pattern))
+  }
+  # find variable for which we want to test coefficient stability
+  if (class(unrestricted) == 'lm'){
+    j <- which(str_detect(names(unrestricted$coefficients), var.pattern))
+  } else {
+    j <- which(str_detect(row.names(unrestricted$coefficients), var.pattern))
+  }
+
+  # extract coefficients
+  b_zero  <- restricted$coefficients[i]
+  b_tilde <- unrestricted$coefficients[j]
+
+  # extract rsquared
+  r2_zero  <- summary(restricted)$r.squared
+  r2_tilde <- summary(unrestricted)$r.squared
+
+  # calculate max r2 which would make beta insignificant (at delta == 1)
+  if (is.null(r2_max)) {
+
+    # calculate max r2
+    r2_max <- ((b_tilde / (b_zero - b_tilde)) * (r2_tilde - r2_zero))+ r2_tilde
+
+    # return call
+    return(unname(r2_max))
+
+  } else {
+    # calculate degree of selection on unobservables
+    delta <- (b_tilde / (b_zero - b_tilde)) *
+             ((r2_tilde - r2_zero) / (r2_max - r2_tilde))
+
+    # return call
+    return(unname(delta))
+  }
+}
+
 # define function to calculate corrected SEs for OLS, IV, and FELM regressions
 cse <- function(reg, fs = FALSE, ...) {
   # Args:
@@ -103,6 +134,30 @@ cse <- function(reg, fs = FALSE, ...) {
 
   # return matrix
   return(rob)
+}
+
+# function to conduct t-tests across parameters in different regressions
+t.test2 <- function(mean1, mean2, se1, se2) {
+  # Args:
+  #   mean1, mean2: means of each parameter
+  #   se1, se2:     standard errors of each parameter
+
+  # Returns:
+  #   test statistics
+
+  # Body:
+  #   compute statistics and return results
+
+  # function
+  se <- se1 + se2
+  df <- ((se1 + se2)^2) / ((se1)^2 / (9442 - 1) + (se2)^2 / (9442 - 1))
+  t  <- (mean1 - mean2) / se
+  result <- c(mean1, mean2, mean1 - mean2, se, t, 2 * pt(-abs(t), df))
+  names(result) <- c('Trial', 'Appeals', 'Difference in beta', 'Std. Error',
+                     't-stat', 'p-value')
+
+  # return call
+  return(result)
 }
 
 ### define y's and x's used in analysis and their labels
@@ -657,6 +712,64 @@ paste0(' \\')
 # here i implement the tests in altonji el at. (2005), oster (2017),
 # pei et al. (2019)
 
+# calculate set of maximum r-squared
+rsqr <- objects(pattern = 'ols') %>%
+        lapply(get) %>%
+        lapply(function(x){summary(x)$r.squared}) %>%
+        unlist()
+
+# create empty vector
+rmax.set <- rsqr %>%
+  {c(.[2] + (.[2] - .[1]), .[3] + (.[3] - .[1]), .[5] + (.[5] - .[4]),
+     .[6] + (.[6] - .[4]), .[8] + (.[8] - .[7]), .[9] + (.[9] - .[7]),
+     .[11]+ (.[11] - .[10]), .[12] + (.[12] - .[10])
+  )} %>%
+  lapply(function(x){ifelse(x < 1, x, 1)}) %>%
+  unlist()
+
+# produce statistics
+coefstab01 <- c(coefstab(ols01, ols02, rmax.set[1]),
+                coefstab(ols01, ols02, 2 * rsqr[2]),
+                coefstab(ols01, ols02, NULL),
+                coefstab(ols01, ols03, rmax.set[2]),
+                coefstab(ols01, ols03, 2 * rsqr[3]),
+                coefstab(ols01, ols03, NULL))
+coefstab02 <- c(coefstab(ols04, ols05, rmax.set[3]),
+                coefstab(ols04, ols05, 2 * rsqr[5]),
+                coefstab(ols04, ols05, NULL),
+                coefstab(ols04, ols06, rmax.set[4]),
+                coefstab(ols04, ols06, 1),
+                coefstab(ols04, ols06, NULL))
+coefstab03 <- c(coefstab(ols07, ols08, rmax.set[5]),
+                coefstab(ols07, ols08, 2 * rsqr[8]),
+                coefstab(ols07, ols08, NULL),
+                coefstab(ols07, ols09, rmax.set[6]),
+                coefstab(ols07, ols09, 1),
+                coefstab(ols07, ols09, NULL))
+coefstab04 <- c(coefstab(ols10, ols11, rmax.set[7]),
+                coefstab(ols10, ols11, 2 * rsqr[11]),
+                coefstab(ols10, ols11, NULL),
+                coefstab(ols10, ols12, rmax.set[8]),
+                coefstab(ols10, ols12, 1),
+                coefstab(ols10, ols12, NULL))
+
+# create table
+tibble(coefstab01, coefstab02, coefstab03, coefstab04) %>%
+t() %>%
+as_tibble() %>%
+mutate_all(~round(., 2)) %>%
+mutate(
+  outcome = c('Outcome 1: Probability of Election', 'Outcome 2: Vote Share',
+    'Outcome 3: Vote Distance to Cutoff (City Councilor)',
+    'Outcome 4: Vote Distance to Cutoff (Mayor)')
+) %>%
+select(7, 1:6) %>%
+xtable() %>%
+print.xtable(floating = FALSE, hline.after = c(-1, -1, 0, 4, 4),
+  include.rownames = FALSE)
+
+# remove unnecessary objects
+rm(ls = objects(pattern = 'rsqr|rmax|coefstab'))
 
 ### test for heterogeneous judicial behavior between trial and appeals
 # i am interested in knowing whether justices change change the factors
@@ -1129,3 +1242,4 @@ paste0(' \\')
 
 # remove unnecessary objects
 rm(list = objects(pattern = 'hte'))
+
