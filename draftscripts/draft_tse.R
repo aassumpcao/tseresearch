@@ -1363,8 +1363,5 @@ c(rmax.set[7], 2 * rsqr[11], NA_real_, rmax.set[8], 1, NA_real_) %>%
 round(3) %>%
 paste0(collapse = ' & ')
 
-#
-
-
 # remove unnecessary objects
 rm(ls = objects(pattern = 'rsqr|rmax|coefstab'))
