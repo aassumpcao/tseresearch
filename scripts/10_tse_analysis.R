@@ -159,7 +159,6 @@ t.test2 <- function(mean1, mean2, se1, se2) {
   # return call
   return(result)
 }
-
 ### define y's and x's used in analysis and their labels
 # outcome labels
 outcomes       <- c('outcome.elected', 'outcome.share', 'outcome.distance')
@@ -767,6 +766,20 @@ select(7, 1:6) %>%
 xtable() %>%
 print.xtable(floating = FALSE, hline.after = c(-1, -1, 0, 4, 4),
   include.rownames = FALSE)
+
+# create r-squares for table
+c(rmax.set[1], 2 * rsqr[2], NA_real_, rmax.set[2], 2 * rsqr[3], NA_real_) %>%
+round(3) %>%
+paste0(collapse = ' & ')
+c(rmax.set[3], 2 * rsqr[5], NA_real_, rmax.set[4], 1, NA_real_) %>%
+round(3) %>%
+paste0(collapse = ' & ')
+c(rmax.set[5], 2 * rsqr[8], NA_real_, rmax.set[6], 1, NA_real_) %>%
+round(3) %>%
+paste0(collapse = ' & ')
+c(rmax.set[7], 2 * rsqr[11], NA_real_, rmax.set[8], 1, NA_real_) %>%
+round(3) %>%
+paste0(collapse = ' & ')
 
 # remove unnecessary objects
 rm(ls = objects(pattern = 'rsqr|rmax|coefstab'))
