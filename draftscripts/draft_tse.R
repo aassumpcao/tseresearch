@@ -828,25 +828,17 @@ tse.analysis %>%
     exactDOF = TRUE)} -> fs8
 
 # create function to simulate distribution of ols and iv coefficients
-coef_simulation <- function(sample = 1000, rep = 1000, ...) {
+coefsimulation <- function(sample = 1000, rep = 1000, ...) {
 
 # create vector of betas and s.e.
-ols.beta <- c()
-ols.se   <- c()
 iv.beta  <- c()
 iv.se    <- c()
 
 # create distribution of betas
 for (i in 1:rep) {
+
   # created new dataset
   sampled.dataset <- sample_n(tse.analysis, size = sample, ...)
-
-  # run ols model
-  ols.model <- sampled.dataset %>%
-    {felm(outcome.elected ~ candidacy.invalid.ontrial + candidate.age +
-      candidate.male + candidate.experience + candidacy.expenditures.actual +
-      candidate.maritalstatus + candidate.education | election.year +
-      election.ID + party.number, data = ., exactDOF = TRUE)}
 
   # run iv model
   iv.model <- sampled.dataset %>%
@@ -857,10 +849,10 @@ for (i in 1:rep) {
       candidacy.invalid.onappeal), data = ., exactDOF = TRUE)}
 
   # check models
-  ols.beta <- c(ols.beta, summary(ols.model)$coefficients[1, 1])
-  ols.se   <- c(ols.se,   cse(ols.model)[2])
-  iv.beta  <- c(iv.beta,  summary(iv.model)$coefficients[1, 1])
-  iv.se    <- c(iv.se,    summary(iv.model, robust = TRUE)$coefficients[1, 2])
+  j <- which(str_detect(row.names(iv.model$coefficient), fixed('(fit)')))
+  iv <- summary(iv.model, robust = TRUE)$coefficients[j, c(1, 2)]
+  iv.beta  <- c(iv.beta, iv[1])
+  iv.se    <- c(iv.se,   iv[2])
 
   # print progress
   if (i %% 100 == 0) {print(paste0(i, ' concluded / ', rep, ' total.'))}
@@ -868,16 +860,27 @@ for (i in 1:rep) {
 }
 
 # output dataset
-object <- tibble(ols.beta, ols.se, iv.beta, iv.se)
+object <- tibble(iv.beta, iv.se)
 
 # return object
 return(object)
 
 }
 
-ggplot(object, aes(ols.beta)) +
+a <- mean(object$iv.beta)
+b <- sd(object$iv.se)
+
+x <- rnorm(1000, a, b)
+y <- summary(ols03)$coefficients[1, 1]
+z <- cse(ols03)[1]
+w <- rnorm(1000, y, z)
+
+object <- coefsimulation(1000, 1000)
+
+ggplot(tibble(x), aes(x = x)) +
   geom_histogram(fill = 'red', alpha = .5, bins = 50) +
-  geom_histogram(aes(iv.beta), fill = 'blue', alpha = .5, bins = 50)
+  geom_histogram(aes(x = object$iv.beta), fill = 'blue', alpha = .5, bins = 50) +
+  geom_histogram(aes(x = tibble(w)$w), fill = 'yellow', alpha = .5, bins = 50)
 
 ### test for the correlation between instrument and other covariates
 # here i want to know whether the instrument might be significantly correlated
@@ -1228,7 +1231,6 @@ stargazer(
   omit.yes.no = c('Yes', '-'),
   table.placement = '!htbp'
 )
-
 
 
 objects(pattern = 'ols') %>%
