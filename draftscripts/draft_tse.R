@@ -1367,3 +1367,160 @@ paste0(collapse = ' & ')
 
 # remove unnecessary objects
 rm(ls = objects(pattern = 'rsqr|rmax|coefstab'))
+
+### placebo test
+# here I want to estimate a random
+tse.analysis %>%
+  filter(candidacy.invalid.ontrial == 1) %>%
+  {felm(outcome.elected ~ candidate.age + candidate.male +
+    candidate.experience + candidacy.expenditures.actual +
+    candidate.maritalstatus + candidate.education | election.ID + election.year +
+    party.number | (candidacy.invalid.ontrial ~ candidacy.invalid.onappeal), data = ., exactDOF = TRUE)} %>%
+  summary(robust = TRUE)
+
+r <- .70
+
+# function to simulate other correlation levels using the same judicial review
+# data
+simcorrel <- function(correl.shift = NULL, ...) {
+  # Args:
+  #   var: variable used to compute correlation
+  #   ...: additional arguments passed to sample()
+
+  # Returns:
+  #   list with correlation coefficient, mean, and vector of simulated outcomes
+
+  # Body:
+  #   call to sample, correlation, mean, and store it to object
+
+  # function
+  # extract actual observed values from appeals distribution
+  var <- tse.analysis$candidacy.invalid.onappeal
+
+  # determine size of sampled observations
+  if (is.null(correl.shift)) {samplesize <- 9470}
+  else                       {samplesize <- ceiling(9470 * correl.shift)}
+
+  # replace values in original variable
+  if (samplesize < 9470) {
+    # determine size of non-sampled observations
+    sampled <- sample(9470, samplesize, replace = FALSE)
+    var[sampled] <- sample(c(1, 0), size = samplesize, replace = TRUE)
+
+  } else {
+    var %<>% sample(size = samplesize, ...)
+  }
+
+  # produce object
+  object <- list(correlation = cor(tse.analysis$candidacy.invalid.ontrial, var),
+                 mean = mean(var),
+                 appeals.outcomes = var
+            )
+
+  # return call
+  invisible(object)
+}
+
+# create vectors of independent coefficients, standard errors, and correlations
+betas  <- c()
+se     <- c()
+correl <- c()
+
+# execute for loop
+for (i in 1:10000) {
+
+  # determine correlation deviation from main sample
+  x <- runif(1, .001)
+
+  # call to simulation and store to dataset
+  y <- simcorrel(x)
+  tse.analysis$appeals.simulation <- y$appeals.outcomes
+
+  # run regressions
+  regression <- tse.analysis %>%
+    {felm(outcome.elected ~ candidate.age + candidate.male +
+      candidate.experience + candidacy.expenditures.actual +
+      candidate.maritalstatus + candidate.education | election.ID +
+      election.year + party.number | (candidacy.invalid.ontrial ~
+      appeals.simulation), data = ., exactDOF = TRUE)}
+
+  # store results
+  estimates <- summary(regression, robust = TRUE)$coefficients[16, c(1, 2)]
+  correl <- c(correl, unname(y$correlation))
+  betas <- c(betas, unname(estimates[1]))
+  se <- c(se, unname(estimates[2]))
+
+}
+
+# determine which coefficients are significant at the 5% level
+simulation %<>% mutate(significant = ifelse(abs(betas / se) >= 1.96, 1, 0))
+
+# create mean and standard errors for simulation beta
+simulation.mean <- mean(unlist(filter(simulation, significant == 1)[,'betas']))
+simulation.ses  <- mean(unlist(filter(simulation, significant == 1)[,'se']))
+simulation.corr <- mean(unlist(filter(simulation, significant == 1)[,'correl']))
+
+# create mean and standard errors for actual beta
+iv.mean <- summary(ss03)$coefficients[16, 1]
+iv.ses  <- summary(ss03, robust = TRUE)$coefficients[16, 2]
+iv.corr <- summary(fs03)$coefficients[1, 1]
+
+# create mean and standard errors for weak instrument beta
+weak.iv.mean <- mean(
+    unlist(filter(simulation, significant == 1 & correl <= .3)[, 'betas']))
+weak.iv.ses  <- mean(
+    unlist(filter(simulation, significant == 1 & correl <= .3)[, 'se']))
+weak.iv.corr <- mean(
+    unlist(filter(simulation, significant == 1 & correl <= .3)[, 'correl']))
+
+# create point for ols statistic
+ols.mean <- summary(ols03)$coefficients[1, 1]
+ols.ses  <- cse(ols03)[1]
+ols.cor  <- tse.analysis %$%
+  cor(candidacy.invalid.ontrial, candidacy.invalid.onappeal)
+
+# create labels for data
+ylabel <-  c(iv.corr, weak.iv.corr, simulation.corr)
+xlabel <-  c(iv.mean, weak.iv.mean, simulation.mean)
+
+# build plot
+ggplot(filter(simulation, significant == 1)) +
+  geom_point(aes(y = correl, x = betas), color = 'grey56', alpha = .5) +
+  geom_point(aes(y = iv.corr, x = iv.mean), color = 'grey26') +
+  geom_point(aes(y = weak.iv.corr, x = weak.iv.mean), color = 'grey26') +
+  geom_point(aes(y = simulation.corr, x = simulation.mean), color = 'grey26') +
+  scale_x_continuous(breaks = seq(-1, 0, .05), limits = c(-.5, 0)) +
+  scale_y_continuous(breaks = seq(0, .8, .1), limits = c(0, .8)) +
+  geom_segment(aes(y = 0, yend = .8), x = ols.mean - 1.96 * ols.ses,
+    xend = ols.mean - 1.96 * ols.ses, color = 'tomato2', alpha = .5, size = .5)+
+  geom_segment(aes(y = 0, yend = .8), x = ols.mean + 1.96 * ols.ses,
+    xend = ols.mean + 1.96 * ols.ses, color = 'tomato2', alpha = .5, size = .5)+
+  geom_segment(aes(y = iv.corr, yend = iv.corr,
+    x = iv.mean + qnorm(.05) * iv.ses,
+    xend = iv.mean - qnorm(.05) * iv.ses), color = 'grey26', size = .3) +
+  geom_segment(aes(y = simulation.corr, yend = simulation.corr,
+    x = simulation.mean + qnorm(.05) * simulation.ses,
+    xend = simulation.mean - qnorm(.05) * simulation.ses), color = 'grey26',
+    size = .3) +
+  geom_segment(aes(y = weak.iv.corr, yend = weak.iv.corr,
+    x = weak.iv.mean + qnorm(.05) * weak.iv.ses,
+    xend = weak.iv.mean - qnorm(.05) * weak.iv.ses), color = 'grey26',
+    size = .3) +
+  geom_label(data = tibble(y = ylabel, x = xlabel), aes(y = y, x = x,
+    label = round(xlabel, 3)), nudge_y = -.03, family = 'LM Roman 10') +
+  labs(y = 'Correlation Coefficient', x = 'IV Coefficient Point Estimate') +
+  theme_bw() +
+  theme(axis.title  = element_text(size = 10),
+        axis.text.y = element_text(size = 10, lineheight = 1.1, face = 'bold'),
+        axis.text.x = element_text(size = 10, lineheight = 1.1, face = 'bold'),
+        text = element_text(family = 'LM Roman 10'),
+        panel.border = element_rect(color = 'black', size = 1),
+        panel.grid = element_blank(),
+        panel.grid.major.x = element_line(color = 'lightcyan4',
+                                          linetype = 'dotted')
+  )
+
+# # # save plot
+# library(extrafont)
+# ggsave('weakinstruments.pdf', device = cairo_pdf, path = 'plots', dpi = 100,
+#        width = 8, height = 5)

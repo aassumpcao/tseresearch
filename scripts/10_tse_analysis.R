@@ -57,7 +57,7 @@ cbeta <- function(reg, name = 'candidacy.invalid.ontrial') {
 # function to measure the degree to which selection on unobservables would hurt
 # coefficient stability
 coefstab <- function(restricted, unrestricted, r2_max = 1,
-                     var.pattern = 'invalid'){
+                     var.pattern = 'invalid') {
   # Args:
   #   restricted:   restricted regression object
   #   unrestricted: unrestricted regression object
@@ -136,6 +136,44 @@ cse <- function(reg, fs = FALSE, ...) {
   return(rob)
 }
 
+# function to simulate other correlation levels between trial and appeals
+# rulings using the same judicial review data
+simcorrel <- function(correl.shift = NULL, ...) {
+  # Args:
+  #   var: variable used to compute correlation
+  #   ...: additional arguments passed to sample()
+
+  # Returns:
+  #   list with correlation coefficient, mean, and vector of simulated outcomes
+
+  # Body:
+  #   call to sample, correlation, mean, and store it to object
+
+  # function
+  # extract actual observed values from appeals distribution
+  var <- tse.analysis$candidacy.invalid.onappeal
+
+  # determine size of sampled observations
+  if (is.null(correl.shift)) {samplesize <- 9470}
+  else                       {samplesize <- ceiling(9470 * correl.shift)}
+
+  # replace values in original variable
+  if (samplesize < 9470) {
+    # determine size of non-sampled observations
+    sampled <- sample(9470, samplesize, replace = FALSE)
+    var[sampled] <- sample(c(1, 0), size = samplesize, replace = TRUE)
+
+  } else {
+    var %<>% sample(size = samplesize, ...)
+  }
+
+  # produce object
+  object <- list(correlation = cor(tse.analysis$candidacy.invalid.ontrial, var),
+                 mean = mean(var), appeals.outcomes = var)
+  # return call
+  invisible(object)
+}
+
 # function to conduct t-tests across parameters in different regressions
 t.test2 <- function(mean1, mean2, se1, se2) {
   # Args:
@@ -159,6 +197,7 @@ t.test2 <- function(mean1, mean2, se1, se2) {
   # return call
   return(result)
 }
+
 ### define y's and x's used in analysis and their labels
 # outcome labels
 outcomes       <- c('outcome.elected', 'outcome.share', 'outcome.distance')
@@ -1168,91 +1207,240 @@ rm(candidate.disengagement.analysis, trial.expenditures, appeals.expenditures,
 # type of electoral violation and (ii) whether strategy is beneficial from the
 # when politicians are not caught.
 
-# build new dataset containing only the politicians for which i can recover the
-# type of electoral crime
-hte.analysis <- filter(tse.analysis, !is.na(candidacy.ruling.class))
+# # build new dataset containing only the politicians for which i can recover the
+# # type of electoral crime
+# hte.analysis <- filter(tse.analysis, !is.na(candidacy.ruling.class))
 
-# relevel ruling categories to procedural or substantial rule breaking
-hte.analysis$class <- hte.analysis$candidacy.ruling.class %>%
-  {ifelse(.  != 'Requisito Faltante', 'Substantial', 'Procedural')} %>%
-  factor() %>%
-  {relevel(., ref = 'Procedural')}
+# # relevel ruling categories to procedural or substantial rule breaking
+# hte.analysis$class <- hte.analysis$candidacy.ruling.class %>%
+#   {ifelse(.  != 'Requisito Faltante', 'Substantial', 'Procedural')} %>%
+#   factor() %>%
+#   {relevel(., ref = 'Procedural')}
 
-# create one long ivreg regression formula for all problems
-treat <- paste0(instrumented, ' * class + ')
-instr <- paste0(instrument, ' * class + ')
-exgos <- paste0(covariates, collapse = ' + ')
-fe    <- ' + election.year + election.ID + party.number'
-equations <- paste0(outcomes, ' ~ ', treat, exgos, fe, ' | ', instr, exgos, fe)
+# # create one long ivreg regression formula for all problems
+# treat <- paste0(instrumented, ' * class + ')
+# instr <- paste0(instrument, ' * class + ')
+# exgos <- paste0(covariates, collapse = ' + ')
+# fe    <- ' + election.year + election.ID + party.number'
+# equations <- paste0(outcomes, ' ~ ', treat, exgos, fe, ' | ', instr, exgos, fe)
 
-# run regressions (note: up to 4 minutes to execute)
-# outcome 1: probability of election
-hte01 <- ivreg(equations[1], data = hte.analysis)
+# # run regressions (note: up to 4 minutes to execute)
+# # outcome 1: probability of election
+# hte01 <- ivreg(equations[1], data = hte.analysis)
 
-# outcome 2: vote share
-hte02 <- ivreg(equations[2], data = hte.analysis)
+# # outcome 2: vote share
+# hte02 <- ivreg(equations[2], data = hte.analysis)
 
-# outcome 3: distance to election cutoff for city councilor candidates
-hte03 <- ivreg(equations[3], data = filter(hte.analysis, office.ID == 13))
+# # outcome 3: distance to election cutoff for city councilor candidates
+# hte03 <- ivreg(equations[3], data = filter(hte.analysis, office.ID == 13))
 
-# outcome 3: distance to election cutoff for mayor candidates
-hte04 <- ivreg(equations[3], data = filter(hte.analysis, office.ID == 11))
+# # outcome 3: distance to election cutoff for mayor candidates
+# hte04 <- ivreg(equations[3], data = filter(hte.analysis, office.ID == 11))
 
-# compute standard errors (note: up to 5 minutes to execute)
-hte01.se <- cse(hte01)
-hte02.se <- cse(hte02)
-hte03.se <- cse(hte03)
-hte04.se <- cse(hte04)
+# # compute standard errors (note: up to 5 minutes to execute)
+# hte01.se <- cse(hte01)
+# hte02.se <- cse(hte02)
+# hte03.se <- cse(hte03)
+# hte04.se <- cse(hte04)
 
-# produce table
-stargazer(
+# # produce table
+# stargazer(
 
-  # first-stage regressions
-  list(hte01, hte02, hte03, hte04),
+#   # first-stage regressions
+#   list(hte01, hte02, hte03, hte04),
 
-  # table cosmetics
-  type = 'latex',
-  title = 'Heterogeneous Effect of Electoral Crime',
-  style = 'default',
-  # out = 'tables/hte.tex',
-  out.header = FALSE,
-  column.labels = c(rep('Full Sample', 2), 'City Councilor', 'Mayor'),
-  column.separate = rep(1, 4),
-  covariate.labels = c(instrument.labels[1], 'Substantial', 'Inter'),
-  dep.var.caption = '',
-  # dep.var.labels = paste0('Outcome: ', 1:4),
-  dep.var.labels.include = FALSE,
-  align = FALSE,
-  se = list(hte01.se, hte02.se, hte03.se, hte04.se),
-  p.auto = TRUE,
-  column.sep.width = '4pt',
-  digit.separate = 3,
-  digits = 3,
-  digits.extra = 0,
-  font.size = 'scriptsize',
-  header = FALSE,
-  initial.zero = FALSE,
-  model.names = FALSE,
-  keep = 'invalid|class',
-  label = 'tab:hte',
-  no.space = FALSE,
-  omit = c('education', 'party'),
-  omit.labels = c('Individual Controls', 'Fixed-Effects'),
-  omit.stat = c('ser', 'f', 'rsq'),
-  omit.yes.no = c('Yes', '-'),
-  table.placement = '!htbp'
-)
+#   # table cosmetics
+#   type = 'latex',
+#   title = 'Heterogeneous Effect of Electoral Crime',
+#   style = 'default',
+#   # out = 'tables/hte.tex',
+#   out.header = FALSE,
+#   column.labels = c(rep('Full Sample', 2), 'City Councilor', 'Mayor'),
+#   column.separate = rep(1, 4),
+#   covariate.labels = c(instrument.labels[1], 'Substantial', 'Inter'),
+#   dep.var.caption = '',
+#   # dep.var.labels = paste0('Outcome: ', 1:4),
+#   dep.var.labels.include = FALSE,
+#   align = FALSE,
+#   se = list(hte01.se, hte02.se, hte03.se, hte04.se),
+#   p.auto = TRUE,
+#   column.sep.width = '4pt',
+#   digit.separate = 3,
+#   digits = 3,
+#   digits.extra = 0,
+#   font.size = 'scriptsize',
+#   header = FALSE,
+#   initial.zero = FALSE,
+#   model.names = FALSE,
+#   keep = 'invalid|class',
+#   label = 'tab:hte',
+#   no.space = FALSE,
+#   omit = c('education', 'party'),
+#   omit.labels = c('Individual Controls', 'Fixed-Effects'),
+#   omit.stat = c('ser', 'f', 'rsq'),
+#   omit.yes.no = c('Yes', '-'),
+#   table.placement = '!htbp'
+# )
 
-# extract f-stats for table
-objects(pattern = '^hte0[1-4]{1}$') %>%
-lapply(get) %>%
-lapply(function(x){summary(x)$waldtest[1]}) %>%
-unlist() %>%
-round(2) %>%
-paste0(collapse = ' & ') %>%
-{paste0('\textit{F}-stat & ', .)} %>%
-paste0(' \\')
+# # extract f-stats for table
+# objects(pattern = '^hte0[1-4]{1}$') %>%
+# lapply(get) %>%
+# lapply(function(x){summary(x)$waldtest[1]}) %>%
+# unlist() %>%
+# round(2) %>%
+# paste0(collapse = ' & ') %>%
+# {paste0('\textit{F}-stat & ', .)} %>%
+# paste0(' \\')
 
-# remove unnecessary objects
-rm(list = objects(pattern = 'hte'))
+# # remove unnecessary objects
+# rm(list = objects(pattern = 'hte'))
 
+### placebo test
+# here I want to estimate an entire set of correlations between trial and
+# appeals decisions to map when exactly would the IV parameter become the same
+# as the OLS parameter
+
+# # create vectors of independent coefficients, standard errors, and correlations
+# betas  <- c()
+# se     <- c()
+# correl <- c()
+
+# # execute for loop (~ 25 minutes)
+# for (i in 1:10000) {
+
+#   # determine correlation deviation from main sample
+#   x <- runif(1, .001)
+
+#   # call to simulation and store to dataset
+#   y <- simcorrel(x)
+#   tse.analysis$appeals.simulation <- y$appeals.outcomes
+
+#   # run regression
+#   regression <- tse.analysis %>%
+#     {felm(outcome.elected ~ candidate.age + candidate.male +
+#       candidate.experience + candidacy.expenditures.actual +
+#       candidate.maritalstatus + candidate.education | election.ID +
+#       election.year + party.number | (candidacy.invalid.ontrial ~
+#       appeals.simulation), data = ., exactDOF = TRUE)}
+
+#   # store results
+#   estimates <- summary(regression, robust = TRUE)$coefficients[16, c(1, 2)]
+#   correl <- c(correl, unname(y$correlation))
+#   betas <- c(betas, unname(estimates[1]))
+#   se <- c(se, unname(estimates[2]))
+
+# }
+
+# # save object so that I don't have to execute the loop again
+# simulation <- tibble(correl, betas, se)
+
+# # save to file
+# save(simulation, file = 'data/tseSimulation.Rda')
+
+# load data from file
+load('data/tseSimulation.Rda')
+
+
+# create vectors of independent coefficients, standard errors, and correlations
+betas  <- c()
+se     <- c()
+correl <- c()
+
+# execute for loop
+for (i in 1:10000) {
+
+  # determine correlation deviation from main sample
+  x <- runif(1, .001)
+
+  # call to simulation and store to dataset
+  y <- simcorrel(x)
+  tse.analysis$appeals.simulation <- y$appeals.outcomes
+
+  # run regressions
+  regression <- tse.analysis %>%
+    {felm(outcome.elected ~ candidate.age + candidate.male +
+      candidate.experience + candidacy.expenditures.actual +
+      candidate.maritalstatus + candidate.education | election.ID +
+      election.year + party.number | (candidacy.invalid.ontrial ~
+      appeals.simulation), data = ., exactDOF = TRUE)}
+
+  # store results
+  estimates <- summary(regression, robust = TRUE)$coefficients[16, c(1, 2)]
+  correl <- c(correl, unname(y$correlation))
+  betas <- c(betas, unname(estimates[1]))
+  se <- c(se, unname(estimates[2]))
+
+}
+
+# determine which coefficients are significant at the 5% level
+simulation %<>% mutate(significant = ifelse(abs(betas / se) >= 1.96, 1, 0))
+
+# create mean and standard errors for simulation beta
+simulation.mean <- mean(unlist(filter(simulation, significant == 1)[,'betas']))
+simulation.ses  <- mean(unlist(filter(simulation, significant == 1)[,'se']))
+simulation.corr <- mean(unlist(filter(simulation, significant == 1)[,'correl']))
+
+# create mean and standard errors for actual beta
+iv.mean <- summary(ss03)$coefficients[16, 1]
+iv.ses  <- summary(ss03, robust = TRUE)$coefficients[16, 2]
+iv.corr <- summary(fs03)$coefficients[1, 1]
+
+# create mean and standard errors for weak instrument beta
+weak.iv.mean <- mean(
+    unlist(filter(simulation, significant == 1 & correl <= .3)[, 'betas']))
+weak.iv.ses  <- mean(
+    unlist(filter(simulation, significant == 1 & correl <= .3)[, 'se']))
+weak.iv.corr <- mean(
+    unlist(filter(simulation, significant == 1 & correl <= .3)[, 'correl']))
+
+# create point for ols statistic
+ols.mean <- summary(ols03)$coefficients[1, 1]
+ols.ses  <- cse(ols03)[1]
+ols.cor  <- tse.analysis %$%
+  cor(candidacy.invalid.ontrial, candidacy.invalid.onappeal)
+
+# create labels for data
+ylabel <-  c(iv.corr, weak.iv.corr, simulation.corr)
+xlabel <-  c(iv.mean, weak.iv.mean, simulation.mean)
+
+# build plot
+ggplot(filter(simulation, significant == 1)) +
+  geom_point(aes(y = correl, x = betas), color = 'grey56', alpha = .5) +
+  geom_point(aes(y = iv.corr, x = iv.mean), color = 'grey26') +
+  geom_point(aes(y = weak.iv.corr, x = weak.iv.mean), color = 'grey26') +
+  geom_point(aes(y = simulation.corr, x = simulation.mean), color = 'grey26') +
+  scale_x_continuous(breaks = seq(-1, 0, .05), limits = c(-.5, 0)) +
+  scale_y_continuous(breaks = seq(0, .8, .1), limits = c(0, .8)) +
+  geom_segment(aes(y = 0, yend = .8), x = ols.mean - 1.96 * ols.ses,
+    xend = ols.mean - 1.96 * ols.ses, color = 'tomato2', alpha = .5, size = .5)+
+  geom_segment(aes(y = 0, yend = .8), x = ols.mean + 1.96 * ols.ses,
+    xend = ols.mean + 1.96 * ols.ses, color = 'tomato2', alpha = .5, size = .5)+
+  geom_segment(aes(y = iv.corr, yend = iv.corr,
+    x = iv.mean + qnorm(.05) * iv.ses,
+    xend = iv.mean - qnorm(.05) * iv.ses), color = 'grey26', size = .3) +
+  geom_segment(aes(y = simulation.corr, yend = simulation.corr,
+    x = simulation.mean + qnorm(.05) * simulation.ses,
+    xend = simulation.mean - qnorm(.05) * simulation.ses), color = 'grey26',
+    size = .3) +
+  geom_segment(aes(y = weak.iv.corr, yend = weak.iv.corr,
+    x = weak.iv.mean + qnorm(.05) * weak.iv.ses,
+    xend = weak.iv.mean - qnorm(.05) * weak.iv.ses), color = 'grey26',
+    size = .3) +
+  geom_label(data = tibble(y = ylabel, x = xlabel), aes(y = y, x = x,
+    label = round(xlabel, 3)), nudge_y = -.03, family = 'LM Roman 10') +
+  labs(y = 'Correlation Coefficient', x = 'IV Coefficient Point Estimate') +
+  theme_bw() +
+  theme(axis.title  = element_text(size = 10),
+        axis.text.y = element_text(size = 10, lineheight = 1.1, face = 'bold'),
+        axis.text.x = element_text(size = 10, lineheight = 1.1, face = 'bold'),
+        text = element_text(family = 'LM Roman 10'),
+        panel.border = element_rect(color = 'black', size = 1),
+        panel.grid = element_blank(),
+        panel.grid.major.x = element_line(color = 'lightcyan4',
+                                          linetype = 'dotted')
+  )
+
+# # # save plot
+# library(extrafont)
+# ggsave('weakinstruments.pdf', device = cairo_pdf, path = 'plots', dpi = 100,
+#        width = 8, height = 5)
