@@ -1300,53 +1300,13 @@ rm(candidate.disengagement.analysis, trial.expenditures, appeals.expenditures,
 # appeals decisions to map when exactly would the IV parameter become the same
 # as the OLS parameter
 
-# # create vectors of independent coefficients, standard errors, and correlations
-# betas  <- c()
-# se     <- c()
-# correl <- c()
-
-# # execute for loop (~ 25 minutes)
-# for (i in 1:10000) {
-
-#   # determine correlation deviation from main sample
-#   x <- runif(1, .001)
-
-#   # call to simulation and store to dataset
-#   y <- simcorrel(x)
-#   tse.analysis$appeals.simulation <- y$appeals.outcomes
-
-#   # run regression
-#   regression <- tse.analysis %>%
-#     {felm(outcome.elected ~ candidate.age + candidate.male +
-#       candidate.experience + candidacy.expenditures.actual +
-#       candidate.maritalstatus + candidate.education | election.ID +
-#       election.year + party.number | (candidacy.invalid.ontrial ~
-#       appeals.simulation), data = ., exactDOF = TRUE)}
-
-#   # store results
-#   estimates <- summary(regression, robust = TRUE)$coefficients[16, c(1, 2)]
-#   correl <- c(correl, unname(y$correlation))
-#   betas <- c(betas, unname(estimates[1]))
-#   se <- c(se, unname(estimates[2]))
-
-# }
-
-# # save object so that I don't have to execute the loop again
-# simulation <- tibble(correl, betas, se)
-
-# # save to file
-# save(simulation, file = 'data/tseSimulation.Rda')
-
-# load data from file
-load('data/tseSimulation.Rda')
-
-
 # create vectors of independent coefficients, standard errors, and correlations
 betas  <- c()
 se     <- c()
+fstat  <- c()
 correl <- c()
 
-# execute for loop
+# execute for loop (~ 30 minutes)
 for (i in 1:10000) {
 
   # determine correlation deviation from main sample
@@ -1364,13 +1324,23 @@ for (i in 1:10000) {
       election.year + party.number | (candidacy.invalid.ontrial ~
       appeals.simulation), data = ., exactDOF = TRUE)}
 
+  # run regressions
+  firststage <- tse.analysis %>%
+    {felm(candidacy.invalid.ontrial ~ appeals.simulation + candidate.age +
+      candidate.male + candidate.experience + candidacy.expenditures.actual +
+      candidate.maritalstatus + candidate.education | election.ID +
+      election.year + party.number, data = ., exactDOF = TRUE)}
+
   # store results
   estimates <- summary(regression, robust = TRUE)$coefficients[16, c(1, 2)]
   correl <- c(correl, unname(y$correlation))
   betas <- c(betas, unname(estimates[1]))
+  fstat <- c(fstat, summary(firststage)$fstat)
   se <- c(se, unname(estimates[2]))
-
 }
+
+# create dataset
+simulation <- tibble(correl, betas, se, fstat)
 
 # determine which coefficients are significant at the 5% level
 simulation %<>% mutate(significant = ifelse(abs(betas / se) >= 1.96, 1, 0))
