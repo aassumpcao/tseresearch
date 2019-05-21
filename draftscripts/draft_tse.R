@@ -1520,7 +1520,10 @@ ggplot(filter(simulation, significant == 1)) +
                                           linetype = 'dotted')
   )
 
-# # # save plot
-# library(extrafont)
-# ggsave('weakinstruments.pdf', device = cairo_pdf, path = 'plots', dpi = 100,
-#        width = 8, height = 5)
+# save plot
+library(extrafont)
+ggsave('weakinstruments.pdf', device = cairo_pdf, path = 'plots', dpi = 100,
+       width = 8, height = 5)
+
+# remove everything for serial sourcing
+rm(list = ls())

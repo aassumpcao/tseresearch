@@ -1383,7 +1383,7 @@ ols.mean <- summary(ols03)$coefficients[1, 1]
 ols.ses  <- cse(ols03)[1]
 
 # create labels for data
-ylabel <- c(.52, iv.corr)
+ylabel <- rep(.52, 2)
 xlabel <- c(strg.iv.mean, ols.mean)
 
 # build plot
@@ -1392,29 +1392,29 @@ ggplot() +
   scale_y_continuous(breaks = seq(.52, .76, .04), limits = c(.52, .76)) +
   geom_point(data = strg.iv.simulation, aes(y = ccorrel,  x = betas),
     color = 'grey4', alpha = .5) +
-  # geom_point(aes(y = iv.corr, x = iv.mean), color = 'blue', fill = 'skyblue2',
-  #   shape = 21, size = 3) +
   geom_segment(aes(y = .52, yend = .52,
     x = strg.iv.mean - qnorm(.025) * strg.iv.ses,
     xend = strg.iv.mean + qnorm(.025) * strg.iv.ses), color = 'skyblue2') +
   geom_point(aes(y = .52, x = strg.iv.mean), color = 'blue',
     fill = 'skyblue2', shape = 21, size = 3) +
-  geom_segment(aes(y = iv.corr, yend = iv.corr, x = -.16,
+  geom_segment(aes(y = .52, yend = .52, x = -.16,
     xend = ols.mean + qnorm(.025) * ols.ses), color = 'skyblue2') +
-  geom_segment(aes(y = iv.corr, yend = iv.corr, x = -.15,
+  geom_segment(aes(y = .52, yend = .52, x = -.15,
     xend = -.16), color = 'skyblue2', linetype = 'dashed') +
-  geom_point(aes(y = iv.corr, x = ols.mean), color = 'blue', fill = 'skyblue2',
+  geom_point(aes(y = .52, x = ols.mean), color = 'blue', fill = 'skyblue2',
     shape = 21, size = 3) +
   geom_segment(aes(y = .52, yend = .76, x = ols.mean + qnorm(.025) * ols.ses,
     xend = ols.mean + qnorm(.025) * ols.ses), color = 'grey1',
     linetype = 'dashed') +
-  geom_label(data = tibble(y = ylabel, x = xlabel), aes(y = y, x = x,
-    label = round(xlabel, 3)), family = 'LM Roman 10',
-    position = position_nudge(x = 0, y = .01)) +
+  geom_label(data = tibble(y = ylabel, x = xlabel), aes(y = y, x = x),
+    label = paste0(c('IV: ', 'OLS: '), round(xlabel, 3)),
+    family = 'LM Roman 10', position = position_nudge(x = 0, y = .01)) +
   labs(y = 'Correlation Coefficient',
        x = 'IV Coefficient Point Estimate Simulations') +
   theme_bw() +
   theme(axis.title  = element_text(size = 10),
+        axis.title.y = element_text(margin = margin(r = 12)),
+        axis.title.x = element_text(margin = margin(t = 12)),
         axis.text.y = element_text(size = 10, lineheight = 1.1, face = 'bold'),
         axis.text.x = element_text(size = 10, lineheight = 1.1, face = 'bold'),
         text = element_text(family = 'LM Roman 10'),
@@ -1423,7 +1423,10 @@ ggplot() +
         panel.grid.major.x = element_line(color = 'grey79')
   )
 
-# save plot
-library(extrafont)
+# # save plot
+# library(extrafont)
 ggsave('weakinstruments.pdf', device = cairo_pdf, path = 'plots', dpi = 100,
        width = 7, height = 5)
+
+# remove everything for serial sourcing
+rm(list = ls())
