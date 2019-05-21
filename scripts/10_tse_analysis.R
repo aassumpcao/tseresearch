@@ -794,7 +794,7 @@ coefstab04 <- c(coefstab(ols10, ols11, rmax.set[7]),
 # create table
 tibble(coefstab01, coefstab02, coefstab03, coefstab04) %>%
 t() %>%
-as_tibble() %>%
+as_tibble(.name_repair = 'universal') %>%
 mutate_all(~round(., 2)) %>%
 mutate(
   outcome = c('Outcome 1: Probability of Election', 'Outcome 2: Vote Share',
@@ -821,7 +821,7 @@ round(3) %>%
 paste0(collapse = ' & ')
 
 # remove unnecessary objects
-rm(ls = objects(pattern = 'rsqr|rmax|coefstab'))
+rm(list = objects(pattern = 'rsqr|rmax|coefstab'))
 
 ### test for heterogeneous judicial behavior between trial and appeals
 # i am interested in knowing whether justices change change the factors
@@ -1300,55 +1300,68 @@ rm(candidate.disengagement.analysis, trial.expenditures, appeals.expenditures,
 # appeals decisions to map when exactly would the IV parameter become the same
 # as the OLS parameter
 
-# create vectors of independent coefficients, standard errors, and correlations
-betas  <- c()
-se     <- c()
-fstat  <- c()
-correl <- c()
+# # create vectors of independent coefficients, standard errors, and correlations
+# se <- c()
+# betas <- c()
+# fstat <- c()
+# ucorrel <- c()
+# ccorrel <- c()
 
-# execute for loop (~ 30 minutes)
-for (i in 1:10000) {
+# # set seed to break process down into 2
+# set.seed(12345)
 
-  # determine correlation deviation from main sample
-  x <- runif(1, .001)
+# # execute for loop (~ 45 minutes)
+# for (i in 1:10000) {
 
-  # call to simulation and store to dataset
-  y <- simcorrel(x)
-  tse.analysis$appeals.simulation <- y$appeals.outcomes
+#   # determine correlation deviation from main sample
+#   x <- runif(1, .001)
 
-  # run regressions
-  regression <- tse.analysis %>%
-    {felm(outcome.elected ~ candidate.age + candidate.male +
-      candidate.experience + candidacy.expenditures.actual +
-      candidate.maritalstatus + candidate.education | election.ID +
-      election.year + party.number | (candidacy.invalid.ontrial ~
-      appeals.simulation), data = ., exactDOF = TRUE)}
+#   # call to simulation and store to dataset
+#   y <- simcorrel(x)
+#   tse.analysis$appeals.simulation <- y$appeals.outcomes
 
-  # run regressions
-  firststage <- tse.analysis %>%
-    {felm(candidacy.invalid.ontrial ~ appeals.simulation + candidate.age +
-      candidate.male + candidate.experience + candidacy.expenditures.actual +
-      candidate.maritalstatus + candidate.education | election.ID +
-      election.year + party.number, data = ., exactDOF = TRUE)}
+#   # run regressions
+#   regression <- tse.analysis %>%
+#     {felm(outcome.elected ~ candidate.age + candidate.male +
+#       candidate.experience + candidacy.expenditures.actual +
+#       candidate.maritalstatus + candidate.education | election.ID +
+#       election.year + party.number | (candidacy.invalid.ontrial ~
+#       appeals.simulation), data = ., exactDOF = TRUE)}
 
-  # store results
-  estimates <- summary(regression, robust = TRUE)$coefficients[16, c(1, 2)]
-  correl <- c(correl, unname(y$correlation))
-  betas <- c(betas, unname(estimates[1]))
-  fstat <- c(fstat, summary(firststage)$fstat)
-  se <- c(se, unname(estimates[2]))
-}
+#   # run regressions
+#   firststage <- tse.analysis %>%
+#     {felm(candidacy.invalid.ontrial ~ appeals.simulation + candidate.age +
+#       candidate.male + candidate.experience + candidacy.expenditures.actual +
+#       candidate.maritalstatus + candidate.education | election.ID +
+#       election.year + party.number, data = ., exactDOF = TRUE)}
 
-# create dataset
-simulation <- tibble(correl, betas, se, fstat)
+#   # store results
+#   estimates <- summary(regression, robust = TRUE)$coefficients[16, c(1, 2)]
+#   ucorrel <- c(ucorrel, unname(y$correlation))
+#   ccorrel <- c(ccorrel, summary(firststage)$coefficients[1])
+#   betas <- c(betas, unname(estimates[1]))
+#   fstat <- c(fstat, summary(firststage)$fstat)
+#   se <- c(se, unname(estimates[2]))
+# }
+
+# # create dataset
+# simulation <- tibble(ccorrel, ucorrel, betas, se, fstat)
+
+# # save to file
+# save(simulation, file = 'data/tseSimulation.Rda')
+
+# load from file
+load('data/tseSimulation.Rda')
 
 # determine which coefficients are significant at the 5% level
 simulation %<>% mutate(significant = ifelse(abs(betas / se) >= 1.96, 1, 0))
+weak.iv.simulation <- filter(simulation, fstat <= 10)
+strg.iv.simulation <- filter(simulation, fstat  > 10)
 
 # create mean and standard errors for simulation beta
-simulation.mean <- mean(unlist(filter(simulation, significant == 1)[,'betas']))
-simulation.ses  <- mean(unlist(filter(simulation, significant == 1)[,'se']))
-simulation.corr <- mean(unlist(filter(simulation, significant == 1)[,'correl']))
+simulation.mean <- mean(unlist(simulation[,'betas']))
+simulation.ses  <- mean(unlist(simulation[,'se']))
+simulation.corr <- mean(unlist(simulation[,'ccorrel']))
 
 # create mean and standard errors for actual beta
 iv.mean <- summary(ss03)$coefficients[16, 1]
@@ -1356,49 +1369,50 @@ iv.ses  <- summary(ss03, robust = TRUE)$coefficients[16, 2]
 iv.corr <- summary(fs03)$coefficients[1, 1]
 
 # create mean and standard errors for weak instrument beta
-weak.iv.mean <- mean(
-    unlist(filter(simulation, significant == 1 & correl <= .3)[, 'betas']))
-weak.iv.ses  <- mean(
-    unlist(filter(simulation, significant == 1 & correl <= .3)[, 'se']))
-weak.iv.corr <- mean(
-    unlist(filter(simulation, significant == 1 & correl <= .3)[, 'correl']))
+weak.iv.mean <- mean(unlist(weak.iv.simulation[, 'betas']))
+weak.iv.ses  <- mean(unlist(weak.iv.simulation[, 'se']))
+weak.iv.corr <- mean(unlist(weak.iv.simulation[, 'ccorrel']))
 
-# create point for ols statistic
+# create mean and standard errors for strh instrument beta
+strg.iv.mean <- mean(unlist(strg.iv.simulation[, 'betas']))
+strg.iv.ses  <- mean(unlist(strg.iv.simulation[, 'se']))
+strg.iv.corr <- min(unlist(strg.iv.simulation[, 'ccorrel']))
+
+# create mean and standard errors for ols beta
 ols.mean <- summary(ols03)$coefficients[1, 1]
 ols.ses  <- cse(ols03)[1]
-ols.cor  <- tse.analysis %$%
-  cor(candidacy.invalid.ontrial, candidacy.invalid.onappeal)
 
 # create labels for data
-ylabel <-  c(iv.corr, weak.iv.corr, simulation.corr)
-xlabel <-  c(iv.mean, weak.iv.mean, simulation.mean)
+ylabel <- c(.52, iv.corr)
+xlabel <- c(strg.iv.mean, ols.mean)
 
 # build plot
-ggplot(filter(simulation, significant == 1)) +
-  geom_point(aes(y = correl, x = betas), color = 'grey56', alpha = .5) +
-  geom_point(aes(y = iv.corr, x = iv.mean), color = 'grey26') +
-  geom_point(aes(y = weak.iv.corr, x = weak.iv.mean), color = 'grey26') +
-  geom_point(aes(y = simulation.corr, x = simulation.mean), color = 'grey26') +
-  scale_x_continuous(breaks = seq(-1, 0, .05), limits = c(-.5, 0)) +
-  scale_y_continuous(breaks = seq(0, .8, .1), limits = c(0, .8)) +
-  geom_segment(aes(y = 0, yend = .8), x = ols.mean - 1.96 * ols.ses,
-    xend = ols.mean - 1.96 * ols.ses, color = 'tomato2', alpha = .5, size = .5)+
-  geom_segment(aes(y = 0, yend = .8), x = ols.mean + 1.96 * ols.ses,
-    xend = ols.mean + 1.96 * ols.ses, color = 'tomato2', alpha = .5, size = .5)+
-  geom_segment(aes(y = iv.corr, yend = iv.corr,
-    x = iv.mean + qnorm(.05) * iv.ses,
-    xend = iv.mean - qnorm(.05) * iv.ses), color = 'grey26', size = .3) +
-  geom_segment(aes(y = simulation.corr, yend = simulation.corr,
-    x = simulation.mean + qnorm(.05) * simulation.ses,
-    xend = simulation.mean - qnorm(.05) * simulation.ses), color = 'grey26',
-    size = .3) +
-  geom_segment(aes(y = weak.iv.corr, yend = weak.iv.corr,
-    x = weak.iv.mean + qnorm(.05) * weak.iv.ses,
-    xend = weak.iv.mean - qnorm(.05) * weak.iv.ses), color = 'grey26',
-    size = .3) +
+ggplot() +
+  scale_x_continuous(breaks = seq(-.3, -.15, .025), limits = c(-.30, -.15)) +
+  scale_y_continuous(breaks = seq(.52, .76, .04), limits = c(.52, .76)) +
+  geom_point(data = strg.iv.simulation, aes(y = ccorrel,  x = betas),
+    color = 'grey4', alpha = .5) +
+  # geom_point(aes(y = iv.corr, x = iv.mean), color = 'blue', fill = 'skyblue2',
+  #   shape = 21, size = 3) +
+  geom_segment(aes(y = .52, yend = .52,
+    x = strg.iv.mean - qnorm(.025) * strg.iv.ses,
+    xend = strg.iv.mean + qnorm(.025) * strg.iv.ses), color = 'skyblue2') +
+  geom_point(aes(y = .52, x = strg.iv.mean), color = 'blue',
+    fill = 'skyblue2', shape = 21, size = 3) +
+  geom_segment(aes(y = iv.corr, yend = iv.corr, x = -.16,
+    xend = ols.mean + qnorm(.025) * ols.ses), color = 'skyblue2') +
+  geom_segment(aes(y = iv.corr, yend = iv.corr, x = -.15,
+    xend = -.16), color = 'skyblue2', linetype = 'dashed') +
+  geom_point(aes(y = iv.corr, x = ols.mean), color = 'blue', fill = 'skyblue2',
+    shape = 21, size = 3) +
+  geom_segment(aes(y = .52, yend = .76, x = ols.mean + qnorm(.025) * ols.ses,
+    xend = ols.mean + qnorm(.025) * ols.ses), color = 'grey1',
+    linetype = 'dashed') +
   geom_label(data = tibble(y = ylabel, x = xlabel), aes(y = y, x = x,
-    label = round(xlabel, 3)), nudge_y = -.03, family = 'LM Roman 10') +
-  labs(y = 'Correlation Coefficient', x = 'IV Coefficient Point Estimate') +
+    label = round(xlabel, 3)), family = 'LM Roman 10',
+    position = position_nudge(x = 0, y = .01)) +
+  labs(y = 'Correlation Coefficient',
+       x = 'IV Coefficient Point Estimate Simulations') +
   theme_bw() +
   theme(axis.title  = element_text(size = 10),
         axis.text.y = element_text(size = 10, lineheight = 1.1, face = 'bold'),
@@ -1406,11 +1420,10 @@ ggplot(filter(simulation, significant == 1)) +
         text = element_text(family = 'LM Roman 10'),
         panel.border = element_rect(color = 'black', size = 1),
         panel.grid = element_blank(),
-        panel.grid.major.x = element_line(color = 'lightcyan4',
-                                          linetype = 'dotted')
+        panel.grid.major.x = element_line(color = 'grey79')
   )
 
-# # # save plot
-# library(extrafont)
-# ggsave('weakinstruments.pdf', device = cairo_pdf, path = 'plots', dpi = 100,
-#        width = 8, height = 5)
+# save plot
+library(extrafont)
+ggsave('weakinstruments.pdf', device = cairo_pdf, path = 'plots', dpi = 100,
+       width = 7, height = 5)
