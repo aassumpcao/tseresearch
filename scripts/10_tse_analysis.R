@@ -6,13 +6,10 @@
 # author: andre assumpcao
 # by andre.assumpcao@gmail.com
 
-# if not running
-rm(list = ls())
-
 ### data and library calls
 # import libraries
 library(AER)
-# library(extrafont)
+library(extrafont)
 library(lfe)
 library(magrittr)
 library(stargazer)
