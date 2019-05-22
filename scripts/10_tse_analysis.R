@@ -383,7 +383,6 @@ ggplot(fs.estimates, aes(y = estimate, x = models, group = ci_bound)) +
   )
 
 # # save plot
-# library(extrafont)
 # ggsave('firststage.pdf', device = cairo_pdf, path = 'plots', dpi = 100,
 #        width = 7, height = 5)
 
@@ -996,7 +995,6 @@ ggplot(instrument.check, aes(y = betas, x = models, color = endogenous)) +
   )
 
 # # save plot
-# library(extrafont)
 # ggsave('instrumentcorrelation.pdf', device = cairo_pdf, path = 'plots',
 #        dpi = 100, width = 10, height = 5)
 
@@ -1421,9 +1419,8 @@ ggplot() +
   )
 
 # # save plot
-# library(extrafont)
-ggsave('weakinstruments.pdf', device = cairo_pdf, path = 'plots', dpi = 100,
-       width = 7, height = 5)
+# ggsave('weakinstruments.pdf', device = cairo_pdf, path = 'plots', dpi = 100,
+#        width = 7, height = 5)
 
 # remove everything for serial sourcing
 rm(list = ls())

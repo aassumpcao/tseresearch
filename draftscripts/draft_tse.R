@@ -1527,3 +1527,6 @@ ggsave('weakinstruments.pdf', device = cairo_pdf, path = 'plots', dpi = 100,
 
 # remove everything for serial sourcing
 rm(list = ls())
+
+tse.analysis %$% summary(candidate.maritalstatus)
+tse.analysis %$% summary(candidate.education)
