@@ -692,6 +692,16 @@ c('\textit{F}-stat ',
 paste0(collapse = ' & ') %>%
 paste0(' \\')
 
+# produce cis for discussion in paper
+cis <- list(c(summary(ols04)$coefficients[2], cse(ols04)[2]),
+            c(summary(ols05)$coefficients[2], cse(ols05)[2]),
+            c(summary(ols06)$coefficients[1], cse(ols06)[1]),
+            summary(ss04, robust = TRUE)$coefficients[2, c(1, 2)],
+            summary(ss05, robust = TRUE)$coefficients[17, c(1, 2)],
+            summary(ss06, robust = TRUE)$coefficients[16, c(1, 2)]) %>%
+       lapply(unname) %>%
+       lapply(function(x){c(x[1]-qnorm(.005)*x[2], x[1]+qnorm(.005)*x[2])})
+
 # produce tables with outcome three for city councilor and mayor sample
 stargazer(
 
