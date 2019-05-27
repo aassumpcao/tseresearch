@@ -698,7 +698,8 @@ cis <- list(c(summary(ols04)$coefficients[2], cse(ols04)[2]),
             c(summary(ols06)$coefficients[1], cse(ols06)[1]),
             summary(ss04, robust = TRUE)$coefficients[2, c(1, 2)],
             summary(ss05, robust = TRUE)$coefficients[17, c(1, 2)],
-            summary(ss06, robust = TRUE)$coefficients[16, c(1, 2)]) %>%
+            summary(ss06, robust = TRUE)$coefficients[16, c(1, 2)]
+       ) %>%
        lapply(unname) %>%
        lapply(function(x){c(x[1]-qnorm(.005)*x[2], x[1]+qnorm(.005)*x[2])})
 
@@ -757,12 +758,12 @@ paste0(' \\')
 # pei et al. (2019)
 
 # calculate set of maximum r-squared
-rsqr <- objects(pattern = 'ols') %>%
+rsqr <- objects(pattern = 'ss') %>%
         lapply(get) %>%
         lapply(function(x){summary(x)$r.squared}) %>%
         unlist()
 
-# create empty vector
+# create vector for R2_ur + (R2_ur - R2_r)
 rmax.set <- rsqr %>%
   {c(.[2] + (.[2] - .[1]), .[3] + (.[3] - .[1]), .[5] + (.[5] - .[4]),
      .[6] + (.[6] - .[4]), .[8] + (.[8] - .[7]), .[9] + (.[9] - .[7]),
@@ -772,30 +773,30 @@ rmax.set <- rsqr %>%
   unlist()
 
 # produce statistics
-coefstab01 <- c(coefstab(ols01, ols02, rmax.set[1]),
-                coefstab(ols01, ols02, 2 * rsqr[2]),
-                coefstab(ols01, ols02, NULL),
-                coefstab(ols01, ols03, rmax.set[2]),
-                coefstab(ols01, ols03, 2 * rsqr[3]),
-                coefstab(ols01, ols03, NULL))
-coefstab02 <- c(coefstab(ols04, ols05, rmax.set[3]),
-                coefstab(ols04, ols05, 2 * rsqr[5]),
-                coefstab(ols04, ols05, NULL),
-                coefstab(ols04, ols06, rmax.set[4]),
-                coefstab(ols04, ols06, 1),
-                coefstab(ols04, ols06, NULL))
-coefstab03 <- c(coefstab(ols07, ols08, rmax.set[5]),
-                coefstab(ols07, ols08, 2 * rsqr[8]),
-                coefstab(ols07, ols08, NULL),
-                coefstab(ols07, ols09, rmax.set[6]),
-                coefstab(ols07, ols09, 1),
-                coefstab(ols07, ols09, NULL))
-coefstab04 <- c(coefstab(ols10, ols11, rmax.set[7]),
-                coefstab(ols10, ols11, 2 * rsqr[11]),
-                coefstab(ols10, ols11, NULL),
-                coefstab(ols10, ols12, rmax.set[8]),
-                coefstab(ols10, ols12, 1),
-                coefstab(ols10, ols12, NULL))
+coefstab01 <- c(coefstab(ss01, ss02, rmax.set[1]),
+                coefstab(ss01, ss02, 2 * rsqr[2]),
+                coefstab(ss01, ss02, NULL),
+                coefstab(ss01, ss03, rmax.set[2]),
+                coefstab(ss01, ss03, 2 * rsqr[3]),
+                coefstab(ss01, ss03, NULL))
+coefstab02 <- c(coefstab(ss04, ss05, rmax.set[3]),
+                coefstab(ss04, ss05, 2 * rsqr[5]),
+                coefstab(ss04, ss05, NULL),
+                coefstab(ss04, ss06, rmax.set[4]),
+                coefstab(ss04, ss06, 1),
+                coefstab(ss04, ss06, NULL))
+coefstab03 <- c(coefstab(ss07, ss08, rmax.set[5]),
+                coefstab(ss07, ss08, 2 * rsqr[8]),
+                coefstab(ss07, ss08, NULL),
+                coefstab(ss07, ss09, rmax.set[6]),
+                coefstab(ss07, ss09, 1),
+                coefstab(ss07, ss09, NULL))
+coefstab04 <- c(coefstab(ss10, ss11, rmax.set[7]),
+                coefstab(ss10, ss11, 2 * rsqr[11]),
+                coefstab(ss10, ss11, NULL),
+                coefstab(ss10, ss12, rmax.set[8]),
+                coefstab(ss10, ss12, 1),
+                coefstab(ss10, ss12, NULL))
 
 # create table
 tibble(coefstab01, coefstab02, coefstab03, coefstab04) %>%
