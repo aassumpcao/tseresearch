@@ -1530,3 +1530,59 @@ rm(list = ls())
 
 tse.analysis %$% summary(candidate.maritalstatus)
 tse.analysis %$% summary(candidate.education)
+
+
+coefstab <- function(restricted, unrestricted, stat, b_star = 0, r2_max = 1) {
+  # Args:
+  #   restricted:   restricted regression object
+  #   unrestricted: unrestricted regression object
+
+  # Returns:
+  #   degree of selection or max r.squared
+
+  # Body:
+  #   extract r.squared and coefficients
+
+  # function
+  # find variable for which we want to test coefficient stability
+  try(silent = TRUE, expr = {
+    i <- which(str_detect(names(restricted$coefficients), 'invalid'))
+    j <- which(str_detect(names(unrestricted$coefficients), 'invalid'))
+  })
+  try(silent = TRUE, expr = {
+    i <- which(str_detect(row.names(restricted$coefficients), 'invalid'))
+    j <- which(str_detect(row.names(unrestricted$coefficients), 'invalid'))
+  })
+
+  # extract coefficients
+  b_zero  <- restricted$coefficients[i]
+  b_tilde <- unrestricted$coefficients[j]
+
+  # extract rsquared
+  r2_zero  <- summary(restricted)$r.squared
+  r2_tilde <- summary(unrestricted)$r.squared
+
+  # return calls
+  if (stat == 'bias') {
+    # calculate bias-adjusted coefficient
+    bias <- (b_tilde - (b_zero - b_tilde)) *
+            ((r2_max - r2_tilde) / (r2_tilde - r2_zero))
+    # return
+    return(bias)
+
+  } else if (stat == 'delta') {
+    # calculate delta
+    delta <- ((b_tilde - b_star) * (r2_tilde - r2_zero)) /
+             ((b_zero - b_tilde) * (r2_max - r2_tilde))
+    # return
+    return(delta)
+
+  } else if (stat == 'r2_max') {
+    # calculate max r2
+    r2_max <- ((b_tilde/(b_zero - b_tilde)) * (r2_tilde - r2_zero)) + r2_tilde
+    # return
+    return(unname(r2_max))
+  }
+}
+
+coefstab(ss01, ss03, 'delta', betas[3], rmax.set[2])

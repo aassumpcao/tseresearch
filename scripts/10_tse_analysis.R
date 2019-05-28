@@ -53,8 +53,7 @@ cbeta <- function(reg, name = 'candidacy.invalid.ontrial') {
 
 # function to measure the degree to which selection on unobservables would hurt
 # coefficient stability
-coefstab <- function(restricted, unrestricted, r2_max = 1,
-                     var.pattern = 'invalid') {
+coefstab <- function(restricted, unrestricted, stat, b_star = 0, r2_max = 1) {
   # Args:
   #   restricted:   restricted regression object
   #   unrestricted: unrestricted regression object
@@ -67,17 +66,14 @@ coefstab <- function(restricted, unrestricted, r2_max = 1,
 
   # function
   # find variable for which we want to test coefficient stability
-  if (class(restricted) == 'lm'){
-    i <- which(str_detect(names(restricted$coefficients), var.pattern))
-  } else {
-    i <- which(str_detect(row.names(restricted$coefficients), var.pattern))
-  }
-  # find variable for which we want to test coefficient stability
-  if (class(unrestricted) == 'lm'){
-    j <- which(str_detect(names(unrestricted$coefficients), var.pattern))
-  } else {
-    j <- which(str_detect(row.names(unrestricted$coefficients), var.pattern))
-  }
+  try(silent = TRUE, expr = {
+    i <- which(str_detect(names(restricted$coefficients), 'invalid'))
+    j <- which(str_detect(names(unrestricted$coefficients), 'invalid'))
+  })
+  try(silent = TRUE, expr = {
+    i <- which(str_detect(row.names(restricted$coefficients), 'invalid'))
+    j <- which(str_detect(row.names(unrestricted$coefficients), 'invalid'))
+  })
 
   # extract coefficients
   b_zero  <- restricted$coefficients[i]
@@ -87,22 +83,26 @@ coefstab <- function(restricted, unrestricted, r2_max = 1,
   r2_zero  <- summary(restricted)$r.squared
   r2_tilde <- summary(unrestricted)$r.squared
 
-  # calculate max r2 which would make beta insignificant (at delta == 1)
-  if (is.null(r2_max)) {
+  # return calls
+  if (stat == 'bias') {
+    # calculate bias-adjusted coefficient
+    bias <- (b_tilde - (b_zero - b_tilde)) *
+            ((r2_max - r2_tilde) / (r2_tilde - r2_zero))
+    # return
+    return(bias)
 
+  } else if (stat == 'delta') {
+    # calculate delta
+    delta <- ((b_tilde - b_star) * (r2_tilde - r2_zero)) /
+             ((b_zero - b_tilde) * (r2_max - r2_tilde))
+    # return
+    return(delta)
+
+  } else if (stat == 'r2_max') {
     # calculate max r2
-    r2_max <- ((b_tilde / (b_zero - b_tilde)) * (r2_tilde - r2_zero))+ r2_tilde
-
-    # return call
+    r2_max <- ((b_tilde / (b_zero - b_tilde)) * (r2_tilde - r2_zero)) + r2_tilde
+    # return
     return(unname(r2_max))
-
-  } else {
-    # calculate degree of selection on unobservables
-    delta <- (b_tilde / (b_zero - b_tilde)) *
-             ((r2_tilde - r2_zero) / (r2_max - r2_tilde))
-
-    # return call
-    return(unname(delta))
   }
 }
 
@@ -693,15 +693,16 @@ paste0(collapse = ' & ') %>%
 paste0(' \\')
 
 # produce cis for discussion in paper
-cis <- list(c(summary(ols04)$coefficients[2], cse(ols04)[2]),
-            c(summary(ols05)$coefficients[2], cse(ols05)[2]),
-            c(summary(ols06)$coefficients[1], cse(ols06)[1]),
-            summary(ss04, robust = TRUE)$coefficients[2, c(1, 2)],
-            summary(ss05, robust = TRUE)$coefficients[17, c(1, 2)],
-            summary(ss06, robust = TRUE)$coefficients[16, c(1, 2)]
-       ) %>%
-       lapply(unname) %>%
-       lapply(function(x){c(x[1]-qnorm(.005)*x[2], x[1]+qnorm(.005)*x[2])})
+cis <- list(
+          c(summary(ols04)$coefficients[2], cse(ols04)[2]),
+          c(summary(ols05)$coefficients[2], cse(ols05)[2]),
+          c(summary(ols06)$coefficients[1], cse(ols06)[1]),
+          summary(ss04, robust = TRUE)$coefficients[2, c(1, 2)],
+          summary(ss05, robust = TRUE)$coefficients[17, c(1, 2)],
+          summary(ss06, robust = TRUE)$coefficients[16, c(1, 2)]
+        ) %>%
+        lapply(unname) %>%
+        lapply(function(x){c(x[1]-qnorm(.005)*x[2], x[1]+qnorm(.005)*x[2])})
 
 # produce tables with outcome three for city councilor and mayor sample
 stargazer(
@@ -754,8 +755,34 @@ paste0(collapse = ' & ') %>%
 paste0(' \\')
 
 ### test for coefficient stability
-# here i implement the tests in altonji el at. (2005), oster (2017),
-# pei et al. (2019)
+# here i implement the tests in altonji el at. (2005), oster (2017). i estimate
+# boundaries for beta_iv based on the y-variation use in each regression
+
+# extract beta.ols from ols regressions
+objects(pattern = 'ols') %>%
+lapply(get) %>%
+lapply(function(x){
+ if (class(x) == 'lm') {x$coefficients %>% {.[str_detect(names(.), 'trial')]}}
+ else {x$coefficients %>% {.[str_detect(row.names(.), 'trial')]}}
+}) %>%
+unlist() %>%
+unname() -> betas
+
+# extract beta.olsse from ols regressions
+objects(pattern = 'ols') %>%
+lapply(get) %>%
+lapply(function(x){cse(x)[str_detect(names(cse(x)), 'trial')]}) %>%
+unlist() %>%
+unname() -> stder
+
+# calculate the lower bound of confidence intervals to compare to iv parameters
+betas.star <- betas + qnorm(.025) * stder
+
+# extract beta.ols from ols regressions
+objects(pattern = 'ss') %>%
+lapply(get) %>%
+lapply(function(x){x$coefficients %>% {.[str_detect(row.names(.), 'tri')]}}) %>%
+unlist() -> betas.iv
 
 # calculate set of maximum r-squared
 rsqr <- objects(pattern = 'ss') %>%
@@ -764,7 +791,7 @@ rsqr <- objects(pattern = 'ss') %>%
         unlist()
 
 # create vector for R2_ur + (R2_ur - R2_r)
-rmax.set <- rsqr %>%
+rmax <- rsqr %>%
   {c(.[2] + (.[2] - .[1]), .[3] + (.[3] - .[1]), .[5] + (.[5] - .[4]),
      .[6] + (.[6] - .[4]), .[8] + (.[8] - .[7]), .[9] + (.[9] - .[7]),
      .[11]+ (.[11] - .[10]), .[12] + (.[12] - .[10])
@@ -773,30 +800,30 @@ rmax.set <- rsqr %>%
   unlist()
 
 # produce statistics
-coefstab01 <- c(coefstab(ss01, ss02, rmax.set[1]),
-                coefstab(ss01, ss02, 2 * rsqr[2]),
-                coefstab(ss01, ss02, NULL),
-                coefstab(ss01, ss03, rmax.set[2]),
-                coefstab(ss01, ss03, 2 * rsqr[3]),
-                coefstab(ss01, ss03, NULL))
-coefstab02 <- c(coefstab(ss04, ss05, rmax.set[3]),
-                coefstab(ss04, ss05, 2 * rsqr[5]),
-                coefstab(ss04, ss05, NULL),
-                coefstab(ss04, ss06, rmax.set[4]),
-                coefstab(ss04, ss06, 1),
-                coefstab(ss04, ss06, NULL))
-coefstab03 <- c(coefstab(ss07, ss08, rmax.set[5]),
-                coefstab(ss07, ss08, 2 * rsqr[8]),
-                coefstab(ss07, ss08, NULL),
-                coefstab(ss07, ss09, rmax.set[6]),
-                coefstab(ss07, ss09, 1),
-                coefstab(ss07, ss09, NULL))
-coefstab04 <- c(coefstab(ss10, ss11, rmax.set[7]),
-                coefstab(ss10, ss11, 2 * rsqr[11]),
-                coefstab(ss10, ss11, NULL),
-                coefstab(ss10, ss12, rmax.set[8]),
-                coefstab(ss10, ss12, 1),
-                coefstab(ss10, ss12, NULL))
+coefstab01 <- c(coefstab(ss01, ss02, 'delta', betas[2], rmax[1]),
+                coefstab(ss01, ss02, 'delta', betas[2], 2 * rsqr[2]),
+                coefstab(ss01, ss02, 'r2_max'),
+                coefstab(ss01, ss03, 'delta', betas[3], rmax[2]),
+                coefstab(ss01, ss03, 'delta', betas[3], 2 * rsqr[3]),
+                coefstab(ss01, ss03, 'r2_max'))
+coefstab02 <- c(coefstab(ss04, ss05, 'delta', betas[5], rmax[3]),
+                coefstab(ss04, ss05, 'delta', betas[5], 2 * rsqr[5]),
+                coefstab(ss04, ss05, 'r2_max'),
+                coefstab(ss04, ss06, 'delta', betas[6], 1),
+                coefstab(ss04, ss06, 'delta', betas[6], 1),
+                coefstab(ss04, ss06, 'r2_max'))
+coefstab03 <- c(coefstab(ss07, ss08, 'delta', betas[8], rmax[5]),
+                coefstab(ss07, ss08, 'delta', betas[8], 2 * rsqr[8]),
+                coefstab(ss07, ss08, 'r2_max'),
+                coefstab(ss07, ss09, 'delta', betas[9], 1),
+                coefstab(ss07, ss09, 'delta', betas[9], 1),
+                coefstab(ss07, ss09, 'r2_max'))
+coefstab04 <- c(coefstab(ss10, ss11, 'delta', betas[11], rmax[7]),
+                coefstab(ss10, ss11, 'delta', betas[11], 2 * rsqr[11]),
+                coefstab(ss10, ss11, 'r2_max'),
+                coefstab(ss10, ss12, 'delta', betas[12], 1),
+                coefstab(ss10, ss12, 'delta', betas[12], 1),
+                coefstab(ss10, ss12, 'r2_max'))
 
 # create table
 tibble(coefstab01, coefstab02, coefstab03, coefstab04) %>%
@@ -814,17 +841,17 @@ print.xtable(floating = FALSE, hline.after = c(-1, -1, 0, 4, 4),
   include.rownames = FALSE)
 
 # create r-squares for table
-c(rmax.set[1], 2 * rsqr[2], NA_real_, rmax.set[2], 2 * rsqr[3], NA_real_) %>%
-round(3) %>%
+c(rmax[1], 2 * rsqr[2], NA_real_, rmax[2], 2 * rsqr[3], NA_real_) %>%
+round(2) %>%
 paste0(collapse = ' & ')
-c(rmax.set[3], 2 * rsqr[5], NA_real_, rmax.set[4], 1, NA_real_) %>%
-round(3) %>%
+c(rmax[3], 2 * rsqr[5], NA_real_, rmax[4], 1, NA_real_) %>%
+round(2) %>%
 paste0(collapse = ' & ')
-c(rmax.set[5], 2 * rsqr[8], NA_real_, rmax.set[6], 1, NA_real_) %>%
-round(3) %>%
+c(rmax[5], 2 * rsqr[8], NA_real_, rmax[6], 1, NA_real_) %>%
+round(2) %>%
 paste0(collapse = ' & ')
-c(rmax.set[7], 2 * rsqr[11], NA_real_, rmax.set[8], 1, NA_real_) %>%
-round(3) %>%
+c(rmax[7], 2 * rsqr[11], NA_real_, rmax[8], 1, NA_real_) %>%
+round(2) %>%
 paste0(collapse = ' & ')
 
 # remove unnecessary objects
