@@ -6,6 +6,9 @@
 # author: andre assumpcao
 # by andre.assumpcao@gmail.com
 
+# rm all
+rm(list = ls())
+
 ### data and library calls
 # import libraries
 library(AER)
