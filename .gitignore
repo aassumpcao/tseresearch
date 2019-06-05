@@ -57,3 +57,4 @@ bbc/
 
 # Ignore specific files
 scripts/07_sentence_test.py
+*/cepesp0.py
