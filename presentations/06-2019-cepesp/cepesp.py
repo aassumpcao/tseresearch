@@ -1,4 +1,4 @@
-### cepesp presentation
+### oab-sp presentation
 # quick demonstration of tse module
 # developed by:
 # andre assumpcao
