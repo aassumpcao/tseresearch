@@ -54,6 +54,7 @@ bbc/
 *.zip
 *.sh
 *.tex
+diff.pdf
 
 # Ignore specific files
 scripts/07_sentence_test.py
