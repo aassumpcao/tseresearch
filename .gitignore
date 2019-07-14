@@ -54,7 +54,8 @@ bbc/
 *.zip
 *.sh
 *.tex
-diff.pdf
+electoralcrime_diff.pdf
+electoralcrime_v1.pdf
 
 # Ignore specific files
 scripts/07_sentence_test.py
