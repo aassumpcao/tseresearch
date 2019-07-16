@@ -51,8 +51,10 @@ split = len(tse[tse['classID'] != -1])
 ### create tf-idf measures to inspect and transform data
 # pass kwargs to tf-idf vectorizer to construct a measure of word
 # importance
-kwargs = {'sublinear_tf': True, 'min_df': 5, 'stop_words': stopwords,
-          'encoding': 'utf-8', 'ngram_range': (1, 2), 'norm': 'l2'}
+kwargs = {
+    'sublinear_tf': True, 'min_df': 5, 'stop_words': stopwords,
+    'encoding': 'utf-8', 'ngram_range': (1, 2), 'norm': 'l2'
+}
 
 # create tf-idf vector
 tfidf = TfidfVectorizer(**kwargs)
@@ -102,9 +104,11 @@ CV = 5
 entries = []
 
 # create list of cross validation arguments outside of function
-cvkwargs = {'X': trainFeatures, 'y': trainLabels, 'n_jobs': -1, 'verbose': 2,
-            'scoring': {'acc': 'accuracy', 'f1micro': 'f1_micro'}, 'cv': CV,
-            'return_train_score': True}
+cvkwargs = {
+    'X': trainFeatures, 'y': trainLabels, 'n_jobs': -1, 'verbose': 2,
+    'scoring': {'acc': 'accuracy', 'f1micro': 'f1_micro'}, 'cv': CV,
+    'return_train_score': True
+}
 
 # run cross-validation for all models (> 10 hours of execution time)
 for model in models:
@@ -132,8 +136,10 @@ performance.groupby(['model']).test_f1micro.mean()
 
 # 1. accuracy produce boxplots depicting model performance
 sns.boxplot(x = 'model', y = 'test_acc', data = performance)
-sns.stripplot(x = 'model', y = 'test_acc', data = performance, size = 8,
-              jitter = True, edgecolor = 'gray', linewidth = 2)
+sns.stripplot(
+    x = 'model', y = 'test_acc', data = performance, size = 8, jitter = True,
+    edgecolor = 'gray', linewidth = 2
+)
 
 # display plot
 plt.show()
@@ -141,8 +147,10 @@ plt.savefig('plots/cvTestAccuracy.png')
 
 # 2. f1_micro: produce boxplots depicting model performance
 sns.boxplot(x = 'model', y = 'test_f1micro', data = performance)
-sns.stripplot(x = 'model', y = 'test_f1micro', data = performance, size = 8,
-              jitter = True, edgecolor = 'gray', linewidth = 2)
+sns.stripplot(
+    x = 'model', y = 'test_f1micro', data = performance, size = 8,
+    jitter = True, edgecolor = 'gray', linewidth = 2
+)
 
 # display plot
 plt.show()
@@ -186,10 +194,12 @@ np.savetxt('data/y_pred_svm.txt', y_pred_svm, '%d', ',')
 # y_pred_svm = np.loadtxt('data/y_pred_svm.txt')
 
 # create new datasets with observed and predicted classes
-tseObserved  = pd.DataFrame({'rulingClass': labels[:split],
-                             'scraperID': trainScraper})
-tsePredicted = pd.DataFrame({'svmPred': y_pred_svm, 'xgPred': y_pred_xg,
-                             'scraperID': testScraper})
+tseObserved  = pd.DataFrame({
+    'rulingClass': labels[:split], 'scraperID': trainScraper
+})
+tsePredicted = pd.DataFrame({
+    'svmPred': y_pred_svm, 'xgPred': y_pred_xg, 'scraperID': testScraper
+})
 
 # join arrays
 arrays = [y_pred_proba_xg, y_pred_proba_svm]
