@@ -226,8 +226,9 @@ class parser:
 
         # isolate latter tables
         kwargs = {'class': 'titulo_tabela'}
-        self.xtable = [td.text for t in self.tables \
-                       for td in t.find_all('td', **kwargs)]
+        self.xtable = [
+            td.text for t in self.tables for td in t.find_all('td', **kwargs)
+        ]
         self.xtable = {t: i + 1 for i, t in enumerate(self.xtable)}
 
     #1 parse summary info table:
@@ -476,8 +477,9 @@ class parser:
             table3.insert(0, 'caseinfo', 'details')
 
             # bind onto previous tables
-            table2 = pd.concat([table2, table3], \
-                               axis = 0, ignore_index = True, sort = False)
+            table2 = pd.concat(
+                [table2, table3], axis = 0, ignore_index = True, sort = False
+            )
         # skip error if table doesn't exist
         except:
             pass
@@ -491,8 +493,9 @@ class parser:
             table4.insert(0, 'caseinfo', 'relatedcases')
 
             # bind onto previous tables
-            table2 = pd.concat([table2, table4], \
-                               axis = 0, ignore_index = True, sort = False)
+            table2 = pd.concat(
+                [table2, table4], axis = 0, ignore_index = True, sort = False
+            )
         # skip error if table doesn't exist
         except:
             pass
@@ -506,8 +509,9 @@ class parser:
             table5.insert(0, 'caseinfo', 'relateddocs')
 
             # bind onto previous tables
-            table2 = pd.concat([table2, table5], \
-                               axis = 0, ignore_index = True, sort = False)
+            table2 = pd.concat(
+                [table2, table5], axis = 0, ignore_index = True, sort = False
+            )
         # skip error if table doesn't exist
         except:
             pass
