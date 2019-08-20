@@ -1,7 +1,7 @@
 ### tse electoral crime case decision scraper
 # this script downloads the case decisions for all candidacy cases at
-#   the tse electoral court for municipal elections since 2008. each
-#   decision is downloaded as an html file and saved to disk
+#  the tse electoral court for municipal elections since 2008. each
+#  decision is downloaded as an html file and saved to disk
 # developed by:
 # andre assumpcao
 # andre.assumpcao@gmail.com
@@ -27,13 +27,12 @@ import tse
 
 # define chrome options
 CHROME_PATH = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
-WINDOW_SIZE = '1920,1080'
 CHROMEDRIVER_PATH = '/usr/local/bin/chromedriver'
 
 # set options
 chrome_options = Options()
 chrome_options.add_argument('--headless')
-chrome_options.add_argument('--window-size=%s' % WINDOW_SIZE)
+chrome_options.add_argument('--window-size=1920,1080')
 chrome_options.binary_location = CHROME_PATH
 
 # open invisible browser

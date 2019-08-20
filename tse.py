@@ -26,6 +26,7 @@ from selenium.webdriver.support.ui     import Select
 from selenium.webdriver.support.ui     import WebDriverWait
 from selenium.webdriver.support        import expected_conditions as EC
 
+
 # define scraper class
 class scraper:
 
@@ -41,9 +42,9 @@ class scraper:
             case:       download case and protocol number
             decision:   use protocol number to download judicial decision
     """
+
     # define static arguments for all methods in the scraper class
-    browser = []
-    page = []
+    browser, page = [], []
     main = 'http://divulgacandcontas.tse.jus.br/divulga/#/candidato'
     java = 'return document.getElementsByTagName("html")[0].innerHTML'
 
@@ -69,7 +70,7 @@ class scraper:
 
         # turn method arguments to strings
         args = locals()
-        pageargs = [str(value) for key, value in args.items() if key != 'self']
+        pageargs = [str(v) for k, v in args.items() if k not 'self']
 
         # concatenate everything and form page address
         self.page = '/'.join([self.main] + pageargs)

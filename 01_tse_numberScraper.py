@@ -8,11 +8,11 @@
 # andre.assumpcao@gmail.com
 
 # import standard libraries
-import codecs
-import os
+import os, re, time, codecs
 import pandas as pd
-import re
-import time
+import feather
+
+# import selenium libraries
 from selenium                          import webdriver
 from selenium.common.exceptions        import NoSuchElementException
 from selenium.common.exceptions        import StaleElementReferenceException
@@ -24,18 +24,16 @@ from selenium.webdriver.support        import expected_conditions as EC
 from selenium.webdriver.support.ui     import WebDriverWait
 
 # import third-party libraries
-import feather
 import tse
 
 # define chrome options
 CHROME_PATH = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
-WINDOW_SIZE = '1920,1080'
 CHROMEDRIVER_PATH = '/usr/local/bin/chromedriver'
 
 # set options
 chrome_options = Options()
 chrome_options.add_argument('--headless')
-chrome_options.add_argument('--window-size=%s' % WINDOW_SIZE)
+chrome_options.add_argument('--window-size=1920,1080')
 chrome_options.binary_location = CHROME_PATH
 
 # open invisible browser
