@@ -157,7 +157,7 @@ plt.show()
 plt.savefig('plots/cvTestAccuracy.png')
 
 ### test models
-# here, we are implementing the preferred algorithm on the train data,
+# here, we are implementing the preferred algorithm on the test data,
 # which was held out during the training process.
 
 # call best performing models: svm (1st) and xgboost (2nd)
