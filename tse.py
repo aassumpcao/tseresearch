@@ -169,6 +169,7 @@ class scraper:
         except:
             return 'Download failed: reason unknown'
 
+
 # define parser class
 class parser:
 
@@ -188,8 +189,7 @@ class parser:
     """
 
     # define static variables used for parsing all tables
-    soup   = []
-    tables = []
+    soup, tables = [], []
 
     # define regex compile for substituting weird characters in all tables
     regex0 = re.compile(r'\n|\t')

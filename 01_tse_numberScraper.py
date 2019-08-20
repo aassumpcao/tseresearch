@@ -10,7 +10,6 @@
 # import standard libraries
 import os, re, time, codecs
 import pandas as pd
-import feather
 
 # import selenium libraries
 from selenium                          import webdriver
@@ -43,7 +42,7 @@ browser = webdriver.Chrome(CHROMEDRIVER_PATH, options = chrome_options)
 browser.implicitly_wait(10)
 
 # import test dataset with 1,000 individuals
-candidates = pd.read_csv('./data/candidatesPython.csv')
+candidates = pd.read_csv('./data/candidatesPending.csv')
 candidates = candidates.sample(100).reset_index(drop = True)
 limit = len(candidates)
 
@@ -54,16 +53,18 @@ casenumbers = []
 for i in range(limit):
 
     # pull sequential numbers from table
-    arguments = {'electionYear'   : candidates.loc[int(i), 'electionYear'],
-                 'electionID'     : candidates.loc[int(i), 'electionID'],
-                 'electoralUnitID': candidates.loc[int(i), 'electoralUnitID'],
-                 'candidateID'    : candidates.loc[int(i), 'candidateID']}
+    arguments = {
+        'electionYear'   : candidates.loc[int(i), 'year'],
+        'electionID'     : candidates.loc[int(i), 'electionID'],
+        'electoralUnitID': candidates.loc[int(i), 'unit'],
+        'candidateID'    : candidates.loc[int(i), 'candID']
+    }
 
     # run scraper capturing browser crash error
-    row = tse.scraper(browser).case(**arguments)
+    row = [tse.scraper(browser).case(**arguments)]
 
     # merge candidate scraper id
-    row = [row] + [candidates.loc[int(i), 'scraperID']]
+    row += [candidates.loc[int(i), 'candidate_ID']]
 
     # print warning every 10 iterations
     if (i + 1) % 10 == 0: print(str(i + 1) + ' / ' + str(limit))
@@ -74,10 +75,8 @@ for i in range(limit):
 # quit browser
 browser.quit()
 
-# wrangle data
 # transform list into dataframe
 casenumbers = pd.DataFrame(casenumbers)
 
 # save to file
-feather.write_dataframe(casenumbers, './data/caseNumbers.feather')
-casenumbers.to_scv('./data/caseNumbers.csv', index = False)
+casenumbers.to_scv('./data/candidatesCasenumbers.csv', index = False)

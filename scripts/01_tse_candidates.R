@@ -106,6 +106,16 @@ candidates2 %$% table(`Ano Eleição`, appeals)
 save(candidates1, file = 'data/candidates1.Rda')
 save(candidates2, file = 'data/candidates2.Rda')
 
+# rename variables
+names(candidates2)[2:10] <- c(
+  'year', 'cpf', 'name', 'candID', 'officeID', 'office', 'unit', 'state',
+  'candidacy'
+)
+
+# extract election number from list of candidates from website
+electionID <- c('', '', '', '')
+
+
 # filter candidates whose appeals were outstanding on day of election
 candidatesPending <- filter(candidates2, appeals == 1)
 
