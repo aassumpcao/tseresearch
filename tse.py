@@ -140,12 +140,9 @@ class scraper:
             # save inner html to object
             html = self.browser.execute_script(self.java)
 
-            # define filename
-            if filename == 'decision':
-                file = 'decision.html'
-            else:
-                # provide name to file
-                file = str(filename) + '.html'
+            # define filename to save file
+            file = str(filename) + '.html'
+
             # save to file
             try:
                 codecs.open(file, 'w', 'cp1252').write(html)

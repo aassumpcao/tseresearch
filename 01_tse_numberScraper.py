@@ -42,7 +42,7 @@ browser.implicitly_wait(10)
 
 # import test dataset with 1,000 individuals
 candidates = pd.read_csv('./data/candidatesPending.csv')
-candidates = candidates[18000:].reset_index(drop = True)
+candidates = candidates[:1000].reset_index(drop = True)
 limit = len(candidates)
 
 # create empty dataset
@@ -65,8 +65,8 @@ for i in range(limit):
     # merge candidate scraper id
     row += [candidates.loc[int(i), 'candidateID']]
 
-    # # print warning every 10 iterations
-    # if (i + 1) % 10 == 0: print(str(i + 1) + ' / ' + str(limit))
+    # print warning every 10 iterations
+    if (i + 1) % 500 == 0: print(str(i + 1) + ' / ' + str(limit))
 
     # bind to dataset
     casenumbers.append(row)
@@ -78,4 +78,4 @@ browser.quit()
 casenumbers = pd.DataFrame(casenumbers)
 
 # save to file
-casenumbers.to_csv('./data/candidatesCasenumbers19083.csv', index = False)
+casenumbers.to_csv('./data/candidatesCasenumbers1000.csv', index = False)
