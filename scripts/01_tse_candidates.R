@@ -106,6 +106,9 @@ candidates2 %$% table(`Ano Eleição`, appeals)
 save(candidates1, file = 'data/candidates1.Rda')
 save(candidates2, file = 'data/candidates2.Rda')
 
+# load candidates datasets
+load('data/candidates1.Rda');load('data/candidates2.Rda')
+
 # rename variables
 names(candidates2)[2:10] <- c(
   'year', 'cpf', 'name', 'candID', 'officeID', 'office', 'unit', 'state',
@@ -119,8 +122,26 @@ candidates2 %<>% mutate(electionID = year %>%
              . == 2012 ~ electionID[3], . == 2016 ~ electionID[4])})
 
 # filter candidates whose appeals were outstanding on day of election and focus
-# only on mayor and city council candidates
-candidatesPending <- filter(candidates2, appeals == 1 & officeID %in% c(11, 13))
+# only on mayor and city council candidates. in addition, filter candidates who
+# were participating in the general election (no run-offs)
+candidatesPending <- candidates2 %>%
+  filter(appeals == 1 & officeID %in% c(11, 13)) %>%
+  left_join(candidates1, 'candidateID') %>%
+  filter(NUM_TURNO == 1) %>%
+  select(1:13, 25) %>%
+  mutate(candID = candID %>% {case_when(
+    year == 2004 & . == SEQUENCIAL_CANDIDATO ~ as.character(candID),
+    year == 2004 & . != SEQUENCIAL_CANDIDATO ~ as.character(SEQUENCIAL_CANDIDATO),
+    year %in% c(2008, 2012, 2016) ~ as.character(candID)
+  )}) %>%
+  distinct(candidateID, .keep_all = TRUE)
+
+# fix variable name
+names(candidatesPending)[c(11:12)] %<>% str_remove('\\.x')
+
+# check inconsistencies
+candidatesPending %>% {table(.$candID == .$SEQUENCIAL_CANDIDATO, .$year)}
+
 
 # save dataset with candidates who had candidacy on appeal
 save(candidatesPending, file = 'data/candidatesPending.Rda')

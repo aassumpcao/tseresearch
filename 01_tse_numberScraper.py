@@ -42,7 +42,7 @@ browser.implicitly_wait(10)
 
 # import test dataset with 1,000 individuals
 candidates = pd.read_csv('./data/candidatesPending.csv')
-candidates = candidates[:1000].reset_index(drop = True)
+candidates = candidates[:100].reset_index(drop = True)
 limit = len(candidates)
 
 # create empty dataset
@@ -60,13 +60,21 @@ for i in range(limit):
     }
 
     # run scraper capturing browser crash error
-    row = [tse.scraper(browser).case(**arguments)]
+    try:
+        row = [tse.scraper(browser).case(**arguments)]
+    except:
+        # reload browser if there is any problem with downloads
+        browser = webdriver.Chrome(CHROMEDRIVER_PATH, options = chrome_options)
+        browser.implicitly_wait(10)
+
+        # try again
+        row = [tse.scraper(browser).case(**arguments)]
 
     # merge candidate scraper id
     row += [candidates.loc[int(i), 'candidateID']]
 
     # print warning every 10 iterations
-    if (i + 1) % 500 == 0: print(str(i + 1) + ' / ' + str(limit))
+    if (i + 1) % 10 == 0: print(str(i + 1) + ' / ' + str(limit))
 
     # bind to dataset
     casenumbers.append(row)
@@ -78,4 +86,4 @@ browser.quit()
 casenumbers = pd.DataFrame(casenumbers)
 
 # save to file
-casenumbers.to_csv('./data/candidatesCasenumbers1000.csv', index = False)
+casenumbers.to_csv('./data/casenumbers100.csv', index = False)
