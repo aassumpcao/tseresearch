@@ -34,8 +34,9 @@ rstudioapi::openProject('2019 Electoral Crime.Rproj')
 # nonetheless, i include all files for replication and transparency purposes if
 # you are interested in a particular step taken.
 
-# wrangle local candidate data.
+# wrangle local candidate data and scrape them from the internet
 source('scripts/01_tse_candidates.R')
+system2('python 01_tse_numberScraper.py &')
 
 # wrangle local candidate campaign data.
 source('scripts/02_tse_campaign.R')

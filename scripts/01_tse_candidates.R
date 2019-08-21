@@ -113,11 +113,14 @@ names(candidates2)[2:10] <- c(
 )
 
 # extract election number from list of candidates from website
-electionID <- c('', '', '', '')
+electionID <- c('14431', '14422', '1699', '2')
+candidates2 %<>% mutate(electionID = year %>%
+  {case_when(. == 2004 ~ electionID[1], . == 2008 ~ electionID[2],
+             . == 2012 ~ electionID[3], . == 2016 ~ electionID[4])})
 
-
-# filter candidates whose appeals were outstanding on day of election
-candidatesPending <- filter(candidates2, appeals == 1)
+# filter candidates whose appeals were outstanding on day of election and focus
+# only on mayor and city council candidates
+candidatesPending <- filter(candidates2, appeals == 1 & officeID %in% c(11, 13))
 
 # save dataset with candidates who had candidacy on appeal
 save(candidatesPending, file = 'data/candidatesPending.Rda')

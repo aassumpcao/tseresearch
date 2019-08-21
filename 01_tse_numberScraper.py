@@ -12,15 +12,14 @@ import os, re, time, codecs
 import pandas as pd
 
 # import selenium libraries
-from selenium                          import webdriver
-from selenium.common.exceptions        import NoSuchElementException
-from selenium.common.exceptions        import StaleElementReferenceException
-from selenium.common.exceptions        import TimeoutException
+from selenium import webdriver
+from selenium.common.exceptions import NoSuchElementException, TimeoutException
+from selenium.common.exceptions import StaleElementReferenceException
 from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.common.by      import By
-from selenium.webdriver.common.keys    import Keys
-from selenium.webdriver.support        import expected_conditions as EC
-from selenium.webdriver.support.ui     import WebDriverWait
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait
 
 # import third-party libraries
 import tse
@@ -43,7 +42,7 @@ browser.implicitly_wait(10)
 
 # import test dataset with 1,000 individuals
 candidates = pd.read_csv('./data/candidatesPending.csv')
-candidates = candidates.sample(100).reset_index(drop = True)
+candidates = candidates[18000:].reset_index(drop = True)
 limit = len(candidates)
 
 # create empty dataset
@@ -64,10 +63,10 @@ for i in range(limit):
     row = [tse.scraper(browser).case(**arguments)]
 
     # merge candidate scraper id
-    row += [candidates.loc[int(i), 'candidate_ID']]
+    row += [candidates.loc[int(i), 'candidateID']]
 
-    # print warning every 10 iterations
-    if (i + 1) % 10 == 0: print(str(i + 1) + ' / ' + str(limit))
+    # # print warning every 10 iterations
+    # if (i + 1) % 10 == 0: print(str(i + 1) + ' / ' + str(limit))
 
     # bind to dataset
     casenumbers.append(row)
@@ -79,4 +78,4 @@ browser.quit()
 casenumbers = pd.DataFrame(casenumbers)
 
 # save to file
-casenumbers.to_scv('./data/candidatesCasenumbers.csv', index = False)
+casenumbers.to_csv('./data/candidatesCasenumbers19083.csv', index = False)

@@ -70,7 +70,7 @@ class scraper:
 
         # turn method arguments to strings
         args = locals()
-        pageargs = [str(v) for k, v in args.items() if k not 'self']
+        pageargs = [str(v) for k, v in args.items() if k != 'self']
 
         # concatenate everything and form page address
         self.page = '/'.join([self.main] + pageargs)
@@ -270,7 +270,8 @@ class parser:
         for k, v in info.items():
             info[k] = [re.search(self.regex13, i).group() for i in info[k]]
             info[k] = [i.strip() for i in info[k]]
-            if len(info[k]) > 1: info[k] = [' '.join(info[k])]
+            if len(info[k]) > 1:
+                info[k] = [' '.join(info[k])]
 
         # replace missing values for None
         summary = {k: [None] if not v else v for k, v in info.items()}
