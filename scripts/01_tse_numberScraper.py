@@ -8,14 +8,13 @@
 # andre.assumpcao@gmail.com
 
 # import standard libraries
-import os, re, time, codecs
+import os, re, time, codecs, glob
 import pandas as pd
 
 # import selenium libraries
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException, TimeoutException
 from selenium.common.exceptions import StaleElementReferenceException
-from selenium.common.exceptions import SessionNotCreatedException
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
@@ -47,7 +46,12 @@ browser.implicitly_wait(30)
 # import test dataset with 1,000 individuals
 candidates = pd.read_csv('./data/candidatesPending.csv')
 candidates['unit'] = candidates['unit'].astype(str).str.pad(5, 'left', '0')
-candidates = candidates[8000:8600].reset_index(drop = True)
+
+# define parameters for ending search
+start = glob.glob('data/casenumbers*', recursive = True)
+start = [re.search(r'(?<=casenumbers).*(?=\.)', s).group(0) for s in start]
+start = max([int(s) for s in start])
+candidates = candidates[start:].reset_index(drop = True)
 limit = len(candidates)
 
 # create empty dataset
@@ -68,21 +72,19 @@ for i in range(limit):
     # run scraper capturing browser crash error
     row = [tse.scraper(browser).case(**arguments)]
 
-    if row == 'pageCrashed':
-        # restart browser if page crashes
-        browser.quit()
-        browser = webdriver.Chrome(CHROMEDRIVER_PATH, options = chrome_options)
-        browser.implicitly_wait(30)
-        row = [tse.scraper(browser).case(**arguments)]
-
     # merge candidate scraper id
     row += [candidates.loc[int(i), 'candidateID']]
 
     # print results
-    if (i + 1) % 100 == 0: print(str(i) + ' / ' + str(limit))
+    if (i + 1) % 100 == 0: print(str(i + 1) + ' / ' + str(limit))
 
     # bind to dataset
     casenumbers.append(row)
+
+    # restart browser if page crashes
+    if row[0] == 'pageCrashed':
+        print('crashed at ' + str(i+1))
+        break
 
 # quit browser
 browser.quit()
@@ -91,4 +93,4 @@ browser.quit()
 casenumbers = pd.DataFrame(casenumbers, columns = ['url', 'candidateID'])
 
 # save to file
-casenumbers.to_csv('./data/casenumbers8600.csv', index = False)
+casenumbers.to_csv('./data/casenumbers'+str(start+i+1)+'.csv', index = False)
