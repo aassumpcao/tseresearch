@@ -64,7 +64,7 @@ class scraper:
         self.browser = browser
 
     # case number scraper function
-    def case(self, electionYear, electionID, electoralUnitID, candidateID):
+    def case(self, year, election, unit, candidate, wait = 2):
 
         """ method to download case number by candidate information """
 
@@ -81,19 +81,15 @@ class scraper:
             self.browser.get(self.page)
 
             # check if protocol number is visible in webpage
-            # caseVis = EC.presence_of_element_located((By.XPATH, casePath))
             protVis = EC.presence_of_element_located((By.XPATH, self.prot))
 
             # wait up to 60s for elements to be located
-            # WebDriverWait(browser, 60).until(caseVis)
-            WebDriverWait(self.browser, 10).until(protVis)
+            WebDriverWait(self.browser, wait).until(protVis)
 
             # if protocol number has been found, download it
-            # caseElem = browser.find_element_by_xpath(casePath)
             protElem = self.browser.find_element_by_xpath(self.prot)
 
             # extract text from caseNum and href from protNum
-            # caseNum = caseElem.text
             protNum = protElem.get_attribute('href')
 
         # handle exception

@@ -23,6 +23,11 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 # import third-party libraries
 import tse
+# import importlib
+# importlib.reload(tse)
+
+# define function to clear screen
+# clear = lambda: os.system('clear')
 
 # define chrome options
 CHROME_PATH = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
@@ -38,11 +43,12 @@ chrome_options.binary_location = CHROME_PATH
 browser = webdriver.Chrome(CHROMEDRIVER_PATH, options = chrome_options)
 
 # set implicit wait for page load
-browser.implicitly_wait(10)
+browser.implicitly_wait(30)
 
 # import test dataset with 1,000 individuals
 candidates = pd.read_csv('./data/candidatesPending.csv')
-candidates = candidates[:100].reset_index(drop = True)
+candidates['unit'] = candidates['unit'].astype(str).str.pad(5, 'left', '0')
+candidates = candidates[2500:5000].reset_index(drop = True)
 limit = len(candidates)
 
 # create empty dataset
@@ -53,28 +59,20 @@ for i in range(limit):
 
     # pull sequential numbers from table
     arguments = {
-        'electionYear'   : candidates.loc[int(i), 'year'],
-        'electionID'     : candidates.loc[int(i), 'electionID'],
-        'electoralUnitID': candidates.loc[int(i), 'unit'],
-        'candidateID'    : candidates.loc[int(i), 'candID']
+        'year'      : candidates.loc[int(i), 'year'],
+        'election'  : candidates.loc[int(i), 'electionID'],
+        'unit'      : candidates.loc[int(i), 'unit'],
+        'candidate' : candidates.loc[int(i), 'candID']
     }
 
     # run scraper capturing browser crash error
-    try:
-        row = [tse.scraper(browser).case(**arguments)]
-    except:
-        # reload browser if there is any problem with downloads
-        browser = webdriver.Chrome(CHROMEDRIVER_PATH, options = chrome_options)
-        browser.implicitly_wait(10)
-
-        # try again
-        row = [tse.scraper(browser).case(**arguments)]
+    row = [tse.scraper(browser).case(**arguments)]
 
     # merge candidate scraper id
     row += [candidates.loc[int(i), 'candidateID']]
 
     # print warning every 10 iterations
-    if (i + 1) % 10 == 0: print(str(i + 1) + ' / ' + str(limit))
+    if (i + 1) % 100 == 0: print(str(i + 1) + ' / ' + str(limit))
 
     # bind to dataset
     casenumbers.append(row)
@@ -86,4 +84,4 @@ browser.quit()
 casenumbers = pd.DataFrame(casenumbers)
 
 # save to file
-casenumbers.to_csv('./data/casenumbers100.csv', index = False)
+casenumbers.to_csv('./data/casenumbers5000.csv', index = False)

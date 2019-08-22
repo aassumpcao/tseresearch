@@ -142,7 +142,6 @@ names(candidatesPending)[c(11:12)] %<>% str_remove('\\.x')
 # check inconsistencies
 candidatesPending %>% {table(.$candID == .$SEQUENCIAL_CANDIDATO, .$year)}
 
-
 # save dataset with candidates who had candidacy on appeal
 save(candidatesPending, file = 'data/candidatesPending.Rda')
 write_csv(candidatesPending, 'data/candidatesPending.csv')
