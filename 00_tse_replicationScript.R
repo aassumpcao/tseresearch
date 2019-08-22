@@ -29,14 +29,22 @@ rstudioapi::openProject('2019 Electoral Crime.Rproj')
 
 ### wrangling scripts
 # these scripts wrangle all data used in this paper. you should not run them as
-# they will take a long time to process (> 44 hours if laptop; > 33 hours if
+# they will take a long time to process (> 72 hours if laptop; > 40 hours if
 # cluster). you are better off using the final datasets than producing them;
 # nonetheless, i include all files for replication and transparency purposes if
 # you are interested in a particular step taken.
 
-# wrangle local candidate data and scrape them from the internet
+# python3.7: install packages from requirements.txt to run the next script.
+system2('cat scripts/requirements.txt | xargs -n 1 pip install')
+
+# wrangle local candidate data
 source('scripts/01_tse_candidates.R')
-system2('python 01_tse_numberScraper.py &')
+
+# scrape them from the internet (36+ hours)
+system2('python scripts/01_tse_numberScraper.py &')
+system2('python scripts/02_tse_decisionScraper.py &')
+system2('python scripts/03_tse_manualScraper.py &')
+system2('python scripts/04_tse_htmlParser.py &')
 
 # wrangle local candidate campaign data.
 source('scripts/02_tse_campaign.R')
@@ -56,11 +64,8 @@ source('scripts/06_tse_rejections.R')
 # wrangle text in sentences for classification.
 source('scripts/07_tse_sentence_cleanup.R')
 
-# python3.7: install packages from requirements.txt to run the next script.
-system2('cat scripts/requirements.txt | xargs -n 1 pip install')
-
-# python3.7: create sentence classification algorithm from 2016 sentences. this
-# script takes 25 hours to run on a big memory (500g) cluster. use with caution.
+# create sentence classification algorithm from 2016 sentences. this script
+# takes 25 hours to run on a big memory (500g) cluster. use with caution.
 system2('python scripts/99_tse_sentence_classification.py &')
 
 # wrangle judicial classes after judicial sentence classification.

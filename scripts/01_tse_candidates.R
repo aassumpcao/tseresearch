@@ -106,8 +106,8 @@ candidates2 %$% table(`Ano Eleição`, appeals)
 save(candidates1, file = 'data/candidates1.Rda')
 save(candidates2, file = 'data/candidates2.Rda')
 
-# load candidates datasets
-load('data/candidates1.Rda');load('data/candidates2.Rda')
+# # load candidates datasets
+# load('data/candidates1.Rda');load('data/candidates2.Rda')
 
 # rename variables
 names(candidates2)[2:10] <- c(
@@ -117,9 +117,12 @@ names(candidates2)[2:10] <- c(
 
 # extract election number from list of candidates from website
 electionID <- c('14431', '14422', '1699', '2')
-candidates2 %<>% mutate(electionID = year %>%
-  {case_when(. == 2004 ~ electionID[1], . == 2008 ~ electionID[2],
-             . == 2012 ~ electionID[3], . == 2016 ~ electionID[4])})
+candidates2 %<>%
+  mutate(electionID = year %>% {case_when(
+    . == 2004 ~ electionID[1], . == 2008 ~ electionID[2],
+    . == 2012 ~ electionID[3], . == 2016 ~ electionID[4]
+  )}) %>%
+  mutate(electionID = str_pad(electionID, 5, 'left', '0'))
 
 # filter candidates whose appeals were outstanding on day of election and focus
 # only on mayor and city council candidates. in addition, filter candidates who
@@ -129,9 +132,9 @@ candidatesPending <- candidates2 %>%
   left_join(candidates1, 'candidateID') %>%
   filter(NUM_TURNO == 1) %>%
   select(1:13, 25) %>%
-  mutate(candID = candID %>% {case_when(
-    year == 2004 & . == SEQUENCIAL_CANDIDATO ~ as.character(candID),
-    year == 2004 & . != SEQUENCIAL_CANDIDATO ~ as.character(SEQUENCIAL_CANDIDATO),
+  mutate(candID = SEQUENCIAL_CANDIDATO %>% {case_when(
+    year == 2004 & candID == . ~ as.character(candID),
+    year == 2004 & candID != . ~ as.character(.),
     year %in% c(2008, 2012, 2016) ~ as.character(candID)
   )}) %>%
   distinct(candidateID, .keep_all = TRUE)

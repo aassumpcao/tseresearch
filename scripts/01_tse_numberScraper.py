@@ -15,6 +15,7 @@ import pandas as pd
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException, TimeoutException
 from selenium.common.exceptions import StaleElementReferenceException
+from selenium.common.exceptions import SessionNotCreatedException
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
@@ -23,8 +24,6 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 # import third-party libraries
 import tse
-# import importlib
-# importlib.reload(tse)
 
 # define function to clear screen
 # clear = lambda: os.system('clear')
@@ -48,7 +47,7 @@ browser.implicitly_wait(30)
 # import test dataset with 1,000 individuals
 candidates = pd.read_csv('./data/candidatesPending.csv')
 candidates['unit'] = candidates['unit'].astype(str).str.pad(5, 'left', '0')
-candidates = candidates[2500:5000].reset_index(drop = True)
+candidates = candidates[8000:8600].reset_index(drop = True)
 limit = len(candidates)
 
 # create empty dataset
@@ -62,17 +61,25 @@ for i in range(limit):
         'year'      : candidates.loc[int(i), 'year'],
         'election'  : candidates.loc[int(i), 'electionID'],
         'unit'      : candidates.loc[int(i), 'unit'],
-        'candidate' : candidates.loc[int(i), 'candID']
+        'candidate' : candidates.loc[int(i), 'candID'],
+        'wait': 10
     }
 
     # run scraper capturing browser crash error
     row = [tse.scraper(browser).case(**arguments)]
 
+    if row == 'pageCrashed':
+        # restart browser if page crashes
+        browser.quit()
+        browser = webdriver.Chrome(CHROMEDRIVER_PATH, options = chrome_options)
+        browser.implicitly_wait(30)
+        row = [tse.scraper(browser).case(**arguments)]
+
     # merge candidate scraper id
     row += [candidates.loc[int(i), 'candidateID']]
 
-    # print warning every 10 iterations
-    if (i + 1) % 100 == 0: print(str(i + 1) + ' / ' + str(limit))
+    # print results
+    if (i + 1) % 100 == 0: print(str(i) + ' / ' + str(limit))
 
     # bind to dataset
     casenumbers.append(row)
@@ -81,7 +88,7 @@ for i in range(limit):
 browser.quit()
 
 # transform list into dataframe
-casenumbers = pd.DataFrame(casenumbers)
+casenumbers = pd.DataFrame(casenumbers, columns = ['url', 'candidateID'])
 
 # save to file
-casenumbers.to_csv('./data/casenumbers5000.csv', index = False)
+casenumbers.to_csv('./data/casenumbers8600.csv', index = False)

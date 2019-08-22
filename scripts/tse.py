@@ -70,7 +70,8 @@ class scraper:
 
         # turn method arguments to strings
         args = locals()
-        pageargs = [str(v) for k, v in args.items() if k != 'self']
+        argsnot = ['self', 'wait']
+        pageargs = [str(v) for k, v in args.items() if k not in argsnot]
 
         # concatenate everything and form page address
         self.page = '/'.join([self.main] + pageargs)
@@ -83,7 +84,7 @@ class scraper:
             # check if protocol number is visible in webpage
             protVis = EC.presence_of_element_located((By.XPATH, self.prot))
 
-            # wait up to 60s for elements to be located
+            # wait up to wait seconds for elements to be located
             WebDriverWait(self.browser, wait).until(protVis)
 
             # if protocol number has been found, download it
@@ -101,6 +102,10 @@ class scraper:
         except TimeoutException as Exception:
             # caseNum = ['timeoutException']
             protNum = 'timeoutException'
+
+        # handle exception
+        except:
+            protNum = 'pageCrashed'
 
         # return case and protocol numbers as list
         return protNum
