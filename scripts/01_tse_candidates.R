@@ -102,18 +102,20 @@ candidates2 %<>%
 filter(candidates1, ANO_ELEICAO > 2000) %$% table(ANO_ELEICAO, appeals)
 candidates2 %$% table(`Ano Eleição`, appeals)
 
-# save full dataset
-save(candidates1, file = 'data/candidates1.Rda')
-save(candidates2, file = 'data/candidates2.Rda')
-
-# # load candidates datasets
-# load('data/candidates1.Rda');load('data/candidates2.Rda')
-
 # rename variables
 names(candidates2)[2:10] <- c(
   'year', 'cpf', 'name', 'candID', 'officeID', 'office', 'unit', 'state',
   'candidacy'
 )
+
+# save full dataset
+save(candidates1, file = 'data/candidates1.Rda')
+save(candidates2, file = 'data/candidates2.Rda')
+write_csv(candidates1, path = 'data/candidates1.csv')
+write_csv(candidates2, path = 'data/candidates2.csv')
+
+# # load candidates datasets
+# load('data/candidates1.Rda');load('data/candidates2.Rda')
 
 # extract election number from list of candidates from website
 electionID <- c('14431', '14422', '1699', '2')

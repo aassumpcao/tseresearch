@@ -95,12 +95,10 @@ class scraper:
 
         # handle exception
         except StaleElementReferenceException as Exception:
-            # caseNum = ['staleException']
             protNum = 'staleElementException'
 
         # handle exception
         except TimeoutException as Exception:
-            # caseNum = ['timeoutException']
             protNum = 'timeoutException'
 
         # handle exception
