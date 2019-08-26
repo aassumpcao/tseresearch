@@ -13,12 +13,7 @@ import pandas as pd
 
 # import selenium libraries
 from selenium import webdriver
-from selenium.common.exceptions import NoSuchElementException, TimeoutException
-from selenium.common.exceptions import StaleElementReferenceException
 from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
 # import third-party libraries
@@ -44,7 +39,7 @@ browser = webdriver.Chrome(CHROMEDRIVER_PATH, options = chrome_options)
 browser.implicitly_wait(30)
 
 # import test dataset with 1,000 individuals
-candidates = pd.read_csv('./data/casenumbers_missing.csv')
+candidates = pd.read_csv('data/candidatesPending.csv')
 candidates['unit'] = candidates['unit'].astype(str).str.pad(5, 'left', '0')
 
 # # check if we have downloaded these files before
@@ -80,18 +75,15 @@ for i in range(limit):
     # merge candidate scraper id
     row += [candidates.loc[int(i), 'candidateID']]
 
-    # # print results
-    # if (i + 1) % 100 == 0:
-    #     print(str(i + 1) + ' / ' + str(limit))
-    print(row)
     # bind to dataset
     casenumbers.append(row)
 
-    # # restart browser after 600 iterations (when browser crashes)
-    # if (i + 1) % 600 == 0:
-    #     browser.quit()
-    #     browser = webdriver.Chrome(CHROMEDRIVER_PATH, options = chrome_options)
-    #     browser.implicitly_wait(30)
+    # restart browser after 600 iterations (when browser crashes)
+    if (i + 1) % 600 == 0:
+        browser.quit()
+        browser = webdriver.Chrome(CHROMEDRIVER_PATH, options = chrome_options)
+        browser.implicitly_wait(30)
+        print(str(i+1) ' / ' + str(limit) + ' completed.')
 
     # # restart browser if it crashes
     # if row[0] == 'pageCrashed':
@@ -105,4 +97,4 @@ browser.quit()
 casenumbers = pd.DataFrame(casenumbers, columns = ['url', 'candidateID'])
 
 # save to file
-casenumbers.to_csv('./data/casenumbers_scrapedagain.csv', index = False)
+casenumbers.to_csv('./data/casenumbers.csv', index = False)

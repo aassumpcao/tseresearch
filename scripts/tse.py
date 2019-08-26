@@ -109,7 +109,7 @@ class scraper:
         return protNum
 
     # decision scraper function
-    def decision(self, url = None, filename = 'decision'):
+    def decision(self, url = None, filename = 'decision', wait = 15):
 
         """ method to download tse decisions by url """
 
@@ -128,7 +128,7 @@ class scraper:
             dec = EC.presence_of_element_located((By.XPATH, self.viewPath))
 
             # wait up to 3s for last element to be located
-            WebDriverWait(self.browser, 15).until(dec)
+            WebDriverWait(self.browser, wait).until(dec)
 
             # when element is found, click on 'andamento', 'despacho',
             # and 'view' so that the browser opens up the information we

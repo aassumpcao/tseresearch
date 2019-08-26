@@ -7,20 +7,11 @@
 # andre.assumpcao@gmail.com
 
 # import standard libraries
-import importlib
-import datetime
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.support.ui import WebDriverWait
 import os
 import pandas as pd
-from selenium                          import webdriver
-from selenium.webdriver.chrome.options import Options
-from selenium.common.exceptions        import NoSuchElementException
-from selenium.common.exceptions        import TimeoutException
-from selenium.common.exceptions        import StaleElementReferenceException
-from selenium.webdriver.common.by      import By
-from selenium.webdriver.common.keys    import Keys
-from selenium.webdriver.support.ui     import Select
-from selenium.webdriver.support.ui     import WebDriverWait
-from selenium.webdriver.support        import expected_conditions
 
 # import third-party libraries
 import tse
@@ -39,33 +30,47 @@ chrome_options.binary_location = CHROME_PATH
 browser = webdriver.Chrome(CHROMEDRIVER_PATH, options = chrome_options)
 
 # set implicit wait for page load
-browser.implicitly_wait(15)
+browser.implicitly_wait(10)
 
 # import test dataset with 1,000 individuals
-candidates = pd.read_csv('caseNumbers.csv').reset_index()
-candidates['scraperID'] = candidates['scraperID'].astype(str)
-limit = len(candidates)
+candidates = pd.read_csv('data/casedecision_list.csv')
+# candidates = candidates[
+#     candidates['candidateID'].str.contains('(2012|2016)_', regex = True)
+# ]
 
-# change working directory
-os.chdir('./html-trialrun')
+# create directory for html files
+try:
+    os.mkdir('html')
+except:
+    pass
+
+# change directory to html files
+os.chdir('html')
 
 # load up scraper and prepare error catching list
 scrape = tse.scraper(browser)
 results = []
 
+# transform dataset elements into list
+urls = candidates['url'].to_list()
+identifiers = candidates['candidateID'].to_list()
+candidates = [(a, b) for a, b in zip(urls, identifiers)]
+
 # run loop
-for i in range(limit):
+for i, candidate in enumerate(candidates):
+
     # arguments for function
-    arguments = {'url': candidates.loc[i, 'protNum'],
-                 'filename': candidates.loc[i, 'scraperID']}
+    arguments = {'url': candidate[0], 'filename': candidate[1], 'wait': 2}
+
     # run scraper
     absorb = scrape.decision(**arguments)
     results.append((arguments['filename'], absorb))
+
     # print progress
-    if (i + 1) % 1000 == 0: print(str(i + 1) + ' / ' + str(limit))
+    if (i + 1) % 1000 == 0: print(str(i + 1) + ' / ' + str(len(candidates)))
 
 # save scraper outcomes
-pd.DataFrame(results).to_csv('./data/scraper_status.csv')
+pd.DataFrame(results).to_csv('../data/casedecision_status.csv')
 
 # quit browser
 browser.quit()
