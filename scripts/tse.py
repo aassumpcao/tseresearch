@@ -188,16 +188,16 @@ class parser:
     soup, tables = [], []
 
     # define regex compile for substituting weird characters in all tables
-    regex0 = re.compile(r'\n|\t')
-    regex1 = re.compile(r'\\n|\\t')
-    regex2 = re.compile('\xa0')
-    regex3 = re.compile(' +')
-    regex4 = re.compile('^PROCESSO')
-    regex5 = re.compile('^MUNIC[IÍ]PIO')
-    regex6 = re.compile('^PROTOCOLO')
-    regex7 = re.compile('^(requere|impugnan|recorren|litis)', re.IGNORECASE)
-    regex8 = re.compile('^(requeri|impugnad|recorri|candid)', re.IGNORECASE)
-    regex9 = re.compile('^(ju[íi]z|relator)', re.IGNORECASE)
+    regex0  = re.compile(r'\n|\t')
+    regex1  = re.compile(r'\\n|\\t')
+    regex2  = re.compile('\xa0')
+    regex3  = re.compile(' +')
+    regex4  = re.compile('^PROCESSO')
+    regex5  = re.compile('^MUNIC[IÍ]PIO')
+    regex6  = re.compile('^PROTOCOLO')
+    regex7  = re.compile('^(requere|impugnan|recorren|litis)', re.IGNORECASE)
+    regex8  = re.compile('^(requeri|impugnad|recorri|candid)', re.IGNORECASE)
+    regex9  = re.compile('^(ju[íi]z|relator)', re.IGNORECASE)
     regex10 = re.compile('^assunt', re.IGNORECASE)
     regex11 = re.compile('^localiz', re.IGNORECASE)
     regex12 = re.compile('^fase', re.IGNORECASE)
@@ -449,7 +449,7 @@ class parser:
 
         # throw error if table is not available
         except:
-            return 'There are related docs here.'
+            return 'There are no related docs here.'
 
     #6 return full table
     def parse_all(self):

@@ -18,6 +18,10 @@ files = os.listdir('html')
 files = sorted(files)[1:]
 files = ['html/' + file for file in files]
 
+# define arguments for pandas methods
+kwarg  = {'ignore_index': True}
+kwargs = {'index': False, 'sep': ',', 'quoting': csv.QUOTE_NONNUMERIC}
+
 ### parse summary
 # define function to parse case summary
 def case_summary(file):
@@ -29,26 +33,25 @@ def case_summary(file):
 summary = list(map(case_summary, files))
 
 # build dataset
-summaries = pd.concat([pd.DataFrame.from_dict(case) for case in summary])
+summaries = pd.concat([pd.DataFrame.from_dict(s) for s in summary], **kwarg)
 summaries = summaries.reset_index(drop = True)
 
 # save dataset
-kwargs = {'index': False, 'sep': ',', 'quoting': csv.QUOTE_NONNUMERIC}
 summaries.to_csv('data/tseSummaries.csv', **kwargs)
 
 ### parse updates
 # define function to parse case updates
 def case_updates(file):
     case = tse.parser(file).parse_updates()
-    eq = len(case['zone'])
-    case.update({'candidateID': [file[5:-5]] * eq})
+    equalizer = len(case['zone'])
+    case.update({'candidateID': [file[5:-5]] * equalizer})
     return case
 
 # parse updates and include each file's scraperID in the dictionary
 updates = list(map(case_updates, files[:10]))
 
 # build dataset
-updates = pd.concat([pd.DataFrame(up) for up in update], ignore_index = True)
+updates = pd.concat([pd.DataFrame(up) for up in updates], **kwarg)
 updates = updates.reset_index(drop = True)
 
 # save dataset
@@ -58,15 +61,15 @@ updates.to_csv('data/tseUpdates.csv', **kwargs)
 # define function to parse case updates
 def case_details(file):
     case = tse.parser(file).parse_details()
-    eq = len(case['shead'])
-    case.update({'candidateID': [file[5:-5]] * eq})
+    equalizer = len(case['shead'])
+    case.update({'candidateID': [file[5:-5]] * equalizer})
     return case
 
 # parse table details
 sentences = list(map(case_details, files[:10]))
 
 # build dataset
-sentences = pd.concat([pd.DataFrame(sentence) for sentence in sentences])
+sentences = pd.concat([pd.DataFrame(s) for s in sentences], **kwarg)
 sentences = sentences.reset_index(drop = True)
 
 # save dataset
