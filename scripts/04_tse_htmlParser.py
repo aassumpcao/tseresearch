@@ -4,11 +4,8 @@
 # andre.assumpcao@gmail.com
 
 # import standard libraries
-import glob
+import os, sys, re, csv
 import pandas as pd
-import re
-import random
-import os
 
 # import third-party libraries
 import tse
@@ -16,69 +13,64 @@ import tse
 # define clear function
 clear = lambda: os.system('clear')
 
-# load list of files to parse
-regex = re.compile('(?<=run/)[^a-z]+[0-9]+(?=\\.html)')
-files = glob.glob('./html-first-run/*.html')
-files = list(filter(regex.search, files))
-
-# create list of scraperIDs passed to data frames
-scraperID = [{'scraperID': [re.search(regex, file).group()]} for file in files]
+# load list of files to parse, and create identifier for all files
+files = os.listdir('html')
+files = sorted(files)[1:]
+files = ['html/' + file for file in files]
 
 ### parse summary
-# parse summary and include each file's scraperID in the dictionary
-summary = [tse.parser(file).parse_summary() for file in files]
-for i, case in enumerate(summary): case.update(scraperID[i])
+# define function to parse case summary
+def case_summary(file):
+    case = tse.parser(file).parse_summary()
+    case.update({'candidateID': file[5:-5]})
+    return case
+
+# map over list of cases and extract summary information
+summary = list(map(case_summary, files))
 
 # build dataset
-summary = pd.concat([pd.DataFrame.from_dict(case) for case in summary])
-summary = summary.reset_index(drop = True)
+summaries = pd.concat([pd.DataFrame.from_dict(case) for case in summary])
+summaries = summaries.reset_index(drop = True)
 
 # save dataset
-summary.to_csv('.data/tseSummary.csv', index = False, sep = '#')
+kwargs = {'index': False, 'sep': ',', 'quoting': csv.QUOTE_NONNUMERIC}
+summaries.to_csv('data/tseSummaries.csv', **kwargs)
 
 ### parse updates
+# define function to parse case updates
+def case_updates(file):
+    case = tse.parser(file).parse_updates()
+    eq = len(case['zone'])
+    case.update({'candidateID': [file[5:-5]] * eq})
+    return case
+
 # parse updates and include each file's scraperID in the dictionary
-updates = [tse.parser(file).parse_updates() for file in files]
-
-# create an equalizer list that will repeat scraperID so that all rows
-# in the updates data frame have a scraperID number
-equalizer = [len(case['zone']) for case in updates]
-
-# update the scraperID object with the new length from above
-scraperID = [{'scraperID': politician['scraperID'] * equalizer[i]} \
-             for i, politician in enumerate(scraperID)]
-
-# build dictionary including each file's scraperID
-for i, case in enumerate(updates): case.update(scraperID[i])
+updates = list(map(case_updates, files[:10]))
 
 # build dataset
-updates = pd.concat([pd.DataFrame.from_dict(case) for case in updates])
+updates = pd.concat([pd.DataFrame(up) for up in update], ignore_index = True)
 updates = updates.reset_index(drop = True)
 
 # save dataset
-updates.to_csv('./data/tseUpdates.csv', index = False, sep = '#')
+updates.to_csv('data/tseUpdates.csv', **kwargs)
 
 ### parse details
+# define function to parse case updates
+def case_details(file):
+    case = tse.parser(file).parse_details()
+    eq = len(case['shead'])
+    case.update({'candidateID': [file[5:-5]] * eq})
+    return case
+
 # parse table details
-details = [tse.parser(file).parse_details() for file in files]
-
-# create an equalizer list that will repeat scraperID so that all rows
-# in the details data frame have a scraperID number
-equalizer = [len(case['shead']) for case in details]
-
-# update the scraperID object with the new length from above
-scraperID = [{'scraperID': politician['scraperID'] * equalizer[i]} \
-             for i, politician in enumerate(scraperID)]
-
-# build dictionary including each file's scraperID
-for i, case in enumerate(details): case.update(scraperID[i])
+sentences = list(map(case_details, files[:10]))
 
 # build dataset
-sentences = pd.concat([pd.DataFrame.from_dict(case) for case in details])
+sentences = pd.concat([pd.DataFrame(sentence) for sentence in sentences])
 sentences = sentences.reset_index(drop = True)
 
 # save dataset
-sentences.to_csv('./data/tseSentences.csv', index = False, sep = '#')
+sentences.to_csv('data/tseSentences.csv', **kwargs)
 
 
 

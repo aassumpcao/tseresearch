@@ -5,79 +5,62 @@
 # andre.assumpcao@gmail.com
 
 # import standard libraries
-import os
+import os, sys, re
 import pandas as pd
-import re
 
-# define function to clear screen of interactive session
+# import additional libraries
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.support.ui import WebDriverWait
+from scripts import tse
+
+# create function to clear screen
 clear = lambda: os.system('clear')
 
-# load earlier candidate files
-candidates = pd.read_csv('data/candidatesPending.csv')
-candidates_full = pd.read_csv('data/candidates1.csv', dtype = str)
+# define chrome options
+CHROME_PATH = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
+CHROMEDRIVER_PATH = '/usr/local/bin/chromedriver'
 
-# find and load csv files (with errors)
-casenumbers = pd.read_csv('data/casenumbers.csv')
-casenumbers.shape
+# set options
+chrome_options = Options()
+chrome_options.add_argument('--headless')
+chrome_options.add_argument('--window-size=1920,1080')
+chrome_options.binary_location = CHROME_PATH
 
-# drop duplicates
-casenumbers = casenumbers.drop_duplicates('candidateID')
-urls = casenumbers['url'].to_list()
+# open invisible browser
+browser = webdriver.Chrome(CHROMEDRIVER_PATH, options = chrome_options)
 
-### 1. download errors
-# isolate cases which should be downloaded again
-rx = re.compile(r'timeout|Crashed')
-redownload = [i for i, url in enumerate(urls) if re.search(rx, url)]
-redownload = casenumbers.loc[redownload, 'candidateID'].to_list()
-redownload = candidates[candidates['candidateID'].isin(redownload)]
+# set implicit wait for page load
+browser.implicitly_wait(3)
 
-### 2. missing candidates
-# isolate cases which should be tried again because I skipped them
-alldownloads = casenumbers['candidateID'].to_list()
-missing = candidates[~candidates['candidateID'].isin(alldownloads)]
+# read in dataset of candidates
+candidates = pd.read_csv('data/casedecision_list.csv')
 
-# save them to disk and run scraper again
-scrapeagain = pd.concat([redownload, missing], ignore_index = True)
-scrapeagain.to_csv('data/casenumbers_scrapeagain.csv', index = False)
+# read html files which were downloaded in previous script
+files = os.listdir('html')
+files = sorted(files)[1:]
+files = [file[:-5] for file in files]
 
-# load results
-scrapedagain = pd.read_csv('data/casenumbers_scrapedagain.csv')
-scrapedagain = scrapedagain.drop(scrapedagain.index[range(8, 13)])
-scrapedmanually = pd.read_csv('data/casenumbers_scrapedmanually.csv')
-scrapedagain = pd.concat([scrapedagain, scrapedmanually], ignore_index = True)
+# transform dataset elements into list
+urls = candidates['url'].to_list()
+identifiers = candidates['candidateID'].to_list()
+candidates = [(a, b) for a, b in zip(urls, identifiers)]
 
-### 3. broken links
-# isolate cases where the link is broken
-rx = re.compile(r'stale|null|undefined')
-brokenlinks = [i for i, url in enumerate(urls) if re.search(rx, url)]
-brokenlinks = casenumbers.loc[brokenlinks, 'candidateID'].to_list()
+# find missing downloads if not year == 2004 | year == 2008
+missing = [c for c in candidates if c[1] not in files]
+missing2012 = [m for m in missing if re.search(r'^2012_', m[1])]
+missing2016 = [m for m in missing if re.search(r'^2016_', m[1])]
 
-# load csv with corrections
-casenumbers_brokenlinks = pd.read_csv('data/casenumbers_brokenlinks.csv')
+# print length of these missing decisions
+len(missing2012), len(missing2016)
 
-### 4. fix everything
-# work with original dataset, drop problems, and merge solutions
-rx = re.compile(r'timeout|Crashed|stale|null|undefined')
-observations = casenumbers['url'].to_list()
-drop = [i for i, case in enumerate(observations) if re.search(rx, case)]
-casenumbers = casenumbers.drop(casenumbers.index[drop])
-casenumbers = pd.concat(
-    [casenumbers, scrapedagain, casenumbers_brokenlinks], ignore_index = True
-)
+# initiate class and change working directory
+scrape = tse.scraper(browser)
+os.chdir('html')
 
-# check problems and find last missing observations
-old = candidates['candidateID'].to_list()
-new = casenumbers['candidateID'].to_list()
-missing = list(set(old) - set(new))
+# try to download these again
+check2012 = [(m[1], scrape.decision(*m)) for m in missing2012]
+check2016 = [(m[1], scrape.decision(*m)) for m in missing2016]
 
-# save to file, scrape them again
-missing = candidates[candidates['candidateID'].isin(missing)]
-missing.to_csv('data/casenumbers_missing.csv', index = False)
-
-# load solutions
-fixedmissing = pd.read_csv('data/casenumbers_fixedmissing.csv')
-casenumbers = casenumbers.drop_duplicates('candidateID')
-casenumbers = pd.concat([casenumbers, fixedmissing], ignore_index = True)
-
-# save to file
-casenumbers.to_csv('data/casedecision_list.csv', index = False)
+# close browser
+browser.quit()
