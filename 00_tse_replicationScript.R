@@ -1,8 +1,8 @@
 ### electoral crime under democracy: evidence from brazil
 # master script
 #   this is the master script for the reproduction of the entire work in my jmp.
-#   it contains two large groups of scripts (r and python): data wrangling (or
-#   munging) and analysis. i indicate below the execution times for either
+#   it contains two large groups of scripts (r and python3.7): data wrangling
+#   (or munging) and analysis. i indicate below the execution times for either
 #   group when scripts took longer than 15 minutes to execute. if you have r,
 #   rstudio, and python installed on the computer, you can source this script
 #   from the top. if you would like further clarification on how to go about
@@ -34,13 +34,14 @@ rstudioapi::openProject('2019 Electoral Crime.Rproj')
 # nonetheless, i include all files for replication and transparency purposes if
 # you are interested in a particular step taken.
 
-# python3.7: install packages from requirements.txt to run the next script.
+# python: install packages from requirements.txt to run the next script.
 system2('cat scripts/requirements.txt | xargs -n 1 pip install')
 
 # wrangle local candidate data
 source('scripts/01_tse_candidates.R')
 
-# scrape them from the internet (36+ hours)
+# (obs: these python scripts take 36+ hours to execute)
+# python: scrape lawsuit IDs from the internet
 system2('python scripts/01_tse_numberScraper.py &')
 system2('python scripts/02_tse_decisionScraper.py &')
 system2('python scripts/03_tse_manualScraper.py &')
@@ -64,8 +65,8 @@ source('scripts/06_tse_rejections.R')
 # wrangle text in sentences for classification.
 source('scripts/07_tse_sentence_cleanup.R')
 
-# create sentence classification algorithm from 2016 sentences. this script
-# takes 25 hours to run on a big memory (500g) cluster. use with caution.
+# python: create sentence classification algorithm from 2016 sentences. this
+# script takes 25 hours to run on a big memory (500g) cluster. use with caution.
 system2('python scripts/99_tse_sentence_classification.py &')
 
 # wrangle judicial classes after judicial sentence classification.

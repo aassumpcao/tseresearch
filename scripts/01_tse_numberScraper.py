@@ -1,8 +1,8 @@
 ### tse candidacy cases scraper
 # this script downloads the case number for all candidacy cases at the
-#   tse electoral court for municipal elections since 2008. each case id
-#   is used for creating a list of people for whom I download case
-#   decisions in another python script.
+#  tse electoral court for municipal elections since 2008. each case id
+#  is used for creating a list of people for whom I download case
+#  decisions in another python script.
 # developed by:
 # andre assumpcao
 # andre.assumpcao@gmail.com

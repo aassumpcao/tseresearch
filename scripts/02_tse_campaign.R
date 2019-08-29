@@ -1,7 +1,7 @@
 ### electoral crime paper
 # campaign wrangling
-#   this script wrangles the campaign data for all local elections in brazil
-#   2004 and 2016.
+#  this script wrangles the campaign data for all local elections in brazil
+#  2004 and 2016.
 # author: andre assumpcao
 # email:  andre.assumpcao@gmail.com
 
@@ -12,13 +12,8 @@ library(readr)
 library(tidyverse)
 
 # load campaign expenditures data for all elections between 2004 and 2016
-load('data/campaign2004.Rda')
-load('data/campaign2006.Rda')
-load('data/campaign2008.Rda')
-load('data/campaign2010.Rda')
-load('data/campaign2012.Rda')
-load('data/campaign2014.Rda')
-load('data/campaign2016.Rda')
+databases <- paste0('data/campaign', seq(2004, 2016, 4), '.Rda')
+lapply(databases, load)
 
 ### body
 # reformat every variable in every dataset to character
@@ -88,6 +83,22 @@ campaign %<>%
   mutate(TOTAL_DESPESA = sum(VR_DESPESA)) %>%
   filter(row_number() == 1) %>%
   ungroup()
+
+# create unique identifier for campaign expenditures
+load('data/candidates1.Rda');load('data/campaign.Rda')
+
+# narrow candidates dataset down
+candidates1 %<>%
+  select(candidateID, ANO_ELEICAO, NUMERO_CANDIDATO, SIGLA_UE) %>%
+  unite('tempID', ANO_ELEICAO, NUMERO_CANDIDATO, SIGLA_UE, remove = FALSE) %>%
+  select(tempID, candidateID)
+
+# merge onto campaign so that we have unique keys for campaign expenditures
+campaign %<>%
+  unite('tempID', ANO_ELEICAO, NR_CANDIDATO, SG_UE, remove = FALSE) %>%
+  left_join(candidates1, 'tempID') %>%
+  select(1:32, -tempID, candidateID) %>%
+  filter(!is.na(candidateID))
 
 # save to file
 save(campaign, file = 'data/campaign.Rda')

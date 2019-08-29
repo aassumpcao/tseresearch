@@ -48,7 +48,7 @@ def case_updates(file):
     return case
 
 # parse updates and include each file's scraperID in the dictionary
-updates = list(map(case_updates, files[:10]))
+updates = list(map(case_updates, files))
 
 # build dataset
 updates = pd.concat([pd.DataFrame(up) for up in updates], **kwarg)
@@ -66,7 +66,7 @@ def case_details(file):
     return case
 
 # parse table details
-sentences = list(map(case_details, files[:10]))
+sentences = list(map(case_details, files))
 
 # build dataset
 sentences = pd.concat([pd.DataFrame(s) for s in sentences], **kwarg)
