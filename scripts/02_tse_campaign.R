@@ -26,16 +26,16 @@ campaign2014 %<>% mutate_all(as.character) %>% mutate(ANO_ELEICAO = '2014')
 campaign2016 %<>% mutate_all(as.character) %>% mutate(ANO_ELEICAO = '2016')
 
 # rename 2004 variables
-names(campaign2004)[1:7] <- names(campaign2008)[2:8]
+names(campaign2004)[1:7]  <- names(campaign2008)[2:8]
 names(campaign2004)[8:20] <- names(campaign2008)[10:22]
-names(campaign2004)[21] <- names(campaign2008)[24]
-names(campaign2004)[22] <- names(campaign2008)[27]
+names(campaign2004)[21]   <- names(campaign2008)[24]
+names(campaign2004)[22]   <- names(campaign2008)[27]
 
 # rename 2006 variables
-names(campaign2006)[1:6] <- names(campaign2008)[1:6]
+names(campaign2006)[1:6]  <- names(campaign2008)[1:6]
 names(campaign2006)[7:20] <- names(campaign2008)[9:22]
-names(campaign2006)[21] <- names(campaign2008)[24]
-names(campaign2006)[22] <- names(campaign2008)[27]
+names(campaign2006)[21]   <- names(campaign2008)[24]
+names(campaign2006)[22]   <- names(campaign2008)[27]
 
 # rename 2010 vars
 campaign2010 %<>% rename(`Sigla  Partido` = `Sigla Partido`,
@@ -45,7 +45,7 @@ campaign2010 %<>% rename(`Sigla  Partido` = `Sigla Partido`,
                             `Entrega em conjunto?`))
 # rename 2012 vars
 campaign2012 %<>% rename(`Sigla da UE` = `Número UE`, `Nome da UE` = Município,
-                         `Tipo de documento`=`Tipo do documento`,
+                         `Tipo de documento`= `Tipo do documento`,
                          `Cod setor econômico do fornecedor` =
                          `Cod setor econômico do doador`)
 # rename 2014 vars
@@ -85,7 +85,8 @@ campaign %<>%
   ungroup()
 
 # create unique identifier for campaign expenditures
-load('data/candidates1.Rda');load('data/campaign.Rda')
+load('data/candidates1.Rda')
+load('data/campaign.Rda')
 
 # narrow candidates dataset down
 candidates1 %<>%
