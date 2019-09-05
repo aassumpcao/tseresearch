@@ -19,7 +19,7 @@ codebook <- strsplit(codebook, '\n')
 codebook <- unlist(codebook[17])
 
 # fix names
-codebook %<>% substr(0, 17) %>% {sub('\\(\\*\\)', '', .)} %>% trimws()
+codebook %>% substr(0, 17) %>% {sub('\\(\\*\\)', '', .)} %>% trimws()
 codebook <- codebook[which(codebook != '')]
 codebook <- codebook[4:18]
 
@@ -63,7 +63,7 @@ for (i in 1:length(states)) {
 names(sections2004) <- codebook
 
 # write to disk
-save(sections2004, file = 'sections2004.Rda')
+save(sections2004, file = 'data/sections2004.Rda')
 
 # remove files
 unlink('./2004section', recursive = TRUE)
@@ -332,14 +332,13 @@ save(sections2016, file = 'data/sections2016.Rda')
 unlink('./2016section', recursive = TRUE)
 
 # bind all data
-sections <- bind_rows(sections2004, sections2006, sections2008, sections2010,
-                      sections2012, sections2014, sections2016)
-
+sections <- bind_rows(sections2004, sections2008, sections2012, sections2016)
+sections %>% head()
 # collapse results to individual voting counts
 sections %<>%
   group_by(ANO_ELEICAO, SIGLA_UE, NUM_TURNO, CODIGO_CARGO, NUM_VOTAVEL) %>%
-  summarize(votes2 = sum(QTDE_VOTOS)) %>%
-  arrange(SIGLA_UE, NUM_TURNO, CODIGO_CARGO, desc(votes2)) %>%
+  summarize(voto.secao = sum(QTDE_VOTOS)) %>%
+  arrange(SIGLA_UE, NUM_TURNO, CODIGO_CARGO, desc(voto.secao)) %>%
   ungroup()
 
 # save to file
@@ -434,6 +433,89 @@ names(turnout) <- codebook
 
 # save to file
 save(turnout, file = 'data/turnout.Rda')
+
+### updated results
+# load files
+files <- list.files('../2018 TSE Databank/', pattern = 'candidato_munzona_')
+files <- files[which(str_detect(files, '2004|2008|2012|2016'))]
+paths <- paste0('../2018 TSE Databank/', files)
+
+# unzip all files
+lapply(paths, unzip, exdir = 'munzona')
+
+# wait for all files to be unzipped
+Sys.sleep(10)
+
+# get file names
+states <- list.files('munzona', pattern = 'votacao')
+
+# create datasets
+results2004 <- tibble()
+results2008 <- tibble()
+results2012 <- tibble()
+results2016 <- tibble()
+
+# define function to load all data
+extract_results <- function(data, paths) {
+  for (i in 1:length(paths)) {
+    path <- paste0('munzona/', paths[i])
+    file <- read_delim(path, ';', escape_double = FALSE, col_names = FALSE,
+      locale = locale(encoding = 'Latin1'), trim_ws = TRUE)
+    data <- rbind(data, file)
+    # print looping information
+    print(paste0('Iteration ', i, ' of ', length(paths)))
+  }
+  return(data)
+}
+
+# find paths for different years
+states2004 <- states[which(str_detect(states, '2004'))]
+states2008 <- states[which(str_detect(states, '2008'))]
+states2012 <- states[which(str_detect(states, '2012'))]
+states2016 <- states[which(str_detect(states, '2016'))]
+
+# create all datasets
+results2004 <- extract_results(results2004, states2004)
+results2008 <- extract_results(results2008, states2008)
+results2012 <- extract_results(results2012, states2012)
+results2016 <- extract_results(results2016, states2016)
+
+# extract column names from accompanying .pdf file
+codebook <- pdf_text('LEIAME.pdf')
+codebook <- strsplit(codebook, '\n')
+codebook <- unlist(codebook[12:14])
+
+# define vector of column names
+codebook <- codebook[c(7:39, 41:44)]
+codebook <- unlist(str_split(codebook, ' '))
+codebook <- codebook[which(str_detect(codebook, '_'))]
+
+# assign variable names to datasets
+names(results2004) <- codebook
+names(results2008) <- codebook
+names(results2012) <- codebook
+names(results2016) <- c(codebook, 'TRANSITO')
+
+# bind all, save to disc
+aggregate_results <- function(dataset) {
+  dataset %<>%
+    group_by(ANO_ELEICAO, SIGLA_UE, NUM_TURNO, CODIGO_CARGO, NUMERO_CAND) %>%
+    summarize(voto.municipio = sum(TOTAL_VOTOS)) %>%
+    arrange(SIGLA_UE, NUM_TURNO, CODIGO_CARGO, desc(voto.municipio)) %>%
+    ungroup()
+  return(dataset)
+}
+
+# aggregate all datasets
+results2004 <- aggregate_results(results2004)
+results2008 <- aggregate_results(results2008)
+results2012 <- aggregate_results(results2012)
+results2016 <- aggregate_results(results2016)
+
+# bind all, save to disk
+results <- bind_rows(results2004, results2008, results2012, results2016)
+save(results, file = 'data/results.Rda')
+
 
 # remove all for serial sourcing
 rm(list = ls())

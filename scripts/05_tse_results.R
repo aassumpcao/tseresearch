@@ -11,13 +11,9 @@
 library(tidyverse)
 library(magrittr)
 
-# create vectors for loading results
-results <- paste0('data/results', seq(2004, 2016, 4), '.Rda')
-section <- paste0('data/sections', seq(2004, 2016, 4), '.Rda')
-
 # load them
-for (element in results) {load(element)}
-for (element in section) {load(element)}
+load('data/results.Rda')
+load('data/sectios.Rda')
 load('data/candidatesPending.Rda')
 load('data/candidates1.Rda')
 
