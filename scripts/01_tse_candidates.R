@@ -133,16 +133,12 @@ candidatesPending <- candidates2 %>%
   filter(appeals == 1 & officeID %in% c(11, 13)) %>%
   left_join(candidates1, 'candidateID') %>%
   filter(NUM_TURNO == 1) %>%
-  select(1:13, 25) %>%
   mutate(candID = SEQUENCIAL_CANDIDATO %>% {case_when(
     year == 2004 & candID == . ~ as.character(candID),
     year == 2004 & candID != . ~ as.character(.),
     year %in% c(2008, 2012, 2016) ~ as.character(candID)
   )}) %>%
   distinct(candidateID, .keep_all = TRUE)
-
-# fix variable name
-names(candidatesPending)[c(11:12)] %<>% str_remove('\\.x')
 
 # check inconsistencies
 candidatesPending %>% {table(.$candID == .$SEQUENCIAL_CANDIDATO, .$year)}

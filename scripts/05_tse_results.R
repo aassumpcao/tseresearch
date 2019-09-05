@@ -13,9 +13,8 @@ library(magrittr)
 
 # load them
 load('data/results.Rda')
-load('data/sectios.Rda')
+load('data/sections.Rda')
 load('data/candidatesPending.Rda')
-load('data/candidates1.Rda')
 
 ### wrangle candidate datasets to match results
 # split dataset for easy calculation of results
@@ -32,15 +31,47 @@ people <- candidates2004 %$% unique(candID)
 
 # # if necessary
 # load('data/results2004.Rda');load('data/sections2004.Rda')
+# names(candidatesPending);names(results);names(sections)
+
+# create vector for join keys
+key1 <- c('ANO_ELEICAO','SIGLA_UE','NUM_TURNO','NUMERO_CANDIDATO'='NUMERO_CAND')
+key2 <- c('ANO_ELEICAO','SIGLA_UE','NUM_TURNO','NUMERO_CANDIDATO'='NUM_VOTAVEL')
 
 # prepare valid results dataset
-results2004 %<>%
-  mutate(candID = SQ_CANDIDATO, unit = SIGLA_UE) %>%
-  filter(NUM_TURNO == 1) %>%
-  group_by(unit, candID) %>%
-  summarize(votes = sum(TOTAL_VOTOS)) %>%
-  ungroup() %>%
-  mutate_all(as.character)
+candidates <- candidatesPending %>%
+  mutate_all(as.character) %>%
+  left_join(mutate_all(results, as.character), key1) %>%
+  left_join(mutate_all(sections, as.character), key2)
+
+# fix wrong officeIDs in tse's dataset
+candidates %<>%
+  group_by(candidateID) %>%
+  filter(row_number() == 1)
+
+# step1: isolate candidates with final decisions before election day using info
+#  on one of the variables
+registro_negado <- candidates %>%
+  filter(str_detect(DESC_SIT_TOT_TURNO, 'ANTES DA ELEIÇÃO'))
+
+# step2: isolate candidates with no votes in either dataset with vote counts
+#  (results or sections)
+candidates %<>%
+  anti_join(registro_negado, 'candidateID') %>%
+  filter(!is.na(voto.secao) | !is.na(voto.municipio))
+
+# define list of eligible politicians
+eligible <- c()
+candidates %>% names()
+
+with(candidates, table(appeals.x))
+
+candidates %>%
+  mutate(trialCrime = ifelse(str_detect(candidacy, '^(DEFERIDO|SUB)'), 0, 1))
+
+candidates %>%
+  {table(.$candidacy, .$)}
+
+  mutate(appeals = ifelse(COD_SITUACAO_CANDIDATURA == 16))
 
 # join candidates and valid results
 candidates2004 %<>%
