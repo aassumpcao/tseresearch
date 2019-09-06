@@ -45,7 +45,6 @@ source('scripts/01_tse_candidates.R')
 system2('python scripts/01_tse_numberScraper.py &')
 system2('python scripts/02_tse_decisionScraper.py &')
 system2('python scripts/03_tse_manualScraper.py &')
-system2('python scripts/04_tse_htmlParser.py &')
 
 # wrangle local candidate campaign data.
 source('scripts/02_tse_campaign.R')
@@ -61,8 +60,10 @@ source('scripts/05_tse_results.R')
 
 # wrangle candidacy rejections.
 source('scripts/06_tse_rejections.R')
+system2('python scripts/06_tse_decision2016.py &')
 
 # wrangle text in sentences for classification.
+system2('python scripts/07_tse_htmlParser.py &')
 source('scripts/07_tse_sentence_cleanup.R')
 
 # python: create sentence classification algorithm from 2016 sentences. this
