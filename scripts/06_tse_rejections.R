@@ -51,12 +51,13 @@ saveRDS(rejections_unique, 'data/rejections.Rds')
 #  severe reasons.
 reason <- prevented$DS_MOTIVO_CASSACAO %>% {factor(., unique(.), labels)}
 prevented$broad.rejection <- reason
-prevented %<>%
+prevented %>%
   mutate(broad.rejection = as.integer(broad.rejection)) %>%
   group_by(SQ_CANDIDATO) %>%
   top_n(-1, broad.rejection) %>%
   ungroup() %>%
-  mutate(broad.rejection = ifelse(broad.rejection > 2, 1, 2))
+  mutate(broad.rejection = ifelse(broad.rejection > 2, 1, 2)) %$%
+  table(DS_MOTIVO_CASSACAO, broad.rejection)
 
 # filter candidates running for 2016 elections
 candidates2016 <- candidates1 %>%
