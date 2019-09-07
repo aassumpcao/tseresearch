@@ -33,6 +33,9 @@ browser.implicitly_wait(10)
 
 # import test dataset with 1,000 individuals
 candidates = pd.read_csv('data/prevented2016.csv')
+infile = [file[:-5] for file in os.listdir('html')]
+candidates = candidates[~candidates['candidateID'].isin(infile)]
+candidates = candidates.reset_index(drop = True)
 
 # change directory to html files
 os.chdir('html')
@@ -46,6 +49,7 @@ urls = candidates['url'].to_list()
 identifiers = candidates['candidateID'].to_list()
 candidates = [(a, b) for a, b in zip(urls, identifiers)]
 
+print('loop began')
 # run loop
 for i, candidate in enumerate(candidates):
 
@@ -54,7 +58,7 @@ for i, candidate in enumerate(candidates):
     results.append((candidate[1], absorb))
 
     # print progress
-    if (i + 1) % 10 == 0: print(str(i + 1) + ' / ' + str(len(candidates)))
+    if (i + 1) % 1000 == 0: print(str(i + 1) + ' / ' + str(len(candidates)))
 
 # save scraper outcomes
 pd.DataFrame(results).to_csv('../data/prevented2016_status.csv')
