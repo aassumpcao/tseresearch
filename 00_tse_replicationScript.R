@@ -68,7 +68,7 @@ source('scripts/07_tse_sentence_cleanup.R')
 
 # python: create sentence classification algorithm from 2016 sentences. this
 # script takes 25 hours to run on a big memory (500g) cluster. use with caution.
-system2('python scripts/99_tse_sentence_classification.py &')
+system2('python scripts/99_tse_sentence_validation.py &')
 
 # wrangle judicial classes after judicial sentence classification.
 source('scripts/08_tse_analysis_prep.R')

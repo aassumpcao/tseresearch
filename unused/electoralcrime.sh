@@ -1,11 +1,12 @@
 #!/bin/bash
 
-#SBATCH -p general
-#SBATCH -N 10
-#SBATCH --mem=8g
-#SBATCH -n 24
-#SBATCH -t 1-
+#SBATCH -p bigmem
+#SBATCH --qos bigmem_access
+#SBATCH -N 1
+#SBATCH --mem=1000g
+#SBATCH -n 6
+#SBATCH -t 7-
 #SBATCH --mail-user=andre.assumpcao@gmail.com
 #SBATCH --mail-type=ALL
 
-R CMD BATCH --no-save longleaf.R
+python 99_tse_sentence_classification.py

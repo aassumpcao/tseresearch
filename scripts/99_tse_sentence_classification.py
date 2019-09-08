@@ -7,10 +7,9 @@
 # by andre.assumpcao@gmail.com
 
 # import standard libraries
-import codecs
+import codecs, os, random
 import matplotlib.pyplot as plt
 import numpy as np
-import os
 import pandas as pd
 import seaborn as sns
 
@@ -21,21 +20,20 @@ from sklearn.ensemble                import GradientBoostingClassifier
 from sklearn.ensemble                import RandomForestClassifier
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model            import LogisticRegression
-from sklearn.model_selection         import cross_validate
+from sklearn.model_selection         import cross_validate, train_test_split
 from sklearn.naive_bayes             import MultinomialNB
 from sklearn.svm                     import SVC
+from sklearn.metrics                 import accuracy_score, roc_auc_score
 
 # define clear function
 clear = lambda: os.system('clear')
 
 # load dataset
-tse = pd.read_csv('data/tse.csv', dtype = 'str')
-tse = tse[tse.sbody.notnull()]
+tse = pd.read_csv('data/tsePredictions.csv', dtype = 'str')
 stopwords = codecs.open('data/stopwords.txt', 'r', 'utf-8').read().split('\n')
 stopwords = stopwords[:-1]
 
 # rename class variable and create factors out of classes
-tse = tse.rename(columns = {'broad.rejection': 'class'})
 tse['classID'] = tse['class'].factorize()[0]
 
 # create new variables and dictionaries
@@ -44,9 +42,19 @@ class_id_tse = class_id_tse.sort_values('classID').reset_index(drop = True)
 class_to_ids = dict(class_id_tse.values)
 ids_to_class = dict(class_id_tse[['classID', 'class']].values)
 
-# sort data by class so that we can manually split dataset later
-tse = tse.sort_values('classID', ascending = False).reset_index(drop = True)
-split = len(tse[tse['classID'] != -1])
+# sort data for later split between classified an unclassified sets
+tse = tse.sort_values('classID').reset_index(drop = True)
+# split = len(tse[tse['classID'] == -1])
+
+# split data for testing script (not necessary for training model)
+prediction, predicted = tse[tse['classID'] == -1], tse[tse['classID'] != -1]
+
+# # reduce dimensionality for testing model
+# prediction, predicted = prediction[:200], predicted.sample(200)
+
+# reset indexes
+prediction.reset_index(drop = True, inplace = True)
+predicted.reset_index(drop = True, inplace = True)
 
 ### create tf-idf measures to inspect and transform data
 # pass kwargs to tf-idf vectorizer to construct a measure of word
@@ -60,24 +68,29 @@ kwargs = {
 tfidf = TfidfVectorizer(**kwargs)
 
 # create features vector (words) and classes
-features = tfidf.fit_transform(tse.sbody).toarray()
-labels   = tse.classID
-scraper  = tse.scraperID
+features = tfidf.fit_transform(predicted.sbody).toarray()
+labels = predicted['classID']
+identifiers = predicted['candidateID']
 
 # check dimensionality of data: 16,199 rows; 103,968 features
 features.shape
 
-# split up features and labels so that we have two datasets: one in
-# which we know sentence class and one in which we don't know sentence
-# class
-trainFeatures, testFeatures = features[:split], features[split:]
-trainLabels, testLabels     = labels[:split], labels[split:]
-trainScraper, testScraper   = scraper[:split], scraper[split:]
+# # split data across classified and unclassified sets
+# modelFeatures, predictFeatures = features[split:], features[:split]
+# modelLabels, predictLabels     = labels[split:], labels[:split]
+# modelScraper, predictScraper   = scraper[split:], scraper[:split]
+
+# split up features and labels so that we have two train and teste sets
+tts = {'test_size': 0.20, 'random_state': 42}
+X_train, X_test, y_train, y_test = train_test_split(features, labels, **tts)
 
 # oversample train data so that we have fairly balanced classes for
 # training models
 sm = SMOTE()
-trainFeatures, trainLabels = sm.fit_sample(trainFeatures, trainLabels)
+X_train, y_train = sm.fit_sample(X_train, y_train)
+
+# check shape
+X_train.shape
 
 ### train models
 # 1. multinomial naive bayes classification (nb)
@@ -101,16 +114,15 @@ models = [
 CV = 5
 
 # create empty list to store model results
-entries = []
+entries, holdout = [], []
 
 # create list of cross validation arguments outside of function
 cvkwargs = {
-    'X': trainFeatures, 'y': trainLabels, 'n_jobs': -1, 'verbose': 2,
-    'scoring': {'acc': 'accuracy', 'f1micro': 'f1_micro'}, 'cv': CV,
-    'return_train_score': True
+    'X': X_train, 'y': y_train, 'n_jobs': -1, 'verbose': 2, 'cv': CV,
+    'scoring': ['accuracy', 'roc_auc'], 'return_train_score': True
 }
 
-# run cross-validation for all models (> 10 hours of execution time)
+# run training validation for all models (> 10 hours of execution time)
 for model in models:
     # extract model name from model attribute
     mname = model.__class__.__name__
@@ -119,105 +131,127 @@ for model in models:
     # add model name to dictionary of results
     metrics['model'] = [mname] * 5
     # append results to entries list
-    entries.append(metrics)
-    # print loop progress
-    print(str(mname) + ' computation concluded.')
+    entries += [metrics]
+
+# print progress
+print('Validation complete.')
 
 # fill in the cross-validation dataset and save to file
-performance = pd.concat([pd.DataFrame(entry) for entry in entries])
-performance.to_csv('data/modelPerformance.csv', index = False)
+validation_performance = pd.concat([pd.DataFrame(entry) for entry in entries])
+validation_performance.to_csv('data/validation_performance.csv', index = False)
 
-# # load dataset after running everything else on longleaf
-# performance = pd.read_csv('data/modelPerformance.csv')
+# apply models to holdout samples
+for model in models:
+    # extract model name from model attribute
+    mname = model.__class__.__name__
+    # fir each model
+    model.fit(X_train, y_train)
+    # predict each class
+    y_pred = model.predict(X_test)
+    # compute accuracy score
+    y = (mname, accuracy_score(y_pred, y_test), roc_auc_score(y_pred, y_test))
+    # compute auc
+    holdout += [y]
 
-# quickly visualize performance
-performance.groupby(['model']).test_acc.mean()
-performance.groupby(['model']).test_f1micro.mean()
+# print progress
+print('Hold-out test complete.')
 
-# 1. accuracy produce boxplots depicting model performance
-sns.boxplot(x = 'model', y = 'test_acc', data = performance)
-sns.stripplot(
-    x = 'model', y = 'test_acc', data = performance, size = 8, jitter = True,
-    edgecolor = 'gray', linewidth = 2
-)
+# create dataframe of hold-out performances
+columns = ['model', 'holdout_accuracy', 'holdout_auc']
+holdout_performance = pd.DataFrame(holdout, columns = columns)
+holdout_performance.to_csv('data/holdout_performance.csv', index = False)
 
-# display plot
-plt.show()
-plt.savefig('plots/cvTestAccuracy.png')
+# # # load dataset after running everything else on longleaf
+# # performance = pd.read_csv('data/modelPerformance.csv')
 
-# 2. f1_micro: produce boxplots depicting model performance
-sns.boxplot(x = 'model', y = 'test_f1micro', data = performance)
-sns.stripplot(
-    x = 'model', y = 'test_f1micro', data = performance, size = 8,
-    jitter = True, edgecolor = 'gray', linewidth = 2
-)
+# # quickly visualize performance
+# performance.groupby(['model']).test_acc.mean()
+# performance.groupby(['model']).test_f1micro.mean()
 
-# display plot
-plt.show()
-plt.savefig('plots/cvTestAccuracy.png')
+# # 1. accuracy produce boxplots depicting model performance
+# sns.boxplot(x = 'model', y = 'test_acc', data = performance)
+# sns.stripplot(
+#     x = 'model', y = 'test_acc', data = performance, size = 8, jitter = True,
+#     edgecolor = 'gray', linewidth = 2
+# )
 
-### test models
-# here, we are implementing the preferred algorithm on the test data,
-# which was held out during the training process.
+# # display plot
+# plt.show()
+# plt.savefig('plots/cvTestAccuracy.png')
 
-# call best performing models: svm (1st) and xgboost (2nd)
-xgboost = GradientBoostingClassifier(learning_rate = 1, verbose = 1)
-svmlinr = SVC(kernel = 'linear', verbose = True, probability = True)
+# # 2. f1_micro: produce boxplots depicting model performance
+# sns.boxplot(x = 'model', y = 'test_f1micro', data = performance)
+# sns.stripplot(
+#     x = 'model', y = 'test_f1micro', data = performance, size = 8,
+#     jitter = True, edgecolor = 'gray', linewidth = 2
+# )
 
-# xgboost and svmlinr: fit features to classes in train dataset
-# (> 15 hours execution time)
-xgboost.fit(trainFeatures, trainLabels)
-svmlinr.fit(trainFeatures, trainLabels)
+# # display plot
+# plt.show()
+# plt.savefig('plots/cvTestAccuracy.png')
 
-# xgboost: predict y's and their probabilities using x's in test data
-y_pred_proba_xg = xgboost.predict_proba(testFeatures)
-y_pred_xg = xgboost.predict(testFeatures)
+# ### test models
+# # here, we are implementing the preferred algorithm on the test data,
+# # which was held out during the training process.
 
-# svmlinr: predict y's and their probabilities using x's in test data
-y_pred_proba_svm = svmlinr.predict_proba(testFeatures)
-y_pred_svm = svmlinr.predict(testFeatures)
+# # call best performing models: svm (1st) and xgboost (2nd)
+# xgboost = GradientBoostingClassifier(learning_rate = 1, verbose = 1)
+# svmlinr = SVC(kernel = 'linear', verbose = True, probability = True)
 
-# xgboost: save predicted values and probabilities to file
-np.savetxt('data/y_pred_proba_xg.txt', y_pred_proba_xg, '%f', ',')
-np.savetxt('data/y_pred_xg.txt', y_pred_xg, '%d', ',')
+# # xgboost and svmlinr: fit features to classes in train dataset
+# # (> 15 hours execution time)
+# xgboost.fit(trainFeatures, trainLabels)
+# svmlinr.fit(trainFeatures, trainLabels)
 
-# svmlinr: save predicted values and probabilities to file
-np.savetxt('data/y_pred_proba_svm.txt', y_pred_proba_svm, '%f', ',')
-np.savetxt('data/y_pred_svm.txt', y_pred_svm, '%d', ',')
+# # xgboost: predict y's and their probabilities using x's in test data
+# y_pred_proba_xg = xgboost.predict_proba(testFeatures)
+# y_pred_xg = xgboost.predict(testFeatures)
 
-# # xgboost: load predicted values and probabilities onto python
-# y_pred_proba_xg = np.loadtxt('data/y_pred_proba_xg.txt', delimiter = ',')
-# y_pred_xg = np.loadtxt('data/y_pred_xg.txt')
+# # svmlinr: predict y's and their probabilities using x's in test data
+# y_pred_proba_svm = svmlinr.predict_proba(testFeatures)
+# y_pred_svm = svmlinr.predict(testFeatures)
 
-# # svmlinr: load predicted values and probabilities onto python
-# y_pred_proba_svm = np.loadtxt('data/y_pred_proba_svm.txt', delimiter = ',')
-# y_pred_svm = np.loadtxt('data/y_pred_svm.txt')
+# # xgboost: save predicted values and probabilities to file
+# np.savetxt('data/y_pred_proba_xg.txt', y_pred_proba_xg, '%f', ',')
+# np.savetxt('data/y_pred_xg.txt', y_pred_xg, '%d', ',')
 
-# create new datasets with observed and predicted classes
-tseObserved  = pd.DataFrame({
-    'rulingClass': labels[:split], 'scraperID': trainScraper
-})
-tsePredicted = pd.DataFrame({
-    'svmPred': y_pred_svm, 'xgPred': y_pred_xg, 'scraperID': testScraper
-})
+# # svmlinr: save predicted values and probabilities to file
+# np.savetxt('data/y_pred_proba_svm.txt', y_pred_proba_svm, '%f', ',')
+# np.savetxt('data/y_pred_svm.txt', y_pred_svm, '%d', ',')
 
-# join arrays
-arrays = [y_pred_proba_xg, y_pred_proba_svm]
+# # # xgboost: load predicted values and probabilities onto python
+# # y_pred_proba_xg = np.loadtxt('data/y_pred_proba_xg.txt', delimiter = ',')
+# # y_pred_xg = np.loadtxt('data/y_pred_xg.txt')
 
-# create new dataset with the class probability from svm and xg algos
-tseClassProb = pd.concat([pd.DataFrame(array) for array in arrays], axis = 1)
+# # # svmlinr: load predicted values and probabilities onto python
+# # y_pred_proba_svm = np.loadtxt('data/y_pred_proba_svm.txt', delimiter = ',')
+# # y_pred_svm = np.loadtxt('data/y_pred_svm.txt')
 
-# rename dataset columns
-tseClassProb.columns = [
-    'xgClass0Prob', 'xgClass1Prob', 'xgClass2Prob', 'xgClass3Prob',
-    'svmClass0Prob', 'svmClass1Prob', 'svmClass2Prob', 'svmClass3Prob'
-]
+# # create new datasets with observed and predicted classes
+# tseObserved  = pd.DataFrame({
+#     'rulingClass': labels[:split], 'scraperID': trainScraper
+# })
+# tsePredicted = pd.DataFrame({
+#     'svmPred': y_pred_svm, 'xgPred': y_pred_xg, 'scraperID': testScraper
+# })
 
-# add scraperID column
-tseClassProb['scraperID'] = testScraper.reset_index(drop = True)
+# # join arrays
+# arrays = [y_pred_proba_xg, y_pred_proba_svm]
 
-# save to file
-saveargs = {'index': False, 'float_format': '%f'}
-tseObserved.to_csv('data/tseObserved.csv', **saveargs)
-tsePredicted.to_csv('data/tsePredicted.csv', **saveargs)
-tseClassProb.to_csv('data/tseClassProb.csv', **saveargs)
+# # create new dataset with the class probability from svm and xg algos
+# tseClassProb = pd.concat([pd.DataFrame(array) for array in arrays], axis = 1)
+
+# # rename dataset columns
+# tseClassProb.columns = [
+#     'xgClass0Prob', 'xgClass1Prob', 'xgClass2Prob', 'xgClass3Prob',
+#     'svmClass0Prob', 'svmClass1Prob', 'svmClass2Prob', 'svmClass3Prob'
+# ]
+
+# # add scraperID column
+# tseClassProb['scraperID'] = testScraper.reset_index(drop = True)
+
+# # save to file
+# saveargs = {'index': False, 'float_format': '%f'}
+# tseObserved.to_csv('data/tseObserved.csv', **saveargs)
+# tsePredicted.to_csv('data/tsePredicted.csv', **saveargs)
+# tseClassProb.to_csv('data/tseClassProb.csv', **saveargs)
