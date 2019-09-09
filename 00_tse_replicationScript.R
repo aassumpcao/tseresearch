@@ -1,12 +1,12 @@
 ### electoral crime under democracy: evidence from brazil
 # master script
-#   this is the master script for the reproduction of the entire work in my jmp.
-#   it contains two large groups of scripts (r and python3.7): data wrangling
-#   (or munging) and analysis. i indicate below the execution times for either
-#   group when scripts took longer than 15 minutes to execute. if you have r,
-#   rstudio, and python installed on the computer, you can source this script
-#   from the top. if you would like further clarification on how to go about
-#   these scripts, please email me at the address below.
+#  this is the master script for the reproduction of the entire work in my jmp.
+#  it contains two large groups of scripts (r and python3.7): data wrangling
+#  (or munging) and analysis. i indicate below the execution times for either
+#  group when scripts took longer than 15 minutes to execute. if you have r,
+#  rstudio, and python installed on the computer, you can source this script
+#  from the top. if you would like further clarification on how to go about
+#  these scripts, please email me at the address below.
 # author: andre assumpcao
 # by: andre.assumpcao@gmail.com
 
@@ -28,11 +28,11 @@ if (!require(xtable))    {install.packages('xtable')}
 rstudioapi::openProject('2019 Electoral Crime.Rproj')
 
 ### wrangling scripts
-# these scripts wrangle all data used in this paper. you should not run them as
-# they will take a long time to process (> 72 hours if laptop; > 40 hours if
-# cluster). you are better off using the final datasets than producing them;
-# nonetheless, i include all files for replication and transparency purposes if
-# you are interested in a particular step taken.
+#  these scripts wrangle all data used in this paper. you should not run them
+#  as they will take a long time to process (over an entire week on a computer
+#  cluster). you are better off using the final datasets than producing these
+#  scripts; nonetheless, i include all files for replication and transparency
+#  purposes if you are interested in a particular step taken.
 
 # python: install packages from requirements.txt to run the next script.
 system2('cat scripts/requirements.txt | xargs -n 1 pip install')
@@ -63,12 +63,16 @@ source('scripts/06_tse_rejections.R')
 system2('python scripts/06_tse_decision2016.py &')
 
 # wrangle text in sentences for classification.
-system2('python scripts/07_tse_htmlParser.py &')
 source('scripts/07_tse_sentence_cleanup.R')
+system2('python scripts/07_tse_htmlParser.py &')
 
 # python: create sentence classification algorithm from 2016 sentences. this
-# script takes 25 hours to run on a big memory (500g) cluster. use with caution.
-system2('python scripts/99_tse_sentence_validation.py &')
+#  script takes one week to run on a big memory (1000g) cluster.
+#  use with caution.
+system2('python scripts/08_tse_feature_extraction.py &')
+system2('python scripts/09_tse_dnn_validation.py &')
+system2('python scripts/10_tse_sentence_validation.py &')
+system2('python scripts/11_tse_sentence_classification.py &')
 
 # wrangle judicial classes after judicial sentence classification.
 source('scripts/08_tse_analysis_prep.R')

@@ -6,7 +6,6 @@
 
 # import tf and scikit-learn libraries
 from imblearn.over_sampling import SMOTE
-from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.model_selection import train_test_split
 from tensorflow import keras
 import tensorflow as tf
@@ -14,7 +13,7 @@ import tensorflow as tf
 # import helper libraries
 import codecs, os, re, random
 import matplotlib.pyplot as plt
-import numpy as np
+import numpy as np, scipy.sparse
 import pandas as pd
 
 # define clear function
@@ -28,49 +27,15 @@ stopwords = stopwords[:-1]
 # rename class variable and create factors out of classes
 tse['classID'] = tse['class'].factorize()[0]
 
-# create new variables and dictionaries
-class_id_tse = tse[['class', 'classID']].drop_duplicates()
-class_id_tse = class_id_tse.sort_values('classID').reset_index(drop = True)
-class_to_ids = dict(class_id_tse.values)
-ids_to_class = dict(class_id_tse[['classID', 'class']].values)
-
-# sort data for later split between classified an unclassified sets
-tse = tse.sort_values('classID').reset_index(drop = True)
-# split = len(tse[tse['classID'] == -1])
-
 # split data for testing script (not necessary for training model)
-prediction, predicted = tse[tse['classID'] == -1], tse[tse['classID'] != -1]
+predicted = tse[tse['classID'] != -1].reset_index(drop = True)
 
-# reduce dimensionality for testing model
-prediction, predicted = prediction[:1000], predicted.sample(1000)
-
-# reset indexes
-prediction.reset_index(drop = True, inplace = True)
-predicted.reset_index(drop = True, inplace = True)
-
-### create tf-idf measures to inspect and transform data
-# pass kwargs to tf-idf vectorizer to construct a measure of word
-# importance
-kwargs = {
-    'sublinear_tf': True, 'min_df': 5, 'stop_words': stopwords,
-    'encoding': 'utf-8', 'ngram_range': (1, 2), 'norm': 'l2'
-}
-
-# create tf-idf vector
-tfidf = TfidfVectorizer(**kwargs)
-
-# create features vector (words) and classes
-features = tfidf.fit_transform(predicted.sbody).toarray()
+# store labels and identifiers
 labels = predicted['classID']
 identifiers = predicted['candidateID']
 
-# check dimensionality of data: 16,199 rows; 103,968 features
-'rows, features: {}'.format(features.shape)
-
-# # split data across classified and unclassified sets
-# modelFeatures, predictFeatures = features[split:], features[:split]
-# modelLabels, predictLabels     = labels[split:], labels[:split]
-# modelScraper, predictScraper   = scraper[split:], scraper[:split]
+# load features into script
+features = scipy.sparse.load_npz('data/sentenceFeatures.npz').toarray()
 
 # split up features and labels so that we have two train and teste sets
 tts = {'test_size': 0.20, 'random_state': 42}
@@ -82,11 +47,11 @@ sm = SMOTE()
 X_train, y_train = sm.fit_sample(X_train, y_train)
 
 # check shape
-'rows, features: {}'.format(X_train.shape)
+print('rows, features: {}'.format(X_train.shape))
 
 ### build model
-# define the network layers, which are built out of the inputs fed to the
-# model
+# define the network layers, which are built out of the inputs fed to
+#  the model
 
 # input shape is the vocabulary count used for the movie reviews:
 # (10,000 words)

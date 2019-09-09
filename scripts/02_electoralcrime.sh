@@ -28,4 +28,4 @@ SIMG_NAME=tensorflow1.9.0-py3-nogpu-ubuntu18.04.simg
 DATA_PATH=/pine/scr/a/a/aa2015/electoralcrime
 
 # GPU with Singularity
-singularity exec --nv -B /pine -B /proj $SIMG_PATH/$SIMG_NAME bash -c "cd $DATA_PATH; scripts/99_dnn_validation.py"
+singularity exec --nv -B /pine -B /proj $SIMG_PATH/$SIMG_NAME bash -c "cd $DATA_PATH; python scripts/09_tse_dnn_validation.py"

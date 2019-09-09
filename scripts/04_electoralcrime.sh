@@ -9,4 +9,4 @@
 #SBATCH --mail-user=andre.assumpcao@gmail.com
 #SBATCH --mail-type=ALL
 
-python3.6 scripts/99_tse_sentence_validation.py
+python3.6 scripts/10_tse_sentence_classification.py

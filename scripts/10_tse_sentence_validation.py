@@ -25,7 +25,7 @@ from sklearn.metrics                 import accuracy_score, roc_auc_score
 # define clear function
 clear = lambda: os.system('clear')
 
-# load dataset
+# load sentences and stopwords sets
 tse = pd.read_csv('data/tsePredictions.csv', dtype = 'str')
 stopwords = codecs.open('data/stopwords.txt', 'r', 'utf-8').read().split('\n')
 stopwords = stopwords[:-1]
@@ -33,43 +33,15 @@ stopwords = stopwords[:-1]
 # rename class variable and create factors out of classes
 tse['classID'] = tse['class'].factorize()[0]
 
-# sort data for later split between classified an unclassified sets
-tse = tse.sort_values('classID').reset_index(drop = True)
-# split = len(tse[tse['classID'] == -1])
-
 # split data for testing script (not necessary for training model)
-prediction, predicted = tse[tse['classID'] == -1], tse[tse['classID'] != -1]
+predicted = tse[tse['classID'] != -1].reset_index(drop = True)
 
-# # reduce dimensionality for testing model
-# prediction, predicted = prediction[:5000], predicted.sample(5000)
-
-# reset indexes
-prediction.reset_index(drop = True, inplace = True)
-predicted.reset_index(drop = True, inplace = True)
-
-### create tf-idf measures to inspect and transform data
-# pass kwargs to tf-idf vectorizer to construct a measure of word
-# importance
-kwargs = {
-    'sublinear_tf': True, 'min_df': 5, 'stop_words': stopwords,
-    'encoding': 'utf-8', 'ngram_range': (1, 2), 'norm': 'l2'
-}
-
-# create tf-idf vector
-tfidf = TfidfVectorizer(**kwargs)
-
-# create features vector (words) and classes
-features = tfidf.fit_transform(predicted.sbody).toarray()
+# store labels and identifiers
 labels = predicted['classID']
 identifiers = predicted['candidateID']
 
-# # check dimensionality of data: 16,199 rows; 103,968 features
-# '(rows, features): {}'.format(features.shape)
-
-# # split data across classified and unclassified sets
-# modelFeatures, predictFeatures = features[split:], features[:split]
-# modelLabels, predictLabels     = labels[split:], labels[:split]
-# modelScraper, predictScraper   = scraper[split:], scraper[:split]
+# load features into script
+features = scipy.sparse.load_npz('data/sentenceFeatures.npz').toarray()
 
 # split up features and labels so that we have two train and teste sets
 kwargs = {'test_size': 0.20, 'random_state': 42}
@@ -81,7 +53,7 @@ sm = SMOTE()
 X_train, y_train = sm.fit_sample(X_train, y_train)
 
 # check shape
-'(rows, features): {}'.format(X_train.shape)
+print('rows, features: {}'.format(features.shape))
 
 ### train models
 # 1. multinomial naive bayes classification (nb)
