@@ -129,7 +129,11 @@ history_dict = history.history
 history_dict.keys()
 
 # total epochs
-epochs = range(1, len(history_dict['accuracy']) + 1)
+epochs = range(1, len(history_dict['acc']) + 1)
+
+# create folder for plots
+if not os.path.exists('plots'):
+    os.mkdir('plots')
 
 # build plot
 plt.plot(epochs, history_dict['loss'], 'bo', label = 'Training loss')
@@ -139,17 +143,22 @@ plt.plot(epochs, history_dict['val_loss'], 'b', label = 'Validation loss')
 plt.title('Training and validation loss')
 plt.xlabel('Epochs')
 plt.ylabel('Loss')
-plt.legend(), plt.show()
 
-# clear figure
-plt.clf()
+# save plot to disk
+plt.savefig('plots/loss.png')
 
 # build plot
-plt.plot(epochs, history_dict['accuracy'], 'bo', label = 'Training acc')
-plt.plot(epochs, history_dict['val_accuracy'], 'b', label = 'Validation acc')
+plt.plot(epochs, history_dict['acc'], 'bo', label = 'Training acc')
+plt.plot(epochs, history_dict['val_acc'], 'b', label = 'Validation acc')
 
 # define graphical parameters
 plt.title('Training and validation accuracy')
 plt.xlabel('Epochs')
 plt.ylabel('Accuracy')
-plt.legend(), plt.show()
+
+# save plot to disk
+plt.savefig('plots/accuracy.png')
+
+# save results to disk
+history_dict['epochs'] = epochs
+pd.DataFrame(history_dict).to_csv('data/dnnClassification.csv', index = False)

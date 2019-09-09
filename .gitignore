@@ -52,7 +52,6 @@ bbc/
 *.Rda
 *.txt
 *.zip
-*.sh
 *.tex
 electoralcrime_diff.pdf
 electoralcrime_v1.pdf
