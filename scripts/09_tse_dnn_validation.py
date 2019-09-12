@@ -61,7 +61,9 @@ vocab_size = X_train.shape[1]
 model = keras.Sequential([
     keras.layers.Embedding(vocab_size, 16),
     keras.layers.GlobalAveragePooling1D(),
-    keras.layers.Dense(16, activation = tf.nn.relu),  # hidden units
+    keras.layers.Dense(1000, activation = tf.nn.relu),  # hidden units
+    keras.layers.Dense(1000, activation = tf.nn.relu),  # hidden units
+    keras.layers.Dense(500, activation = tf.nn.relu),  # hidden units
     keras.layers.Dense(1, activation = tf.nn.sigmoid) # labels (0 or 1)
 ])
 
@@ -80,8 +82,8 @@ model.compile(
 history = model.fit(
     x = X_train,
     y = y_train,
-    batch_size = 512,
-    epochs = 40,
+    batch_size = 128,
+    epochs = 100,
     validation_data = (X_test, y_test)
 )
 

@@ -9,6 +9,7 @@
 # import standard libraries
 import codecs, os, random
 import numpy as np, pandas as pd
+import scipy.sparse
 
 # import scikit-learn machine classification libraries
 from imblearn.over_sampling          import SMOTE
