@@ -5,8 +5,8 @@
 #SBATCH -N 1
 #SBATCH --mem=2000g
 #SBATCH -n 16
-#SBATCH -t 10-
+#SBATCH -t 11-
 #SBATCH --mail-user=andre.assumpcao@gmail.com
 #SBATCH --mail-type=ALL
 
-python3.6 scripts/10_tse_sentence_validation.py
+python3.6 scripts/10_tse_sentence_validation.py --chi2_select=20000

@@ -10,12 +10,14 @@
 import codecs, os, random
 import numpy as np, pandas as pd
 import scipy.sparse
+from optparse import OptionParser
 
 # import scikit-learn machine classification libraries
 from imblearn.over_sampling          import SMOTE
 from sklearn.ensemble                import AdaBoostClassifier
 from sklearn.ensemble                import GradientBoostingClassifier
 from sklearn.ensemble                import RandomForestClassifier
+from sklearn.feature_selection       import SelectKBest, chi2
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model            import LogisticRegression
 from sklearn.model_selection         import cross_validate, train_test_split
@@ -23,13 +25,13 @@ from sklearn.naive_bayes             import MultinomialNB
 from sklearn.svm                     import SVC
 from sklearn.metrics                 import accuracy_score, roc_auc_score
 
-# define clear function
-clear = lambda: os.system('clear')
+# parse command line arguments
+op = OptionParser()
+op.add_option('--chi2_select', action = 'store', type = 'int')
+opts, args = op.parse_args()
 
 # load sentences and stopwords sets
 tse = pd.read_csv('data/tsePredictions.csv', dtype = 'str')
-stopwords = codecs.open('data/stopwords.txt', 'r', 'utf-8').read().split('\n')
-stopwords = stopwords[:-1]
 
 # rename class variable and create factors out of classes
 tse['classID'] = tse['class'].factorize()[0]
@@ -41,8 +43,13 @@ predicted = tse[tse['classID'] != -1].reset_index(drop = True)
 labels = predicted['classID']
 identifiers = predicted['candidateID']
 
-# load features into script
+# load 181,252 features into script (40,993 rows)
 features = scipy.sparse.load_npz('data/sentenceFeatures.npz').toarray()
+
+# change the number of features according to tests
+if opts.chi2_select:
+    chi_sqrd = SelectKBest(chi2, k = opts.chi2_select)
+    features = chi_sqrd.fit_transform(features, labels)
 
 # split up features and labels so that we have two train and teste sets
 kwargs = {'test_size': 0.20, 'random_state': 42}
@@ -109,9 +116,6 @@ for model in models:
 # fill in the cross-validation dataset and save to file
 validation_performance = pd.concat([pd.DataFrame(entry) for entry in entries])
 validation_performance.to_csv('data/validation_performance.csv', index = False)
-
-# print progress
-print('Hold-out test complete.')
 
 # create dataframe of hold-out performances
 columns = ['model', 'holdout_accuracy', 'holdout_auc']
