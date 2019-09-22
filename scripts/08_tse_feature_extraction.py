@@ -42,7 +42,7 @@ features = tfidf.fit_transform(predicted.sbody).toarray()
 labels = predicted['classID']
 identifiers = predicted['candidateID']
 
-# check dimensionality of data: 16,199 rows; 103,968 features
+# check dimensionality of data: 40,933 rows; 181,252 features
 print('rows, features: {}'.format(features.shape))
 
 # convert to sparse matrix
