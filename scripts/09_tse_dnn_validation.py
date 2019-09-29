@@ -35,7 +35,7 @@ labels = predicted['classID']
 identifiers = predicted['candidateID']
 
 # load features into script
-features = scipy.sparse.load_npz('data/sentenceFeatures.npz').toarray()
+features = scipy.sparse.load_npz('data/sentenceFeatures_count.npz').toarray()
 
 # split up features and labels so that we have two train and teste sets
 tts = {'test_size': 0.20, 'random_state': 42}
@@ -52,9 +52,8 @@ print('rows, features: {}'.format(X_train.shape))
 ### build model
 # define the network layers, which are built out of the inputs fed to
 #  the model
-
-# input shape is the vocabulary count used for the movie reviews:
-# (10,000 words)
+# input shape is the vocabulary (term) count used for the movie reviews
+#  example
 vocab_size = X_train.shape[1]
 
 # create layers and hidden units

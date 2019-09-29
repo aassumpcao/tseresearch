@@ -5,27 +5,23 @@
 
 # import standard libraries
 import codecs
-import glob
 import math
-import numpy as np
 import os
-import pandas as pd
 import re
 import time
 
 # import third-party libraries
 from bs4 import BeautifulSoup
-from selenium                          import webdriver
-from selenium.webdriver.chrome.options import Options
-from selenium.common.exceptions        import NoSuchElementException
-from selenium.common.exceptions        import TimeoutException
-from selenium.common.exceptions        import StaleElementReferenceException
-from selenium.webdriver.common.by      import By
-from selenium.webdriver.common.keys    import Keys
-from selenium.webdriver.support.ui     import Select
-from selenium.webdriver.support.ui     import WebDriverWait
-from selenium.webdriver.support        import expected_conditions as EC
-
+from selenium import webdriver
+from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import StaleElementReferenceException
+from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import Select
+from selenium.webdriver.support.ui import WebDriverWait
+import pandas as pd
 
 # define scraper class
 class scraper:

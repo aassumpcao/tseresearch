@@ -44,7 +44,7 @@ labels = predicted['classID']
 identifiers = predicted['candidateID']
 
 # load 181,252 features into script (40,993 rows)
-features = scipy.sparse.load_npz('data/sentenceFeatures.npz').toarray()
+features = scipy.sparse.load_npz('data/sentenceFeatures_tfidf.npz').toarray()
 
 # change the number of features according to tests
 if opts.chi2_select:

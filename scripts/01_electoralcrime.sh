@@ -1,9 +1,10 @@
 #!/bin/bash
-#SBATCG -p general
-#SBATCH --nodes=1
-#SBATCH --mem=256g
-#SBATCH --ntasks=12
-#SBATCH -t 1-
+#SBATCH -p bigmem
+#SBATCH --qos bigmem_access
+#SBATCH -N 1
+#SBATCH --mem=1500g
+#SBATCH -n 16
+#SBATCH -t 11-
 #SBATCH --mail-user=andre.assumpcao@gmail.com
 #SBATCH --mail-type=ALL
 

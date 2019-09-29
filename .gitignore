@@ -58,6 +58,8 @@ electoralcrime_v1.pdf
 
 # Ignore specific files
 scripts/07_sentence_test.py
+scripts/aassumpcao.sh
+scripts/aassumpcao.py
 */cepesp0.py
 */diff.pdf
 *_polisci*
