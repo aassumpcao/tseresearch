@@ -1,9 +1,8 @@
 #!/bin/bash
-#SBATCH -p bigmem
-#SBATCH --qos bigmem_access
+#SBATCH -p general
 #SBATCH -N 1
-#SBATCH --mem=1500g
-#SBATCH -n 16
+#SBATCH --mem=256g
+#SBATCH -n 24
 #SBATCH -t 11-
 #SBATCH --mail-user=andre.assumpcao@gmail.com
 #SBATCH --mail-type=ALL

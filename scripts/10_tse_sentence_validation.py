@@ -6,118 +6,148 @@
 # author: andre assumpcao
 # by andre.assumpcao@gmail.com
 
-# import standard libraries
+# import statements
+from imblearn.over_sampling import SMOTE
+from sklearn.ensemble import AdaBoostClassifier
+from sklearn.ensemble import GradientBoostingClassifier
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
+from sklearn.feature_selection import SelectKBest, chi2
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score, roc_auc_score
+from sklearn.model_selection import cross_validate, train_test_split
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.svm import LinearSVC
+import argparse
 import codecs, os, random
 import numpy as np, pandas as pd
-import scipy.sparse
-from optparse import OptionParser
+import scipy.sparse as sparse
 
-# import scikit-learn machine classification libraries
-from imblearn.over_sampling          import SMOTE
-from sklearn.ensemble                import AdaBoostClassifier
-from sklearn.ensemble                import GradientBoostingClassifier
-from sklearn.ensemble                import RandomForestClassifier
-from sklearn.feature_selection       import SelectKBest, chi2
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.linear_model            import LogisticRegression
-from sklearn.model_selection         import cross_validate, train_test_split
-from sklearn.naive_bayes             import MultinomialNB
-from sklearn.svm                     import SVC
-from sklearn.metrics                 import accuracy_score, roc_auc_score
+# define function to extract arguments from shell
+def get_options():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--chi2', action = 'store', type = int)
+    args = parser.parse_args()
+    return args.chi2
 
-# parse command line arguments
-op = OptionParser()
-op.add_option('--chi2_select', action = 'store', type = 'int')
-opts, args = op.parse_args()
+# define function to load the data
+def load_tse():
+    df = pd.read_csv('data/tsePredictions.csv', dtype = str)
+    df['classID'] = df['class'].factorize()[0]
+    df = df.sort_values('classID').reset_index(drop = True)
+    return df
 
-# load sentences and stopwords sets
-tse = pd.read_csv('data/tsePredictions.csv', dtype = 'str')
+# define function to split validation and classification samples
+def split_labels_tse(df):
+    split = len(df[df['classID'] == -1])
+    return df.loc[split:, 'classID'], df.loc[:split, 'classID']
 
-# rename class variable and create factors out of classes
-tse['classID'] = tse['class'].factorize()[0]
+# define function to load features into python
+def load_features(tfidf = True):
+    if not tfidf:
+        features_cv = sparse.load_npz('data/features_tfidf_cv.npz').toarray()
+        features_pr = sparse.load_npz('data/features_tfidf_pr.npz').toarray()
+    return features_cv, features_pr
 
-# split data for testing script (not necessary for training model)
-predicted = tse[tse['classID'] != -1].reset_index(drop = True)
+# define main program block
+if __name__ == '__main__':
 
-# store labels and identifiers
-labels = predicted['classID']
-identifiers = predicted['candidateID']
+    # load dataset and split labels for validation and classification
+    tse = load_tse()
+    labels_cv, labels_pr = split_labels_tse(tse)
 
-# load 181,252 features into script (40,993 rows)
-features = scipy.sparse.load_npz('data/sentenceFeatures_tfidf.npz').toarray()
+    # load features for validation and classification
+    features_cv, features_pr = load_features()
 
-# change the number of features according to tests
-if opts.chi2_select:
-    chi_sqrd = SelectKBest(chi2, k = opts.chi2_select)
-    features = chi_sqrd.fit_transform(features, labels)
+    # transform if feature selection is specified
+    if get_options():
+        chi_sqrd = SelectKBest(chi2, k = get_options())
+        features_cv = chi_sqrd.fit_transform(features_cv, labels_cv)
+        features_pr = chi_sqrd.transform(features_pr)
 
-# split up features and labels so that we have two train and teste sets
-kwargs = {'test_size': 0.20, 'random_state': 42}
-X_train, X_test, y_train, y_test = train_test_split(features, labels, **kwargs)
+    # split up features and labels so that we have train and test sets
+    kwargs = {'test_size': 0.20, 'random_state': 42}
+    X_train, X_test, y_train, y_test = train_test_split(
+        features_cv, labels_cv, **kwargs
+    )
+    # oversample train data so that classes are balanced training models
+    sm = SMOTE()
+    X_train, y_train = sm.fit_sample(X_train, y_train)
 
-# oversample train data so that we have fairly balanced classes for
-# training models
-sm = SMOTE()
-X_train, y_train = sm.fit_sample(X_train, y_train)
+    # check shape
+    print('rows, features: {}'.format(X_train.shape))
 
-# check shape
-print('rows, features: {}'.format(features.shape))
+    # train models
+    # 1. multinomial naive bayes classification (nb)
+    # 2. logistic regression (logit)
+    # 3. support vector machine (svm)
+    # 4. random forest
+    # 5. adaptive boosting
+    # 6. gradient boosting
 
-### train models
-# 1. multinomial naive bayes classification (nb)
-# 2. logistic regression (logit)
-# 3. support vector machine (svm)
-# 4. random forest
-# 5. adaptive boosting
-# 6. gradient boosting
+    # create list of models used. parameters have already been tuned
+    models = [
+        MultinomialNB(),
+        LogisticRegression(
+            solver = 'lbfgs', multi_class = 'auto', max_iter = 500
+        ),
+        LinearSVC(),
+        RandomForestClassifier(n_estimators = 100, max_depth = 3),
+        AdaBoostClassifier(n_estimators = 100),
+        GradientBoostingClassifier(learning_rate = 1)
+    ]
 
-# create list of models used. their parameters have already been tuned
-models = [
-    MultinomialNB(),
-    LogisticRegression(solver = 'lbfgs', multi_class = 'auto', max_iter = 500),
-    SVC(kernel = 'linear', verbose = True),
-    RandomForestClassifier(n_estimators = 100, max_depth = 3, verbose = 1),
-    AdaBoostClassifier(n_estimators = 100),
-    GradientBoostingClassifier(learning_rate = 1, verbose = 1)
-]
+    # create empty list to store model results
+    validation, holdouts = [], []
 
-# create empty list to store model results
-entries, holdout = [], []
+    # create list of cross validation arguments outside function
+    kwargs = {
+        'X': X_train, 'y': y_train, 'n_jobs': -1, 'verbose': 2, 'cv': 5,
+        'scoring': ['accuracy', 'roc_auc'], 'return_train_score': True
+    }
 
-# create list of cross validation arguments outside function
-cvkwargs = {
-    'X': X_train, 'y': y_train, 'n_jobs': -1, 'verbose': 2, 'cv': 5,
-    'scoring': ['accuracy', 'roc_auc'], 'return_train_score': True
-}
+    # run training validation for all models (>4 days of execution time)
+    for model in models:
 
-# run training validation for all models (> 10 hours of execution time)
-for model in models:
-    # extract model name from model attribute
-    mname = model.__class__.__name__
-    # compute accuracy scores across cross-validation exercise
-    metrics = cross_validate(model, **cvkwargs)
-    # add model name to dictionary of results
-    metrics['model'] = [mname] * 5
-    # append results to entries list
-    entries += [metrics]
-    # print progress
-    print('Validation complete for model: ' + str(mname) + '.')
-    # fit each model
-    model.fit(X_train, y_train)
-    # predict each class
-    y_pred = model.predict(X_test)
-    # compute accuracy score
-    y = (mname, accuracy_score(y_pred, y_test), roc_auc_score(y_pred, y_test))
-    # compute auc
-    holdout += [y]
-    # print progress
-    print('Hold-out test complete for model: ' + str(mname) + '.')
+        # extract model name from model attribute
+        mname = model.__class__.__name__
 
-# fill in the cross-validation dataset and save to file
-validation_performance = pd.concat([pd.DataFrame(entry) for entry in entries])
-validation_performance.to_csv('data/validation_performance.csv', index = False)
+        # compute accuracy scores across cross-validation exercise
+        metrics = cross_validate(model, **kwargs)
 
-# create dataframe of hold-out performances
-columns = ['model', 'holdout_accuracy', 'holdout_auc']
-holdout_performance = pd.DataFrame(holdout, columns = columns)
-holdout_performance.to_csv('data/holdout_performance.csv', index = False)
+        # add model name to dictionary of results
+        metrics['model'] = [mname] * 5
+
+        # append results to entries list
+        validation += [metrics]
+
+        # print progress
+        print('Validation complete for model: ' + str(mname) + '.')
+
+        # fit each model
+        model.fit(X_train, y_train)
+
+        # predict each class
+        y_pred = model.predict(X_test)
+
+        # compute accuracy score
+        holdout = (
+            mname,
+            accuracy_score(y_pred, y_test),
+            roc_auc_score(y_pred, y_test)
+        )
+
+        # compute auc
+        holdouts += [holdout]
+
+        # print progress
+        print('Hold-out test complete for model: ' + str(mname) + '.')
+
+    # fill in the cross-validation dataset and save to file
+    val_performance = pd.concat([pd.DataFrame(entry) for entry in entries])
+    val_performance.to_csv('data/validation_performance.csv', index = False)
+
+    # create dataframe of hold-out performances
+    columns = ['model', 'holdout_accuracy', 'holdout_auc']
+    holdout_performance = pd.DataFrame(holdouts, columns = columns)
+    holdout_performance.to_csv('data/holdout_performance.csv', index = False)
