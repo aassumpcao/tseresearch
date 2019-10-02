@@ -5,7 +5,7 @@
 #SBATCH -p bigmem
 #SBATCH --qos bigmem_access
 #SBATCH -N 1
-#SBATCH --mem=2500g
+#SBATCH --mem=2000g
 #SBATCH -n 16
 #SBATCH -t 11-
 #SBATCH --mail-user=andre.assumpcao@gmail.com
@@ -24,4 +24,4 @@ SIMG_NAME=tensorflow1.9.0-py3-nogpu-ubuntu18.04.simg
 DATA_PATH=/pine/scr/a/a/aa2015/electoralcrime
 
 # GPU with Singularity
-singularity exec --nv -B /pine -B /proj $SIMG_PATH/$SIMG_NAME bash -c "cd $DATA_PATH; python scripts/09_tse_dnn_validation.py --chi2=40000"
+singularity exec --nv -B /pine -B /proj $SIMG_PATH/$SIMG_NAME bash -c "cd $DATA_PATH; python scripts/09_tse_dnn_validation.py --chi2=60000"

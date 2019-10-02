@@ -74,7 +74,7 @@ if __name__ == '__main__':
 
     # create layers and hidden units
     model = keras.Sequential([
-        keras.layers.Embedding(vocab_size, 50),
+        keras.layers.Embedding(vocab_size, 100),
         keras.layers.GlobalMaxPooling1D(),
         keras.layers.Dense(100, activation = tf.nn.relu),
         keras.layers.Dense(50, activation = tf.nn.relu),
