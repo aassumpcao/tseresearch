@@ -60,19 +60,19 @@ source('scripts/05_tse_results.R')
 
 # wrangle candidacy rejections.
 source('scripts/06_tse_rejections.R')
-system2('python scripts/06_tse_decision2016.py &')
+system2('python scripts/04_tse_decision2016.py &')
 
 # wrangle text in sentences for classification.
-source('scripts/07_tse_sentence_cleanup.R')
-system2('python scripts/07_tse_htmlParser.py &')
+source('scripts/07_tse_sentence_processing.R')
+system2('python scripts/06_tse_embedding_processing.py &')
 
 # python: create sentence classification algorithm from 2016 sentences. this
 #  script takes one week to run on a big memory (1000g) cluster.
 #  use with caution.
-system2('python scripts/08_tse_feature_extraction.py &')
-system2('python scripts/09_tse_dnn_validation.py &')
-system2('python scripts/10_tse_sentence_validation.py &')
-system2('python scripts/11_tse_sentence_classification.py &')
+system2('python scripts/07_tse_feature_extraction.py &')
+system2('python scripts/08_tse_dnn_validation.py &')
+system2('python scripts/09_tse_sentence_validation.py &')
+system2('python scripts/10_tse_sentence_classification.py &')
 
 # wrangle judicial classes after judicial sentence classification.
 source('scripts/08_tse_analysis_prep.R')

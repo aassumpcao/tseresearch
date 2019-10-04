@@ -20,24 +20,31 @@ tsePredictions <- tseSentences %>%
   left_join(sentences2016, 'candidateID') %>%
   mutate_all(as.character)
 
-# process sentences
+# process sentences:
+# 1. remove accents; 2. remove punctuation and spaces; 3. remove invalid ascii
+# characters; 4. remove words with a single character; 5. break camel case;
+# 6. remove extra white spaces
 tsePredictions$sbody %<>%
-  str_to_lower() %>%
   stringi::stri_trans_general('Latin-ASCII') %>%
   str_replace_all('[[:punct:]]|[[:space:]]', ' ') %>%
-  str_replace_all('^[a-z]{1,1} +', ' ') %>%
-  str_replace_all(' +[a-z]{1,1} +', ' ') %>%
+  str_replace_all('º|ª|€|†|‡|Œ|“|”|•|™|œ|£|¤|¥|§|«|®|°|µ|ü', ' ') %>%
+  str_replace_all('((?<=[a-z])[A-Z]|[A-Z](?=[a-z]))', ' \\1') %>%
+  str_replace_all('\\b[a-zA-Z0-9]{1,1}\\b', ' ') %>%
   str_squish()
+
+# determine encoding
+Encoding(tsePredictions$sbody) <- 'UTF-8'
 
 # drop sentence heading
 tsePredictions %>%
   filter(nchar(sbody) > 5) %>%
   select(candidateID, class, sbody) %>%
+  mutate_all(str_to_lower) %>%
   write_csv('data/tsePredictions.csv')
 
 # create list of stopwords
 stopwords <- c(
-  stopwords::stopwords('portuguese'), 'art', 'nº', '2016', '2012', 'lei', 'fls',
+  stopwords::stopwords('portuguese'), 'art', '2016', '2012', 'lei', 'fls',
   'tse', 'ata', 'ser', 'ie', 'juiz', 'juiza'
 )
 
