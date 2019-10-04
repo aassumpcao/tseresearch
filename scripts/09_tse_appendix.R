@@ -13,7 +13,7 @@ library(magrittr)
 # read csv files
 validation <- read_csv('data/validation_performance.csv')
 holdout <- read_csv('data/holdout_performance.csv')
-dnn <- read_csv('data/dnnClassification.csv')
+dnn <- read_csv('data/validation_performance_dnn.csv')
 
 # add simulation history and unnest values
 validation$simulation <- as.character(rep(seq(1, 5), 6))
@@ -26,6 +26,9 @@ validation <-  bind_rows(
   mutate(source = 'train'),
 )
 
+# plot learning curve and loss for dnn
+dnn <- mutate(dnn, acc_color = '1', loss_color = '1')
+
 # rename models
 validation$model %<>%
   str_replace_all('([a-z])([A-Z])', '\\1 \\2') %>%
@@ -34,7 +37,8 @@ validation$model %<>%
   str_replace_all('SVC', 'Linear SVM')
 
 # graph accuracy scores
-ggplot(validation) +
+p <- validation %>%
+  ggplot() +
   geom_boxplot(
     aes(x = fct_reorder(model, accuracy), y = accuracy, color = source),
     outlier.shape = NA
@@ -62,6 +66,37 @@ ggplot(validation) +
 # # save plot
 # ggsave(
 #   'validation-boxplots.pdf', device = cairo_pdf, path = 'plots', dpi = 100,
+#   width = 7, height = 5
+# )
+
+# produce dnn plot
+p <- dnn %>%
+  ggplot() +
+  geom_point(aes(x = epochs, y = accuracy, color = '1')) +
+  geom_point(aes(x = epochs, y = loss, color = '2')) +
+  geom_smooth(aes(x = epochs, y = accuracy, color = '1'), se = FALSE) +
+  geom_smooth(aes(x = epochs, y = loss, color = '2'), se = FALSE) +
+  labs(x = 'Epochs', y = 'Accuracy') +
+  scale_color_manual(
+    name = 'Metrics', breaks = c('1', '2'), labels = c('Accuracy', 'Loss'),
+    values = c('1' = 'grey15', '2' = 'grey60')
+  ) +
+  theme_bw() +
+  theme(
+    axis.title.y = element_blank(),
+    axis.title.x = element_text(margin = margin(t = 12)),
+    axis.text.y = element_text(size = 10, lineheight = 1.1, face = 'bold'),
+    axis.text.x = element_text(size = 10, lineheight = 1.1, face = 'bold'),
+    text = element_text(family = 'LM Roman 10'),
+    panel.border = element_rect(color = 'black', size = 1),
+    panel.grid.major.y = element_line(color = 'grey79', linetype = 'dashed'),
+    panel.grid.major.x = element_line(color = 'grey79', linetype = 'dashed'),
+    legend.position = 'top'
+  )
+
+# # save plot
+# ggsave(
+#   plot = p, 'validation-dnn.pdf', device = cairo_pdf, path = 'plots', dpi = 100,
 #   width = 7, height = 5
 # )
 

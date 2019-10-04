@@ -32,7 +32,8 @@ def get_options():
 
 # define function to load the data
 def load_tse():
-    df = pd.read_csv('data/tsePredictions.csv', dtype = str)
+    kwargs = {'index_col': False, 'encoding': 'utf-8'}
+    df = pd.read_csv('data/tsePredictions.csv', **kwargs)
     df['classID'] = df['class'].factorize()[0]
     df = df.sort_values('classID').reset_index(drop = True)
     return df
@@ -40,7 +41,10 @@ def load_tse():
 # define function to split validation and classification samples
 def split_labels_tse(df):
     split = len(df[df['classID'] == -1])
-    return df.loc[split:, 'classID'], df.loc[:split, 'classID']
+    return (
+        df.loc[split:, 'classID'].reset_index(drop = True),
+        df.loc[:split, 'classID'].reset_index(drop = True)
+    )
 
 # define function to load features into python
 def load_features(tfidf = True):
@@ -49,8 +53,8 @@ def load_features(tfidf = True):
         features_pr = sparse.load_npz('data/features_tfidf_pr.npz').toarray()
     return features_cv, features_pr
 
-# define main program block
-if __name__ == '__main__':
+# define main function
+def main():
 
     # load dataset and split labels for validation and classification
     tse = load_tse()
@@ -151,3 +155,7 @@ if __name__ == '__main__':
     columns = ['model', 'holdout_accuracy', 'holdout_auc']
     holdout_performance = pd.DataFrame(holdouts, columns = columns)
     holdout_performance.to_csv('data/holdout_performance.csv', index = False)
+
+# define main program block
+if __name__ == '__main__':
+    main()

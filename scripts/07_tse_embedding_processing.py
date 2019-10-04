@@ -17,7 +17,7 @@ import io
 # define function to load the data
 def load_tse():
     kwargs = {'index_col': False, 'encoding': 'utf-8'}
-    df = pd.read_csv('data/tsePredictions.csv', )
+    df = pd.read_csv('data/tsePredictions.csv', **kwargs)
     df['classID'] = df['class'].factorize()[0]
     df = df.sort_values('classID').reset_index(drop = True)
     return df
@@ -58,7 +58,6 @@ def main():
 
     # load dataset and get indexes for classification sample
     tse = load_tse()
-    tse = tse.sample(1000)
     split = len(tse[tse['classID'] == -1])
 
     # save kwargs for each vectorization function
