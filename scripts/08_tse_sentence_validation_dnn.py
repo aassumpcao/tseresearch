@@ -30,10 +30,9 @@ def split_labels_tse(df):
     )
 
 # define function to load features into python
-def load_features(tfidf = True):
-    if not tfidf:
-        features_cv = sparse.load_npz('data/features_token_cv.npz').toarray()
-        features_pr = sparse.load_npz('data/features_token_pr.npz').toarray()
+def load_features():
+    features_cv = sparse.load_npz('data/features_token_cv.npz').toarray()
+    features_pr = sparse.load_npz('data/features_token_pr.npz').toarray()
     return features_cv, features_pr
 
 # define function to load embedding layer
@@ -49,16 +48,15 @@ def main():
     labels_cv, labels_pr = split_labels_tse(tse)
 
     # load features for validation and classification
-    features_cv, features_pr = load_features(tfidf = False)
+    features_cv, features_pr = load_features()
 
     # # split random
     # split = random.sample(range(0, len(labels_cv)), 1000)
     # features_cv, labels_cv = features_cv[split], labels_cv.iloc[split,]
 
     # split up features and labels so that we have two train and test sets
-    kwargs = {'test_size': 0.20, 'random_state': 42}
     X_train, X_test, y_train, y_test = train_test_split(
-        features_cv, labels_cv, **kwargs
+        features_cv, labels_cv, test_size = 0.20, random_state = 42
     )
 
     # load word embeddings for validation and classification
@@ -102,7 +100,7 @@ def main():
 
     # fit model
     history = model.fit(
-        x = X_train, y = y_train, batch_size = 1024, epochs = 100,
+        x = X_train, y = y_train, batch_size = 2048, epochs = 100,
         validation_data = (X_test, y_test)
     )
 
@@ -120,6 +118,9 @@ def main():
     history_dict = pd.DataFrame(history_dict)
     history_dict.to_csv('data/validation_performance_dnn.csv', index = False)
 
-# define main program block
+    # save model to disk
+    model.save('data/dnn_model.h5')
+
+# call main function
 if __name__ == '__main__':
     main()

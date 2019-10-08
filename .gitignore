@@ -53,16 +53,12 @@ bbc/
 *.txt
 *.zip
 *.tex
-electoralcrime_diff.pdf
-electoralcrime_v1.pdf
 
-# Ignore specific files
-scripts/07_sentence_test.py
-scripts/aassumpcao.sh
-scripts/aassumpcao.py
+# Ignore specific files and folders
 */cepesp0.py
 */diff.pdf
 *_polisci*
 *_econ*
 sftp-config.json
 scripts/08_tse_feature_extraction_Tokenizer.py
+presentations

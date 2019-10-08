@@ -5,7 +5,7 @@
 #SBATCH -p bigmem
 #SBATCH --qos bigmem_access
 #SBATCH -N 1
-#SBATCH --mem=1000g
+#SBATCH --mem=2500g
 #SBATCH -n 16
 #SBATCH -t 11-
 #SBATCH --mail-user=andre.assumpcao@gmail.com

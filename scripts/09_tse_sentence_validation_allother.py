@@ -47,13 +47,12 @@ def split_labels_tse(df):
     )
 
 # define function to load features into python
-def load_features(tfidf = True):
-    if not tfidf:
-        features_cv = sparse.load_npz('data/features_tfidf_cv.npz').toarray()
-        features_pr = sparse.load_npz('data/features_tfidf_pr.npz').toarray()
+def load_features():
+    features_cv = sparse.load_npz('data/features_tfidf_cv.npz').toarray()
+    features_pr = sparse.load_npz('data/features_tfidf_pr.npz').toarray()
     return features_cv, features_pr
 
-# define main function
+# define main program block
 def main():
 
     # load dataset and split labels for validation and classification
@@ -156,6 +155,6 @@ def main():
     holdout_performance = pd.DataFrame(holdouts, columns = columns)
     holdout_performance.to_csv('data/holdout_performance.csv', index = False)
 
-# define main program block
+# call main function
 if __name__ == '__main__':
     main()
