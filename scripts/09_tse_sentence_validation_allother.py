@@ -147,7 +147,7 @@ def main():
         print('Hold-out test complete for model: ' + str(mname) + '.')
 
     # fill in the cross-validation dataset and save to file
-    val_performance = pd.concat([pd.DataFrame(entry) for entry in entries])
+    val_performance = pd.concat([pd.DataFrame(val) for val in validation])
     val_performance.to_csv('data/validation_performance.csv', index = False)
 
     # create dataframe of hold-out performances

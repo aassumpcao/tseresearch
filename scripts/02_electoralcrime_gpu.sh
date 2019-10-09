@@ -8,12 +8,17 @@
 #SBATCH -N 1
 #SBATCH --mem=64g
 #SBATCH -n 4
-#SBATCH -t 10-
+#SBATCH -t 5-
 #SBATCH --mail-user=andre.assumpcao@gmail.com
 #SBATCH --mail-type=ALL
+#SBATCH --output=slurm-%j.log
 
 # clear number of threads
 unset OMP_NUM_THREADS
+
+# include modules
+module add tensorflow_py3/2.0.0
+module add cuda/10.0
 
 # set SIMG path
 SIMG_PATH=/nas/longleaf/apps/tensorflow_py3/2.0.0/simg

@@ -5,7 +5,7 @@
 #SBATCH -N 1
 #SBATCH --mem=2000g
 #SBATCH -n 16
-#SBATCH -t 7-
+#SBATCH -t 1-
 #SBATCH --mail-user=andre.assumpcao@gmail.com
 #SBATCH --mail-type=ALL
 

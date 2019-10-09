@@ -33,8 +33,13 @@ dnn <- mutate(dnn, acc_color = '1', loss_color = '1')
 validation$model %<>%
   str_replace_all('([a-z])([A-Z])', '\\1 \\2') %>%
   str_remove(' Classifier') %>%
-  str_replace_all('Ada Boost', 'Adaptive Boosting') %>%
-  str_replace_all('SVC', 'Linear SVM')
+  str_replace_all('Ada Boost', 'Adaptive Boosting')
+
+holdout$model %<>%
+  str_replace_all('([a-z])([A-Z])', '\\1 \\2') %>%
+  str_remove(' Classifier') %>%
+  str_replace_all('Ada Boost', 'Adaptive Boosting')
+
 
 # graph accuracy scores
 p <- validation %>%
@@ -103,7 +108,7 @@ p <- dnn %>%
 # graph area under the curve for all six models
 validation %>%
   group_by(model) %>%
-  summarize(accuracy = mean(accuracy), auc = mean(auc)) %>%
+  summarize(accuracy = min(accuracy), auc = min(auc)) %>%
   arrange(desc(accuracy)) %>%
   xtable::xtable(digits = 3)
 
