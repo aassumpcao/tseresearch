@@ -1,13 +1,14 @@
 #!/bin/bash
-#SBATCH --partition=bigmem
-#SBATCH --qos=bigmem_access
-#SBATCH --mem=200g
-#SBATCH --nodes=1
-#SBATCH --ntasks=64
+# this is an example of an sbatch script to run a tensorflow script
+#  using singularity to run on the unc's gpu partition.
+
+#SBATCH -p general
+#SBATCH -N 10
+#SBATCH --mem=256g
+#SBATCH -n 48
 #SBATCH -t 4-
 #SBATCH --mail-user=andre.assumpcao@gmail.com
 #SBATCH --mail-type=ALL
-#SBATCH --output=slurm-%j.log
 
 # clear number of threads
 unset OMP_NUM_THREADS
@@ -22,6 +23,4 @@ SIMG_NAME=tensorflow1.9.0-py3-nogpu-ubuntu18.04.simg
 DATA_PATH=/pine/scr/a/a/aa2015/electoralcrime
 
 # GPU with Singularity
-singularity exec --nv \
-  -B /pine $SIMG_PATH/$SIMG_NAME bash \
-  -c 'cd $DATA_PATH; python3.6 scripts/08_tse_sentence_validation_dnn.py'
+singularity exec --nv -B /pine $SIMG_PATH/$SIMG_NAME bash -c "cd $DATA_PATH; python scripts/08_tse_sentence_validation_dnn.py"
