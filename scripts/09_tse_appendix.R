@@ -68,11 +68,11 @@ p <- validation %>%
     legend.position = 'top'
   )
 
-# # save plot
-# ggsave(
-#   'validation-boxplots.pdf', device = cairo_pdf, path = 'plots', dpi = 100,
-#   width = 7, height = 5
-# )
+# save plot
+ggsave(
+  'validation-boxplots.pdf', device = cairo_pdf, path = 'plots', dpi = 100,
+  width = 7, height = 5
+)
 
 # produce dnn plot
 p <- dnn %>%

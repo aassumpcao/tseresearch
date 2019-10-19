@@ -745,14 +745,14 @@ stargazer(
 
 # extract f-stat for graphs and tables
 objects(pattern = 'ols|ss') %>%
-{.[c(9, 12, 21, 24)]} %>%
-lapply(get) %>%
-lapply(function(x){summary(x)$F.fstat[1]}) %>%
-unlist() %>%
-round(2) %>%
-paste0(collapse = ' & ') %>%
-{paste0('\textit{F}-stat & ', .)} %>%
-paste0(' \\')
+  {.[c(9, 12, 21, 24)]} %>%
+  lapply(get) %>%
+  lapply(function(x){summary(x)$F.fstat[1]}) %>%
+  unlist() %>%
+  round(2) %>%
+  paste0(collapse = ' & ') %>%
+  {paste0('\textit{F}-stat & ', .)} %>%
+  paste0(' \\')
 
 ### test for coefficient stability
 # here i implement the tests in altonji el at. (2005), oster (2017). i estimate
@@ -760,29 +760,29 @@ paste0(' \\')
 
 # extract beta.ols from ols regressions
 objects(pattern = 'ols') %>%
-lapply(get) %>%
-lapply(function(x){
- if (class(x) == 'lm') {x$coefficients %>% {.[str_detect(names(.), 'trial')]}}
- else {x$coefficients %>% {.[str_detect(row.names(.), 'trial')]}}
-}) %>%
-unlist() %>%
-unname() -> betas
+  lapply(get) %>%
+  lapply(function(x){
+   if (class(x) == 'lm') {x$coefficients %>% {.[str_detect(names(.), 'trial')]}}
+   else {x$coefficients %>% {.[str_detect(row.names(.), 'trial')]}}
+  }) %>%
+  unlist() %>%
+  unname() -> betas
 
-# extract beta.olsse from ols regressions
+# extract beta.ols from ols regressions
 objects(pattern = 'ols') %>%
-lapply(get) %>%
-lapply(function(x){cse(x)[str_detect(names(cse(x)), 'trial')]}) %>%
-unlist() %>%
-unname() -> stder
+  lapply(get) %>%
+  lapply(function(x){cse(x)[str_detect(names(cse(x)), 'trial')]}) %>%
+  unlist() %>%
+  unname() -> stder
 
 # calculate the lower bound of confidence intervals to compare to iv parameters
 betas.star <- betas + qnorm(.025) * stder
 
 # extract beta.ols from ols regressions
 objects(pattern = 'ss') %>%
-lapply(get) %>%
-lapply(function(x){x$coefficients %>% {.[str_detect(row.names(.), 'tri')]}}) %>%
-unlist() -> betas.iv
+  lapply(get) %>%
+  lapply(function(x){x$coefficients %>% {.[str_detect(row.names(.),'tri')]}})%>%
+  unlist() -> betas.iv
 
 # calculate set of maximum r-squared
 rsqr <- objects(pattern = 'ss') %>%
@@ -827,32 +827,32 @@ coefstab04 <- c(coefstab(ss10, ss11, 'delta', betas[11], rmax[7]),
 
 # create table
 tibble(coefstab01, coefstab02, coefstab03, coefstab04) %>%
-t() %>%
-as_tibble(.name_repair = 'universal') %>%
-mutate_all(~round(., 2)) %>%
-mutate(
-  outcome = c('Outcome 1: Probability of Election', 'Outcome 2: Vote Share',
-    'Outcome 3: Vote Distance to Cutoff (City Councilor)',
-    'Outcome 4: Vote Distance to Cutoff (Mayor)')
-) %>%
-select(7, 1:6) %>%
-xtable() %>%
-print.xtable(floating = FALSE, hline.after = c(-1, -1, 0, 4, 4),
-  include.rownames = FALSE)
+  t() %>%
+  as_tibble(.name_repair = 'universal') %>%
+  mutate_all(~round(., 2)) %>%
+  mutate(
+    outcome = c('Outcome 1: Probability of Election', 'Outcome 2: Vote Share',
+      'Outcome 3: Vote Distance to Cutoff (City Councilor)',
+      'Outcome 4: Vote Distance to Cutoff (Mayor)')
+  ) %>%
+  select(7, 1:6) %>%
+  xtable() %>%
+  print.xtable(floating = FALSE, hline.after = c(-1, -1, 0, 4, 4),
+    include.rownames = FALSE)
 
 # create r-squares for table
 c(rmax[1], 2 * rsqr[2], NA_real_, rmax[2], 2 * rsqr[3], NA_real_) %>%
-round(2) %>%
-paste0(collapse = ' & ')
-c(rmax[3], 2 * rsqr[5], NA_real_, rmax[4], 1, NA_real_) %>%
-round(2) %>%
-paste0(collapse = ' & ')
-c(rmax[5], 2 * rsqr[8], NA_real_, rmax[6], 1, NA_real_) %>%
-round(2) %>%
-paste0(collapse = ' & ')
-c(rmax[7], 2 * rsqr[11], NA_real_, rmax[8], 1, NA_real_) %>%
-round(2) %>%
-paste0(collapse = ' & ')
+  round(2) %>%
+  paste0(collapse = ' & ')
+  c(rmax[3], 2 * rsqr[5], NA_real_, rmax[4], 1, NA_real_) %>%
+  round(2) %>%
+  paste0(collapse = ' & ')
+  c(rmax[5], 2 * rsqr[8], NA_real_, rmax[6], 1, NA_real_) %>%
+  round(2) %>%
+  paste0(collapse = ' & ')
+  c(rmax[7], 2 * rsqr[11], NA_real_, rmax[8], 1, NA_real_) %>%
+  round(2) %>%
+  paste0(collapse = ' & ')
 
 # remove unnecessary objects
 rm(list = objects(pattern = 'rsqr|rmax|coefstab'))
@@ -1423,25 +1423,42 @@ xlabel <- c(strg.iv.mean, ols.mean)
 ggplot() +
   scale_x_continuous(breaks = seq(-.3, -.15, .025), limits = c(-.30, -.15)) +
   scale_y_continuous(breaks = seq(.52, .76, .04), limits = c(.52, .76)) +
-  geom_point(data = strg.iv.simulation, aes(y = ccorrel,  x = betas),
-    color = 'grey4', alpha = .5) +
-  geom_segment(aes(y = .52, yend = .52,
-    x = strg.iv.mean - qnorm(.025) * strg.iv.ses,
-    xend = strg.iv.mean + qnorm(.025) * strg.iv.ses), color = 'skyblue2') +
-  geom_point(aes(y = .52, x = strg.iv.mean), color = 'blue',
-    fill = 'skyblue2', shape = 21, size = 3) +
-  geom_segment(aes(y = .52, yend = .52, x = -.16,
-    xend = ols.mean + qnorm(.025) * ols.ses), color = 'skyblue2') +
-  geom_segment(aes(y = .52, yend = .52, x = -.15,
-    xend = -.16), color = 'skyblue2', linetype = 'dashed') +
-  geom_point(aes(y = .52, x = ols.mean), color = 'blue', fill = 'skyblue2',
-    shape = 21, size = 3) +
-  geom_segment(aes(y = .52, yend = .76, x = ols.mean + qnorm(.025) * ols.ses,
-    xend = ols.mean + qnorm(.025) * ols.ses), color = 'grey1',
-    linetype = 'dashed') +
-  geom_label(data = tibble(y = ylabel, x = xlabel), aes(y = y, x = x),
-    label = paste0(c('IV: ', 'OLS: '), round(xlabel, 3)),
-    family = 'LM Roman 10', position = position_nudge(x = 0, y = .01)) +
+  geom_point(
+    data = strg.iv.simulation, aes(y = ccorrel,  x = betas), color = 'grey4',
+    alpha = .5
+  ) +
+  # geom_point(
+  #   data = weak.iv.simulation, aes(y = ccorrel,  x = betas),
+  #   alpha = .5
+  # ) +
+  # scale_x_continuous(breaks = seq(-.5, .5, .1), limits = c(-.5, .5)) +
+  # scale_y_continuous(breaks = seq(0, .76, .076), limits = c(0, .76)) +
+  geom_point(
+    aes(y = .73, x = strg.iv.mean), color = 'blue', fill = 'skyblue2',
+    shape = 21, size = 3
+  ) +
+  geom_segment(
+    aes(y = .73, yend = .73, x = strg.iv.mean - qnorm(.025) * strg.iv.ses,
+    xend = strg.iv.mean + qnorm(.025) * strg.iv.ses), color = 'skyblue2'
+  ) +
+  geom_segment(
+    aes(y = .73, yend = .73, x = -.16, xend = ols.mean + qnorm(.025) * ols.ses),
+    color = 'skyblue2'
+  ) +
+  geom_segment(
+    aes(y = .73, yend = .73, x = -.15, xend = -.16), color = 'skyblue2',
+    linetype = 'dashed'
+  ) +
+  geom_point(
+    aes(y = .73, x = ols.mean), color = 'blue', fill = 'skyblue2', shape = 21,
+    size = 3
+  ) +
+  # geom_segment(aes(y = .52, yend = .76, x = ols.mean + qnorm(.025) * ols.ses,
+  #   xend = ols.mean + qnorm(.025) * ols.ses), color = 'grey1',
+  #   linetype = 'dashed') +
+  # geom_label(data = tibble(y = ylabel, x = xlabel), aes(y = y, x = x),
+  #   label = paste0(c('IV: ', 'OLS: '), round(xlabel, 3)),
+  #   family = 'LM Roman 10', position = position_nudge(x = 0, y = .01)) +
   labs(y = 'Correlation Coefficient',
        x = 'IV Coefficient Point Estimate Simulations') +
   theme_bw() +
@@ -1453,12 +1470,15 @@ ggplot() +
         text = element_text(family = 'LM Roman 10'),
         panel.border = element_rect(color = 'black', size = 1),
         panel.grid = element_blank(),
-        panel.grid.major.x = element_line(color = 'grey79')
+        panel.grid.major.x = element_line(color = 'grey79'),
+        # legend.position = 'none'
   )
 
-# # save plot
-# ggsave('weakinstruments.pdf', device = cairo_pdf, path = 'plots', dpi = 100,
-#        width = 7, height = 5)
+# save plot
+ggsave(
+  '05_weakinstruments_IV_OLS.pdf', device = cairo_pdf, path = 'plots', dpi = 100,
+  width = 7, height = 5
+)
 
 # remove everything for serial sourcing
 rm(list = ls())

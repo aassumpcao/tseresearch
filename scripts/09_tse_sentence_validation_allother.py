@@ -11,6 +11,7 @@ from imblearn.over_sampling import SMOTE
 from sklearn.ensemble import AdaBoostClassifier
 from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.externals import joblib
 from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
 from sklearn.feature_selection import SelectKBest, chi2
 from sklearn.linear_model import LogisticRegression
@@ -130,6 +131,9 @@ def main():
         # fit each model
         model.fit(X_train, y_train)
 
+        # save model
+        joblib.dump(model, 'data/' + str(mname) + '.pkl')
+
         # predict each class
         y_pred = model.predict(X_test)
 
@@ -145,6 +149,7 @@ def main():
 
         # print progress
         print('Hold-out test complete for model: ' + str(mname) + '.')
+
 
     # fill in the cross-validation dataset and save to file
     val_performance = pd.concat([pd.DataFrame(val) for val in validation])

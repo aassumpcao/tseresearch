@@ -1,12 +1,12 @@
 #!/bin/bash
-
-#SBATCH -p bigmem
-#SBATCH --qos bigmem_access
-#SBATCH -N 1
+#SBATCH --partition=bigmem
+#SBATCH --qos=bigmem_access
 #SBATCH --mem=2000g
-#SBATCH -n 16
-#SBATCH -t 1-
+#SBATCH --nodes=1
+#SBATCH --ntasks=64
+#SBATCH -t 11-
 #SBATCH --mail-user=andre.assumpcao@gmail.com
 #SBATCH --mail-type=ALL
+#SBATCH --output=slurm-%j.log
 
-python3.6 scripts/09_tse_sentence_validation_allother.py --chi2=20000
+python3.6 scripts/09_tse_sentence_validation_allother.py
