@@ -1,34 +1,29 @@
 ### electoral crime and performance paper
 # judicial decisions script
 #   this script wrangles the judicial rulings after machine learning
-#   classification. i load the results from both svm and xgboost estimations,
-#   the best performing algorithms, to find the class of each judicial ruling.
+#   classification. i load the results from both the linear svc estimation,
+#   the best performing algorithm, to find the class of each judicial ruling.
 #   finally, i build the analysis dataset compiling all other datasets.
 # author: andre assumpcao
 # by andre.assumpcao@gmail.com
 
-### data and library calls
+rm(list = ls())
 # import libraries
 library(magrittr)
 library(tidyverse)
 
 # load data
 load('data/campaign.Rda')
+load('data/candidatesPending.Rda')
+load('data/electoralResults.Rda')
 load('data/sections.Rda')
-load('data/tseAnalysis.Rda')
-load('data/tseSummary.Rda')
-load('data/tseUpdates.Rda')
 load('data/turnout.Rda')
 load('data/vacancies.Rda')
 
 # load csv files
-tseObserved  <- read_csv('data/tseObserved.csv') %>%
-                mutate(scraperID = as.character(scraperID))
-tsePredicted <- read_csv('data/tsePredicted.csv') %>%
-                mutate(scraperID = as.character(scraperID))
-tseClassProb <- read_csv('data/tseClassProb.csv')
+tseClasses <- read_csv('data/tseClasses.csv')
 
-### function definitions
+# function definitions
 # define function to calculate age from dob
 calc_age <- function(birthDate, refDate = Sys.Date()) {
   # Args:
@@ -46,33 +41,10 @@ calc_age <- function(birthDate, refDate = Sys.Date()) {
   return(time$year)
 }
 
-### body
-# define same classes as python
-classes <- c('Ficha Limpa' = 0, 'Lei das Eleições' = 1,
-             'Requisito Faltante' = 2, 'Partido/Coligação' = 3)
-
-# build analysis dataset from scratch
-tse.analysis <- electoralCrimes %>%
-  select(scraperID, ruling.class = broad.rejection)
-
-# join the predictions for each ruling class
-tse.analysis %<>%
-  left_join(tseObserved, by = 'scraperID') %>%
-  distinct(scraperID, .keep_all = TRUE) %>%
-  select(-rulingClass) %>%
-  left_join(tsePredicted, by = 'scraperID') %>%
-  distinct(scraperID, .keep_all = TRUE) %>%
-  select(-xgPred) %>%
-  mutate(ruling.class = ruling.class %>% {ifelse(is.na(.), svmPred, .)})
-
-# convert ruling class numbers into the same earlier categories
-for (i in 1:4) {
-  tse.analysis$ruling.class %<>% {ifelse(. == i - 1, names(classes)[[i]], .)}
-  if (i == 4) {rm(i)}
-}
-
-# join with earlier data
-tse.analysis %<>% select(-svmPred) %>% left_join(electoralCrimes, 'scraperID')
+# build final dataset
+tse.analysis <- electoralResults %>%
+  left_join(tseClasses, 'candidateID') %>%
+  distinct(candidateID, .keep_all = TRUE)
 
 # compute votes necessary for election in each cycle in three ways
 #   1. mayors:          50% + 1 of the valid vote total           (maj.)
@@ -87,104 +59,109 @@ tse.analysis %<>% select(-svmPred) %>% left_join(electoralCrimes, 'scraperID')
 # define relevant election years and criteria for join function across datasets
 years <- seq(2004, 2016, 4)
 joinkey.1 <- c('SIGLA_UE', 'CODIGO_CARGO', 'ANO_ELEICAO')
-joinkey.2 <- c('SIGLA_UE', 'NUM_TURNO', 'CODIGO_CARGO', 'ANO_ELEICAO')
+joinkey.2 <- c(joinkey.1, 'NUMERO_CANDIDATO' = 'NUM_VOTAVEL')
 
 # edit vacancies dataset before joining onto sections
 vacancies %<>%
   mutate(
-    SIGLA_UE     = ifelse(ANO_ELEICAO == 2016, str_pad(SG_UE, 5, pad = '0'),
-                          SIGLA_UE),
+    SIGLA_UE = ifelse(ANO_ELEICAO == 2016, str_pad(SG_UE,5,pad='0'), SIGLA_UE),
     CODIGO_CARGO = ifelse(ANO_ELEICAO == 2016, CD_CARGO, CODIGO_CARGO),
-    QTDE_VAGAS   = ifelse(ANO_ELEICAO == 2016, QT_VAGAS, QTDE_VAGAS)
-  )
+    QTDE_VAGAS = ifelse(ANO_ELEICAO == 2016, QT_VAGAS, QTDE_VAGAS)
+  ) %>%
+  mutate_all(as.character)
 
-# create first and second vote variable (for maj. and prop. elections)
-elections <- vacancies %>%
-  {left_join(filter(sections, ANO_ELEICAO %in% years), ., joinkey.1)} %>%
+# aggregate results by electoral section
+aggregated.sections <- sections %>%
+  ungroup() %>%
+  group_by(ANO_ELEICAO, SIGLA_UE, CODIGO_CARGO) %>%
+  summarize(voto.secao.total = sum(voto.secao)) %>%
+  ungroup() %>%
+  mutate_all(as.character)
+
+# aggregate results by electoral section and rank candidates
+individual.politicians <- sections %>%
   filter(!(NUM_VOTAVEL %in% c(95, 96, 97))) %>%
-  group_by(SIGLA_UE, ANO_ELEICAO, CODIGO_CARGO, NUM_TURNO, QTDE_VAGAS) %>%
-  summarize(total_votes = sum(votes2)) %>%
-  mutate(votes1 = case_when(CODIGO_CARGO == 11 ~ floor(total_votes / 2),
-    CODIGO_CARGO == 13 ~ floor(total_votes / QTDE_VAGAS))
-  )
+  group_by(ANO_ELEICAO, SIGLA_UE, CODIGO_CARGO) %>%
+  arrange(ANO_ELEICAO, SIGLA_UE, CODIGO_CARGO, desc(NUM_VOTAVEL)) %>%
+  mutate(voto.ranking = row_number()) %>%
+  ungroup() %>%
+  mutate_all(as.character)
 
-# create third vote variable (for proportional elections)
-elections <- sections %>%
-  group_by(ANO_ELEICAO, SIGLA_UE, NUM_TURNO, CODIGO_CARGO) %>%
-  mutate(rank = order(votes2, decreasing = TRUE)) %>%
-  {left_join(elections, ., joinkey.2)} %>%
-  filter(QTDE_VAGAS == rank) %>%
+# join analysis file with aggregation of electoral results by municipality.
+# then, join onto vacancies so that we can calculate votees necessary for
+# election
+tse.analysis %<>%
+  mutate_all(as.character) %>%
+  left_join(aggregated.sections, joinkey.1) %>%
+  left_join(individual.politicians, joinkey.2) %>%
+  mutate(voto.secao = voto.secao.x) %>%
+  select(-matches('\\.(y|x)$')) %>%
+  left_join(vacancies, joinkey.1) %>%
+  select(-matches('\\.(y|x)$')) %>%
+  group_by(SIGLA_UE, ANO_ELEICAO, CODIGO_CARGO) %>%
+  mutate_at(vars(voto.secao.total, QTDE_VAGAS), as.numeric) %>%
+  mutate(
+    votos.porcargo = case_when(CODIGO_CARGO == 11 ~ floor(voto.secao.total/2),
+      CODIGO_CARGO == 13 ~ floor(voto.secao.total/QTDE_VAGAS)),
+    vagas.porcargo = QTDE_VAGAS
+  ) %>%
   ungroup()
 
-# define last conditions for total votes
-elections$election_votes <- elections %$%
-  ifelse(CODIGO_CARGO == 13 & (votes2 >= votes1), votes1, votes2)
-
 # remove useless objects ls()
-rm(list = objects(pattern = 'lass|join|Summ|Pred|Obser|years|local'))
+rm(list = objects(pattern = '^(a|can|e|i|j|s|tseClasses|turnout|v|y)'))
 
 # rename variables in the remaining datasets
 tse.analysis %<>%
   mutate_all(as.character) %>%
-  transmute(election.year              = ANO_ELEICAO,
-            election.stage             = NUM_TURNO,
-            election.state             = SIGLA_UF,
-            election.ID                = SIGLA_UE,
-            office.ID                  = CODIGO_CARGO,
-            scraper.ID                 = scraperID,
-            candidate.ID               = SEQUENCIAL_CANDIDATO,
-            candidate.number           = NUMERO_CANDIDATO,
-            candidate.name             = NOME_CANDIDATO,
-            candidate.ssn              = CPF_CANDIDATO,
-            candidate.dob              = DATA_NASCIMENTO,
-            candidate.age              = IDADE_DATA_ELEICAO,
-            candidate.ethnicity        = DESCRICAO_COR_RACA,
-            candidate.ethnicity.ID     = CODIGO_COR_RACA,
-            candidate.gender           = DESCRICAO_SEXO,
-            candidate.gender.ID        = CODIGO_SEXO,
-            candidate.occupation       = DESCRICAO_OCUPACAO,
-            candidate.occupation.ID    = CODIGO_OCUPACAO,
-            candidate.education        = DESCRICAO_GRAU_INSTRUCAO,
-            candidate.education.ID     = COD_GRAU_INSTRUCAO,
-            candidate.maritalstatus    = DESCRICAO_ESTADO_CIVIL,
-            candidate.maritalstatus.ID = CODIGO_ESTADO_CIVIL,
-            candidate.votes            = as.integer(votes),
-            candidacy.situation        = DES_SITUACAO_CANDIDATURA,
-            candidacy.situation.ID     = COD_SITUACAO_CANDIDATURA,
-            candidacy.expenditures.max = DESPESA_MAX_CAMPANHA,
-            candidacy.invalid.ontrial  = trialCrime,
-            candidacy.invalid.onappeal = appealCrime,
-            candidacy.ruling.class     = ruling.class,
-            party.number               = NUMERO_PARTIDO,
-            party.coalition            = COMPOSICAO_LEGENDA)
-
-elections %<>%
-  mutate_all(as.character) %>%
-  transmute(election.year            = ANO_ELEICAO,
-            election.stage           = NUM_TURNO,
-            election.ID              = SIGLA_UE,
-            office.ID                = CODIGO_CARGO,
-            office.vacancies         = QTDE_VAGAS,
-            elected.candidate.number = NUM_VOTAVEL,
-            votes.total              = as.integer(total_votes),
-            votes.foroffice          = as.integer(election_votes))
+  transmute(
+    election.year              = year,
+    election.state             = state,
+    election.ID                = electionID,
+    office.ID                  = officeID,
+    office.vacancies           = QTDE_VAGAS,
+    candidate.ID               = candidateID,
+    candidate.number           = NUMERO_CANDIDATO,
+    candidate.name             = NOME_CANDIDATO,
+    candidate.ssn              = CPF_CANDIDATO,
+    candidate.dob              = DATA_NASCIMENTO,
+    candidate.age              = IDADE_DATA_ELEICAO,
+    candidate.ethnicity        = DESCRICAO_COR_RACA,
+    candidate.ethnicity.ID     = CODIGO_COR_RACA,
+    candidate.gender           = DESCRICAO_SEXO,
+    candidate.gender.ID        = CODIGO_SEXO,
+    candidate.occupation       = DESCRICAO_OCUPACAO,
+    candidate.occupation.ID    = CODIGO_OCUPACAO,
+    candidate.education        = DESCRICAO_GRAU_INSTRUCAO,
+    candidate.education.ID     = COD_GRAU_INSTRUCAO,
+    candidate.maritalstatus    = DESCRICAO_ESTADO_CIVIL,
+    candidate.maritalstatus.ID = CODIGO_ESTADO_CIVIL,
+    candidacy.situation        = DES_SITUACAO_CANDIDATURA,
+    candidacy.situation.ID     = COD_SITUACAO_CANDIDATURA,
+    candidacy.expenditures.max = DESPESA_MAX_CAMPANHA,
+    candidacy.invalid.ontrial  = trialCrime,
+    candidacy.invalid.onappeal = appealsCrime,
+    candidacy.ruling.class     = class,
+    party.number               = NUMERO_PARTIDO,
+    party.coalition            = COMPOSICAO_LEGENDA,
+    votes.election.candidate   = voto.secao,
+    votes.election.total       = voto.secao.total,
+    votes.valid.candidate      = voto.municipio,
+    votes.ranking.candidate    = voto.ranking,
+    votes.foroffice            = votos.porcargo
+  )
 
 # prepare outcomes in final dataset
 tse.analysis %<>%
-  left_join(elections, by = c('election.year', 'election.stage',
-    'election.ID', 'office.ID')) %>%
+  mutate_at(vars(starts_with('votes'), office.vacancies), as.integer) %>%
   mutate(
-    candidate.votes  = as.integer(candidate.votes),
-    outcome.elected  = as.integer(ifelse(candidate.votes >= votes.foroffice,
-                                         1, 0)),
-    outcome.share    = round((candidate.votes / votes.total) * 100, digits = 2),
-    outcome.distance = round((candidate.votes - votes.foroffice) * 100 /
-                              votes.total, digits = 2)
-  ) %>%
-  select(
-    contains('election'), matches('office|scraper\\.'), contains('outcome'),
-    contains('votes'), contains('candidate'), contains('candidacy'),
-    contains('party')
+    outcome.elected = ifelse(
+      votes.election.candidate >= votes.foroffice |
+      votes.ranking.candidate <= office.vacancies, 1, 0
+    ),
+    outcome.share = round(votes.election.candidate / votes.election.total, 3),
+    outcome.distance = round(
+      (votes.election.candidate - votes.foroffice) / votes.election.total, 3
+    )
   )
 
 # prepare covariates
@@ -218,8 +195,11 @@ tse.analysis %<>%
   select(-candidate.education.ID) %>%
   mutate(candidate.education = str_remove(candidate.education, 'ENSINO')) %>%
   mutate(candidate.education = str_trim(candidate.education)) %>%
-  mutate(candidate.education = ifelse(candidate.education == 'NÃO INFORMADO',
-                                      'SUPERIOR COMPLETO', candidate.education))
+  mutate(candidate.education = ifelse(
+    candidate.education == 'NÃO INFORMADO', 'SUPERIOR COMPLETO',
+    candidate.education
+  ))
+
 # wrangle marital status
 tse.analysis %<>%
   mutate(candidate.maritalstatus = ifelse(
@@ -244,20 +224,23 @@ tse.analysis %<>%
 
 # wrangle campaign expenditures
 # select variables in final dataset that will be used to match campaign spending
-campaign.match <- tse.analysis %>% select(1, 4:6, 15)
+campaign.match <- tse.analysis %>%
+  select(candidate.ID, election.year, election.ID, candidate.number)
 
 # define joinkey
-joinkey <- c('ANO_ELEICAO' = 'election.year', 'SG_UE' = 'election.ID',
-             'NR_CANDIDATO' = 'candidate.number')
+joinkey <- c(
+  'ANO_ELEICAO' = 'election.year', 'SG_UE' = 'election.ID',
+  'NR_CANDIDATO' = 'candidate.number'
+)
 
 # filter observations down to municipal elections
 campaign %>%
   filter(ANO_ELEICAO %in% seq(2004, 2016, 4) & DS_CARGO != 'Vice-prefeito') %>%
-  mutate(CD_CARGO = ifelse(DS_CARGO == 'Vereador', 13, 11)) %>%
-  inner_join(campaign.match, joinkey) %>%
-  group_by(scraper.ID) %>%
+  mutate(CD_CARGO = as.character(ifelse(DS_CARGO == 'Vereador', 13, 11))) %>%
+  inner_join(campaign.match, c('candidateID' = 'candidate.ID'), keep = TRUE) %>%
+  group_by(candidateID) %>%
   summarize(x = sum(TOTAL_DESPESA)) %>%
-  {left_join(tse.analysis, ., 'scraper.ID')} %>%
+  {left_join(tse.analysis, ., c('candidate.ID' = 'candidateID'))} %>%
   select(1:30, x, 31:36) %>%
   group_by(election.ID) %>%
   mutate(x = ifelse(is.na(x), mean(x, na.rm = TRUE), x)) %>%

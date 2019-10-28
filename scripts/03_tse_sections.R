@@ -334,6 +334,7 @@ unlink('./2016section', recursive = TRUE)
 # bind all data
 sections <- bind_rows(sections2004, sections2008, sections2012, sections2016)
 sections %>% head()
+
 # collapse results to individual voting counts
 sections %<>%
   group_by(ANO_ELEICAO, SIGLA_UE, NUM_TURNO, CODIGO_CARGO, NUM_VOTAVEL) %>%
