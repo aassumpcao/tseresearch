@@ -40,7 +40,6 @@ holdout$model %<>%
   str_remove(' Classifier') %>%
   str_replace_all('Ada Boost', 'Adaptive Boosting')
 
-
 # graph accuracy scores
 p <- validation %>%
   ggplot() +
@@ -48,7 +47,11 @@ p <- validation %>%
     aes(x = fct_reorder(model, accuracy), y = accuracy, color = source),
     outlier.shape = NA
   ) +
+  geom_text(
+    aes(y = .8, x = 1), label = '<.80', size = 4, family = 'LM Roman 10',
+  ) +
   labs(y = 'Cross-Validation Accuracy') +
+  scale_y_continuous(limits = c(.8, 1), breaks = seq(.8, 1, .025)) +
   scale_color_manual(
     name = 'Validation Stage', breaks = c('test', 'train'),
     values = c('test' = 'grey15', 'train' = 'grey60'),
@@ -65,6 +68,7 @@ p <- validation %>%
     panel.border = element_rect(color = 'black', size = 1),
     panel.grid.major.y = element_blank(),
     panel.grid.major.x = element_line(color = 'grey79', linetype = 'dashed'),
+    panel.grid.minor.x = element_line(color = 'grey79', linetype = 'dashed'),
     legend.position = 'top'
   )
 
@@ -77,14 +81,14 @@ ggsave(
 # produce dnn plot
 p <- dnn %>%
   ggplot() +
-  geom_point(aes(x = epochs, y = accuracy, color = '1')) +
-  geom_point(aes(x = epochs, y = loss, color = '2')) +
-  geom_smooth(aes(x = epochs, y = accuracy, color = '1'), se = FALSE) +
-  geom_smooth(aes(x = epochs, y = loss, color = '2'), se = FALSE) +
+  geom_line(aes(x = epochs, y = accuracy, color = '1'), size = 1.5) +
+  geom_line(aes(x = epochs, y = loss, color = '2'), size = 1.5) +
   labs(x = 'Epochs', y = 'Accuracy') +
+  scale_y_continuous(limits = c(.1, 1), breaks = seq(.1, 1, .1)) +
+  scale_x_continuous(limits = c(0, 150), breaks = seq(0, 150, 25)) +
   scale_color_manual(
-    name = 'Metrics', breaks = c('1', '2'), labels = c('Accuracy', 'Loss'),
-    values = c('1' = 'grey15', '2' = 'grey60')
+    name = 'Performance Metrics:', breaks = c('1', '2'),
+    labels = c('Accuracy', 'Loss'), values = c('1' = 'grey15', '2' = 'grey60')
   ) +
   theme_bw() +
   theme(
@@ -95,7 +99,9 @@ p <- dnn %>%
     text = element_text(family = 'LM Roman 10'),
     panel.border = element_rect(color = 'black', size = 1),
     panel.grid.major.y = element_line(color = 'grey79', linetype = 'dashed'),
+    panel.grid.minor.y = element_blank(),
     panel.grid.major.x = element_line(color = 'grey79', linetype = 'dashed'),
+    panel.grid.minor.x = element_blank(),
     legend.position = 'top'
   )
 
@@ -114,4 +120,8 @@ validation %>%
 
 holdout %>%
   arrange(desc(holdout_accuracy)) %>%
+  xtable::xtable(digits = 3)
+
+dnn %>%
+  summarize_all(mean) %>%
   xtable::xtable(digits = 3)
