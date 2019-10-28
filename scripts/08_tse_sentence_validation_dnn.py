@@ -26,7 +26,7 @@ def split_labels_tse(df):
     split = len(df[df['classID'] == -1])
     return (
         df.loc[split:, 'classID'].reset_index(drop = True),
-        df.loc[:split, 'classID'].reset_index(drop = True)
+        df.loc[:(split-1), 'classID'].reset_index(drop = True)
     )
 
 # define function to load features into python
