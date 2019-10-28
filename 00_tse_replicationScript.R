@@ -76,8 +76,8 @@ system2('python scripts/10_tse_sentence_classification.py &')
 # wrangle judicial classes after judicial sentence classification.
 source('scripts/08_tse_analysis_prep.R')
 
-# wrangle candidates, sections, and results for elections in 2006, 2010, 2014.
-source('scripts/09_tse_other.R')
+# wrangle machine learning analysis in appendix
+source('scripts/09_tse_appendix.R')
 
 ### analysis scripts
 # these scripts, however, should be executed. they produce the paper analysis

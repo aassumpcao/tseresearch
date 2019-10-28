@@ -7,7 +7,6 @@
 # author: andre assumpcao
 # by andre.assumpcao@gmail.com
 
-rm(list = ls())
 # import libraries
 library(magrittr)
 library(tidyverse)
@@ -108,7 +107,7 @@ tse.analysis %<>%
   ungroup()
 
 # remove useless objects ls()
-rm(list = objects(pattern = '^(a|can|e|i|j|s|tseClasses|turnout|v|y)'))
+rm(list = objects(pattern = '^(a|can|e|i|j|s|tseClasses|v|y)'))
 
 # rename variables in the remaining datasets
 tse.analysis %<>%
@@ -241,7 +240,7 @@ campaign %>%
   group_by(candidateID) %>%
   summarize(x = sum(TOTAL_DESPESA)) %>%
   {left_join(tse.analysis, ., c('candidate.ID' = 'candidateID'))} %>%
-  select(1:30, x, 31:36) %>%
+  select(1:30, x, 31:35) %>%
   group_by(election.ID) %>%
   mutate(x = ifelse(is.na(x), mean(x, na.rm = TRUE), x)) %>%
   group_by(office.ID) %>%
@@ -252,15 +251,15 @@ campaign %>%
 # wrangle turnout
 turnout %<>%
   mutate(SIGLA_UE = str_pad(SIGLA_UE, 5, 'left', '0')) %>%
+  mutate_at(vars(starts_with('QT')), as.integer) %>%
   group_by(ANO_ELEICAO, SIGLA_UE, CODIGO_CARGO) %>%
   summarize(
-    votes.election  = sum(as.integer(QTD_APTOS)),
-    votes.turnout   = sum(as.integer(QTD_COMPARECIMENTO)),
-    votes.absention = sum(as.integer(QTD_ABSTENCOES)),
-    votes.invalid   = sum(as.integer(QT_VOTOS_NULOS),
-                          as.integer(QT_VOTOS_BRANCOS)),
-    votes.null      = sum(as.integer(QT_VOTOS_NULOS)),
-    votes.blank     = sum(as.integer(QT_VOTOS_BRANCOS))
+    votes.registered = sum(QTD_APTOS),
+    votes.turnout    = sum(QTD_COMPARECIMENTO),
+    votes.absention  = sum(QTD_ABSTENCOES),
+    votes.invalid    = sum(QT_VOTOS_NULOS, QT_VOTOS_BRANCOS),
+    votes.null       = sum(QT_VOTOS_NULOS),
+    votes.blank      = sum(QT_VOTOS_BRANCOS)
   ) %>%
   ungroup() %>%
   rename(
@@ -276,17 +275,11 @@ joinkey <- c('election.year', 'election.ID', 'office.ID')
 # join tse.analysis and turnout
 tse.analysis %<>%
   left_join(turnout, joinkey) %>%
-  rename(votes.valid = votes.total) %>%
-  select(scraper.ID, matches('^election'), matches('outcome'),
+  rename(votes.valid = votes.election.total) %>%
+  select(candidate.ID, matches('^election'), matches('outcome'),
     matches('^office'), matches('candidate'), matches('candidacy'),
     matches('party'), matches('^votes')
   )
-
-#
-
-tseSummary$stage
-tseSentences
-
 
 # save to file
 save(tse.analysis, file = 'data/tseFinal.Rda')

@@ -42,6 +42,7 @@ html/
 __pycache__/
 data/
 bbc/
+plots2/
 *.html
 
 # Ignore text files
@@ -63,3 +64,4 @@ bbc/
 sftp-config.json
 scripts/08_tse_feature_extraction_Tokenizer.py
 presentations
+
