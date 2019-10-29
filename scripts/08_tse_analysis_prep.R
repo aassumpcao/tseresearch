@@ -184,6 +184,10 @@ tse.analysis %<>%
   mutate(age = ifelse(age > 86, 2008 - age, age), candidate.age = age) %>%
   select(-age, -dob)
 
+# fix last two ages
+inconsistent.ages <- which(tse.analysis$candidate.age > 86)
+tse.analysis[inconsistent.ages, 'candidate.age'] <- c(80, 77)
+
 # wrangle gender
 tse.analysis %<>%
   mutate(candidate.male = ifelse(candidate.gender.ID != 4, 1, 0)) %>%

@@ -2,11 +2,9 @@
 # main analysis script
 #   this script produces all tables, plots, and analyses in the electoral crime
 #   and performance paper
-
 # author: andre assumpcao
 # by andre.assumpcao@gmail.com
-
-### data and library calls
+rm(list = ls())
 # import libraries
 library(AER)
 library(extrafont)
@@ -19,7 +17,7 @@ library(xtable)
 # load data
 load('data/tseFinal.Rda')
 
-### function definitions
+# function definitions
 # function to change names of instrumented variable in felm regression so that
 # stargazer outputs everything in the same row
 cbeta <- function(reg, name = 'candidacy.invalid.ontrial') {
@@ -149,15 +147,16 @@ simcorrel <- function(correl.shift = NULL, ...) {
   # function
   # extract actual observed values from appeals distribution
   var <- tse.analysis$candidacy.invalid.onappeal
+  nsample <- nrow(tse.analysis)
 
   # determine size of sampled observations
-  if (is.null(correl.shift)) {samplesize <- 9470}
-  else                       {samplesize <- ceiling(9470 * correl.shift)}
+  if (is.null(correl.shift)) {samplesize <- nsample}
+  else                       {samplesize <- ceiling(nsample * correl.shift)}
 
   # replace values in original variable
-  if (samplesize < 9470) {
+  if (samplesize < nsample) {
     # determine size of non-sampled observations
-    sampled <- sample(9470, samplesize, replace = FALSE)
+    sampled <- sample(nsample, samplesize, replace = FALSE)
     var[sampled] <- sample(c(1, 0), size = samplesize, replace = TRUE)
 
   } else {
@@ -195,12 +194,13 @@ t.test2 <- function(mean1, mean2, se1, se2) {
   return(result)
 }
 
-### define y's and x's used in analysis and their labels
+# define y's and x's used in analysis and their labels
 # outcome labels
 outcomes       <- c('outcome.elected', 'outcome.share', 'outcome.distance')
-outcome.labels <- c('Probability of Election',
-                    'Total Vote Share (in p.p.)',
-                    'Vote Distance to Election Cutoff (in p.p.)')
+outcome.labels <- c(
+  'Probability of Election', 'Total Vote Share (in p.p.)',
+  'Vote Distance to Election Cutoff (in p.p.)'
+)
 
 # define instruments and their labels
 instrument        <- 'candidacy.invalid.onappeal'
@@ -208,30 +208,49 @@ instrumented      <- 'candidacy.invalid.ontrial'
 instrument.labels <- c('Convicted at Trial', 'Convicted on Appeal')
 
 # define independent variables labels
-covariates       <- c('candidate.age', 'candidate.male',
-                      'candidate.maritalstatus', 'candidate.education',
-                      'candidate.experience', 'candidacy.expenditures.actual')
-covariate.labels <- c('Age', 'Male', 'Level of Education', 'Marital Status',
-                      'Political Experience', 'Campaign Expenditures (in R$)')
+covariates       <- c(
+  'candidate.age', 'candidate.male', 'candidate.maritalstatus',
+  'candidate.education', 'candidate.experience', 'candidacy.expenditures.actual'
+)
+covariate.labels <- c(
+  'Age', 'Male', 'Level of Education', 'Marital Status', 'Political Experience',
+  'Campaign Expenditures (in R$)'
+)
 
-### define matrices of fixed effects
+# define matrices of fixed effects
 # municipality and time
 mun.label   <- 'Municipal Election'
 time.label  <- 'Election Year'
 
 # define variable types for analysis
-integers <- c(6, 11, 17, 20, 26, 31:32, 36:43)
-factors  <- c(2, 5, 9, 21, 23:24, 33:35)
+integers <- c(
+  'outcome.elected', 'office.vacancies', 'candidate.age','candidate.experience',
+  'candidate.male', 'votes.election.candidate', 'votes.valid.candidate',
+  'votes.ranking.candidate', 'candidate.experience','candidacy.invalid.ontrial',
+  'candidacy.ruling.class', 'candidacy.invalid.onappeal', 'votes.valid',
+  'votes.foroffice', 'votes.registered', 'votes.turnout', 'votes.absention',
+  'votes.invalid', 'votes.null', 'votes.blank'
+)
+
+factors <- c(
+  'election.year', 'election.ID', 'office.ID', 'candidate.gender',
+  'candidate.education', 'candidate.maritalstatus', 'party.number',
+  'party.coalition'
+)
+
+double <- c('outcome.share', 'outcome.distance')
 
 # change variable types
 tse.analysis %<>%
   mutate_at(vars(integers), as.integer) %>%
-  mutate_at(vars(factors), as.factor)
+  mutate_at(vars(factors), as.factor) %>%
+  mutate_at(vars(double), as.numeric)
 
 # define levels for education and marital status variables
-labels1 <- c('Illiterate', 'Completed ES/MS', 'Incomplete ES/MS',
-             'Can Read and Write', 'Completed HS', 'Incomplete HS',
-             'Completed College', 'Incomplete College')
+labels1 <- c(
+  'Illiterate', 'Completed ES/MS', 'Incomplete ES/MS', 'Can Read and Write',
+  'Completed HS', 'Incomplete HS', 'Completed College', 'Incomplete College'
+)
 labels2 <- c('Married', 'Divorced', 'Legally Divorced', 'Single', 'Widowed')
 
 # assign factors
@@ -251,7 +270,7 @@ stargazer(
   ),
 
   # table cosmetics
-  type = 'text',
+  type = 'latex',
   title = 'Descriptive Statistics',
   style = 'default',
   summary = TRUE,
@@ -336,7 +355,7 @@ fs.estimate3 <- point.estimates3 %>%
   round(3)
 
 # build dataset
-models <- rep(c('model1', 'model2', 'model3'), 3)
+models   <- rep(c('model1', 'model2', 'model3'), 3)
 ci_bound <- rep(c('90% CI', '95% CI', '99% CI'), each = 3)
 estimate <- rep(c(fs.estimate1[1], fs.estimate2[1], fs.estimate3[1]), 3)
 ci_upper <- c(fs.estimate1[2], fs.estimate2[2], fs.estimate3[2],
@@ -357,7 +376,8 @@ labels <- c(f.stat1, f.stat2, f.stat3) %>%
            'Individual Covariates \n and Fixed-Effects'), ., sep = '\n')}
 
 # build plot
-ggplot(fs.estimates, aes(y = estimate, x = models, group = ci_bound)) +
+p <- fs.estimates %>%
+  ggplot(aes(y = estimate, x = models, group = ci_bound)) +
   geom_point(aes(color = ci_bound), position = position_dodge(width = .25),
     size = 3) +
   geom_text(aes(label = estimate), nudge_x = -.25, family = 'LM Roman 10',
@@ -368,23 +388,24 @@ ggplot(fs.estimates, aes(y = estimate, x = models, group = ci_bound)) +
     name = 'Confidence Intervals:') +
   scale_x_discrete(labels = labels) +
   labs(y = 'Instrument Point Estimates', x = element_blank()) +
-  ylim(min = .7, max = .8) +
+  ylim(min = .55, max = .70) +
   theme_bw() +
-  theme(axis.title  = element_text(size = 10),
-        axis.text.y = element_text(size = 10, lineheight = 1.1, face = 'bold'),
-        axis.text.x = element_text(size = 10, lineheight = 1.1, face = 'bold'),
-        text = element_text(family = 'LM Roman 10'),
-        panel.border = element_rect(colour = 'black', size = 1),
-        legend.text  = element_text(size = 10), legend.position = 'top',
-        panel.grid.major = element_line(color = 'lightcyan4',
-                                        linetype = 'dotted'),
-        panel.grid.minor = element_line(color = 'lightcyan4',
-                                        linetype = 'dotted')
+  theme(
+    axis.title  = element_text(size = 10),
+    axis.text.y = element_text(size = 10, lineheight = 1.1, face = 'bold'),
+    axis.text.x = element_text(size = 10, lineheight = 1.1, face = 'bold'),
+    text = element_text(family = 'LM Roman 10'),
+    panel.border = element_rect(colour = 'black', size = 1),
+    legend.text  = element_text(size = 10), legend.position = 'top',
+    panel.grid.major = element_line(color = 'lightcyan4', linetype = 'dotted'),
+    panel.grid.minor = element_line(color = 'lightcyan4', linetype = 'dotted')
   )
 
 # # save plot
-# ggsave('firststage.pdf', device = cairo_pdf, path = 'plots', dpi = 100,
-#        width = 7, height = 5)
+# ggsave(
+#   'firststage.pdf', device = cairo_pdf, path = 'plots', dpi = 100, plot = p,
+#   width = 7, height = 5
+# )
 
 # remove unnecessary objects
 rm(list = objects(pattern = 'f\\.stat|point\\.estimate|names|models|ci'))

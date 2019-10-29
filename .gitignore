@@ -43,6 +43,7 @@ __pycache__/
 data/
 bbc/
 plots2/
+tables2/
 *.html
 
 # Ignore text files
