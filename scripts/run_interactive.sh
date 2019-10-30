@@ -18,4 +18,4 @@ SIMG_PATH=/nas/longleaf/apps/tensorflow_py3/2.0.0/simg
 SIMG_NAME=tensorflow2.0.0-py3-cuda10.0-ubuntu18.04.simg
 
 # Run interactive job to GPU node using Singularity
-srun --ntasks=1 --cpus-per-task=1 --mem=128G --time=8:00:00 --partition=volta-gpu --gres=gpu:1 --qos=gpu_access --pty singularity shell --nv -B /pine $SIMG_PATH/$SIMG_NAME
+srun --ntasks=64 --cpus-per-task=1 --mem=128G --time=4:00:00 --partition=volta-gpu --gres=gpu:1 --qos=gpu_access --pty singularity shell --nv -B /pine $SIMG_PATH/$SIMG_NAME

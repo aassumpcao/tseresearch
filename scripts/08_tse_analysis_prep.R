@@ -115,7 +115,7 @@ tse.analysis %<>%
   transmute(
     election.year              = year,
     election.state             = state,
-    election.ID                = electionID,
+    election.ID                = SIGLA_UE,
     office.ID                  = officeID,
     office.vacancies           = QTDE_VAGAS,
     candidate.ID               = candidateID,
@@ -270,14 +270,14 @@ turnout %<>%
     election.year   = ANO_ELEICAO,
     election.ID     = SIGLA_UE,
     office.ID       = CODIGO_CARGO
-  ) %>%
-  select(matches('[a-z]'))
+  )
 
 # define joinkey
 joinkey <- c('election.year', 'election.ID', 'office.ID')
 
 # join tse.analysis and turnout
 tse.analysis %<>%
+  distinct(candidate.ID, .keep_all = TRUE) %>%
   left_join(turnout, joinkey) %>%
   rename(votes.valid = votes.election.total) %>%
   select(candidate.ID, matches('^election'), matches('outcome'),

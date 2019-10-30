@@ -131,45 +131,6 @@ cse <- function(reg, fs = FALSE, ...) {
   return(rob)
 }
 
-# function to simulate other correlation levels between trial and appeals
-# rulings using the same judicial review data
-simcorrel <- function(correl.shift = NULL, ...) {
-  # Args:
-  #   var: variable used to compute correlation
-  #   ...: additional arguments passed to sample()
-
-  # Returns:
-  #   list with correlation coefficient, mean, and vector of simulated outcomes
-
-  # Body:
-  #   call to sample, correlation, mean, and store it to object
-
-  # function
-  # extract actual observed values from appeals distribution
-  var <- tse.analysis$candidacy.invalid.onappeal
-  nsample <- nrow(tse.analysis)
-
-  # determine size of sampled observations
-  if (is.null(correl.shift)) {samplesize <- nsample}
-  else                       {samplesize <- ceiling(nsample * correl.shift)}
-
-  # replace values in original variable
-  if (samplesize < nsample) {
-    # determine size of non-sampled observations
-    sampled <- sample(nsample, samplesize, replace = FALSE)
-    var[sampled] <- sample(c(1, 0), size = samplesize, replace = TRUE)
-
-  } else {
-    var %<>% sample(size = samplesize, ...)
-  }
-
-  # produce object
-  object <- list(correlation = cor(tse.analysis$candidacy.invalid.ontrial, var),
-                 mean = mean(var), appeals.outcomes = var)
-  # return call
-  invisible(object)
-}
-
 # function to conduct t-tests across parameters in different regressions
 t.test2 <- function(mean1, mean2, se1, se2) {
   # Args:
@@ -231,13 +192,11 @@ integers <- c(
   'votes.foroffice', 'votes.registered', 'votes.turnout', 'votes.absention',
   'votes.invalid', 'votes.null', 'votes.blank'
 )
-
 factors <- c(
   'election.year', 'election.ID', 'office.ID', 'candidate.gender',
   'candidate.education', 'candidate.maritalstatus', 'party.number',
   'party.coalition'
 )
-
 double <- c('outcome.share', 'outcome.distance')
 
 # change variable types
@@ -270,7 +229,7 @@ stargazer(
   ),
 
   # table cosmetics
-  type = 'latex',
+  type = 'text',
   title = 'Descriptive Statistics',
   style = 'default',
   summary = TRUE,
@@ -388,7 +347,7 @@ p <- fs.estimates %>%
     name = 'Confidence Intervals:') +
   scale_x_discrete(labels = labels) +
   labs(y = 'Instrument Point Estimates', x = element_blank()) +
-  ylim(min = .55, max = .70) +
+  ylim(min = .50, max = .70) +
   theme_bw() +
   theme(
     axis.title  = element_text(size = 10),
@@ -403,7 +362,7 @@ p <- fs.estimates %>%
 
 # # save plot
 # ggsave(
-#   'firststage.pdf', device = cairo_pdf, path = 'plots', dpi = 100, plot = p,
+#   plot = p, 'firststage.pdf', device = cairo_pdf, path = 'plots', dpi = 100,
 #   width = 7, height = 5
 # )
 
@@ -417,7 +376,7 @@ stargazer(
   list(fs01, fs02, fs03),
 
   # table cosmetics
-  type = 'text',
+  type = 'latex',
   title = 'First-Stage Regressions of Convictions at Trial and on Appeal',
   style = 'default',
   # out = 'tables/firststage.tex',
@@ -489,12 +448,11 @@ print.xtable(
   include.rownames = FALSE
 )
 
-# # remove unnecessary objects
-# rm(iv01, iv02, iv03, iv04, iv05)
+# remove unnecessary objects
+rm(iv01, iv02, iv03, iv04, iv05)
 
 ### ols results
 # create regression objects using the three outcomes and two samples
-
 # outcome 1: probability of election
 ols01 <- lm(outcome.elected ~ candidacy.invalid.ontrial, data = tse.analysis)
 ols02 <- lm(outcome.elected ~ candidacy.invalid.ontrial + candidate.age +
@@ -515,7 +473,7 @@ ols06 <- felm(outcome.share ~ candidacy.invalid.ontrial + candidate.age +
   candidate.maritalstatus + candidate.education | election.ID + election.year +
   party.number, data = tse.analysis, exactDOF = TRUE)
 
-# outcome 3: distance to election cutoff for city councilor candidates
+# outcome 3: distance to election cutoff for city council candidates
 ols07 <- filter(tse.analysis, office.ID == 13) %>%
   {lm(outcome.distance ~ candidacy.invalid.ontrial, data = .)}
 ols08 <- filter(tse.analysis, office.ID == 13) %>%
@@ -577,7 +535,7 @@ ss06 <- tse.analysis %>%
     (candidacy.invalid.ontrial ~ candidacy.invalid.onappeal), data = .,
     exactDOF = TRUE)}
 
-# outcome 3: distance to election cutoff for city councilor candidates
+# outcome 3: distance to election cutoff for city council candidates
 ss07 <- filter(tse.analysis, office.ID == 13) %>%
   {felm(outcome.distance ~ 1 | 0 | (candidacy.invalid.ontrial ~
     candidacy.invalid.onappeal), data = ., exactDOF = TRUE)}
@@ -629,8 +587,7 @@ stargazer(
   dep.var.caption = paste0('Outcome: ', outcome.labels[1]),
   dep.var.labels.include = FALSE,
   align = TRUE,
-  se = list(cse(ols01), cse(ols02), cse(ols03),
-            cse(ss01), cse(ss02), cse(ss03)),
+  se = list(cse(ols01), cse(ols02), cse(ols03),cse(ss01), cse(ss02), cse(ss03)),
   p.auto = TRUE,
   column.sep.width = '4pt',
   digit.separate = 3,
@@ -651,7 +608,7 @@ stargazer(
 )
 
 # extract f-stat for graphs and tables
-c('\textit{F}-stat ',
+c(
   summary(ols01)$fstatistic[1] %>% round(2),
   summary(ols02)$fstatistic[1] %>% round(2),
   summary(ols03)$F.fstat[1]    %>% round(2),
@@ -659,8 +616,8 @@ c('\textit{F}-stat ',
   summary(ss02)$F.fstat[1]     %>% round(2),
   summary(ss03)$F.fstat[1]     %>% round(2)
 ) %>%
-paste0(collapse = ' & ') %>%
-paste0(' \\')
+{paste0(' \\multicolumn{1}{c}{', ., '$^{***}$}', collapse = ' & ')} %>%
+{paste0('\textit{F}-stat &', ., ' \\')}
 
 # produce tables with outcome two
 stargazer(
@@ -680,8 +637,7 @@ stargazer(
   dep.var.caption = paste0('Outcome: ', outcome.labels[2]),
   dep.var.labels.include = FALSE,
   align = TRUE,
-  se = list(cse(ols04), cse(ols05), cse(ols06),
-            cse(ss04), cse(ss05), cse(ss06)),
+  se = list(cse(ols04), cse(ols05), cse(ols06),cse(ss04), cse(ss05), cse(ss06)),
   p.auto = TRUE,
   column.sep.width = '4pt',
   digit.separate = 3,
@@ -702,7 +658,7 @@ stargazer(
 )
 
 # extract f-stat for graphs and tables
-c('\textit{F}-stat ',
+c(
   summary(ols04)$fstatistic[1] %>% round(2),
   summary(ols05)$fstatistic[1] %>% round(2),
   summary(ols06)$F.fstat[1]    %>% round(2),
@@ -710,20 +666,8 @@ c('\textit{F}-stat ',
   summary(ss05)$F.fstat[1]     %>% round(2),
   summary(ss06)$F.fstat[1]     %>% round(2)
 ) %>%
-paste0(collapse = ' & ') %>%
-paste0(' \\')
-
-# produce cis for discussion in paper
-cis <- list(
-          c(summary(ols04)$coefficients[2], cse(ols04)[2]),
-          c(summary(ols05)$coefficients[2], cse(ols05)[2]),
-          c(summary(ols06)$coefficients[1], cse(ols06)[1]),
-          summary(ss04, robust = TRUE)$coefficients[2, c(1, 2)],
-          summary(ss05, robust = TRUE)$coefficients[17, c(1, 2)],
-          summary(ss06, robust = TRUE)$coefficients[16, c(1, 2)]
-        ) %>%
-        lapply(unname) %>%
-        lapply(function(x){c(x[1]-qnorm(.005)*x[2], x[1]+qnorm(.005)*x[2])})
+{paste0(' \\multicolumn{1}{c}{', ., '$^{***}$}', collapse = ' & ')} %>%
+{paste0('\textit{F}-stat &', ., ' \\')}
 
 # produce tables with outcome three for city councilor and mayor sample
 stargazer(
@@ -765,118 +709,200 @@ stargazer(
 )
 
 # extract f-stat for graphs and tables
-objects(pattern = 'ols|ss') %>%
-  {.[c(9, 12, 21, 24)]} %>%
-  lapply(get) %>%
-  lapply(function(x){summary(x)$F.fstat[1]}) %>%
-  unlist() %>%
-  round(2) %>%
-  paste0(collapse = ' & ') %>%
-  {paste0('\textit{F}-stat & ', .)} %>%
-  paste0(' \\')
+c(
+  summary(ols09)$F.fstat[1] %>% round(2),
+  summary(ss09)$F.fstat[1]  %>% round(2),
+  summary(ols12)$F.fstat[1] %>% round(2),
+  summary(ss12)$F.fstat[1]  %>% round(2)
+) %>%
+{paste0(' \\multicolumn{1}{c}{', ., '$^{***}$}', collapse = ' & ')} %>%
+{paste0('\textit{F}-stat &', ., ' \\')}
 
-### test for coefficient stability
-# here i implement the tests in altonji el at. (2005), oster (2017). i estimate
-# boundaries for beta_iv based on the y-variation use in each regression
+### table comparing ols and iv coefficients
+# produce cis for discussion in paper
+cis1 <- list(
+  c(summary(ols01)$coefficients[2], cse(ols01)[2]),
+  c(summary(ols02)$coefficients[2], cse(ols02)[2]),
+  c(summary(ols03)$coefficients[1], cse(ols03)[1]),
+  summary(ss01, robust = TRUE)$coefficients[2, c(1, 2)],
+  summary(ss02, robust = TRUE)$coefficients[17, c(1, 2)],
+  summary(ss03, robust = TRUE)$coefficients[16, c(1, 2)]
+) %>%
+lapply(unname) %>%
+lapply(function(x){c(beta = x[1], ci_lower = x[1]-qnorm(.025)*x[2],
+  ci_upper = x[1]+qnorm(.025)*x[2])
+})
 
-# extract beta.ols from ols regressions
-objects(pattern = 'ols') %>%
-  lapply(get) %>%
-  lapply(function(x){
-   if (class(x) == 'lm') {x$coefficients %>% {.[str_detect(names(.), 'trial')]}}
-   else {x$coefficients %>% {.[str_detect(row.names(.), 'trial')]}}
-  }) %>%
-  unlist() %>%
-  unname() -> betas
+# produce cis for discussion in paper
+cis2 <- list(
+  c(summary(ols04)$coefficients[2], cse(ols04)[2]),
+  c(summary(ols05)$coefficients[2], cse(ols05)[2]),
+  c(summary(ols06)$coefficients[1], cse(ols06)[1]),
+  summary(ss04, robust = TRUE)$coefficients[2, c(1, 2)],
+  summary(ss05, robust = TRUE)$coefficients[17, c(1, 2)],
+  summary(ss06, robust = TRUE)$coefficients[16, c(1, 2)]
+) %>%
+lapply(unname) %>%
+lapply(function(x){c(beta = x[1], ci_lower = x[1]-qnorm(.025)*x[2],
+  ci_upper = x[1]+qnorm(.025)*x[2])
+})
 
-# extract beta.ols from ols regressions
-objects(pattern = 'ols') %>%
-  lapply(get) %>%
-  lapply(function(x){cse(x)[str_detect(names(cse(x)), 'trial')]}) %>%
-  unlist() %>%
-  unname() -> stder
+# produce cis for discussion in paper
+cis3 <- list(
+  c(summary(ols07)$coefficients[2], cse(ols07)[2]),
+  c(summary(ols08)$coefficients[2], cse(ols08)[2]),
+  c(summary(ols09)$coefficients[1], cse(ols09)[1]),
+  summary(ss07, robust = TRUE)$coefficients[2, c(1, 2)],
+  summary(ss08, robust = TRUE)$coefficients[17, c(1, 2)],
+  summary(ss09, robust = TRUE)$coefficients[16, c(1, 2)]
+) %>%
+lapply(unname) %>%
+lapply(function(x){c(beta = x[1], ci_lower = x[1]-qnorm(.025)*x[2],
+  ci_upper = x[1]+qnorm(.025)*x[2])
+})
 
-# calculate the lower bound of confidence intervals to compare to iv parameters
-betas.star <- betas + qnorm(.025) * stder
+# bind everything into a dataset
+CIs <- bind_rows(cis1[[3]],cis1[[6]],cis2[[3]],cis2[[6]],cis3[[3]],cis3[[6]])
+CIs$model <- rep(c('OLS', 'IV'), 3)
+CIs$outcome <- rep(c('Election', 'Share', 'Distance'), each = 2)
+CIs$outcome %<>% factor(levels = c('Election', 'Share', 'Distance'))
 
-# extract beta.ols from ols regressions
-objects(pattern = 'ss') %>%
-  lapply(get) %>%
-  lapply(function(x){x$coefficients %>% {.[str_detect(row.names(.),'tri')]}})%>%
-  unlist() -> betas.iv
+# produce graph
+p <- CIs %>%
+  ggplot(aes(y = beta, x = outcome)) +
+  geom_point(
+    aes(color = model), position = position_dodge(width = -.25), size = 3
+  ) +
+  geom_errorbar(
+    aes(ymax = ci_upper, ymin = ci_lower, color = model), width = .5,
+    position = position_dodge(width = -.25)
+  ) +
+  geom_segment(
+    aes(y = 0, yend = 0, x = .1, xend = 3.9), size = .25, linetype = 'dashed'
+  ) +
+  scale_color_manual(values = c('grey74', 'grey17'), name = 'Models:') +
+  labs(y = 'Coefficient Estimates and 95% CIs', x = element_blank()) +
+  scale_x_discrete(labels = str_wrap(outcome.labels, width = 17)) +
+  scale_y_continuous(limits = c(-.15, 0), breaks = seq(0, -.15, -.025)) +
+  theme_bw() +
+  theme(
+    axis.title  = element_text(size = 10),
+    axis.text.y = element_text(size = 10, lineheight = 1.1, face = 'bold'),
+    axis.text.x = element_text(size = 10, lineheight = 1.1, face = 'bold'),
+    text = element_text(family = 'LM Roman 10'),
+    panel.border = element_rect(colour = 'black', size = 1),
+    legend.text  = element_text(size = 10), legend.position = 'top',
+    panel.grid = element_blank(),
+    panel.grid.major.y = element_line(color = 'lightcyan4', linetype = 'dotted')
+  )
 
-# calculate set of maximum r-squared
-rsqr <- objects(pattern = 'ss') %>%
-        lapply(get) %>%
-        lapply(function(x){summary(x)$r.squared}) %>%
-        unlist()
+# # save plot
+# ggsave(
+#   plot = p, 'coef_comparison.pdf', device = cairo_pdf, path = 'plots',
+#   dpi = 100, width = 7, height = 5
+# )
 
-# create vector for R2_ur + (R2_ur - R2_r)
-rmax <- rsqr %>%
-  {c(.[2] + (.[2] - .[1]), .[3] + (.[3] - .[1]), .[5] + (.[5] - .[4]),
-     .[6] + (.[6] - .[4]), .[8] + (.[8] - .[7]), .[9] + (.[9] - .[7]),
-     .[11]+ (.[11] - .[10]), .[12] + (.[12] - .[10])
-  )} %>%
-  lapply(function(x){ifelse(x < 1, x, 1)}) %>%
-  unlist()
+# ### test for coefficient stability
+# # here i implement the tests in altonji el at. (2005), oster (2017). i estimate
+# # boundaries for beta_iv based on the y-variation use in each regression.
 
-# produce statistics
-coefstab01 <- c(coefstab(ss01, ss02, 'delta', betas[2], rmax[1]),
-                coefstab(ss01, ss02, 'delta', betas[2], 2 * rsqr[2]),
-                coefstab(ss01, ss02, 'r2_max'),
-                coefstab(ss01, ss03, 'delta', betas[3], rmax[2]),
-                coefstab(ss01, ss03, 'delta', betas[3], 2 * rsqr[3]),
-                coefstab(ss01, ss03, 'r2_max'))
-coefstab02 <- c(coefstab(ss04, ss05, 'delta', betas[5], rmax[3]),
-                coefstab(ss04, ss05, 'delta', betas[5], 2 * rsqr[5]),
-                coefstab(ss04, ss05, 'r2_max'),
-                coefstab(ss04, ss06, 'delta', betas[6], 1),
-                coefstab(ss04, ss06, 'delta', betas[6], 1),
-                coefstab(ss04, ss06, 'r2_max'))
-coefstab03 <- c(coefstab(ss07, ss08, 'delta', betas[8], rmax[5]),
-                coefstab(ss07, ss08, 'delta', betas[8], 2 * rsqr[8]),
-                coefstab(ss07, ss08, 'r2_max'),
-                coefstab(ss07, ss09, 'delta', betas[9], 1),
-                coefstab(ss07, ss09, 'delta', betas[9], 1),
-                coefstab(ss07, ss09, 'r2_max'))
-coefstab04 <- c(coefstab(ss10, ss11, 'delta', betas[11], rmax[7]),
-                coefstab(ss10, ss11, 'delta', betas[11], 2 * rsqr[11]),
-                coefstab(ss10, ss11, 'r2_max'),
-                coefstab(ss10, ss12, 'delta', betas[12], 1),
-                coefstab(ss10, ss12, 'delta', betas[12], 1),
-                coefstab(ss10, ss12, 'r2_max'))
+# # extract beta.ols from ols regressions
+# objects(pattern = 'ols') %>%
+#   lapply(get) %>%
+#   lapply(function(x){
+#    if (class(x) == 'lm') {x$coefficients %>% {.[str_detect(names(.), 'trial')]}}
+#    else {x$coefficients %>% {.[str_detect(row.names(.), 'trial')]}}
+#   }) %>%
+#   unlist() %>%
+#   unname() -> betas
 
-# create table
-tibble(coefstab01, coefstab02, coefstab03, coefstab04) %>%
-  t() %>%
-  as_tibble(.name_repair = 'universal') %>%
-  mutate_all(~round(., 2)) %>%
-  mutate(
-    outcome = c('Outcome 1: Probability of Election', 'Outcome 2: Vote Share',
-      'Outcome 3: Vote Distance to Cutoff (City Councilor)',
-      'Outcome 4: Vote Distance to Cutoff (Mayor)')
-  ) %>%
-  select(7, 1:6) %>%
-  xtable() %>%
-  print.xtable(floating = FALSE, hline.after = c(-1, -1, 0, 4, 4),
-    include.rownames = FALSE)
+# # extract beta.ols from ols regressions
+# objects(pattern = 'ols') %>%
+#   lapply(get) %>%
+#   lapply(function(x){cse(x)[str_detect(names(cse(x)), 'trial')]}) %>%
+#   unlist() %>%
+#   unname() -> stder
 
-# create r-squares for table
-c(rmax[1], 2 * rsqr[2], NA_real_, rmax[2], 2 * rsqr[3], NA_real_) %>%
-  round(2) %>%
-  paste0(collapse = ' & ')
-  c(rmax[3], 2 * rsqr[5], NA_real_, rmax[4], 1, NA_real_) %>%
-  round(2) %>%
-  paste0(collapse = ' & ')
-  c(rmax[5], 2 * rsqr[8], NA_real_, rmax[6], 1, NA_real_) %>%
-  round(2) %>%
-  paste0(collapse = ' & ')
-  c(rmax[7], 2 * rsqr[11], NA_real_, rmax[8], 1, NA_real_) %>%
-  round(2) %>%
-  paste0(collapse = ' & ')
+# # calculate the lower bound of confidence intervals to compare to iv parameters
+# betas.star <- betas + qnorm(.025) * stder
 
-# remove unnecessary objects
-rm(list = objects(pattern = 'rsqr|rmax|coefstab'))
+# # extract beta.ols from iv regressions
+# objects(pattern = 'ss') %>%
+#   lapply(get) %>%
+#   lapply(function(x){x$coefficients %>% {.[str_detect(row.names(.),'tri')]}})%>%
+#   unlist() -> betas.iv
+
+# # calculate set of maximum r-squared
+# rsqr <- objects(pattern = 'ss') %>%
+#         lapply(get) %>%
+#         lapply(function(x){summary(x)$r.squared}) %>%
+#         unlist()
+
+# # create vector for R2_ur + (R2_ur - R2_r)
+# rmax <- rsqr %>%
+#   {c(.[2] + (.[2] - .[1]), .[3] + (.[3] - .[1]), .[5] + (.[5] - .[4]),
+#      .[6] + (.[6] - .[4]), .[8] + (.[8] - .[7]), .[9] + (.[9] - .[7]),
+#      .[11]+ (.[11] - .[10]), .[12] + (.[12] - .[10])
+#   )} %>%
+#   lapply(function(x){ifelse(x < 1, x, 1)}) %>%
+#   unlist()
+
+# # produce statistics
+# coefstab01 <- c(coefstab(ss01, ss02, 'delta', betas[2], rmax[1]),
+#                 coefstab(ss01, ss02, 'delta', betas[2], 2 * rsqr[2]),
+#                 coefstab(ss01, ss02, 'r2_max'),
+#                 coefstab(ss01, ss03, 'delta', betas[3], rmax[2]),
+#                 coefstab(ss01, ss03, 'delta', betas[3], 2 * rsqr[3]),
+#                 coefstab(ss01, ss03, 'r2_max'))
+# coefstab02 <- c(coefstab(ss04, ss05, 'delta', betas[5], rmax[3]),
+#                 coefstab(ss04, ss05, 'delta', betas[5], 2 * rsqr[5]),
+#                 coefstab(ss04, ss05, 'r2_max'),
+#                 coefstab(ss04, ss06, 'delta', betas[6], 1),
+#                 coefstab(ss04, ss06, 'delta', betas[6], 1),
+#                 coefstab(ss04, ss06, 'r2_max'))
+# coefstab03 <- c(coefstab(ss07, ss08, 'delta', betas[8], rmax[5]),
+#                 coefstab(ss07, ss08, 'delta', betas[8], 2 * rsqr[8]),
+#                 coefstab(ss07, ss08, 'r2_max'),
+#                 coefstab(ss07, ss09, 'delta', betas[9], 1),
+#                 coefstab(ss07, ss09, 'delta', betas[9], 1),
+#                 coefstab(ss07, ss09, 'r2_max'))
+# coefstab04 <- c(coefstab(ss10, ss11, 'delta', betas[11], rmax[7]),
+#                 coefstab(ss10, ss11, 'delta', betas[11], 2 * rsqr[11]),
+#                 coefstab(ss10, ss11, 'r2_max'),
+#                 coefstab(ss10, ss12, 'delta', betas[12], 1),
+#                 coefstab(ss10, ss12, 'delta', betas[12], 1),
+#                 coefstab(ss10, ss12, 'r2_max'))
+
+# # create table
+# tibble(coefstab01, coefstab02, coefstab03) %>%
+#   t() %>%
+#   as_tibble(.name_repair = 'universal') %>%
+#   mutate_all(~round(., 2)) %>%
+#   mutate(
+#     outcome = c('Outcome 1: Probability of Election', 'Outcome 2: Vote Share',
+#       'Outcome 3: Vote Distance to Cutoff')
+#   ) %>%
+#   select(7, 1:6) %>%
+#   xtable() %>%
+#   print.xtable(floating = FALSE, hline.after = c(-1, -1, 0, 3, 3),
+#     include.rownames = FALSE)
+
+# # create r-squares for table
+# c(rmax[1], 2 * rsqr[2], NA_real_, rmax[2], 2 * rsqr[3], NA_real_) %>%
+#   round(2) %>%
+#   paste0(collapse = ' & ')
+#   c(rmax[3], 2 * rsqr[5], NA_real_, rmax[4], 1, NA_real_) %>%
+#   round(2) %>%
+#   paste0(collapse = ' & ')
+#   c(rmax[5], 2 * rsqr[8], NA_real_, rmax[6], 1, NA_real_) %>%
+#   round(2) %>%
+#   paste0(collapse = ' & ')
+#   c(rmax[7], 2 * rsqr[11], NA_real_, rmax[8], 1, NA_real_) %>%
+#   round(2) %>%
+#   paste0(collapse = ' & ')
+
+# # remove unnecessary objects
+# rm(list = objects(pattern = 'rsqr|rmax|coefstab'))
 
 ### test for heterogeneous judicial behavior between trial and appeals
 # i am interested in knowing whether justices change change the factors
@@ -1012,9 +1038,10 @@ stderr <- models %>%
   {.[str_detect(names(.), 'invalid')]}
 
 # define vectors for dataset
-depvar <- c('Probability of Election', 'Vote Share',
-            'Vote Distance to Cutoff (City Councilor)',
-            'Vote Distance to Cutoff (Mayor)')
+depvar <- c(
+  'Probability of Election', 'Vote Share',
+  'Vote Distance to Cutoff (City Councilor)', 'Vote Distance to Cutoff (Mayor)'
+)
 models <- c('no.covariates', 'covariates', 'covariates.fe')
 comparison <- rep(paste(rep(depvar, each = 3), models, sep = '.'), 2)
 endogenous <- rep(c('Trial', 'Appeals'), each = 12)
@@ -1030,7 +1057,7 @@ mutate(outcomes = factor(outcomes, levels = unique(depvar)),
     levels = c("Trial", "Appeals"))) -> instrument.check
 
 # build plot
-ggplot(instrument.check, aes(y = betas, x = models, color = endogenous)) +
+p <- ggplot(instrument.check, aes(y = betas, x = models, color = endogenous)) +
   geom_point(aes(color = endogenous), position = position_dodge(width = .25)) +
   geom_errorbar(aes(ymax = ci_upper, ymin = ci_lower, color = endogenous),
     width = .25, position = position_dodge(width = .25)) +
@@ -1041,21 +1068,23 @@ ggplot(instrument.check, aes(y = betas, x = models, color = endogenous)) +
   labs(y = 'Point Estimates and 99% CIs', x = element_blank()) +
   facet_wrap(outcomes ~ ., scales = 'free_y') +
   theme_bw() +
-  theme(axis.title  = element_text(size = 10),
-        axis.text.y = element_text(size = 10, lineheight = 1.1, face = 'bold'),
-        axis.text.x = element_text(size = 10, lineheight = 1.1, face = 'bold'),
-        text = element_text(family = 'LM Roman 10'),
-        panel.grid.major = element_blank(),
-        panel.grid.minor = element_line(color = 'lightcyan4',
-                                        linetype = 'dotted'),
-        panel.border = element_rect(colour = 'black', size = 1),
-        legend.text  = element_text(size = 10), legend.position = 'top',
-        strip.text.x = element_text(size = 10, face = 'bold')
+  theme(
+    axis.title  = element_text(size = 10),
+    axis.text.y = element_text(size = 10, lineheight = 1.1, face = 'bold'),
+    axis.text.x = element_text(size = 10, lineheight = 1.1, face = 'bold'),
+    text = element_text(family = 'LM Roman 10'),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_line(color = 'lightcyan4', linetype = 'dotted'),
+    panel.border = element_rect(colour = 'black', size = 1),
+    legend.text  = element_text(size = 10), legend.position = 'top',
+    strip.text.x = element_text(size = 10, face = 'bold')
   )
 
 # # save plot
-# ggsave('instrumentcorrelation.pdf', device = cairo_pdf, path = 'plots',
-#        dpi = 100, width = 10, height = 5)
+# ggsave(
+#   plot = p, 'instrumentcorrelation.pdf', device = cairo_pdf, path = 'plots',
+#   dpi = 100, width = 10, height = 5
+# )
 
 # remove unnecessary objects
 rm(depvar, models, comparison, endogenous, instrument.check, betas, stderr)
@@ -1066,25 +1095,27 @@ rm(depvar, models, comparison, endogenous, instrument.check, betas, stderr)
 # political process altogether. this is what we test here.
 
 # disengagement outcomes
-voter.engagement <- c('Voter Turnout (percent)', 'Valid Votes (percent)',
-                      'Invalid Votes (percent)')
+voter.engagement <- c(
+  'Voter Turnout (percent)', 'Valid Votes (percent)', 'Invalid Votes (percent)'
+)
+v.var <- c('votes.turnout', 'votes.invalid', 'votes.valid')
 
 # disengagement at the individual level
-disengagement01 <- filter_at(tse.analysis, vars(37, 39, 41), ~!is.na(.)) %>%
+disengagement01 <- filter_at(tse.analysis, vars(v.var), ~!is.na(.)) %>%
   {felm(log(votes.turnout + 1) ~ candidate.age + candidate.male +
     candidate.experience + candidacy.expenditures.actual +
     candidate.maritalstatus + candidate.education | election.ID +
     election.year + party.number | (candidacy.invalid.ontrial ~
     candidacy.invalid.onappeal) | election.ID + election.year, data = .,
     exactDOF = TRUE, psdef = FALSE)}
-disengagement02 <- filter_at(tse.analysis, vars(37, 39, 41), ~!is.na(.)) %>%
+disengagement02 <- filter_at(tse.analysis, vars(v.var), ~!is.na(.)) %>%
   {felm(log(votes.valid + 1) ~ candidate.age + candidate.male +
     candidate.experience + candidacy.expenditures.actual +
     candidate.maritalstatus + candidate.education | election.ID +
     election.year + party.number | (candidacy.invalid.ontrial ~
     candidacy.invalid.onappeal) | election.ID + election.year, data = .,
     exactDOF = TRUE, psdef = FALSE)}
-disengagement03 <- filter_at(tse.analysis, vars(37, 39, 41), ~!is.na(.)) %>%
+disengagement03 <- filter_at(tse.analysis, vars(v.var), ~!is.na(.)) %>%
   {felm(log(votes.invalid + 1) ~ candidate.age + candidate.male +
     candidate.experience + candidacy.expenditures.actual +
     candidate.maritalstatus + candidate.education | election.ID +
@@ -1213,8 +1244,7 @@ rm(party.aggregation, election.aggregation)
 # process using a non-parametric bootstrapped sample of expenditures.
 
 # standardize candidate expenditures to offset outlier problems
-candidate.disengagement.analysis %<>%
-  mutate(candidacy.expenditures.actual = candidacy.expenditures.actual)
+candidate.disengagement.analysis
 
 # test 1: campaign expenditures by judicial ruling
 trial.expenditures <- candidate.disengagement.analysis %$%
@@ -1222,7 +1252,7 @@ trial.expenditures <- candidate.disengagement.analysis %$%
 appeals.expenditures <- candidate.disengagement.analysis %$%
   t.test(candidacy.expenditures.actual ~ candidacy.invalid.onappeal)
 
-# test 2: campaign expendtireus across judicial review process
+# test 2: campaign expenditures across judicial review process
 review.expenditures <- candidate.disengagement.analysis %>%
   filter(candidacy.invalid.ontrial == 1) %$%
   t.test(candidacy.expenditures.actual ~ candidacy.invalid.onappeal)
@@ -1249,7 +1279,8 @@ mutate(`Ruling Stage` = c('Trial', 'Appeals', 'Trial')) %>%
 select(`Ruling Stage`, everything()) %>%
 xtable(label = 'tab:candidatebehavior') %>%
 print.xtable(floating = FALSE, hline.after = c(-1, -1, 0, 3, 3),
-  include.rownames = FALSE)
+  include.rownames = FALSE
+)
 
 # remove unnecessary objects
 rm(candidate.disengagement.analysis, trial.expenditures, appeals.expenditures,
@@ -1261,148 +1292,95 @@ rm(candidate.disengagement.analysis, trial.expenditures, appeals.expenditures,
 # type of electoral violation and (ii) whether strategy is beneficial from the
 # when politicians are not caught.
 
-# # build new dataset containing only the politicians for which i can recover the
-# # type of electoral crime
-# hte.analysis <- filter(tse.analysis, !is.na(candidacy.ruling.class))
+# build new dataset containing only the politicians for which i can recover the
+# type of electoral crime
+hte.analysis <- filter(tse.analysis, !is.na(candidacy.ruling.class))
 
-# # relevel ruling categories to procedural or substantial rule breaking
-# hte.analysis$class <- hte.analysis$candidacy.ruling.class %>%
-#   {ifelse(.  != 'Requisito Faltante', 'Substantial', 'Procedural')} %>%
-#   factor() %>%
-#   {relevel(., ref = 'Procedural')}
+# relevel ruling categories to procedural or substantial rule breaking
+hte.analysis$class <- hte.analysis$candidacy.ruling.class
 
-# # create one long ivreg regression formula for all problems
-# treat <- paste0(instrumented, ' * class + ')
-# instr <- paste0(instrument, ' * class + ')
-# exgos <- paste0(covariates, collapse = ' + ')
-# fe    <- ' + election.year + election.ID + party.number'
-# equations <- paste0(outcomes, ' ~ ', treat, exgos, fe, ' | ', instr, exgos, fe)
+# create one long ivreg regression formula for all problems
+treat     <- paste0(instrumented, ' * class + ')
+instr     <- paste0(instrument, ' * class + ')
+exgos     <- paste0(covariates, collapse = ' + ')
+fe        <- ' + election.year + election.ID + party.number'
+equations <- paste0(outcomes, ' ~ ', treat, exgos, fe, ' | ', instr, exgos, fe)
 
-# # run regressions (note: up to 4 minutes to execute)
-# # outcome 1: probability of election
-# hte01 <- ivreg(equations[1], data = hte.analysis)
+# run regressions (note: up to 4 minutes to execute)
+# outcome 1: probability of election
+hte01 <- ivreg(equations[1], data = hte.analysis)
 
-# # outcome 2: vote share
-# hte02 <- ivreg(equations[2], data = hte.analysis)
+# outcome 2: vote share
+hte02 <- ivreg(equations[2], data = hte.analysis)
 
-# # outcome 3: distance to election cutoff for city councilor candidates
-# hte03 <- ivreg(equations[3], data = filter(hte.analysis, office.ID == 13))
+# outcome 3: distance to election cutoff for city councilor candidates
+hte03 <- ivreg(equations[3], data = filter(hte.analysis, office.ID == 13))
 
-# # outcome 3: distance to election cutoff for mayor candidates
-# hte04 <- ivreg(equations[3], data = filter(hte.analysis, office.ID == 11))
+# outcome 3: distance to election cutoff for mayor candidates
+hte04 <- ivreg(equations[3], data = filter(hte.analysis, office.ID == 11))
 
-# # compute standard errors (note: up to 5 minutes to execute)
-# hte01.se <- cse(hte01)
-# hte02.se <- cse(hte02)
-# hte03.se <- cse(hte03)
-# hte04.se <- cse(hte04)
+# compute standard errors (note: up to 5 minutes to execute)
+hte01.se <- cse(hte01)
+hte02.se <- cse(hte02)
+hte03.se <- cse(hte03)
+hte04.se <- cse(hte04)
 
-# # produce table
-# stargazer(
+# produce table
+stargazer(
 
-#   # first-stage regressions
-#   list(hte01, hte02, hte03, hte04),
+  # first-stage regressions
+  list(hte01, hte02, hte03, hte04),
 
-#   # table cosmetics
-#   type = 'latex',
-#   title = 'Heterogeneous Effect of Electoral Crime',
-#   style = 'default',
-#   # out = 'tables/hte.tex',
-#   out.header = FALSE,
-#   column.labels = c(rep('Full Sample', 2), 'City Councilor', 'Mayor'),
-#   column.separate = rep(1, 4),
-#   covariate.labels = c(instrument.labels[1], 'Substantial', 'Inter'),
-#   dep.var.caption = '',
-#   # dep.var.labels = paste0('Outcome: ', 1:4),
-#   dep.var.labels.include = FALSE,
-#   align = FALSE,
-#   se = list(hte01.se, hte02.se, hte03.se, hte04.se),
-#   p.auto = TRUE,
-#   column.sep.width = '4pt',
-#   digit.separate = 3,
-#   digits = 3,
-#   digits.extra = 0,
-#   font.size = 'scriptsize',
-#   header = FALSE,
-#   initial.zero = FALSE,
-#   model.names = FALSE,
-#   keep = 'invalid|class',
-#   label = 'tab:hte',
-#   no.space = FALSE,
-#   omit = c('education', 'party'),
-#   omit.labels = c('Individual Controls', 'Fixed-Effects'),
-#   omit.stat = c('ser', 'f', 'rsq'),
-#   omit.yes.no = c('Yes', '-'),
-#   table.placement = '!htbp'
-# )
+  # table cosmetics
+  type = 'latex',
+  title = 'Heterogeneous Effect of Electoral Crime',
+  style = 'default',
+  # out = 'tables/hte.tex',
+  out.header = FALSE,
+  column.labels = c(rep('Full Sample', 2), 'City Councilor', 'Mayor'),
+  column.separate = rep(1, 4),
+  covariate.labels = c(instrument.labels[1], 'Substantial', 'Inter'),
+  dep.var.caption = '',
+  # dep.var.labels = paste0('Outcome: ', 1:4),
+  dep.var.labels.include = FALSE,
+  align = FALSE,
+  se = list(hte01.se, hte02.se, hte03.se, hte04.se),
+  p.auto = TRUE,
+  column.sep.width = '4pt',
+  digit.separate = 3,
+  digits = 3,
+  digits.extra = 0,
+  font.size = 'scriptsize',
+  header = FALSE,
+  initial.zero = FALSE,
+  model.names = FALSE,
+  keep = 'invalid|class',
+  label = 'tab:hte',
+  no.space = FALSE,
+  omit = c('education', 'party'),
+  omit.labels = c('Individual Controls', 'Fixed-Effects'),
+  omit.stat = c('ser', 'f', 'rsq'),
+  omit.yes.no = c('Yes', '-'),
+  table.placement = '!htbp'
+)
 
-# # extract f-stats for table
-# objects(pattern = '^hte0[1-4]{1}$') %>%
-# lapply(get) %>%
-# lapply(function(x){summary(x)$waldtest[1]}) %>%
-# unlist() %>%
-# round(2) %>%
-# paste0(collapse = ' & ') %>%
-# {paste0('\textit{F}-stat & ', .)} %>%
-# paste0(' \\')
+# extract f-stats for table
+objects(pattern = '^hte0[1-4]{1}$') %>%
+lapply(get) %>%
+lapply(function(x){summary(x)$waldtest[1]}) %>%
+unlist() %>%
+round(2) %>%
+paste0(collapse = ' & ') %>%
+{paste0('\textit{F}-stat & ', .)} %>%
+paste0(' \\')
 
-# # remove unnecessary objects
-# rm(list = objects(pattern = 'hte'))
+# remove unnecessary objects
+rm(list = objects(pattern = 'hte'))
 
-### placebo test
+## placebo test
 # here I want to estimate an entire set of correlations between trial and
 # appeals decisions to map when exactly would the IV parameter become the same
 # as the OLS parameter
-
-# # create vectors of independent coefficients, standard errors, and correlations
-# se <- c()
-# betas <- c()
-# fstat <- c()
-# ucorrel <- c()
-# ccorrel <- c()
-
-# # set seed to break process down into 2
-# set.seed(12345)
-
-# # execute for loop (~ 45 minutes)
-# for (i in 1:10000) {
-
-#   # determine correlation deviation from main sample
-#   x <- runif(1, .001)
-
-#   # call to simulation and store to dataset
-#   y <- simcorrel(x)
-#   tse.analysis$appeals.simulation <- y$appeals.outcomes
-
-#   # run regressions
-#   regression <- tse.analysis %>%
-#     {felm(outcome.elected ~ candidate.age + candidate.male +
-#       candidate.experience + candidacy.expenditures.actual +
-#       candidate.maritalstatus + candidate.education | election.ID +
-#       election.year + party.number | (candidacy.invalid.ontrial ~
-#       appeals.simulation), data = ., exactDOF = TRUE)}
-
-#   # run regressions
-#   firststage <- tse.analysis %>%
-#     {felm(candidacy.invalid.ontrial ~ appeals.simulation + candidate.age +
-#       candidate.male + candidate.experience + candidacy.expenditures.actual +
-#       candidate.maritalstatus + candidate.education | election.ID +
-#       election.year + party.number, data = ., exactDOF = TRUE)}
-
-#   # store results
-#   estimates <- summary(regression, robust = TRUE)$coefficients[16, c(1, 2)]
-#   ucorrel <- c(ucorrel, unname(y$correlation))
-#   ccorrel <- c(ccorrel, summary(firststage)$coefficients[1])
-#   betas <- c(betas, unname(estimates[1]))
-#   fstat <- c(fstat, summary(firststage)$fstat)
-#   se <- c(se, unname(estimates[2]))
-# }
-
-# # create dataset
-# simulation <- tibble(ccorrel, ucorrel, betas, se, fstat)
-
-# # save to file
-# save(simulation, file = 'data/tseSimulation.Rda')
 
 # load from file
 load('data/tseSimulation.Rda')

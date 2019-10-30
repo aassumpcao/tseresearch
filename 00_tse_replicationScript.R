@@ -62,12 +62,14 @@ source('scripts/05_tse_results.R')
 source('scripts/06_tse_rejections.R')
 system2('python scripts/05_tse_decision2016.py &')
 
-# wrangle text in sentences for classification.
+# wrangle text in sentences for classification (~30 minute execution time)
 source('scripts/07_tse_sentence_processing.R')
 system2('python scripts/07_tse_embedding_processing.py &')
 
-# python: create sentence classification algorithm from 2016 sentences. this
-#  script takes one week to run on a big memory (1000g) cluster.
+# python: create sentence classification algorithm from 2016 sentences. these
+#  scripts take about a week to execute on a big memory or gpu cluster.
+#  deep neural network classification: gpu recommended, 10-hour execution time.
+#  other text classification: >2TB RAM necessary. 1-week execution time.
 #  use with caution.
 system2('python scripts/08_tse_sentence_validation_dnn.py &')
 system2('python scripts/09_tse_sentence_validation_allother.py &')
@@ -83,6 +85,9 @@ source('scripts/09_tse_appendix.R')
 # these scripts, however, should be executed. they produce the paper analysis
 # with the datasets that have been wrangled/munged by the wrangling scripts.
 
+# produce simulation for analysis (~10-hour execution time)
+source('script/10_tse_simulation.R')
+
 # produce paper analysis
-source('script/10_tse_analysis.R')
+source('script/11_tse_analysis.R')
 
