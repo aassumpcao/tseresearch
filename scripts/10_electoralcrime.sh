@@ -2,7 +2,7 @@
 #SBATCH --partition=general
 #SBATCH --nodes=1
 #SBATCH --ntasks=64
-#SBATCH --mem=128g
+#SBATCH --mem=64g
 #SBATCH -t 10-
 #SBATCH --mail-user=andre.assumpcao@gmail.com
 #SBATCH --mail-type=ALL

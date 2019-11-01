@@ -1,7 +1,6 @@
 ### electoral crime and performance paper
-# main analysis script
-#   this script produces all tables, plots, and analyses in the electoral crime
-#   and performance paper
+# this script creates the simulation for correlations between instrumented var
+#  and instrument.
 # author: andre assumpcao
 # by andre.assumpcao@gmail.com
 
@@ -13,80 +12,53 @@ library(lfe)
 # load data
 load('data/tseFinal.Rda')
 
-# function to simulate other correlation levels between trial and appeals
-# rulings using the same judicial review data
-simcorrel <- function(correl.shift = NULL, ...) {
-  # Args:
-  #   var: variable used to compute correlation
-  #   ...: additional arguments passed to sample()
-
-  # Returns:
-  #   list with correlation coefficient, mean, and vector of simulated outcomes
-
-  # Body:
-  #   call to sample, correlation, mean, and store it to object
-
-  # function
-  # extract actual observed values from appeals distribution
-  var <- tse.analysis$candidacy.invalid.onappeal
-  nsample <- nrow(tse.analysis)
-
-  # determine size of sampled observations
-  if (is.null(correl.shift)) {samplesize <- nsample}
-  else                       {samplesize <- ceiling(nsample * correl.shift)}
-
-  # replace values in original variable
-  if (samplesize < nsample) {
-
-    # determine size of non-sampled observations
-    sampled <- sample(nsample, samplesize, replace = FALSE)
-    var[sampled] <- sample(c(1, 0), size = samplesize, replace = TRUE)
-
-  } else {
-    var %<>% sample(size = samplesize, ...)
-  }
-
-  # produce object
-  object <- list(
-    correlation = cor(tse.analysis$candidacy.invalid.ontrial, var),
-    mean = mean(var),
-    appeals.outcomes = var
-  )
-
-  # return call
-  invisible(object)
+# function to simulate correlations between trial and appeals rulings using the
+#  same judicial review data.
+simulate_correlation <- function(prob_1, prob_0, appeals_vector = appeals) {
+  appeals_simulated <- appeals
+  simulation <- sample(c(1, 0), nsample, TRUE, c(prob_1, prob_0))
+  appeals_simulated[trials_favorable] <- simulation
+  return(appeals_simulated)
 }
 
-### placebo test
-# here I want to estimate an entire set of correlations between trial and
-# appeals decisions to map when exactly would the IV parameter become the same
-# as the OLS parameter
-
 # convert appeals to numeric
-tse.analysis <- tse.analysis %>%
-  mutate_at(
-    vars(candidacy.invalid.ontrial, candidacy.invalid.onappeal), as.integer
-  )
+tse.analysis$candidacy.invalid.ontrial  %<>% as.integer()
+tse.analysis$candidacy.invalid.onappeal %<>% as.integer()
 
-# create vectors of independent coefficients, standard errors, and correlations
-se <- c()
-betas <- c()
-fstat <- c()
-ucorrel <- c()
-ccorrel <- c()
+# extract appeals from the original dataset
+trials  <- tse.analysis$candidacy.invalid.ontrial
+appeals <- tse.analysis$candidacy.invalid.onappeal
+
+# define positions from appeals vector that we want to make changes in
+trials_favorable <- which(trials == 1)
+nsample <- length(trials_favorable)
+
+# create vector of probabilities for correlation coefficients
+probability <- runif(10000, 0, 1)
+complement  <- 1-probability
 
 # set seed to break process down into 2
 set.seed(12345)
 
-# execute for loop (~7 hours)
-for (i in 1:100000) {
+# create loop to execute simulations
+for (i in 1:10000) {
 
-  # determine correlation deviation from main sample
-  x <- runif(1, .001)
+  # create vectors of coefficients, standard errors, and correlations on first
+  # iteration
+  if (i == 1){
+    se <- c()
+    betas <- c()
+    fstat <- c()
+    ucorrel <- c()
+    ccorrel <- c()
+  }
 
-  # call to simulation and store to dataset
-  y <- simcorrel(x)
-  tse.analysis$appeals.simulation <- y$appeals.outcomes
+  # put probabilities into separate scalars
+  x <- probability[i]
+  y <- complement[i]
+
+  # create new vector and store into dataset
+  tse.analysis$appeals.simulation <- simulate_correlation(x, y)
 
   # run regressions
   regression <- tse.analysis %>%
@@ -103,24 +75,17 @@ for (i in 1:100000) {
       candidate.maritalstatus + candidate.education | election.ID +
       election.year + party.number, data = ., exactDOF = TRUE)}
 
-  # catch exceptions
-  tryCatch(
-    expr = {
-      # store results
-      estimates <- summary(regression, robust = TRUE)$coefficients[16, c(1, 2)]
-      ucorrel <- c(ucorrel, unname(y$correlation))
-      ccorrel <- c(ccorrel, summary(firststage)$coefficients[1])
-      betas <- c(betas, unname(estimates[1]))
-      fstat <- c(fstat, summary(firststage)$fstat)
-      se <- c(se, unname(estimates[2]))
-    },
-    error = function(e) {
-      print('error in computing regression statistics, skipping iteration')
-    }
-  )
+  # store results
+  estimates <- summary(regression, robust = TRUE)$coefficients[16, c(1, 2)]
+  ucorrel <- c(ucorrel, cor(appeals, tse.analysis$appeals.simulation))
+  ccorrel <- c(ccorrel, summary(firststage)$coefficients[1])
+  betas <- c(betas, unname(estimates[1]))
+  fstat <- c(fstat, summary(firststage)$fstat)
+  se <- c(se, unname(estimates[2]))
 
-  # add checkpoint to save to file
-  if (i %% 1000 == 0) {print(as.character(i))}
+  # print progress
+  if (i %% 1000 == 0) {print(paste0(i, ' done.'))}
+
 }
 
 # create dataset
@@ -131,3 +96,4 @@ save(simulation, file = 'data/tseSimulation.Rda')
 
 # remove everything for serial sourcing
 rm(list = ls())
+

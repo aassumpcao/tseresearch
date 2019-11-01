@@ -20,7 +20,7 @@ load('data/tseFinal.Rda')
 # function definitions
 # function to change names of instrumented variable in felm regression so that
 # stargazer outputs everything in the same row
-cbeta <- function(reg, name = 'candidacy.invalid.ontrial') {
+cbeta <- function(reg, name = 'candidacy.invalid.ontrial'){
   # Args:
   #   reg: regression object
 
@@ -51,7 +51,7 @@ cbeta <- function(reg, name = 'candidacy.invalid.ontrial') {
 
 # function to measure the degree to which selection on unobservables would hurt
 # coefficient stability
-coefstab <- function(restricted, unrestricted, stat, b_star = 0, r2_max = 1) {
+coefstab <- function(restricted, unrestricted, stat, b_star = 0, r2_max = 1){
   # Args:
   #   restricted:   restricted regression object
   #   unrestricted: unrestricted regression object
@@ -105,7 +105,7 @@ coefstab <- function(restricted, unrestricted, stat, b_star = 0, r2_max = 1) {
 }
 
 # define function to calculate corrected SEs for OLS, IV, and FELM regressions
-cse <- function(reg, fs = FALSE, ...) {
+cse <- function(reg, fs = FALSE, ...){
   # Args:
   #   reg: regression object
 
@@ -132,7 +132,7 @@ cse <- function(reg, fs = FALSE, ...) {
 }
 
 # function to conduct t-tests across parameters in different regressions
-t.test2 <- function(mean1, mean2, se1, se2) {
+t.test2 <- function(mean1, mean2, se1, se2){
   # Args:
   #   mean1, mean2: means of each parameter
   #   se1, se2:     standard errors of each parameter
@@ -1386,9 +1386,9 @@ rm(list = objects(pattern = 'hte'))
 load('data/tseSimulation.Rda')
 
 # determine which coefficients are significant at the 5% level
-simulation %<>% mutate(significant = ifelse(abs(betas / se) >= 1.96, 1, 0))
-weak.iv.simulation <- filter(simulation, fstat <= 10)
-strg.iv.simulation <- filter(simulation, fstat  > 10)
+simulation %<>% mutate(signif = ifelse(abs(betas / se) >= qnorm(.025), 1, 0))
+weak.iv.simulation <- filter(simulation, fstat  < 10)
+strg.iv.simulation <- filter(simulation, fstat >= 10)
 
 # create mean and standard errors for simulation beta
 simulation.mean <- mean(unlist(simulation[,'betas']))
@@ -1415,69 +1415,91 @@ ols.mean <- summary(ols03)$coefficients[1, 1]
 ols.ses  <- cse(ols03)[1]
 
 # create labels for data
-ylabel <- rep(.52, 2)
+ylabel <- c(strg.iv.corr, iv.corr)
 xlabel <- c(strg.iv.mean, ols.mean)
+labels <- c(
+  as.expression(bquote(IV[sim]:~.(sprintf('%.3f', xlabel[1])))),
+  as.expression(bquote(OLS[emp]:~.(round(xlabel[2], 3)))),
+  as.expression(bquote(IV[emp]:~.(round(iv.mean, 3))))
+)
 
 # build plot
-ggplot() +
-  scale_x_continuous(breaks = seq(-.3, -.15, .025), limits = c(-.30, -.15)) +
-  scale_y_continuous(breaks = seq(.52, .76, .04), limits = c(.52, .76)) +
+p <- strg.iv.simulation %>%
+  ggplot() +
   geom_point(
-    data = strg.iv.simulation, aes(y = ccorrel,  x = betas), color = 'grey4',
-    alpha = .5
+    aes(y = ccorrel,  x = betas), color = 'grey4',
+    alpha = .4, size = 2
   ) +
-  # geom_point(
-  #   data = weak.iv.simulation, aes(y = ccorrel,  x = betas),
-  #   alpha = .5
+  # geom_errorbarh(
+  #   aes(
+  #     y = iv.corr,
+  #     xmin = iv.mean-qnorm(.025)*iv.ses,
+  #     xmax = iv.mean+qnorm(.025)*iv.ses
+  #   ),
+  #   color = 'red4', size = 1, height = .01
   # ) +
-  # scale_x_continuous(breaks = seq(-.5, .5, .1), limits = c(-.5, .5)) +
-  # scale_y_continuous(breaks = seq(0, .76, .076), limits = c(0, .76)) +
   geom_point(
-    aes(y = .73, x = strg.iv.mean), color = 'blue', fill = 'skyblue2',
+    aes(y = iv.corr, x = iv.mean), color = 'red4', fill = 'brown2',
     shape = 21, size = 3
   ) +
-  geom_segment(
-    aes(y = .73, yend = .73, x = strg.iv.mean - qnorm(.025) * strg.iv.ses,
-    xend = strg.iv.mean + qnorm(.025) * strg.iv.ses), color = 'skyblue2'
-  ) +
-  geom_segment(
-    aes(y = .73, yend = .73, x = -.16, xend = ols.mean + qnorm(.025) * ols.ses),
-    color = 'skyblue2'
-  ) +
-  geom_segment(
-    aes(y = .73, yend = .73, x = -.15, xend = -.16), color = 'skyblue2',
-    linetype = 'dashed'
+  geom_errorbarh(
+    aes(
+      y = strg.iv.corr,
+      xmin = strg.iv.mean-qnorm(.025)*strg.iv.ses,
+      xmax = strg.iv.mean+qnorm(.025)*strg.iv.ses
+    ),
+    color = 'skyblue2', size = 1, height = .01
   ) +
   geom_point(
-    aes(y = .73, x = ols.mean), color = 'blue', fill = 'skyblue2', shape = 21,
-    size = 3
+    aes(y = strg.iv.corr, x = strg.iv.mean), color = 'blue', fill = 'skyblue2',
+    shape = 21, size = 3
   ) +
-  # geom_segment(aes(y = .52, yend = .76, x = ols.mean + qnorm(.025) * ols.ses,
-  #   xend = ols.mean + qnorm(.025) * ols.ses), color = 'grey1',
-  #   linetype = 'dashed') +
-  # geom_label(data = tibble(y = ylabel, x = xlabel), aes(y = y, x = x),
-  #   label = paste0(c('IV: ', 'OLS: '), round(xlabel, 3)),
-  #   family = 'LM Roman 10', position = position_nudge(x = 0, y = .01)) +
-  labs(y = 'Correlation Coefficient',
-       x = 'IV Coefficient Point Estimate Simulations') +
+  geom_errorbarh(
+    aes(
+      y = iv.corr,
+      xmin = ols.mean-qnorm(.025)*ols.ses,
+      xmax = ols.mean+qnorm(.025)*ols.ses
+    ),
+    color = 'skyblue2', size = 1, height = .01
+  ) +
+  geom_point(
+    aes(y = iv.corr, x = ols.mean), color = 'blue', fill = 'skyblue2',
+    shape = 21, size = 3
+  ) +
+  geom_label(
+    data = tibble(y = ylabel, x = xlabel), aes(y = y, x = x),
+    label = labels[1:2],
+    family = 'LM Roman 10', position = position_nudge(x = 0, y = -.02)
+  ) +
+  geom_label(
+    data = tibble(y = iv.corr, x = iv.mean), aes(y = iv.corr, x = iv.mean),
+    label = labels[3],
+    family = 'LM Roman 10', position = position_nudge(x = 0, y = -.02)
+  ) +
+  labs(
+    y = 'Correlation Coefficient Simulations',
+    x = 'IV Point Estimate Simulations'
+  ) +
+  scale_y_continuous(breaks = seq(.45, .9, .05)) +
   theme_bw() +
-  theme(axis.title  = element_text(size = 10),
-        axis.title.y = element_text(margin = margin(r = 12)),
-        axis.title.x = element_text(margin = margin(t = 12)),
-        axis.text.y = element_text(size = 10, lineheight = 1.1, face = 'bold'),
-        axis.text.x = element_text(size = 10, lineheight = 1.1, face = 'bold'),
-        text = element_text(family = 'LM Roman 10'),
-        panel.border = element_rect(color = 'black', size = 1),
-        panel.grid = element_blank(),
-        panel.grid.major.x = element_line(color = 'grey79'),
-        # legend.position = 'none'
+  theme(
+    axis.title  = element_text(size = 10),
+    axis.title.y = element_text(margin = margin(r = 12)),
+    axis.title.x = element_text(margin = margin(t = 12)),
+    axis.text.y = element_text(size = 10, lineheight = 1.1, face = 'bold'),
+    axis.text.x = element_text(size = 10, lineheight = 1.1, face = 'bold'),
+    text = element_text(family = 'LM Roman 10'),
+    panel.border = element_rect(color = 'black', size = 1),
+    panel.grid = element_blank(),
+    panel.grid.major.x = element_line(color = 'grey79'),
+    # legend.position = 'none'
   )
 
-# save plot
-ggsave(
-  '05_weakinstruments_IV_OLS.pdf', device = cairo_pdf, path = 'plots', dpi = 100,
-  width = 7, height = 5
-)
+# # save plot
+# ggsave(
+#   plot = p, 'weakinstruments.pdf', device = cairo_pdf, path = 'plots',
+#   dpi = 100, width = 7, height = 5
+# )
 
 # remove everything for serial sourcing
 rm(list = ls())

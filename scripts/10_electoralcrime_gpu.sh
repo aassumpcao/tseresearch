@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --partition=gpu
+#SBATCH --partition=volta-gpu
 #SBATCH --qos=gpu_access
 #SBATCH --gres=gpu:1
 #SBATCH --nodes=1
