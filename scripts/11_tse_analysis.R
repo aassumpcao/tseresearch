@@ -4,7 +4,7 @@
 #   and performance paper
 # author: andre assumpcao
 # by andre.assumpcao@gmail.com
-rm(list = ls())
+
 # import libraries
 library(AER)
 library(extrafont)
@@ -257,10 +257,25 @@ stargazer(
 # run tabulation of convictions
 reversals <- tse.analysis %$%
   table(candidacy.invalid.ontrial, candidacy.invalid.onappeal)
+unconditional.correlation <- tse.analysis %$%
+  cor(candidacy.invalid.ontrial, candidacy.invalid.onappeal)
 
-# do the math for table
+# do the reversal rate math for table
 reversals[1, 2] / (reversals[1, 1] + reversals[1, 2])
 reversals[2, 1] / (reversals[2, 2] + reversals[2, 1])
+(reversals[1, 2] + reversals[2, 1]) / nrow(tse.analysis)
+
+# extract total number of observations for which i have info on judicial
+# decisions
+number.sentences <- tse.analysis %>%
+  filter(!is.na(candidacy.ruling.class)) %>%
+  nrow()
+
+# calculate number of sentences for years 2004 and 2008
+tse.analysis %$%
+  table(election.year, candidacy.ruling.class) %>%
+  {.[c(1, 2), c(1, 2)]} %>%
+  {1 - sum(.) / number.sentences}
 
 # remove useless objects
 rm(reversals)
@@ -376,7 +391,7 @@ stargazer(
   list(fs01, fs02, fs03),
 
   # table cosmetics
-  type = 'latex',
+  type = 'text',
   title = 'First-Stage Regressions of Convictions at Trial and on Appeal',
   style = 'default',
   # out = 'tables/firststage.tex',
@@ -801,6 +816,18 @@ p <- CIs %>%
 #   plot = p, 'coef_comparison.pdf', device = cairo_pdf, path = 'plots',
 #   dpi = 100, width = 7, height = 5
 # )
+
+# # reestimate model six using mayor only sample
+ss06.mayoronly <- tse.analysis %>%
+  filter(office.ID == 13 & candidate.experience == 1) %>%
+  {felm(outcome.share ~ candidate.age + candidate.male +
+    candidacy.expenditures.actual + candidate.maritalstatus +
+    candidate.education | election.ID + election.year + party.number |
+    (candidacy.invalid.ontrial ~ candidacy.invalid.onappeal), data = .,
+    exactDOF = TRUE)}
+
+# check coefficients
+summary(ss06.mayoronly, robust = TRUE)
 
 # ### test for coefficient stability
 # # here i implement the tests in altonji el at. (2005), oster (2017). i estimate
