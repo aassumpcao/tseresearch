@@ -43,7 +43,12 @@ holdout$model %<>%
 # graph accuracy scores
 p <- validation %>%
   ggplot() +
-  geom_boxplot(
+  # geom_point(
+  #   data = mutate(holdout, source = 'hold-out', accuracy = holdout_accuracy),
+  #   aes(x = fct_reorder(model, accuracy), y = accuracy, color = source),
+  #   size = 2
+  # ) +
+  geom_boxplot(data = validation,
     aes(x = fct_reorder(model, accuracy), y = accuracy, color = source),
     outlier.shape = NA
   ) +
