@@ -4,7 +4,7 @@
 #   and performance paper
 # author: andre assumpcao
 # by andre.assumpcao@gmail.com
-
+rm(list = ls())
 # import libraries
 library(AER)
 library(extrafont)
@@ -49,61 +49,6 @@ cbeta <- function(reg, name = 'candidacy.invalid.ontrial'){
   return(reg)
 }
 
-# function to measure the degree to which selection on unobservables would hurt
-# coefficient stability
-coefstab <- function(restricted, unrestricted, stat, b_star = 0, r2_max = 1){
-  # Args:
-  #   restricted:   restricted regression object
-  #   unrestricted: unrestricted regression object
-
-  # Returns:
-  #   degree of selection or max r.squared
-
-  # Body:
-  #   extract r.squared and coefficients
-
-  # function
-  # find variable for which we want to test coefficient stability
-  try(silent = TRUE, expr = {
-    i <- which(str_detect(names(restricted$coefficients), 'invalid'))
-    j <- which(str_detect(names(unrestricted$coefficients), 'invalid'))
-  })
-  try(silent = TRUE, expr = {
-    i <- which(str_detect(row.names(restricted$coefficients), 'invalid'))
-    j <- which(str_detect(row.names(unrestricted$coefficients), 'invalid'))
-  })
-
-  # extract coefficients
-  b_zero  <- restricted$coefficients[i]
-  b_tilde <- unrestricted$coefficients[j]
-
-  # extract rsquared
-  r2_zero  <- summary(restricted)$r.squared
-  r2_tilde <- summary(unrestricted)$r.squared
-
-  # return calls
-  if (stat == 'bias') {
-    # calculate bias-adjusted coefficient
-    bias <- (b_tilde - (b_zero - b_tilde)) *
-            ((r2_max - r2_tilde) / (r2_tilde - r2_zero))
-    # return
-    return(bias)
-
-  } else if (stat == 'delta') {
-    # calculate delta
-    delta <- ((b_tilde - b_star) * (r2_tilde - r2_zero)) /
-             ((b_zero - b_tilde) * (r2_max - r2_tilde))
-    # return
-    return(delta)
-
-  } else if (stat == 'r2_max') {
-    # calculate max r2
-    r2_max <- ((b_tilde / (b_zero - b_tilde)) * (r2_tilde - r2_zero)) + r2_tilde
-    # return
-    return(unname(r2_max))
-  }
-}
-
 # define function to calculate corrected SEs for OLS, IV, and FELM regressions
 cse <- function(reg, fs = FALSE, ...){
   # Args:
@@ -129,6 +74,16 @@ cse <- function(reg, fs = FALSE, ...){
 
   # return matrix
   return(rob)
+}
+
+# function to run coefficient stability tests
+coefstab <- function(beta.zero, beta.tilde, r2.zero, r2.tilde, delta = 1,
+  r2.max = 1
+){
+  beta.adjusted <- beta.tilde + delta * (beta.zero - beta.tilde) *
+    ((r2.max - r2.tilde) / (r2.tilde - r2.zero.trial))
+
+  return(beta.adjusted)
 }
 
 # function to conduct t-tests across parameters in different regressions
@@ -827,31 +782,209 @@ ss06.mayoronly <- tse.analysis %>%
     exactDOF = TRUE)}
 
 # check coefficients
-summary(ss06.mayoronly, robust = TRUE)
+summary(ss06.mayoronly, robust = TRUE)$coefficients[14,]
 
-# ### test for coefficient stability
-# # here i implement the tests in altonji el at. (2005), oster (2017). i estimate
-# # boundaries for beta_iv based on the y-variation use in each regression.
+### test for the correlation between instrument and other covariates
+# here i want to know whether the instrument might be significantly correlated
+# with other covariates beyond the endogenous correlation between the
+# instrumented variable and covariates. solution: run ols with instrument
+# straight into second-stage
+
+# outcome 1: probability of election
+ols13 <- lm(outcome.elected ~ candidacy.invalid.onappeal, data = tse.analysis)
+ols14 <- lm(outcome.elected ~ candidacy.invalid.onappeal + candidate.age +
+  candidate.male + candidate.experience + candidacy.expenditures.actual +
+  candidate.maritalstatus + candidate.education, data = tse.analysis)
+ols15 <- felm(outcome.elected ~ candidacy.invalid.onappeal + candidate.age +
+  candidate.male + candidate.experience + candidacy.expenditures.actual +
+  candidate.maritalstatus + candidate.education | election.ID + election.year +
+  party.number, data = tse.analysis, exactDOF = TRUE)
+
+# outcome 2: vote share
+ols16 <- lm(outcome.share ~ candidacy.invalid.onappeal, data = tse.analysis)
+ols17 <- lm(outcome.share ~ candidacy.invalid.onappeal + candidate.age +
+  candidate.male + candidate.experience + candidacy.expenditures.actual +
+  candidate.maritalstatus + candidate.education, data = tse.analysis)
+ols18 <- felm(outcome.share ~ candidacy.invalid.onappeal + candidate.age +
+  candidate.male + candidate.experience + candidacy.expenditures.actual +
+  candidate.maritalstatus + candidate.education | election.ID + election.year +
+  party.number, data = tse.analysis, exactDOF = TRUE)
+
+# outcome 3: distance to election cutoff for city councilor candidates
+ols19 <- filter(tse.analysis, office.ID == 13) %>%
+  {lm(outcome.distance ~ candidacy.invalid.onappeal, data = .)}
+ols20 <- filter(tse.analysis, office.ID == 13) %>%
+  {lm(outcome.distance ~ candidacy.invalid.onappeal + candidate.age +
+    candidate.male + candidate.experience + candidacy.expenditures.actual +
+    candidate.maritalstatus + candidate.education, data = .)}
+ols21 <- filter(tse.analysis, office.ID == 13) %>%
+  {felm(outcome.distance ~ candidacy.invalid.onappeal + candidate.age +
+    candidate.male + candidate.experience + candidacy.expenditures.actual +
+    candidate.maritalstatus + candidate.education | election.ID + election.year+
+    party.number, data = ., exactDOF = TRUE)}
+
+# outcome 3: distance to election cutoff for mayor candidates
+ols22 <- filter(tse.analysis, office.ID == 11) %>%
+  {lm(outcome.distance ~ candidacy.invalid.onappeal, data = .)}
+ols23 <- filter(tse.analysis, office.ID == 11) %>%
+  {lm(outcome.distance ~ candidacy.invalid.onappeal + candidate.age +
+    candidate.male + candidate.experience + candidacy.expenditures.actual +
+    candidate.maritalstatus + candidate.education, data = .)}
+ols24 <- filter(tse.analysis, office.ID == 11) %>%
+  {felm(outcome.distance ~ candidacy.invalid.onappeal + candidate.age +
+    candidate.male + candidate.experience + candidacy.expenditures.actual +
+    candidate.maritalstatus + candidate.education | election.ID + election.year+
+    party.number, data = ., exactDOF = TRUE)}
+
+# define list of models to extract betas and std errors
+models <- objects(pattern = 'ols')
+
+# recover betas
+betas <- models %>%
+  lapply(get) %>%
+  lapply(summary) %>%
+  lapply(function(x){x$coefficients[, 1]}) %>%
+  unlist() %>%
+  {.[str_detect(names(.), 'invalid')]}
+
+# recover standard errors
+stderr <- models %>%
+  lapply(get) %>%
+  lapply(cse) %>%
+  unlist() %>%
+  {.[str_detect(names(.), 'invalid')]}
+
+# define vectors for dataset
+depvar <- c(
+  'Probability of Election', 'Vote Share',
+  'Vote Distance to Cutoff (City Councilor)', 'Vote Distance to Cutoff (Mayor)'
+)
+models <- c('no.covariates', 'covariates', 'covariates.fe')
+comparison <- rep(paste(rep(depvar, each = 3), models, sep = '.'), 2)
+endogenous <- rep(c('Trial', 'Appeals'), each = 12)
+
+# build dataset
+tibble(outcomes = rep(rep(depvar, each = 3), 2), betas, models = rep(models,
+  8), comparison, endogenous, stderr, ci_upper = betas + qnorm(0.005) *
+  stderr, ci_lower = betas - qnorm(0.005) * stderr, group = paste0(models,
+  endogenous)) %>%
+mutate(outcomes = factor(outcomes, levels = unique(depvar)),
+  models = factor(models, unique(models)), comparison = factor(comparison,
+    levels = unique(unlist(comparison))), endogenous = factor(endogenous,
+    levels = c("Trial", "Appeals"))) -> instrument.check
+
+# build plot
+p <- ggplot(instrument.check, aes(y = betas, x = models, color = endogenous)) +
+  geom_point(aes(color = endogenous), position = position_dodge(width = .25)) +
+  geom_errorbar(aes(ymax = ci_upper, ymin = ci_lower, color = endogenous),
+    width = .25, position = position_dodge(width = .25)) +
+  scale_color_manual(values = c('grey56', 'grey10'), name = 'Coefficients:') +
+  scale_x_discrete(
+    labels = rep(
+      c('No Covariates', 'Individual Covariates',
+        'Individual \n Covariates \n and Fixed Effects'), 4)
+  ) +
+  labs(y = 'Point Estimates and 99% CIs', x = element_blank()) +
+  facet_wrap(outcomes ~ ., scales = 'free_y') +
+  theme_bw() +
+  theme(
+    axis.title  = element_text(size = 10),
+    axis.text.y = element_text(size = 10, lineheight = 1.1, face = 'bold'),
+    axis.text.x = element_text(size = 10, lineheight = 1.1, face = 'bold'),
+    text = element_text(family = 'LM Roman 10'),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_line(color = 'lightcyan4', linetype = 'dotted'),
+    panel.border = element_rect(colour = 'black', size = 1),
+    legend.text  = element_text(size = 10), legend.position = 'top',
+    strip.text.x = element_text(size = 10, face = 'bold')
+  )
+
+# # save plot
+# ggsave(
+#   plot = p, 'instrumentcorrelation.pdf', device = cairo_pdf, path = 'plots',
+#   dpi = 100, width = 10, height = 5
+# )
+
+### test for coefficient stability
+# here i implement the tests in altonji el at. (2005), oster (2017). i estimate
+# boundaries for beta_iv based on the y-variation use in each regression.
+
+# calculate the lower bound of confidence intervals to compare to iv parameters
+betas.star <- betas + qnorm(.025) * stder
+
+# extract beta.zero for the bivariate regressions
+beta.zero.trial   <- summary(ols01)$coefficients[2,1]
+beta.zero.appeals <- summary(ols13)$coefficients[2,1]
+
+# extract beta tilde for the multivariate regression
+beta.tilde.trial   <- summary(ols03)$coefficients[1,1]
+beta.tilde.appeals <- summary(ols15)$coefficients[1,1]
+
+# extract r2.zero for the bivariate regressions
+r2.zero.trial   <- summary(ols01)$r.squared
+r2.zero.appeals <- summary(ols13)$r.squared
+
+# extract beta tilde for the multivariate regression
+r2.tilde.trial   <- summary(ols03)$r.squared
+r2.tilde.appeals <- summary(ols15)$r.squared
+
+# create list of arguments for coefstab function
+trial <- list(beta.zero.trial, beta.tilde.trial, r2.zero.trial, r2.tilde.trial)
+appeals <- list(
+  beta.zero.appeals, beta.tilde.appeals, r2.zero.appeals, r2.tilde.appeals
+)
+
+# create list of betas under two assumptions (r2.max = 1.3, r2.max = 1)
+beta.trial <- c(
+  do.call(coefstab, as.list(c(trial, r2.max = 1.3 * r2.tilde.trial))) %>%
+  round(3), do.call(coefstab, as.list(c(trial))) %>% round(3)
+)
+beta.appeals <- c(
+  do.call(coefstab, as.list(c(appeals, r2.max = 1.3 * r2.tilde.appeals))) %>%
+  round(3), do.call(coefstab, as.list(c(appeals))) %>% round(3)
+)
+
+# produce latex table
+tibble(
+  coefficients = c('trial', 'appeals'),
+  values1 = c(
+              c(round(beta.tilde.trial, 3), beta.trial[1]) %>%
+              paste0(collapse = ','),
+              c(round(beta.tilde.appeals, 3), beta.appeals[1]) %>%
+              paste0(collapse = ',')
+            ),
+  values2 = c(
+              c(round(beta.tilde.trial, 3), beta.trial[2]) %>%
+              paste0(collapse = ','),
+              c(round(beta.tilde.appeals, 3), beta.appeals[2]) %>%
+              paste0(collapse = ',')
+            )
+) %>%
+xtable::xtable() %>%
+print.xtable(floating = FALSE, hline.after = c(-1, -1, 0, 2, 2),
+  include.rownames = FALSE
+)
+
 
 # # extract beta.ols from ols regressions
 # objects(pattern = 'ols') %>%
 #   lapply(get) %>%
 #   lapply(function(x){
-#    if (class(x) == 'lm') {x$coefficients %>% {.[str_detect(names(.), 'trial')]}}
-#    else {x$coefficients %>% {.[str_detect(row.names(.), 'trial')]}}
+#     if (class(x) == 'lm') {
+#       x$coefficients %>% {.[str_detect(names(.), 'trial|appeal')]}
+#     } else {
+#       x$coefficients %>% {.[str_detect(row.names(.), 'trial|appeal')]}
+#     }
 #   }) %>%
 #   unlist() %>%
 #   unname() -> betas
 
-# # extract beta.ols from ols regressions
+# # extract betas' standard errors from ols regressions
 # objects(pattern = 'ols') %>%
 #   lapply(get) %>%
-#   lapply(function(x){cse(x)[str_detect(names(cse(x)), 'trial')]}) %>%
+#   lapply(function(x){cse(x)[str_detect(names(cse(x)), 'trial|appeal')]}) %>%
 #   unlist() %>%
 #   unname() -> stder
-
-# # calculate the lower bound of confidence intervals to compare to iv parameters
-# betas.star <- betas + qnorm(.025) * stder
 
 # # extract beta.ols from iv regressions
 # objects(pattern = 'ss') %>%
@@ -993,125 +1126,6 @@ judicial.behavior %>%
 
 # remove useless objects
 rm(list = objects(pattern = 'balance|var\\.names|judicial\\.behavior|vector'))
-
-### test for the correlation between instrument and other covariates
-# here i want to know whether the instrument might be significantly correlated
-# with other covariates beyond the endogenous correlation between the
-# instrumented variable and covariates. solution: run ols with instrument
-# straight into second-stage
-
-# outcome 1: probability of election
-ols13 <- lm(outcome.elected ~ candidacy.invalid.onappeal, data = tse.analysis)
-ols14 <- lm(outcome.elected ~ candidacy.invalid.onappeal + candidate.age +
-  candidate.male + candidate.experience + candidacy.expenditures.actual +
-  candidate.maritalstatus + candidate.education, data = tse.analysis)
-ols15 <- felm(outcome.elected ~ candidacy.invalid.onappeal + candidate.age +
-  candidate.male + candidate.experience + candidacy.expenditures.actual +
-  candidate.maritalstatus + candidate.education | election.ID + election.year +
-  party.number, data = tse.analysis, exactDOF = TRUE)
-
-# outcome 2: vote share
-ols16 <- lm(outcome.share ~ candidacy.invalid.onappeal, data = tse.analysis)
-ols17 <- lm(outcome.share ~ candidacy.invalid.onappeal + candidate.age +
-  candidate.male + candidate.experience + candidacy.expenditures.actual +
-  candidate.maritalstatus + candidate.education, data = tse.analysis)
-ols18 <- felm(outcome.share ~ candidacy.invalid.onappeal + candidate.age +
-  candidate.male + candidate.experience + candidacy.expenditures.actual +
-  candidate.maritalstatus + candidate.education | election.ID + election.year +
-  party.number, data = tse.analysis, exactDOF = TRUE)
-
-# outcome 3: distance to election cutoff for city councilor candidates
-ols19 <- filter(tse.analysis, office.ID == 13) %>%
-  {lm(outcome.distance ~ candidacy.invalid.onappeal, data = .)}
-ols20 <- filter(tse.analysis, office.ID == 13) %>%
-  {lm(outcome.distance ~ candidacy.invalid.onappeal + candidate.age +
-    candidate.male + candidate.experience + candidacy.expenditures.actual +
-    candidate.maritalstatus + candidate.education, data = .)}
-ols21 <- filter(tse.analysis, office.ID == 13) %>%
-  {felm(outcome.distance ~ candidacy.invalid.onappeal + candidate.age +
-    candidate.male + candidate.experience + candidacy.expenditures.actual +
-    candidate.maritalstatus + candidate.education | election.ID + election.year+
-    party.number, data = ., exactDOF = TRUE)}
-
-# outcome 3: distance to election cutoff for mayor candidates
-ols22 <- filter(tse.analysis, office.ID == 11) %>%
-  {lm(outcome.distance ~ candidacy.invalid.onappeal, data = .)}
-ols23 <- filter(tse.analysis, office.ID == 11) %>%
-  {lm(outcome.distance ~ candidacy.invalid.onappeal + candidate.age +
-    candidate.male + candidate.experience + candidacy.expenditures.actual +
-    candidate.maritalstatus + candidate.education, data = .)}
-ols24 <- filter(tse.analysis, office.ID == 11) %>%
-  {felm(outcome.distance ~ candidacy.invalid.onappeal + candidate.age +
-    candidate.male + candidate.experience + candidacy.expenditures.actual +
-    candidate.maritalstatus + candidate.education | election.ID + election.year+
-    party.number, data = ., exactDOF = TRUE)}
-
-# define list of models to extract betas and std errors
-models <- objects(pattern = 'ols')
-
-# recover betas
-betas <- models %>%
-  lapply(get) %>%
-  lapply(summary) %>%
-  lapply(function(x){x$coefficients[, 1]}) %>%
-  unlist() %>%
-  {.[str_detect(names(.), 'invalid')]}
-
-# recover standard errors
-stderr <- models %>%
-  lapply(get) %>%
-  lapply(cse) %>%
-  unlist() %>%
-  {.[str_detect(names(.), 'invalid')]}
-
-# define vectors for dataset
-depvar <- c(
-  'Probability of Election', 'Vote Share',
-  'Vote Distance to Cutoff (City Councilor)', 'Vote Distance to Cutoff (Mayor)'
-)
-models <- c('no.covariates', 'covariates', 'covariates.fe')
-comparison <- rep(paste(rep(depvar, each = 3), models, sep = '.'), 2)
-endogenous <- rep(c('Trial', 'Appeals'), each = 12)
-
-# build dataset
-tibble(outcomes = rep(rep(depvar, each = 3), 2), betas, models = rep(models,
-  8), comparison, endogenous, stderr, ci_upper = betas + qnorm(0.005) *
-  stderr, ci_lower = betas - qnorm(0.005) * stderr, group = paste0(models,
-  endogenous)) %>%
-mutate(outcomes = factor(outcomes, levels = unique(depvar)),
-  models = factor(models, unique(models)), comparison = factor(comparison,
-    levels = unique(unlist(comparison))), endogenous = factor(endogenous,
-    levels = c("Trial", "Appeals"))) -> instrument.check
-
-# build plot
-p <- ggplot(instrument.check, aes(y = betas, x = models, color = endogenous)) +
-  geom_point(aes(color = endogenous), position = position_dodge(width = .25)) +
-  geom_errorbar(aes(ymax = ci_upper, ymin = ci_lower, color = endogenous),
-    width = .25, position = position_dodge(width = .25)) +
-  scale_color_manual(values = c('grey56', 'grey10'), name = 'Coefficients:') +
-  scale_x_discrete(
-    labels = rep(c('No Covariates', 'Individual Covariates',
-                   'Individual \n Covariates \n and Fixed Effects'), 4)) +
-  labs(y = 'Point Estimates and 99% CIs', x = element_blank()) +
-  facet_wrap(outcomes ~ ., scales = 'free_y') +
-  theme_bw() +
-  theme(
-    axis.title  = element_text(size = 10),
-    axis.text.y = element_text(size = 10, lineheight = 1.1, face = 'bold'),
-    axis.text.x = element_text(size = 10, lineheight = 1.1, face = 'bold'),
-    text = element_text(family = 'LM Roman 10'),
-    panel.grid.major = element_blank(),
-    panel.grid.minor = element_line(color = 'lightcyan4', linetype = 'dotted'),
-    panel.border = element_rect(colour = 'black', size = 1),
-    legend.text  = element_text(size = 10), legend.position = 'top',
-    strip.text.x = element_text(size = 10, face = 'bold')
-  )
-
-# # save plot
-# ggsave(
-#   plot = p, 'instrumentcorrelation.pdf', device = cairo_pdf, path = 'plots',
-#   dpi = 100, width = 10, height = 5
-# )
 
 # remove unnecessary objects
 rm(depvar, models, comparison, endogenous, instrument.check, betas, stderr)
