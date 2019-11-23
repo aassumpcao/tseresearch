@@ -909,9 +909,6 @@ p <- ggplot(instrument.check, aes(y = betas, x = models, color = endogenous)) +
 # here i implement the tests in altonji el at. (2005), oster (2017). i estimate
 # boundaries for beta_iv based on the y-variation use in each regression.
 
-# calculate the lower bound of confidence intervals to compare to iv parameters
-betas.star <- betas + qnorm(.025) * stder
-
 # extract beta.zero for the bivariate regressions
 beta.zero.trial   <- summary(ols01)$coefficients[2,1]
 beta.zero.appeals <- summary(ols13)$coefficients[2,1]
@@ -962,107 +959,7 @@ tibble(
 ) %>%
 xtable::xtable() %>%
 print.xtable(floating = FALSE, hline.after = c(-1, -1, 0, 2, 2),
-  include.rownames = FALSE
-)
-
-
-# # extract beta.ols from ols regressions
-# objects(pattern = 'ols') %>%
-#   lapply(get) %>%
-#   lapply(function(x){
-#     if (class(x) == 'lm') {
-#       x$coefficients %>% {.[str_detect(names(.), 'trial|appeal')]}
-#     } else {
-#       x$coefficients %>% {.[str_detect(row.names(.), 'trial|appeal')]}
-#     }
-#   }) %>%
-#   unlist() %>%
-#   unname() -> betas
-
-# # extract betas' standard errors from ols regressions
-# objects(pattern = 'ols') %>%
-#   lapply(get) %>%
-#   lapply(function(x){cse(x)[str_detect(names(cse(x)), 'trial|appeal')]}) %>%
-#   unlist() %>%
-#   unname() -> stder
-
-# # extract beta.ols from iv regressions
-# objects(pattern = 'ss') %>%
-#   lapply(get) %>%
-#   lapply(function(x){x$coefficients %>% {.[str_detect(row.names(.),'tri')]}})%>%
-#   unlist() -> betas.iv
-
-# # calculate set of maximum r-squared
-# rsqr <- objects(pattern = 'ss') %>%
-#         lapply(get) %>%
-#         lapply(function(x){summary(x)$r.squared}) %>%
-#         unlist()
-
-# # create vector for R2_ur + (R2_ur - R2_r)
-# rmax <- rsqr %>%
-#   {c(.[2] + (.[2] - .[1]), .[3] + (.[3] - .[1]), .[5] + (.[5] - .[4]),
-#      .[6] + (.[6] - .[4]), .[8] + (.[8] - .[7]), .[9] + (.[9] - .[7]),
-#      .[11]+ (.[11] - .[10]), .[12] + (.[12] - .[10])
-#   )} %>%
-#   lapply(function(x){ifelse(x < 1, x, 1)}) %>%
-#   unlist()
-
-# # produce statistics
-# coefstab01 <- c(coefstab(ss01, ss02, 'delta', betas[2], rmax[1]),
-#                 coefstab(ss01, ss02, 'delta', betas[2], 2 * rsqr[2]),
-#                 coefstab(ss01, ss02, 'r2_max'),
-#                 coefstab(ss01, ss03, 'delta', betas[3], rmax[2]),
-#                 coefstab(ss01, ss03, 'delta', betas[3], 2 * rsqr[3]),
-#                 coefstab(ss01, ss03, 'r2_max'))
-# coefstab02 <- c(coefstab(ss04, ss05, 'delta', betas[5], rmax[3]),
-#                 coefstab(ss04, ss05, 'delta', betas[5], 2 * rsqr[5]),
-#                 coefstab(ss04, ss05, 'r2_max'),
-#                 coefstab(ss04, ss06, 'delta', betas[6], 1),
-#                 coefstab(ss04, ss06, 'delta', betas[6], 1),
-#                 coefstab(ss04, ss06, 'r2_max'))
-# coefstab03 <- c(coefstab(ss07, ss08, 'delta', betas[8], rmax[5]),
-#                 coefstab(ss07, ss08, 'delta', betas[8], 2 * rsqr[8]),
-#                 coefstab(ss07, ss08, 'r2_max'),
-#                 coefstab(ss07, ss09, 'delta', betas[9], 1),
-#                 coefstab(ss07, ss09, 'delta', betas[9], 1),
-#                 coefstab(ss07, ss09, 'r2_max'))
-# coefstab04 <- c(coefstab(ss10, ss11, 'delta', betas[11], rmax[7]),
-#                 coefstab(ss10, ss11, 'delta', betas[11], 2 * rsqr[11]),
-#                 coefstab(ss10, ss11, 'r2_max'),
-#                 coefstab(ss10, ss12, 'delta', betas[12], 1),
-#                 coefstab(ss10, ss12, 'delta', betas[12], 1),
-#                 coefstab(ss10, ss12, 'r2_max'))
-
-# # create table
-# tibble(coefstab01, coefstab02, coefstab03) %>%
-#   t() %>%
-#   as_tibble(.name_repair = 'universal') %>%
-#   mutate_all(~round(., 2)) %>%
-#   mutate(
-#     outcome = c('Outcome 1: Probability of Election', 'Outcome 2: Vote Share',
-#       'Outcome 3: Vote Distance to Cutoff')
-#   ) %>%
-#   select(7, 1:6) %>%
-#   xtable() %>%
-#   print.xtable(floating = FALSE, hline.after = c(-1, -1, 0, 3, 3),
-#     include.rownames = FALSE)
-
-# # create r-squares for table
-# c(rmax[1], 2 * rsqr[2], NA_real_, rmax[2], 2 * rsqr[3], NA_real_) %>%
-#   round(2) %>%
-#   paste0(collapse = ' & ')
-#   c(rmax[3], 2 * rsqr[5], NA_real_, rmax[4], 1, NA_real_) %>%
-#   round(2) %>%
-#   paste0(collapse = ' & ')
-#   c(rmax[5], 2 * rsqr[8], NA_real_, rmax[6], 1, NA_real_) %>%
-#   round(2) %>%
-#   paste0(collapse = ' & ')
-#   c(rmax[7], 2 * rsqr[11], NA_real_, rmax[8], 1, NA_real_) %>%
-#   round(2) %>%
-#   paste0(collapse = ' & ')
-
-# # remove unnecessary objects
-# rm(list = objects(pattern = 'rsqr|rmax|coefstab'))
+  include.rownames = FALSE)
 
 ### test for heterogeneous judicial behavior between trial and appeals
 # i am interested in knowing whether justices change change the factors
