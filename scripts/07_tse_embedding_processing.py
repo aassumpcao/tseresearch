@@ -19,7 +19,7 @@ def load_tse():
     kwargs = {'index_col': False, 'encoding': 'utf-8'}
     df = pd.read_csv('data/tsePredictions.csv', **kwargs)
     df['classID'] = df['class'].factorize()[0]
-    df = df.sort_values('classID').reset_index(drop = True)
+    df = df.sort_values('classID').reset_index(drop=True)
     return df
 
 # define function to load stopwords
