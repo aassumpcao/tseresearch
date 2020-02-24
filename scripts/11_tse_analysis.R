@@ -313,7 +313,7 @@ p <- fs.estimates %>%
     size = 4) +
   geom_errorbar(aes(ymax = ci_upper, ymin = ci_lower, color = ci_bound),
     width = .25, position = position_dodge(width = .25)) +
-  scale_color_manual(values = c('grey74', 'yellow4', 'grey10'),
+  scale_color_manual(values = c('grey74', 'dodgerblue2', 'grey10'),
     name = 'Confidence Intervals:') +
   scale_x_discrete(labels = labels) +
   labs(y = 'Instrument Point Estimates', x = element_blank()) +
