@@ -13,9 +13,9 @@ import time
 # import third-party libraries
 from bs4 import BeautifulSoup
 from selenium import webdriver
-from selenium.common.exceptions import NoSuchElementException
-from selenium.common.exceptions import StaleElementReferenceException
-from selenium.common.exceptions import TimeoutException
+from selenium.common.exceptions import (
+    NoSuchElementException, StaleElementReferenceException, TimeoutException
+)
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
@@ -60,7 +60,7 @@ class scraper:
         self.browser = browser
 
     # case number scraper function
-    def case(self, year, election, unit, candidate, wait = 2):
+    def case(self, year, election, unit, candidate, wait=2):
 
         """ method to download case number by candidate information """
 
@@ -105,7 +105,7 @@ class scraper:
         return protNum
 
     # decision scraper function
-    def decision(self, url = None, filename = 'decision', wait = 15):
+    def decision(self, url=None, filename='decision', wait=15):
 
         """ method to download tse decisions by url """
 
@@ -225,7 +225,7 @@ class parser:
         self.xtable = {t: i + 1 for i, t in enumerate(self.xtable)}
 
     #1 parse summary info table:
-    def parse_summary(self, transpose = False):
+    def parse_summary(self, transpose=False):
 
         """ method to wrangle summary information """
 
